@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root> this is root
+    <app
+        appID            = "2000"
+        appPort          = "16666"
+        appMaxPlayer     = "30"
+        appMaxConnection = "11000"
+        appXorCode       = "130"
+        appVersion       = "20230123"
+        recvBytesOne     = "1"
+        recvBytesMax     = "2"
+        sendBytesOne     = "1"
+        sendBytesMax     = "2"
+        maxHeartTime     = "30"
+        maxSecurityTime  = "10"
+        securityCode     = "csdnxxxx"
+        checkCode        = "DE"
+        closeDelay       = "1"
+    />
+
+    <remote
+        appXorCode      = "130"
+        appVersion      = "20230123"
+        recvBytesOne    = "8"
+        recvBytesMax    = "256"
+        sendBytesOne    = "8"
+        sendBytesMax    = "256"
+        maxHeartTime    = "10"
+        autoConnectTime = "3"
+        securityCode    = "csdnxxxx"
+        checkCode       = "DE"
+    >
+        <remote_node
+            userID   = "4001"
+            ip   = "127.0.0.1"
+            port = "13550"
+            type = "Center"
+        />
+
+        <remote_node
+            userID   = "4002"
+            ip   = "127.0.0.1"
+            port = "13550"
+            type = "Gate"
+        />
+    </remote>
+
+    <!--
+        %l    日志级别
+        %i    线程id
+        %c    日志内容
+        %t    日志时间，以产生日志的时间为准
+        %f    产生日志的代码文件
+        %L    产生日志的代码所在行数
+        %n    换行符
+        %T    输出Tab
+        %p    输出百分号%
+-->
+
+    <log> good description
+        <logger m_TypeName  = "default"
+                level = "info"
+                is_async = "true" >
+            <appender
+                    type = "stdout"
+                    format="[%t](%l) %c%n"
+                    time_format="%Y-%m-%d %H:%M:%S."
+                    time_use_us="true" >
+                description
+            </appender>
+
+        </logger>
+
+        <logger m_TypeName  = "b"
+                level = "debug"
+                is_async = "true" >
+            <appender
+                    type = "stdout"
+                    format="[%t](%l) %c%n"
+                    time_format="%Y-%m-%d %H:%M:%S."
+                    time_use_us="true" >
+                description
+            </appender>
+<!--            <appender -->
+<!--                    type = "file"-->
+<!--                    format="[%t][%l][%i][%f:%L] %c%n"-->
+<!--                    time_format="%Y-%m-%d %H:%M:%S."-->
+<!--                    time_use_us="true">-->
+<!--            </appender>-->
+        </logger>
+    </log>
+    <error>
+
+    </error>
+</root>

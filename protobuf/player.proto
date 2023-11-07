@@ -1,0 +1,58 @@
+syntax = "proto3";
+package yy.app.protocol;
+
+
+
+message PlayerID
+{
+  uint32   uid = 1;
+};
+
+message PlayerBaseData
+{
+    uint32     uid        = 1;
+    int32      sockfd     = 2;
+    int32      state      = 3;
+    int32      hp_current = 4;
+    int32      hp_max     = 5;
+
+    bytes      position = 6;
+    bytes      rotation = 7;
+
+    float      ani_speed = 8;
+    bool       ani_isJump = 9;
+    bool       ani_isGround = 10;
+    bool       ani_isFreeFall = 11;
+    float      ani_motionSpeed = 12;
+}
+
+
+message PlayerMove
+{
+    uint32      uid = 1;
+    bytes       position = 2;
+    bytes       rotation = 3;
+    bytes       move_target = 4;
+    float       ani_speed = 5;
+    float       ani_motionSpeed = 6;
+}
+
+
+
+message PlayerJumpAndGravity
+{
+    uint32   uid = 1;
+    bool     ani_isJump = 2;
+    bool     ani_isGround = 3;
+    bool     ani_isFreeFall = 4;
+}
+
+
+
+// 服务器端返回给客户端的登录结果
+message LoginResponse
+{
+    bool result = 1;
+    PlayerBaseData selfdata = 2;
+    repeated PlayerBaseData othersdata = 3;
+}

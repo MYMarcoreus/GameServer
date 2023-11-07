@@ -1,0 +1,49 @@
+syntax = "proto3";
+package yy.core.GameProtocol;
+
+
+//option optimize_for = CODE_SIZE;      // 减少代码大小，但降低了性能
+//option optimize_for = LITE_RUNTIME;   // 链接libprotobuf-lite.so，减少资源消耗
+
+
+enum E_PackageCommand
+{
+    /* 业务层的命令 */
+    eTest            = 0;
+    eLogin           = 1000;
+    eMove            = 2000;
+    eGetPlayerData   = 3000;
+    eLeave           = 4000;
+    eJumpAndGravity  = 5000;
+
+    /* 服务器的命令 */
+    eHeart    = 65000;  // 验证对端的连接是否存在
+    eXor      = 65531;  // 发送给客户端的异或码
+    eSecurity = 65532;  // 安全验证
+}
+
+message PackageHead {
+    bytes            m_CheckCode = 1;
+    uint32           m_FullLength     = 2;
+    E_PackageCommand m_TypeNameLength        = 3;
+}
+
+enum ResultCode {
+    eSuccess          = 0;
+    eAppVersionFailed = 1;
+    eMd5Failed        = 2;
+}
+
+message XorBody {
+    uint32 xor_code = 1;
+}
+
+message SecurityBody {
+    uint32 app_id      = 1;
+    uint32 app_version = 2;
+    string app_md5     = 3;
+}
+
+message ResultBody {
+    ResultCode result_code = 1;
+}

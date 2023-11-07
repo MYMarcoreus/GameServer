@@ -76,14 +76,14 @@ void Socket::SetOpt_KeepAlive(bool onoff) {
     SetOpt(m_socketfd, SO_KEEPALIVE, opt_val);
 }
 
-void Socket::SetOpt_ReusePort(bool onoff) {
-    int opt_val = onoff;
-    int ret = SetOpt(m_socketfd, SO_REUSEPORT, opt_val);
-    if(ret < 0 and onoff) {
-        YLOG_ERROR("In Socket::SetOpt_ReusePort(), setsockopt() error, %s",
-                   util::StatusCode{errno}.ToString().c_str())
-    }
-}
+//! windows没有SO_REUSEPORT
+// void Socket::SetOpt_ReusePort(bool onoff) {
+//     int opt_val = onoff;
+//     int ret = SetOpt(m_socketfd, SO_REUSEPORT, opt_val);
+//     if(ret < 0 and onoff) {
+//         YLOG_ERROR("In Socket::SetOpt_ReusePort(), setsockopt() error, {}", util::StatusCode{errno}.ToString())
+//     }
+// }
 
 void Socket::SetOpt_RecvBuf(int bufSize) {
     SetOpt(m_socketfd, SO_RCVBUF, bufSize);
@@ -95,12 +95,12 @@ void Socket::SetOpt_SendBuf(int bufSize) {
 
 
 void Socket::Shutdown(ShutdownType how) {
-    SocketApiWrapper::shutdown(m_socketfd, how);
+    SocketApiWrapper::shutdown(m_socketfd, (int)how);
 }
 
-void Socket::Shutdown_RD() { Shutdown(SHUT_RD); }
+void Socket::Shutdown_RD() { Shutdown(ShutdownType::eShut_RD); }
 
-void Socket::Shutdown_WR() { Shutdown(SHUT_WR); }
+void Socket::Shutdown_WR() { Shutdown(ShutdownType::eShut_WR); }
 
 void Socket::Close() {
     SocketApiWrapper::close(m_socketfd);
@@ -109,26 +109,26 @@ void Socket::Close() {
 
 ssize_t Socket::Recv(void *ptr, size_t nbytes, int flags)
 {
-    ssize_t ret = ::recv(m_socketfd, ptr, nbytes, flags);
+    ssize_t ret = ::recv(m_socketfd, (char *)ptr, nbytes, flags);
     return ret;
 }
 
 ssize_t Socket::Send(const void *ptr, size_t nbytes, int flags)
 {
-    ssize_t ret = ::send(m_socketfd, ptr, nbytes, flags);
+    ssize_t ret = ::send(m_socketfd, (char *)ptr, nbytes, flags);
     return ret;
 }
 
 ssize_t Socket::Sendto(const void *ptr, size_t nbytes, int flags, IPAddress::ptr peerAddr)
 {
-    return ::sendto(m_socketfd, ptr, nbytes, flags, peerAddr->GetRawAddr(), peerAddr->GetRawAddrLen());
+    return ::sendto(m_socketfd, (char *)ptr, nbytes, flags, peerAddr->GetRawAddr(), peerAddr->GetRawAddrLen());
 }
 
 
 ssize_t Socket::Recvfrom(void *ptr, size_t nbytes, int flags, IPAddress::ptr peerAddr)
 {
     auto addrLen = peerAddr->GetRawAddrLen();
-    return ::recvfrom(m_socketfd, ptr, nbytes, flags, peerAddr->GetRawAddr(), &addrLen);
+    return ::recvfrom(m_socketfd, (char *)ptr, nbytes, flags, peerAddr->GetRawAddr(), &addrLen);
 }
 
 void Socket::SetNonblocking() {

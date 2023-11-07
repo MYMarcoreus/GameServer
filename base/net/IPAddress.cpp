@@ -3,7 +3,6 @@
 #include"status/Status.h"
 #include "net_definations.h"
 
-#include<arpa/inet.h>
 #include<cstring>
 
 
@@ -67,45 +66,5 @@ std::string IPv6Address::GetPortStr() const {
 }
 
 
-IPAddress::ptr IPAddress::GetLocalAddr(SocketApiWrapper::socket_t sockfd) {
-    struct sockaddr_storage localAddr;
-    socklen_t addrLen = sizeof localAddr;
 
-    auto ret = ::getsockname(sockfd, (struct sockaddr*)(&localAddr), &addrLen);
-    if(ret < 0) {
-        YLOG_ERROR("In IPAddress::GetLocalAddr, ::getsockname() error: %s",
-                   util::StatusCode(errno).ToString().c_str());
-        return nullptr;
-    }
-
-    IPAddress::ptr addr{};
-    if(localAddr.ss_family == AF_INET) {
-        addr = std::make_shared<IPv4Address>((struct sockaddr_in *)&localAddr);
-    } else {
-        addr = std::make_shared<IPv6Address>((struct sockaddr_in6 *)&localAddr);
-    }
-
-    return addr;
-}
-
-IPAddress::ptr IPAddress::GetPeerAddr(SocketApiWrapper::socket_t sockfd) {
-    struct sockaddr_storage peerAddr;
-    socklen_t addrLen = sizeof peerAddr;
-
-    auto ret = ::getpeername(sockfd, (struct sockaddr*)(&peerAddr), &addrLen);
-    if(ret < 0) {
-        YLOG_ERROR("In IPAddress::GetPeerAddr, ::getpeername() error: %s",
-                   util::StatusCode(errno).ToString().c_str());
-        return nullptr;
-    }
-
-    IPAddress::ptr addr{};
-    if(peerAddr.ss_family == AF_INET) {
-        addr = std::make_shared<IPv4Address>((struct sockaddr_in *)&peerAddr);
-    } else {
-        addr = std::make_shared<IPv6Address>((struct sockaddr_in6 *)&peerAddr);
-    }
-
-    return addr;
-}
 }

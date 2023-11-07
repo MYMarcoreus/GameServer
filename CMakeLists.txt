@@ -24,7 +24,6 @@ if(CMAKE_BUILD_TYPE MATCHES Debug)
 endif()
 
 
-
 #! 加载Protobuf包
 find_package(Protobuf REQUIRED)
 
@@ -69,11 +68,6 @@ set(COMMON_SOURCES
         core/UserBaseData.cpp
         base/log/log.cpp
         base/net/IPAddress.cpp
-        base/utils/wrap_epoll.cpp
-        base/utils/wrap_fd.cpp
-        base/utils/wrap_file.cpp
-        base/utils/wrap_sigset.cpp
-        base/utils/wrap_socket.cpp
         base/utils/util_functions.cpp
         base/public/md5/md5.cpp
         base/public/tinyxml/tinyxml2.cpp
@@ -112,6 +106,8 @@ set(COMMON_SOURCES
         base/net/TcpClient.cpp
         base/net/SocketApiWrapper.cpp
         base/net/SocketApiWrapper.h
+        base/net/SelectPoller.cpp
+        base/net/SelectPoller.h
 )
 
 add_library(CommonLibrary ${COMMON_SOURCES})

@@ -69,7 +69,7 @@ public:
     void SetNonblocking();
     void SetOpt_ReuseAddr(bool onoff);
     void SetOpt_KeepAlive(bool onoff);
-    void SetOpt_ReusePort(bool onoff);
+    // void SetOpt_ReusePort(bool onoff);
     void SetOpt_Linger   (bool onoff, int timeout = 0);
     void SetOpt_RecvBuf(int bufSize);
     void SetOpt_SendBuf(int bufSize);

@@ -1,5 +1,11 @@
+#ifdef ____LINUX
+
+
+
+
 #ifndef LINUXGAMESERVER_EPOLLPOLLER_H
 #define LINUXGAMESERVER_EPOLLPOLLER_H
+
 
 #include "Poller.h"
 #include <cstdint>
@@ -39,3 +45,9 @@ private:
 }
 
 #endif //LINUXGAMESERVER_EPOLLPOLLER_H
+
+
+
+
+
+#endif

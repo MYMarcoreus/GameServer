@@ -54,9 +54,9 @@
 
 #define YLOG_TRACE(format, ...) YLOG_LEVEL("default", yy::Ylog::LogLevel::eTRACE, format, ##__VA_ARGS__)
 #define YLOG_DEBUG(format, ...) YLOG_LEVEL("default", yy::Ylog::LogLevel::eDEBUG, format, ##__VA_ARGS__)
-#define YLOG_INFO(format, ...) YLOG_LEVEL("default", yy::Ylog::LogLevel::INFO , format, ##__VA_ARGS__)
-#define YLOG_WARN(format, ...) YLOG_LEVEL("default", yy::Ylog::LogLevel::WARN , format, ##__VA_ARGS__)
-#define YLOG_ERROR(format, ...) YLOG_LEVEL("default", yy::Ylog::LogLevel::ERROR, format, ##__VA_ARGS__)
+#define YLOG_INFO(format, ...) YLOG_LEVEL("default", yy::Ylog::LogLevel::eINFO , format, ##__VA_ARGS__)
+#define YLOG_WARN(format, ...) YLOG_LEVEL("default", yy::Ylog::LogLevel::eWARN , format, ##__VA_ARGS__)
+#define YLOG_ERROR(format, ...) YLOG_LEVEL("default", yy::Ylog::LogLevel::eERROR, format, ##__VA_ARGS__)
 #define YLOG_FATAL(format, ...) YLOG_LEVEL("default", yy::Ylog::LogLevel::eFATAL, format, ##__VA_ARGS__)
 
 #define CLOSE_YLOG() Ylog::LoggerManager::getInstance().StopAsyncThread();

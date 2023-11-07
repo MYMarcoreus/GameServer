@@ -10,6 +10,11 @@ class Message;
 class Descriptor;
 }
 
+namespace yy::net {
+class Socket;
+}
+
+
 
 
 namespace yy::core {

@@ -5,6 +5,7 @@
 #include "ConfigManager.h"
 #include "TcpConnection.h"
 #include "log.h"
+#include "SocketApiWrapper.h"
 
 namespace yy::net {
 
@@ -44,11 +45,11 @@ void TcpServer::HandleNewConnection(SocketApiWrapper::socket_t sockfd, IPAddress
     m_AcceptorLoop->AssertInLoopingThread();
 
     EventLoop * ioLoop = m_IOThreadPool->GetNextLoop();
-    IPAddressPtr localAddr = IPAddress::GetLocalAddr(sockfd);
+    IPAddressPtr localAddr = SocketApiWrapper::GetLocalAddr(sockfd);
 
     //! 以"连接时间:连接编号"作为连接的唯一标记，相同连接时间的连接编号一定不同
     char name[64]{};
-    snprintf(name, sizeof name, "%ld:%lu", Timestamp::Now().GetMircoSecondSinceEpoch().count(), m_NextConnID++);
+    snprintf(name, sizeof name, "%lld:%llu", Timestamp::Now().GetMircoSecondSinceEpoch().count(), m_NextConnID++);
 
     TcpConnectionPtr conn = std::make_shared<TcpConnection>(
             name,
@@ -69,8 +70,8 @@ void TcpServer::HandleNewConnection(SocketApiWrapper::socket_t sockfd, IPAddress
     conn->SetConnectionShutdownCallback(std::bind(&TcpServer::AddShutdownConnection, this, _1));
     conn->GetLoop()->RunCallbackInLoop([conn](){ conn->ConnectionEstablished(); });
 
-    YLOG_INFO("In TcpServer::HandleNewConnection<%d:%s>，PeerAddr<%s,%d>, ioLoop<%p>", conn->GetSocketFD(), conn->GetName().c_str(),
-              conn->GetPeerAddr()->GetIPStr().c_str(), conn->GetPeerAddr()->GetPort(), ioLoop);
+    YLOG_INFO("In TcpServer::HandleNewConnection<{}:{}>，PeerAddr<{},{}>", conn->GetSocketFD(), conn->GetName().c_str(),
+              conn->GetPeerAddr()->GetIPStr().c_str(), conn->GetPeerAddr()->GetPort());
 }
 
 void TcpServer::RemoveConnection(const TcpConnectionPtr &conn) {

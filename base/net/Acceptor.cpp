@@ -18,7 +18,7 @@ Acceptor::Acceptor(EventLoop *loop, Socket::Type socketType, const IPAddressPtr 
 {
     //! 初始化监听套接字（尚未开始监听）
     m_AcceptSocket.SetOpt_ReuseAddr(true);
-    m_AcceptSocket.SetOpt_ReusePort(reusePort);
+    //m_AcceptSocket.SetOpt_ReusePort(reusePort);
     m_AcceptSocket.SetOpt_Linger(true);
     m_AcceptSocket.Bind(listenAddr);
 }

@@ -1,3 +1,7 @@
+#ifdef ____LINUX
+
+
+
 #include "EpollPoller.h"
 #include "Channel.h"
 #include "log.h"
@@ -167,3 +171,7 @@ void EpollPoller::SetEpollOperation(Channel * channel, int EPOLL_CTL_XXX) {
 
 
 }
+
+
+
+#endif

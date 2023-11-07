@@ -1,10 +1,13 @@
 #ifndef ____ISERVER_H
 #define ____ISERVER_H
 
-#include <google/protobuf/message.h>
+#include "core_definations.h"
+#include "noncopyable.h"
 #include "UserBaseData.h"
 #include "ConfigManager.h"
 #include "AppXmlConfig.h"
+
+
 
 
 namespace yy::core {
@@ -48,7 +51,7 @@ public:
     [[nodiscard]] virtual size_t getSecureConnnectionCount() const = 0;  // 安全连接数
     [[nodiscard]] virtual bool isRunning() const = 0;
 
-    virtual UserBaseData::ptr getFreeUser(util::Socket sock) = 0;
+    virtual UserBaseData::ptr getFreeUser(yy::net::Socket & sock) = 0;
     virtual void setUserFree(const UserBaseData::ptr& userdata) = 0;
 
     virtual config::ConfigVar<config::AppXmlConfig>::ptr GetAppConfig() = 0;

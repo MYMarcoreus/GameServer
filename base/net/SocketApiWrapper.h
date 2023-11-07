@@ -27,6 +27,10 @@ void     set_nonblocking(socket_t sockfd);
 int      get_socket_error(socket_t sockfd);
 bool     is_self_connect(socket_t sockfd);
 
+
+static std::shared_ptr<IPAddress> GetLocalAddr(SocketApiWrapper::socket_t sockfd);
+static std::shared_ptr<IPAddress> GetPeerAddr (SocketApiWrapper::socket_t sockfd);
+
 }
 
 

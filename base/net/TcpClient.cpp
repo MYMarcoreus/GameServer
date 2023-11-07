@@ -5,6 +5,7 @@
 #include "Socket.h"
 #include "EventLoop.h"
 #include "log.h"
+#include "SocketApiWrapper.h"
 
 
 namespace yy::net {
@@ -61,10 +62,10 @@ void TcpClient::StopConnecting() {
 }
 
 void TcpClient::NewConnection(SocketApiWrapper::socket_t sockfd) {
-    IPAddressPtr localAddr = IPAddress::GetLocalAddr(sockfd);
-    IPAddressPtr peerAddr = IPAddress::GetPeerAddr(sockfd);
+    IPAddressPtr localAddr = SocketApiWrapper::GetLocalAddr(sockfd);
+    IPAddressPtr peerAddr = SocketApiWrapper::GetPeerAddr(sockfd);
     char name[64]{};
-    snprintf(name, sizeof name, "%ld:%lu", Timestamp::Now().GetMircoSecondSinceEpoch().count(), m_NextConnID++);
+    snprintf(name, sizeof name, "%lld:%llu", Timestamp::Now().GetMircoSecondSinceEpoch().count(), m_NextConnID++);
 
     TcpConnectionPtr conn = std::make_shared<TcpConnection>(
             name,

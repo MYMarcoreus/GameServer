@@ -12,9 +12,6 @@ class IPAddress
 public:
     using ptr = std::shared_ptr<IPAddress>;
 
-    static IPAddress::ptr GetLocalAddr(SocketApiWrapper::socket_t sockfd);
-    static IPAddress::ptr GetPeerAddr (SocketApiWrapper::socket_t sockfd);
-
 
     IPAddress() = default;
 

@@ -3,12 +3,15 @@
 
 using namespace yy::core;
 using namespace yy::util;
+using yy::net::TcpConnectionPtr;
 
 namespace yy::app {
 
+
+
 GamePlayerManager::GamePlayerManager()
     : m_global_id{10000}, m_server{get_server_instance()},
-      m_player_pool{m_server.GetAppConfig()->GetValue().app_player_max()}
+      m_player_pool{m_server.GetAppConfig().app_player_max()}
 { }
 
 GamePlayerManager::~GamePlayerManager() // NOLINT(modernize-use-equals-default)
@@ -75,21 +78,14 @@ Ptr<protocol::PlayerBaseData> GamePlayerManager::FindPlayerByUID(UID_t onlineid)
     }
 }
 
-void GamePlayerManager::AppCommand(const UserBaseData::ptr & userdata, int32_t cmd)
+void GamePlayerManager::AppCommand(const TcpConnectionPtr & conn, const google::protobuf::Message & message)
 {
-    auto command = static_cast<E_PackageCommand>(cmd);
+    auto & userdata = m_server.FindUser(conn);
 
-    switch(command) {
-        case E_PackageCommand::eLogin         : onLogin(userdata); break;
-        case E_PackageCommand::eMove          : onMove(userdata); break;
-        case E_PackageCommand::eGetPlayerData : onGetPlayerData(userdata); break;
-        case E_PackageCommand::eLeave         : onLeave(userdata); break;
-        case E_PackageCommand::eJumpAndGravity: onJumpAndGravity(userdata); break;
-        default: YLOG_WARN("unsupported command<%d>", cmd)
-    }
+
 }
 
-void GamePlayerManager::onLogin(const UserBaseData::ptr& userdata) //NOLINT
+void GamePlayerManager::onLogin(const UserBaseDataPtr& userdata) //NOLINT
 {
     return_if(userdata->isLoggedIn());
 
@@ -129,7 +125,7 @@ void GamePlayerManager::onLogin(const UserBaseData::ptr& userdata) //NOLINT
 
 }
 
-void GamePlayerManager::onMove(const UserBaseData::ptr& userdata_self)
+void GamePlayerManager::onMove(const UserBaseDataPtr& userdata_self)
 {
     // 收到玩家A移动后的数据
     protocol::PlayerMove playerMove;
@@ -155,7 +151,7 @@ void GamePlayerManager::onMove(const UserBaseData::ptr& userdata_self)
 }
 
 /// 当userdata_self收到其他人的移动的数据时，便会申请获取id为id_other的用户的玩家数据
-void GamePlayerManager::onGetPlayerData(const UserBaseData::ptr& userdata_self) //NOLINT
+void GamePlayerManager::onGetPlayerData(const UserBaseDataPtr& userdata_self) //NOLINT
 {
     protocol::PlayerID id_other;
     m_server.ParsePackage(userdata_self, &id_other);
@@ -168,10 +164,10 @@ void GamePlayerManager::onGetPlayerData(const UserBaseData::ptr& userdata_self) 
     // auto userdata_other = m_server.FindUserBySockfd(player_other->sockfd);
     // return_if(userdata_other == nullptr);
 
-    m_server.BuildPackage(userdata_self, E_PackageCommand::eGetPlayerData, player_other.get());
+    m_server.BuildPackage(userdata_self, player_other.get());
 }
 
-void GamePlayerManager::onJumpAndGravity(const UserBaseData::ptr& userdata_self) //NOLINT
+void GamePlayerManager::onJumpAndGravity(const UserBaseDataPtr& userdata_self) //NOLINT
 {
     protocol::PlayerJumpAndGravity playerJump;
     m_server.ParsePackage(userdata_self, &playerJump);
@@ -187,21 +183,22 @@ void GamePlayerManager::onJumpAndGravity(const UserBaseData::ptr& userdata_self)
     playerdata_self->set_ani_isground  (playerJump.ani_isground());
     playerdata_self->set_ani_isfreefall(playerJump.ani_isfreefall());
 
-    Broadcast(playerJump.uid(), E_PackageCommand::eJumpAndGravity, playerJump);
+    Broadcast(playerJump.uid(), playerJump);
 }
 
-void GamePlayerManager::onLeave(const UserBaseData::ptr& userdata_self) //NOLINT
+void GamePlayerManager::onLeave(const UserBaseDataPtr& userdata_self) //NOLINT
 {
     return_if(userdata_self == nullptr);
 }
 
 
-void GamePlayerManager::Broadcast(UID_t from, E_PackageCommand cmd, const google::protobuf::Message &data)
+void GamePlayerManager::Broadcast(UID_t from, const google::protobuf::Message &data)
 {
     for(const auto& p: m_online_players)
     {
-        continue_if(p.second->uid() == from);
-        auto to = m_server.FindUserBySockfd(p.second->sockfd());
+        if(p.second->uid() == from)
+            continue;
+        auto to = m_server.FindUser(p.second->sockfd());
         continue_if(to == nullptr);
 
         m_server.BuildPackage(to, cmd, &data);

@@ -7,9 +7,10 @@
 #include "ThreadSafeQueue.hpp"
 #include "IServer.h"
 #include "ObjectPool.h"
+#include "core_definations.h"
 #include <unordered_map>
 
-using yy::core::UserBaseData;
+using yy::core::UserBaseDataPtr;
 
 namespace yy::app {
 
@@ -21,31 +22,31 @@ public:
 
     void Update() override;
 
-    void AppCommand(const UserBaseData::ptr & userdata, int32_t cmd) override;
+    void AppCommand(const UserBaseDataPtr & userdata, int32_t cmd) override;
 
 private:
     GamePlayerManager();
     ~GamePlayerManager() override;
 
     /// @brief 玩家发来登录请求，验证，然后将储存的游戏数据发送回玩家
-    void onLogin(const UserBaseData::ptr& userdata);
+    void onLogin(const UserBaseDataPtr& userdata);
 
     /// @brief 玩家退出
-    void onLeave(const UserBaseData::ptr& userdata_self);
+    void onLeave(const UserBaseDataPtr& userdata_self);
 
     /// @brief 玩家移动
-    void onMove(const UserBaseData::ptr& userdata_self);
+    void onMove(const UserBaseDataPtr& userdata_self);
 
     /// @brief　玩家申请获取另一玩家的数据
-    void onGetPlayerData(const UserBaseData::ptr& userdata_self);
+    void onGetPlayerData(const UserBaseDataPtr& userdata_self);
 
     /// @brief 玩家跳跃
-    void onJumpAndGravity(const UserBaseData::ptr& userdata_self);
+    void onJumpAndGravity(const UserBaseDataPtr& userdata_self);
 
     Ptr<protocol::PlayerBaseData> FindPlayerByUID(UID_t onlineid);
 
     /// @brief 玩家`from`给其他玩家客户端转发数据`data`
-    void Broadcast(UID_t from, core::E_PackageCommand cmd, const google::protobuf::Message &data);
+    void Broadcast(UID_t from, const google::protobuf::Message & data);
 
 private:
     yy::core::IServer &                                       m_server;

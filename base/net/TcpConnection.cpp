@@ -35,6 +35,7 @@ TcpConnection::TcpConnection(std::string name, EventLoop *loop, SocketApiWrapper
     SetState(eConnecting); //! 该结构在Accept接受连接成功后创建，此时TCP连接虽然已建立，但是回调函数未设置完毕，因此需要等待一下
     m_ConnectedTime.SetNow();
     m_ShudownTime.SetNow();
+    m_HeartTime.SetNow();
 }
 
 
@@ -55,10 +56,6 @@ void TcpConnection::Send(const Buffer &buf) {
     Send(buf.Peek(), buf.GetDataSize());
 }
 
-void TcpConnection::Send(const google::protobuf::Message * message) {
-    Send(std::string_view(message->SerializeAsString())); //! const引用延长临时对象生命周期
-}
-
 void TcpConnection::Send(const google::protobuf::Message & message) {
     Send(std::string_view(message.SerializeAsString())); //! const引用延长临时对象生命周期
 }
@@ -72,7 +69,7 @@ void TcpConnection::Send(const std::string_view & message) {
     }
 }
 
-void TcpConnection::SendInLoop(const std::string_view &buf) { //! const引用延长临时对象生命周期
+void TcpConnection::SendInLoop(const std::string_view & buf) { //! const引用延长临时对象生命周期
     m_Loop->AssertInLoopingThread();
 
     ssize_t nByteSend = 0;
@@ -211,6 +208,8 @@ void TcpConnection::HandleRead() {
     if(isReadOK) {
         YLOG_TRACE("TcpConnection::HandleRead()<%d>: 数据接收完毕 head-tail==%zu-%zu",
                    m_Socket->GetFD(), m_RecvBuf.GetHead(), m_RecvBuf.GetTail());
+
+        m_HeartTime.SetNow();
 
         //FIXME m_MessageCallback的实际任务可能不在本线程运行（在线程池处理消息）！m_MessageCallback可能立即返回，因此需要拷贝数据！
         m_MessageCallback(shared_from_this(), m_RecvBuf);

@@ -36,6 +36,17 @@ struct XorBodyDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 XorBodyDefaultTypeInternal _XorBody_default_instance_;
+PROTOBUF_CONSTEXPR HeartBody::HeartBody(
+    ::_pbi::ConstantInitialized) {}
+struct HeartBodyDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR HeartBodyDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
+  ~HeartBodyDefaultTypeInternal() {}
+  union {
+    HeartBody _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 HeartBodyDefaultTypeInternal _HeartBody_default_instance_;
 PROTOBUF_CONSTEXPR SecurityBody::SecurityBody(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_.app_md5_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
@@ -67,7 +78,7 @@ PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORIT
 }  // namespace protocol
 }  // namespace core
 }  // namespace yy
-static ::_pb::Metadata file_level_metadata_connection_2eproto[3];
+static ::_pb::Metadata file_level_metadata_connection_2eproto[4];
 static const ::_pb::EnumDescriptor* file_level_enum_descriptors_connection_2eproto[1];
 static constexpr ::_pb::ServiceDescriptor const** file_level_service_descriptors_connection_2eproto = nullptr;
 
@@ -79,6 +90,12 @@ const uint32_t TableStruct_connection_2eproto::offsets[] PROTOBUF_SECTION_VARIAB
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
   PROTOBUF_FIELD_OFFSET(::yy::core::protocol::XorBody, _impl_.xor_code_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::yy::core::protocol::HeartBody, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::yy::core::protocol::SecurityBody, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -98,30 +115,33 @@ const uint32_t TableStruct_connection_2eproto::offsets[] PROTOBUF_SECTION_VARIAB
 };
 static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::yy::core::protocol::XorBody)},
-  { 7, -1, -1, sizeof(::yy::core::protocol::SecurityBody)},
-  { 16, -1, -1, sizeof(::yy::core::protocol::ResultBody)},
+  { 7, -1, -1, sizeof(::yy::core::protocol::HeartBody)},
+  { 13, -1, -1, sizeof(::yy::core::protocol::SecurityBody)},
+  { 22, -1, -1, sizeof(::yy::core::protocol::ResultBody)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
   &::yy::core::protocol::_XorBody_default_instance_._instance,
+  &::yy::core::protocol::_HeartBody_default_instance_._instance,
   &::yy::core::protocol::_SecurityBody_default_instance_._instance,
   &::yy::core::protocol::_ResultBody_default_instance_._instance,
 };
 
 const char descriptor_table_protodef_connection_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
   "\n\020connection.proto\022\020yy.core.protocol\"\033\n\007"
-  "XorBody\022\020\n\010xor_code\030\001 \001(\r\"D\n\014SecurityBod"
-  "y\022\016\n\006app_id\030\001 \001(\r\022\023\n\013app_version\030\002 \001(\r\022\017"
-  "\n\007app_md5\030\003 \001(\t\"\?\n\nResultBody\0221\n\013result_"
-  "code\030\001 \001(\0162\034.yy.core.protocol.ResultCode"
-  "*A\n\nResultCode\022\014\n\010eSuccess\020\000\022\025\n\021eAppVers"
-  "ionFailed\020\001\022\016\n\neMd5Failed\020\002b\006proto3"
+  "XorBody\022\020\n\010xor_code\030\001 \001(\r\"\013\n\tHeartBody\"D"
+  "\n\014SecurityBody\022\016\n\006app_id\030\001 \001(\r\022\023\n\013app_ve"
+  "rsion\030\002 \001(\r\022\017\n\007app_md5\030\003 \001(\t\"\?\n\nResultBo"
+  "dy\0221\n\013result_code\030\001 \001(\0162\034.yy.core.protoc"
+  "ol.ResultCode*A\n\nResultCode\022\014\n\010eSuccess\020"
+  "\000\022\025\n\021eAppVersionFailed\020\001\022\016\n\neMd5Failed\020\002"
+  "b\006proto3"
   ;
 static ::_pbi::once_flag descriptor_table_connection_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_connection_2eproto = {
-    false, false, 275, descriptor_table_protodef_connection_2eproto,
+    false, false, 288, descriptor_table_protodef_connection_2eproto,
     "connection.proto",
-    &descriptor_table_connection_2eproto_once, nullptr, 0, 3,
+    &descriptor_table_connection_2eproto_once, nullptr, 0, 4,
     schemas, file_default_instances, TableStruct_connection_2eproto::offsets,
     file_level_metadata_connection_2eproto, file_level_enum_descriptors_connection_2eproto,
     file_level_service_descriptors_connection_2eproto,
@@ -327,6 +347,46 @@ void XorBody::InternalSwap(XorBody* other) {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_connection_2eproto_getter, &descriptor_table_connection_2eproto_once,
       file_level_metadata_connection_2eproto[0]);
+}
+
+// ===================================================================
+
+class HeartBody::_Internal {
+ public:
+};
+
+HeartBody::HeartBody(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena, is_message_owned) {
+  // @@protoc_insertion_point(arena_constructor:yy.core.protocol.HeartBody)
+}
+HeartBody::HeartBody(const HeartBody& from)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase() {
+  HeartBody* const _this = this; (void)_this;
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  // @@protoc_insertion_point(copy_constructor:yy.core.protocol.HeartBody)
+}
+
+
+
+
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData HeartBody::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl,
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl,
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*HeartBody::GetClassData() const { return &_class_data_; }
+
+
+
+
+
+
+
+::PROTOBUF_NAMESPACE_ID::Metadata HeartBody::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_connection_2eproto_getter, &descriptor_table_connection_2eproto_once,
+      file_level_metadata_connection_2eproto[1]);
 }
 
 // ===================================================================
@@ -589,7 +649,7 @@ void SecurityBody::InternalSwap(SecurityBody* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata SecurityBody::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_connection_2eproto_getter, &descriptor_table_connection_2eproto_once,
-      file_level_metadata_connection_2eproto[1]);
+      file_level_metadata_connection_2eproto[2]);
 }
 
 // ===================================================================
@@ -770,7 +830,7 @@ void ResultBody::InternalSwap(ResultBody* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ResultBody::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_connection_2eproto_getter, &descriptor_table_connection_2eproto_once,
-      file_level_metadata_connection_2eproto[2]);
+      file_level_metadata_connection_2eproto[3]);
 }
 
 // @@protoc_insertion_point(namespace_scope)
@@ -781,6 +841,10 @@ PROTOBUF_NAMESPACE_OPEN
 template<> PROTOBUF_NOINLINE ::yy::core::protocol::XorBody*
 Arena::CreateMaybeMessage< ::yy::core::protocol::XorBody >(Arena* arena) {
   return Arena::CreateMessageInternal< ::yy::core::protocol::XorBody >(arena);
+}
+template<> PROTOBUF_NOINLINE ::yy::core::protocol::HeartBody*
+Arena::CreateMaybeMessage< ::yy::core::protocol::HeartBody >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::yy::core::protocol::HeartBody >(arena);
 }
 template<> PROTOBUF_NOINLINE ::yy::core::protocol::SecurityBody*
 Arena::CreateMaybeMessage< ::yy::core::protocol::SecurityBody >(Arena* arena) {

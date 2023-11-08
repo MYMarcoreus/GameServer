@@ -6,6 +6,7 @@
 #include "noncopyable.h"
 #include <functional>
 #include <map>
+#include <cassert>
 
 namespace yy::core {
 

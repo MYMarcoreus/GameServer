@@ -39,6 +39,11 @@ message XorBody {
     uint32 xor_code = 1;
 }
 
+message HeartBody
+{
+
+}
+
 message SecurityBody {
     uint32 app_id      = 1;
     uint32 app_version = 2;

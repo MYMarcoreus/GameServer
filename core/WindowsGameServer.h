@@ -12,10 +12,19 @@
 namespace yy::core {
 
 
+namespace protocol {
+class HeartBody;
+class SecurityBody;
+}
+
 
 
 class WindowsGameServer: public IServer, public Singleton<WindowsGameServer> {
     SINGLETON_NECESSITY(WindowsGameServer);
+
+    using HeartPtr    = std::shared_ptr<yy::core::protocol::HeartBody> ;
+    using SecurityPtr = std::shared_ptr<yy::core::protocol::SecurityBody> ;
+
 public:
     /// @brief 启动并初始化服务器
     virtual void Start() override;
@@ -28,34 +37,41 @@ public:
 
 
     /// @brief 通过套接字文件描述符寻找用户连接数据
-    virtual yy::net::TcpConnectionPtr FindUserBySockfd(int sockfd) override;
+    virtual UserBaseDataPtr & FindUser(const yy::net::TcpConnectionPtr conn) override;
     virtual bool   isRunning() const = 0;
 
-    virtual yy::net::TcpConnectionPtr getFreeUser(yy::net::Socket & sock) override;
-    virtual void setUserFree(const yy::net::TcpConnectionPtr& userdata) override;
+    virtual UserBaseDataPtr & getFreeUser(const yy::net::TcpConnectionPtr conn) override;
+    virtual void setUserFree(const UserBaseDataPtr & userdata) override;
 
     virtual const config::AppXmlConfig & GetAppConfig() override { return m_app_configvar->GetValue(); }
 
 
     /* 在实现类中定义四个回调函数成员，下面这四个函数将会设置其对应的回调函数，而回调函数将由业务层定义并传入 */
-    virtual void setNotifier_Connect   (F_Notifier e) override;
-    virtual void setNotifier_Security  (F_Notifier e) override;
-    virtual void setNotifier_DisConnect(F_Notifier e) override;
-    virtual void setNotifier_Command   (F_Notifier e) override;
+    virtual void setNotifier_Security  (F_Notifier cb) override { m_notifierSecurity   = cb; }
+    virtual void setNotifier_DisConnect(F_Notifier cb) override { m_notifierDisconnect = cb; }
+
+    template<typename T>
+    void RegisterMessageCallback(const CallbackT<T>::ProtobufMessageTCallback &callback) {
+        m_dispatcher.RegisterMessageCallback<T>(callback);
+    }
+
 
 private:
     WindowsGameServer(yy::net::EventLoop* loop, yy::net::IPAddressPtr listenAddr);
     ~WindowsGameServer() override;
 
+    void OnGameMessage(yy::net::TcpConnectionPtr conn, const MessagePtr& message);
 
     void OnConnectionEstablished(yy::net::TcpConnectionPtr conn);
     void SendXorCode(const yy::net::TcpConnectionPtr &conn);
 
-    void OnUnknownMessage(yy::net::TcpConnectionPtr conn, const MessagePtr& message);
+    void OnHeart(const yy::net::TcpConnectionPtr & conn, const HeartPtr & message);
+    void OnSecurity(const yy::net::TcpConnectionPtr & conn, const SecurityPtr & message);
 
 
-    void AddShutdownConnection(const TcpConnectionPtr &conn);
-    void CloseShutdownConnections();
+
+    void AddShutdownConnection(const yy::net::TcpConnectionPtr &conn);
+    void CheckDisconnections();
 
 private:
     yy::net::EventLoop *        m_loop;
@@ -67,13 +83,13 @@ private:
     std::atomic<size_t> m_NumSecurity; //安全连接数
 
     /* 这几个回调函数由业务层实现，然后通过对应的set方法传入设置 */
-    F_Notifier m_notifierConnect;     // 用户连接成功后，执行业务层回调函数
     F_Notifier m_notifierSecurity;    // 用户安全验证通过后，执行业务层回调函数
     F_Notifier m_notifierDisconnect;  // 用户连接断开后，执行业务层回调函数
-    F_Notifier m_notifierCommand;     // 读取用户数据包时，若分析到指令是业务层指令，则执行业务层回调函数
 
-    std::vector<yy::net::TcpConnectionPtr> m_ShutdownConnections;
-    std::mutex                    m_ShutdownConnectionsMutex;
+    std::vector<yy::net::TcpConnectionPtr>  m_ShutdownConnections;
+    std::mutex                              m_ShutdownConnectionsMutex;
+
+    std::map<yy::net::TcpConnection *, UserBaseDataPtr> m_users;
 };
 
 }

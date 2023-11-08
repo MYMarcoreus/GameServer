@@ -6,10 +6,8 @@
 
 namespace yy::app{
 
-extern void AppNotifier_Connect   (const core::UserBaseData::ptr &, int32_t);
-extern void AppNotifier_Secutiry  (const core::UserBaseData::ptr &, int32_t);
-extern void AppNotifier_Disconnect(const core::UserBaseData::ptr &, int32_t);
-extern void AppNotifier_Command   (const core::UserBaseData::ptr &, int32_t);
+extern void AppNotifier_Secutiry  (const yy::net::TcpConnectionPtr &, int32_t);
+extern void AppNotifier_Disconnect(const yy::net::TcpConnectionPtr &, int32_t);
 
 }
 

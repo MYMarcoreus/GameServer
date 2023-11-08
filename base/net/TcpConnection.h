@@ -22,10 +22,10 @@ class TcpConnection: public std::enable_shared_from_this<TcpConnection> {
  *      ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
  * */
     enum E_ConnectionState {
-        eDisconnected,
-        eConnecting,
-        eConnected, //! 处于Connected的连接在更上层会有更多的子状态
-        eShutdown,
+        eDisconnected = 0,
+        eConnecting   = 1,
+        eConnected    = 2, //! 处于Connected的连接在更上层会有更多的子状态
+        eShutdown     = 3,
     };
 
 public:
@@ -39,7 +39,6 @@ public:
     void Send(const void * buf, size_t len);
     void Send(const Buffer & buf);
     void Send(const std::string_view & message);
-    void Send(const google::protobuf::Message * message);
     void Send(const google::protobuf::Message & message);
 
     /// @brief 关闭用户连接，但是不回收文件描述符，仍保留系统分配的套接字的资源(如缓存)，适合用户掉线可能马上再连接的情况。
@@ -65,6 +64,7 @@ public:
     const Buffer &         GetReadBuf()   const { return m_RecvBuf; }
     Timestamp              GetConnectedTime() const { return m_ConnectedTime; }
     Timestamp              GetShudownTime()   const { return m_ShudownTime; }
+    Timestamp              GetHeartTime()     const { return m_HeartTime; }
     uint8_t                GetXorCode() const { return m_XorCode; }
     int                    GetSocketFD()  const ;
     bool  IsConnected()    { return m_ConnectionState == eConnected; }
@@ -128,6 +128,7 @@ private:
 
     Timestamp m_ConnectedTime;
     Timestamp m_ShudownTime;
+    Timestamp m_HeartTime;
 };
 
 }

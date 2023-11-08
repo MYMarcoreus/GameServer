@@ -482,20 +482,20 @@ public:
 
     ///@brief 获取配置文件的路径
     ///@return 返回局部静态变量的引用
-    static std::string &
+    static std::filesystem::path &
     GetFilePath() {
-        static std::string s_config_file_path;
+        static std::filesystem::path s_config_file_path;
         return s_config_file_path;
     }
 
     static void
-    SetFilePath(const std::string & config_file_path) { GetFilePath() = config_file_path; }
+    SetFilePath(std::filesystem::path config_file_path) { GetFilePath() = config_file_path; }
 
     ///@brief 读取配置文件，若已读取，则再次读取
     static void
     LoadConfigs()
     {
-        XMLDocument  xml_doc;
+        tinyxml2::XMLDocument  xml_doc;
         XMLElement * root_elem = read_root(xml_doc);
 
         std::vector<std::pair<std::string, void *>> all_nodes;
@@ -543,7 +543,7 @@ private:
 
     ///@brief 读取配置文件，返回配置文件的root结点
     static XMLElement *
-    read_root(XMLDocument & xml_doc)
+    read_root(tinyxml2::XMLDocument & xml_doc)
     {
         XMLElement * root_elem;
 
@@ -553,7 +553,7 @@ private:
         }
 
         // 读取路径为GetConfigFilePath()的配置文件，若读取失败，则查找默认路径的xml文件
-        XMLError ret = xml_doc.LoadFile(GetFilePath().c_str());
+        XMLError ret = xml_doc.LoadFile(GetFilePath().string().c_str());
         if(ret != XML_SUCCESS ) {
             for (auto path: kConfigPaths) {
                 if (xml_doc.LoadFile(path) == XML_SUCCESS) {

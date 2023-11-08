@@ -21,7 +21,7 @@ void EventLoopThreadPool::Start(int threadNum, F_CloseShutdownConnectionsCallbac
         auto t = new EventLoopThread(cb);
         m_Threads.emplace_back(std::unique_ptr<EventLoopThread>(t));
         m_Loops.emplace_back(t->StartLoop());
-        m_Loops.back()->SetCloseShutdownSocketsCallback(CloseShutdownCallbacks);
+        m_Loops.back()->SetCloseSocketsCallback(CloseShutdownCallbacks);
         YLOG_INFO("启动io线程<%lu>！", t->GetThreadID())
     }
 

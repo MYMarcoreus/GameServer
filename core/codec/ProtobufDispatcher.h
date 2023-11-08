@@ -10,14 +10,13 @@
 namespace yy::core {
 
 
-using net::TcpConnectionPtr;
 
 
 class Callback : util::noncopyable
 {
 public:
     virtual ~Callback() = default;
-    virtual void OnMessage(const net::TcpConnectionPtr &, const MessagePtr& message) const = 0;
+    virtual void OnMessage(const yy::net::TcpConnectionPtr &, const MessagePtr& message) const = 0;
 };
 
 
@@ -30,11 +29,11 @@ class CallbackT : public Callback
     static_assert(std::is_base_of_v<google::protobuf::Message, T>, "T must be derived from gpb::Message.");
 public:
     //! message的子类回调
-    using ProtobufMessageTCallback = std::function<void (const net::TcpConnectionPtr&, const std::shared_ptr<T> & message )> ;
+    using ProtobufMessageTCallback = std::function<void (const yy::net::TcpConnectionPtr&, const std::shared_ptr<T> & message )> ;
 
     CallbackT(const ProtobufMessageTCallback& callback) : m_Callback(callback) { }
 
-    void OnMessage(const net::TcpConnectionPtr& conn, const MessagePtr& message ) const override
+    void OnMessage(const yy::net::TcpConnectionPtr& conn, const MessagePtr& message ) const override
     {
         //! 基类指针转换为子类指针
         std::shared_ptr<T> concrete = std::static_pointer_cast<T>(message);
@@ -50,13 +49,13 @@ private:
 class ProtobufDispatcher
 {
 public:
-    using ProtobufMessageCallback = std::function<void (const TcpConnectionPtr&, const MessagePtr& message)> ;
+    using ProtobufMessageCallback = std::function<void (const yy::net::TcpConnectionPtr&, const MessagePtr& message)> ;
 
     explicit ProtobufDispatcher(ProtobufMessageCallback defaultCb) : m_DefaultCallback(defaultCb)
     { }
 
     //! 由上层（XXXServer）传递给ProtobufCodec
-    void OnProtobufMessage(const TcpConnectionPtr& conn, const MessagePtr& message) const;
+    void OnProtobufMessage(const yy::net::TcpConnectionPtr& conn, const MessagePtr& message) const;
 
     //! 注册回调：回调传递子类指针CallbackT<T>，保存的是基类指针Callback，从而使得可以保存各种Message子类的回调
     template<typename T>

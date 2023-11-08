@@ -3,6 +3,9 @@
 
 namespace yy::core {
 
+using yy::net::TcpConnectionPtr;
+
+
 void ProtobufDispatcher::OnProtobufMessage(const TcpConnectionPtr &conn, const MessagePtr &message) const {
     CallbackMap::const_iterator it = m_CallbacksMap.find(message->GetDescriptor());
     if (it != m_CallbacksMap.end()) {

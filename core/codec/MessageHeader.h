@@ -63,8 +63,6 @@ public:
     ///@brief 消息类型名
     std::string GetTypeName() const { return m_TypeName; };
 
-private:
-
     // 随机产生一个异或码
     static uint8_t GenerateXorCode();
 

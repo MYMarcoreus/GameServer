@@ -16,7 +16,7 @@ TcpServer::TcpServer(EventLoop *acceptorLoop, IPAddress::ptr listenAddr, bool re
       m_IOThreadPool( new EventLoopThreadPool(acceptorLoop) ),
       m_AppConfigVar{config::g_app_config}
 {
-    m_AcceptorLoop->SetCloseShutdownSocketsCallback([this](){ this->CloseShutdownConnections(); });
+    m_AcceptorLoop->SetCloseSocketsCallback(m_CloseSocketsCallback);
     InitLog();
 }
 
@@ -67,11 +67,13 @@ void TcpServer::HandleNewConnection(SocketApiWrapper::socket_t sockfd, IPAddress
     conn->SetMessageCallback(m_MessageCallback);
     conn->SetConnectionWriteCompleteCallback(m_ConnectionWriteCompleteCallback);
     conn->SetConnectionCloseCallback(std::bind(&TcpServer::RemoveConnection, this, _1));
-    conn->SetConnectionShutdownCallback(std::bind(&TcpServer::AddShutdownConnection, this, _1));
+    conn->SetConnectionShutdownCallback(m_ConnectionShutdownCallback);
     conn->GetLoop()->RunCallbackInLoop([conn](){ conn->ConnectionEstablished(); });
 
     YLOG_INFO("In TcpServer::HandleNewConnection<{}:{}>，PeerAddr<{},{}>", conn->GetSocketFD(), conn->GetName().c_str(),
               conn->GetPeerAddr()->GetIPStr().c_str(), conn->GetPeerAddr()->GetPort());
+
+    m_NumConnect++;
 }
 
 void TcpServer::RemoveConnection(const TcpConnectionPtr &conn) {
@@ -82,6 +84,8 @@ void TcpServer::RemoveConnectionInLoop(TcpConnectionPtr conn) {
     m_AcceptorLoop->AssertInLoopingThread();
 
     m_ConnectionMap.erase(conn->GetName());
+    m_NumConnect--;
+
     conn->GetLoop()->EnqueueCallbackInLoop([conn](){ conn->ConnectionDestroyed(); });
 }
 
@@ -99,29 +103,7 @@ void TcpServer::InitLog() {
 }
 
 
-void TcpServer::AddShutdownConnection(const TcpConnectionPtr & conn) {
-    {
-        std::lock_guard lg{m_ShutdownConnectionsMutex};
-        m_ShutdownConnections.push_back(conn);
-    }
-    YLOG_TRACE("In TcpServer::AddShutdownConnection<%d>", conn->GetSocketFD());
-}
 
-//! 每个IO线程中运行
-void TcpServer::CloseShutdownConnections() {
-    YLOG_TRACE("In TcpServer::CloseShutdownConnections, 有 %zu 个shutdown连接", m_ShutdownConnections.size());
-
-    std::vector<TcpConnectionPtr> shutdownConnections;
-    {
-        std::lock_guard lg{m_ShutdownConnectionsMutex};
-        m_ShutdownConnections.swap(shutdownConnections);
-    }
-
-    for (const auto & conn: shutdownConnections) {
-        YLOG_TRACE("In TcpServer::CloseShutdownConnections, close shutdown socket<%d>", conn->GetSocketFD());
-        conn->Close();
-    }
-}
 
 
 }

@@ -238,44 +238,9 @@ public:
     }
 
 
-    void print() const
-    {
-        for(int i = 0; i < Maxsize() ;++i)
-        {
-            if(get_rawpointer()[i] == '\0')
-                std::cout << "[ ]";
-            else if(isprint(get_rawpointer()[i]))
-            {
-                std::cout << "[ ]";
-            }
-            else if(get_rawpointer()[i] == '\b')
-            {
-                std::cout << "[ ]";
-            }
-            else
-                std::cout << "[" << get_rawpointer()[i] << "]";
-        } std::cout << "\n";
-        size_t head_pos = get_head() * 3 + 2;
-        size_t tail_pos = head_pos + (get_tail() - get_head()) * 3;
 
-        if(head_pos < tail_pos)
-        {
-            std::string blank1(head_pos-1, ' ');
-            std::string blank2(tail_pos-head_pos-2, ' ');
-            std::cout << blank1 << "^h" << blank2 << "^t" << "\n";
-        }
-        else if(head_pos == tail_pos)
-        {
-            std::string blank1(head_pos-1, ' ');
-            std::cout << blank1 << "^ht" << "\n";
-        }
-        else
-        {
-            std::string blank1(tail_pos-1, ' ');
-            std::string blank2(head_pos-tail_pos-2, ' ');
-            std::cout << blank1 << "^t" << blank2 << "^h" << "\n";
-        }
-    }
+
+
 
 
 };

@@ -133,5 +133,43 @@ bool Buffer::PeekCBuffer(int start_index, void *dest, int len) {
     return true;
 }
 
+void Buffer::Print() const {
+    for(int i = 0; i < GetMaxsize() ;++i)
+    {
+        if(Peek()[i] == '\0')
+            std::cout << "[ ]";
+        else if(isprint(Peek()[i]))
+        {
+            std::cout << "[ ]";
+        }
+        else if(Peek()[i] == '\b')
+        {
+            std::cout << "[ ]";
+        }
+        else
+            std::cout << "[" << Peek()[i] << "]";
+    } std::cout << "\n";
+    size_t head_pos = GetHead() * 3 + 2;
+    size_t tail_pos = head_pos + (GetTail() - GetHead()) * 3;
+
+    if(head_pos < tail_pos)
+    {
+        std::string blank1(head_pos-1, ' ');
+        std::string blank2(tail_pos-head_pos-2, ' ');
+        std::cout << blank1 << "^h" << blank2 << "^t" << "\n";
+    }
+    else if(head_pos == tail_pos)
+    {
+        std::string blank1(head_pos-1, ' ');
+        std::cout << blank1 << "^ht" << "\n";
+    }
+    else
+    {
+        std::string blank1(tail_pos-1, ' ');
+        std::string blank2(head_pos-tail_pos-2, ' ');
+        std::cout << blank1 << "^t" << blank2 << "^h" << "\n";
+    }
+}
+
 
 }

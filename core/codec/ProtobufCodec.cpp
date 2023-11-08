@@ -7,7 +7,8 @@
 
 namespace yy::core {
 
-
+using ::yy::net::Buffer;
+using ::yy::net::TcpConnectionPtr;
 
 
 
@@ -40,6 +41,7 @@ MessagePtr ProtobufCodec::Parse(const TcpConnectionPtr &conn, Buffer &buf, Messa
     } else {
         YLOG_ERROR("解析消息头失败<%d:%s>，%s", conn->GetSocketFD(), conn->GetName().c_str(), ToString(outErrCode).c_str())
     }
+
     return message;
 }
 

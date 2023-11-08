@@ -70,7 +70,7 @@ public:
     ///@brief 获取当前线程的EventLoop
     static EventLoop * GetEventLoopOfThisThread();
 
-    void SetCloseShutdownSocketsCallback(F_CloseSocketsCallback cb) { m_CloseSocketsCallback = cb; }
+    void SetCloseSocketsCallback(F_CloseSocketsCallback cb) { m_CloseSocketsCallback = cb; }
 
 private:
     ///@brief QuitLoop()调用，唤醒正在阻塞在PollWait的EventLoop线程

@@ -4,171 +4,134 @@
 #include "connection.pb.h"
 
 #include <algorithm>
-#include "google/protobuf/io/coded_stream.h"
-#include "google/protobuf/extension_set.h"
-#include "google/protobuf/wire_format_lite.h"
-#include "google/protobuf/descriptor.h"
-#include "google/protobuf/generated_message_reflection.h"
-#include "google/protobuf/reflection_ops.h"
-#include "google/protobuf/wire_format.h"
-// @@protoc_insertion_point(includes)
 
-// Must be included last.
-#include "google/protobuf/port_def.inc"
+#include <google/protobuf/io/coded_stream.h>
+#include <google/protobuf/extension_set.h>
+#include <google/protobuf/wire_format_lite.h>
+#include <google/protobuf/descriptor.h>
+#include <google/protobuf/generated_message_reflection.h>
+#include <google/protobuf/reflection_ops.h>
+#include <google/protobuf/wire_format.h>
+// @@protoc_insertion_point(includes)
+#include <google/protobuf/port_def.inc>
+
 PROTOBUF_PRAGMA_INIT_SEG
+
 namespace _pb = ::PROTOBUF_NAMESPACE_ID;
-namespace _pbi = ::PROTOBUF_NAMESPACE_ID::internal;
+namespace _pbi = _pb::internal;
+
 namespace yy {
 namespace core {
 namespace protocol {
 PROTOBUF_CONSTEXPR XorBody::XorBody(
     ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_.xor_code_)*/ 0u
-
+    /*decltype(_impl_.xor_code_)*/0u
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct XorBodyDefaultTypeInternal {
-  PROTOBUF_CONSTEXPR XorBodyDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR XorBodyDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
   ~XorBodyDefaultTypeInternal() {}
   union {
     XorBody _instance;
   };
 };
-
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
-    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 XorBodyDefaultTypeInternal _XorBody_default_instance_;
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 XorBodyDefaultTypeInternal _XorBody_default_instance_;
 PROTOBUF_CONSTEXPR SecurityBody::SecurityBody(
     ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_.app_md5_)*/ {
-    &::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized {}
-  }
-
-  , /*decltype(_impl_.app_id_)*/ 0u
-
-  , /*decltype(_impl_.app_version_)*/ 0u
-
+    /*decltype(_impl_.app_md5_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_.app_id_)*/0u
+  , /*decltype(_impl_.app_version_)*/0u
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct SecurityBodyDefaultTypeInternal {
-  PROTOBUF_CONSTEXPR SecurityBodyDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR SecurityBodyDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
   ~SecurityBodyDefaultTypeInternal() {}
   union {
     SecurityBody _instance;
   };
 };
-
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
-    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 SecurityBodyDefaultTypeInternal _SecurityBody_default_instance_;
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 SecurityBodyDefaultTypeInternal _SecurityBody_default_instance_;
 PROTOBUF_CONSTEXPR ResultBody::ResultBody(
     ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_.result_code_)*/ 0
-
+    /*decltype(_impl_.result_code_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct ResultBodyDefaultTypeInternal {
-  PROTOBUF_CONSTEXPR ResultBodyDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR ResultBodyDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
   ~ResultBodyDefaultTypeInternal() {}
   union {
     ResultBody _instance;
   };
 };
-
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
-    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ResultBodyDefaultTypeInternal _ResultBody_default_instance_;
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ResultBodyDefaultTypeInternal _ResultBody_default_instance_;
 }  // namespace protocol
 }  // namespace core
 }  // namespace yy
 static ::_pb::Metadata file_level_metadata_connection_2eproto[3];
 static const ::_pb::EnumDescriptor* file_level_enum_descriptors_connection_2eproto[1];
-static constexpr const ::_pb::ServiceDescriptor**
-    file_level_service_descriptors_connection_2eproto = nullptr;
-const ::uint32_t TableStruct_connection_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
-    protodesc_cold) = {
-    ~0u,  // no _has_bits_
-    PROTOBUF_FIELD_OFFSET(::yy::core::protocol::XorBody, _internal_metadata_),
-    ~0u,  // no _extensions_
-    ~0u,  // no _oneof_case_
-    ~0u,  // no _weak_field_map_
-    ~0u,  // no _inlined_string_donated_
-    ~0u,  // no _split_
-    ~0u,  // no sizeof(Split)
-    PROTOBUF_FIELD_OFFSET(::yy::core::protocol::XorBody, _impl_.xor_code_),
-    ~0u,  // no _has_bits_
-    PROTOBUF_FIELD_OFFSET(::yy::core::protocol::SecurityBody, _internal_metadata_),
-    ~0u,  // no _extensions_
-    ~0u,  // no _oneof_case_
-    ~0u,  // no _weak_field_map_
-    ~0u,  // no _inlined_string_donated_
-    ~0u,  // no _split_
-    ~0u,  // no sizeof(Split)
-    PROTOBUF_FIELD_OFFSET(::yy::core::protocol::SecurityBody, _impl_.app_id_),
-    PROTOBUF_FIELD_OFFSET(::yy::core::protocol::SecurityBody, _impl_.app_version_),
-    PROTOBUF_FIELD_OFFSET(::yy::core::protocol::SecurityBody, _impl_.app_md5_),
-    ~0u,  // no _has_bits_
-    PROTOBUF_FIELD_OFFSET(::yy::core::protocol::ResultBody, _internal_metadata_),
-    ~0u,  // no _extensions_
-    ~0u,  // no _oneof_case_
-    ~0u,  // no _weak_field_map_
-    ~0u,  // no _inlined_string_donated_
-    ~0u,  // no _split_
-    ~0u,  // no sizeof(Split)
-    PROTOBUF_FIELD_OFFSET(::yy::core::protocol::ResultBody, _impl_.result_code_),
-};
+static constexpr ::_pb::ServiceDescriptor const** file_level_service_descriptors_connection_2eproto = nullptr;
 
-static const ::_pbi::MigrationSchema
-    schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-        { 0, -1, -1, sizeof(::yy::core::protocol::XorBody)},
-        { 9, -1, -1, sizeof(::yy::core::protocol::SecurityBody)},
-        { 20, -1, -1, sizeof(::yy::core::protocol::ResultBody)},
+const uint32_t TableStruct_connection_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::yy::core::protocol::XorBody, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::yy::core::protocol::XorBody, _impl_.xor_code_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::yy::core::protocol::SecurityBody, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::yy::core::protocol::SecurityBody, _impl_.app_id_),
+  PROTOBUF_FIELD_OFFSET(::yy::core::protocol::SecurityBody, _impl_.app_version_),
+  PROTOBUF_FIELD_OFFSET(::yy::core::protocol::SecurityBody, _impl_.app_md5_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::yy::core::protocol::ResultBody, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::yy::core::protocol::ResultBody, _impl_.result_code_),
+};
+static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+  { 0, -1, -1, sizeof(::yy::core::protocol::XorBody)},
+  { 7, -1, -1, sizeof(::yy::core::protocol::SecurityBody)},
+  { 16, -1, -1, sizeof(::yy::core::protocol::ResultBody)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
-    &::yy::core::protocol::_XorBody_default_instance_._instance,
-    &::yy::core::protocol::_SecurityBody_default_instance_._instance,
-    &::yy::core::protocol::_ResultBody_default_instance_._instance,
-};
-const char descriptor_table_protodef_connection_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-    "\n\020connection.proto\022\020yy.core.protocol\"\033\n\007"
-    "XorBody\022\020\n\010xor_code\030\001 \001(\r\"D\n\014SecurityBod"
-    "y\022\016\n\006app_id\030\001 \001(\r\022\023\n\013app_version\030\002 \001(\r\022\017"
-    "\n\007app_md5\030\003 \001(\t\"\?\n\nResultBody\0221\n\013result_"
-    "code\030\001 \001(\0162\034.yy.core.protocol.ResultCode"
-    "*A\n\nResultCode\022\014\n\010eSuccess\020\000\022\025\n\021eAppVers"
-    "ionFailed\020\001\022\016\n\neMd5Failed\020\002b\006proto3"
-};
-static ::absl::once_flag descriptor_table_connection_2eproto_once;
-const ::_pbi::DescriptorTable descriptor_table_connection_2eproto = {
-    false,
-    false,
-    275,
-    descriptor_table_protodef_connection_2eproto,
-    "connection.proto",
-    &descriptor_table_connection_2eproto_once,
-    nullptr,
-    0,
-    3,
-    schemas,
-    file_default_instances,
-    TableStruct_connection_2eproto::offsets,
-    file_level_metadata_connection_2eproto,
-    file_level_enum_descriptors_connection_2eproto,
-    file_level_service_descriptors_connection_2eproto,
+  &::yy::core::protocol::_XorBody_default_instance_._instance,
+  &::yy::core::protocol::_SecurityBody_default_instance_._instance,
+  &::yy::core::protocol::_ResultBody_default_instance_._instance,
 };
 
-// This function exists to be marked as weak.
-// It can significantly speed up compilation by breaking up LLVM's SCC
-// in the .pb.cc translation units. Large translation units see a
-// reduction of more than 35% of walltime for optimized builds. Without
-// the weak attribute all the messages in the file, including all the
-// vtables and everything they use become part of the same SCC through
-// a cycle like:
-// GetMetadata -> descriptor table -> default instances ->
-//   vtables -> GetMetadata
-// By adding a weak function here we break the connection from the
-// individual vtables back into the descriptor table.
+const char descriptor_table_protodef_connection_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
+  "\n\020connection.proto\022\020yy.core.protocol\"\033\n\007"
+  "XorBody\022\020\n\010xor_code\030\001 \001(\r\"D\n\014SecurityBod"
+  "y\022\016\n\006app_id\030\001 \001(\r\022\023\n\013app_version\030\002 \001(\r\022\017"
+  "\n\007app_md5\030\003 \001(\t\"\?\n\nResultBody\0221\n\013result_"
+  "code\030\001 \001(\0162\034.yy.core.protocol.ResultCode"
+  "*A\n\nResultCode\022\014\n\010eSuccess\020\000\022\025\n\021eAppVers"
+  "ionFailed\020\001\022\016\n\neMd5Failed\020\002b\006proto3"
+  ;
+static ::_pbi::once_flag descriptor_table_connection_2eproto_once;
+const ::_pbi::DescriptorTable descriptor_table_connection_2eproto = {
+    false, false, 275, descriptor_table_protodef_connection_2eproto,
+    "connection.proto",
+    &descriptor_table_connection_2eproto_once, nullptr, 0, 3,
+    schemas, file_default_instances, TableStruct_connection_2eproto::offsets,
+    file_level_metadata_connection_2eproto, file_level_enum_descriptors_connection_2eproto,
+    file_level_service_descriptors_connection_2eproto,
+};
 PROTOBUF_ATTRIBUTE_WEAK const ::_pbi::DescriptorTable* descriptor_table_connection_2eproto_getter() {
   return &descriptor_table_connection_2eproto;
 }
+
 // Force running AddDescriptors() at dynamic initialization time.
-PROTOBUF_ATTRIBUTE_INIT_PRIORITY2
-static ::_pbi::AddDescriptorsRunner dynamic_init_dummy_connection_2eproto(&descriptor_table_connection_2eproto);
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY2 static ::_pbi::AddDescriptorsRunner dynamic_init_dummy_connection_2eproto(&descriptor_table_connection_2eproto);
 namespace yy {
 namespace core {
 namespace protocol {
@@ -186,29 +149,38 @@ bool ResultCode_IsValid(int value) {
       return false;
   }
 }
+
+
 // ===================================================================
 
 class XorBody::_Internal {
  public:
 };
 
-XorBody::XorBody(::PROTOBUF_NAMESPACE_ID::Arena* arena)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
-  SharedCtor(arena);
+XorBody::XorBody(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor(arena, is_message_owned);
   // @@protoc_insertion_point(arena_constructor:yy.core.protocol.XorBody)
 }
 XorBody::XorBody(const XorBody& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message(), _impl_(from._impl_) {
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(
-      from._internal_metadata_);
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  XorBody* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.xor_code_){}
+    , /*decltype(_impl_._cached_size_)*/{}};
+
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _this->_impl_.xor_code_ = from._impl_.xor_code_;
   // @@protoc_insertion_point(copy_constructor:yy.core.protocol.XorBody)
 }
 
-inline void XorBody::SharedCtor(::_pb::Arena* arena) {
+inline void XorBody::SharedCtor(
+    ::_pb::Arena* arena, bool is_message_owned) {
   (void)arena;
+  (void)is_message_owned;
   new (&_impl_) Impl_{
-      decltype(_impl_.xor_code_) { 0u }
-
+      decltype(_impl_.xor_code_){0u}
     , /*decltype(_impl_._cached_size_)*/{}
   };
 }
@@ -223,7 +195,7 @@ XorBody::~XorBody() {
 }
 
 inline void XorBody::SharedDtor() {
-  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
 }
 
 void XorBody::SetCachedSize(int size) const {
@@ -232,7 +204,7 @@ void XorBody::SetCachedSize(int size) const {
 
 void XorBody::Clear() {
 // @@protoc_insertion_point(message_clear_start:yy.core.protocol.XorBody)
-  ::uint32_t cached_has_bits = 0;
+  uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
@@ -243,17 +215,16 @@ void XorBody::Clear() {
 const char* XorBody::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   while (!ctx->Done(&ptr)) {
-    ::uint32_t tag;
+    uint32_t tag;
     ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
       // uint32 xor_code = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 8)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
           _impl_.xor_code_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
-        } else {
+        } else
           goto handle_unusual;
-        }
         continue;
       default:
         goto handle_unusual;
@@ -278,17 +249,16 @@ failure:
 #undef CHK_
 }
 
-::uint8_t* XorBody::_InternalSerialize(
-    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+uint8_t* XorBody::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:yy.core.protocol.XorBody)
-  ::uint32_t cached_has_bits = 0;
+  uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
   // uint32 xor_code = 1;
   if (this->_internal_xor_code() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteUInt32ToArray(
-        1, this->_internal_xor_code(), target);
+    target = ::_pbi::WireFormatLite::WriteUInt32ToArray(1, this->_internal_xor_code(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -299,18 +269,17 @@ failure:
   return target;
 }
 
-::size_t XorBody::ByteSizeLong() const {
+size_t XorBody::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:yy.core.protocol.XorBody)
-  ::size_t total_size = 0;
+  size_t total_size = 0;
 
-  ::uint32_t cached_has_bits = 0;
+  uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
   // uint32 xor_code = 1;
   if (this->_internal_xor_code() != 0) {
-    total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(
-        this->_internal_xor_code());
+    total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_xor_code());
   }
 
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
@@ -327,8 +296,8 @@ void XorBody::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOB
   auto* const _this = static_cast<XorBody*>(&to_msg);
   auto& from = static_cast<const XorBody&>(from_msg);
   // @@protoc_insertion_point(class_specific_merge_from_start:yy.core.protocol.XorBody)
-  ABSL_DCHECK_NE(&from, _this);
-  ::uint32_t cached_has_bits = 0;
+  GOOGLE_DCHECK_NE(&from, _this);
+  uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
   if (from._internal_xor_code() != 0) {
@@ -351,7 +320,6 @@ bool XorBody::IsInitialized() const {
 void XorBody::InternalSwap(XorBody* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-
   swap(_impl_.xor_code_, other->_impl_.xor_code_);
 }
 
@@ -360,58 +328,57 @@ void XorBody::InternalSwap(XorBody* other) {
       &descriptor_table_connection_2eproto_getter, &descriptor_table_connection_2eproto_once,
       file_level_metadata_connection_2eproto[0]);
 }
+
 // ===================================================================
 
 class SecurityBody::_Internal {
  public:
 };
 
-SecurityBody::SecurityBody(::PROTOBUF_NAMESPACE_ID::Arena* arena)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
-  SharedCtor(arena);
+SecurityBody::SecurityBody(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor(arena, is_message_owned);
   // @@protoc_insertion_point(arena_constructor:yy.core.protocol.SecurityBody)
 }
 SecurityBody::SecurityBody(const SecurityBody& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   SecurityBody* const _this = this; (void)_this;
   new (&_impl_) Impl_{
-      decltype(_impl_.app_md5_) {}
-
-    , decltype(_impl_.app_id_) {}
-
-    , decltype(_impl_.app_version_) {}
-
+      decltype(_impl_.app_md5_){}
+    , decltype(_impl_.app_id_){}
+    , decltype(_impl_.app_version_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   _impl_.app_md5_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        _impl_.app_md5_.Set("", GetArenaForAllocation());
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.app_md5_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   if (!from._internal_app_md5().empty()) {
-    _this->_impl_.app_md5_.Set(from._internal_app_md5(), _this->GetArenaForAllocation());
+    _this->_impl_.app_md5_.Set(from._internal_app_md5(), 
+      _this->GetArenaForAllocation());
   }
   ::memcpy(&_impl_.app_id_, &from._impl_.app_id_,
-    static_cast<::size_t>(reinterpret_cast<char*>(&_impl_.app_version_) -
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.app_version_) -
     reinterpret_cast<char*>(&_impl_.app_id_)) + sizeof(_impl_.app_version_));
   // @@protoc_insertion_point(copy_constructor:yy.core.protocol.SecurityBody)
 }
 
-inline void SecurityBody::SharedCtor(::_pb::Arena* arena) {
+inline void SecurityBody::SharedCtor(
+    ::_pb::Arena* arena, bool is_message_owned) {
   (void)arena;
+  (void)is_message_owned;
   new (&_impl_) Impl_{
-      decltype(_impl_.app_md5_) {}
-
-    , decltype(_impl_.app_id_) { 0u }
-
-    , decltype(_impl_.app_version_) { 0u }
-
+      decltype(_impl_.app_md5_){}
+    , decltype(_impl_.app_id_){0u}
+    , decltype(_impl_.app_version_){0u}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.app_md5_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        _impl_.app_md5_.Set("", GetArenaForAllocation());
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.app_md5_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
 }
 
 SecurityBody::~SecurityBody() {
@@ -424,7 +391,7 @@ SecurityBody::~SecurityBody() {
 }
 
 inline void SecurityBody::SharedDtor() {
-  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
   _impl_.app_md5_.Destroy();
 }
 
@@ -434,12 +401,12 @@ void SecurityBody::SetCachedSize(int size) const {
 
 void SecurityBody::Clear() {
 // @@protoc_insertion_point(message_clear_start:yy.core.protocol.SecurityBody)
-  ::uint32_t cached_has_bits = 0;
+  uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
   _impl_.app_md5_.ClearToEmpty();
-  ::memset(&_impl_.app_id_, 0, static_cast<::size_t>(
+  ::memset(&_impl_.app_id_, 0, static_cast<size_t>(
       reinterpret_cast<char*>(&_impl_.app_version_) -
       reinterpret_cast<char*>(&_impl_.app_id_)) + sizeof(_impl_.app_version_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
@@ -448,37 +415,34 @@ void SecurityBody::Clear() {
 const char* SecurityBody::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   while (!ctx->Done(&ptr)) {
-    ::uint32_t tag;
+    uint32_t tag;
     ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
       // uint32 app_id = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 8)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
           _impl_.app_id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
-        } else {
+        } else
           goto handle_unusual;
-        }
         continue;
       // uint32 app_version = 2;
       case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 16)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
           _impl_.app_version_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
-        } else {
+        } else
           goto handle_unusual;
-        }
         continue;
       // string app_md5 = 3;
       case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 26)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
           auto str = _internal_mutable_app_md5();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
           CHK_(::_pbi::VerifyUTF8(str, "yy.core.protocol.SecurityBody.app_md5"));
-        } else {
+        } else
           goto handle_unusual;
-        }
         continue;
       default:
         goto handle_unusual;
@@ -503,32 +467,32 @@ failure:
 #undef CHK_
 }
 
-::uint8_t* SecurityBody::_InternalSerialize(
-    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+uint8_t* SecurityBody::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:yy.core.protocol.SecurityBody)
-  ::uint32_t cached_has_bits = 0;
+  uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
   // uint32 app_id = 1;
   if (this->_internal_app_id() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteUInt32ToArray(
-        1, this->_internal_app_id(), target);
+    target = ::_pbi::WireFormatLite::WriteUInt32ToArray(1, this->_internal_app_id(), target);
   }
 
   // uint32 app_version = 2;
   if (this->_internal_app_version() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteUInt32ToArray(
-        2, this->_internal_app_version(), target);
+    target = ::_pbi::WireFormatLite::WriteUInt32ToArray(2, this->_internal_app_version(), target);
   }
 
   // string app_md5 = 3;
   if (!this->_internal_app_md5().empty()) {
-    const std::string& _s = this->_internal_app_md5();
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-        _s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE, "yy.core.protocol.SecurityBody.app_md5");
-    target = stream->WriteStringMaybeAliased(3, _s, target);
+      this->_internal_app_md5().data(), static_cast<int>(this->_internal_app_md5().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "yy.core.protocol.SecurityBody.app_md5");
+    target = stream->WriteStringMaybeAliased(
+        3, this->_internal_app_md5(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -539,30 +503,29 @@ failure:
   return target;
 }
 
-::size_t SecurityBody::ByteSizeLong() const {
+size_t SecurityBody::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:yy.core.protocol.SecurityBody)
-  ::size_t total_size = 0;
+  size_t total_size = 0;
 
-  ::uint32_t cached_has_bits = 0;
+  uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
   // string app_md5 = 3;
   if (!this->_internal_app_md5().empty()) {
-    total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-                                    this->_internal_app_md5());
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_app_md5());
   }
 
   // uint32 app_id = 1;
   if (this->_internal_app_id() != 0) {
-    total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(
-        this->_internal_app_id());
+    total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_app_id());
   }
 
   // uint32 app_version = 2;
   if (this->_internal_app_version() != 0) {
-    total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(
-        this->_internal_app_version());
+    total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_app_version());
   }
 
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
@@ -579,8 +542,8 @@ void SecurityBody::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::P
   auto* const _this = static_cast<SecurityBody*>(&to_msg);
   auto& from = static_cast<const SecurityBody&>(from_msg);
   // @@protoc_insertion_point(class_specific_merge_from_start:yy.core.protocol.SecurityBody)
-  ABSL_DCHECK_NE(&from, _this);
-  ::uint32_t cached_has_bits = 0;
+  GOOGLE_DCHECK_NE(&from, _this);
+  uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
   if (!from._internal_app_md5().empty()) {
@@ -611,8 +574,10 @@ void SecurityBody::InternalSwap(SecurityBody* other) {
   auto* lhs_arena = GetArenaForAllocation();
   auto* rhs_arena = other->GetArenaForAllocation();
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.app_md5_, lhs_arena,
-                                       &other->_impl_.app_md5_, rhs_arena);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.app_md5_, lhs_arena,
+      &other->_impl_.app_md5_, rhs_arena
+  );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
       PROTOBUF_FIELD_OFFSET(SecurityBody, _impl_.app_version_)
       + sizeof(SecurityBody::_impl_.app_version_)
@@ -626,29 +591,37 @@ void SecurityBody::InternalSwap(SecurityBody* other) {
       &descriptor_table_connection_2eproto_getter, &descriptor_table_connection_2eproto_once,
       file_level_metadata_connection_2eproto[1]);
 }
+
 // ===================================================================
 
 class ResultBody::_Internal {
  public:
 };
 
-ResultBody::ResultBody(::PROTOBUF_NAMESPACE_ID::Arena* arena)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
-  SharedCtor(arena);
+ResultBody::ResultBody(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor(arena, is_message_owned);
   // @@protoc_insertion_point(arena_constructor:yy.core.protocol.ResultBody)
 }
 ResultBody::ResultBody(const ResultBody& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message(), _impl_(from._impl_) {
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(
-      from._internal_metadata_);
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  ResultBody* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.result_code_){}
+    , /*decltype(_impl_._cached_size_)*/{}};
+
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _this->_impl_.result_code_ = from._impl_.result_code_;
   // @@protoc_insertion_point(copy_constructor:yy.core.protocol.ResultBody)
 }
 
-inline void ResultBody::SharedCtor(::_pb::Arena* arena) {
+inline void ResultBody::SharedCtor(
+    ::_pb::Arena* arena, bool is_message_owned) {
   (void)arena;
+  (void)is_message_owned;
   new (&_impl_) Impl_{
-      decltype(_impl_.result_code_) { 0 }
-
+      decltype(_impl_.result_code_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
 }
@@ -663,7 +636,7 @@ ResultBody::~ResultBody() {
 }
 
 inline void ResultBody::SharedDtor() {
-  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
 }
 
 void ResultBody::SetCachedSize(int size) const {
@@ -672,7 +645,7 @@ void ResultBody::SetCachedSize(int size) const {
 
 void ResultBody::Clear() {
 // @@protoc_insertion_point(message_clear_start:yy.core.protocol.ResultBody)
-  ::uint32_t cached_has_bits = 0;
+  uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
@@ -683,18 +656,17 @@ void ResultBody::Clear() {
 const char* ResultBody::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   while (!ctx->Done(&ptr)) {
-    ::uint32_t tag;
+    uint32_t tag;
     ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
       // .yy.core.protocol.ResultCode result_code = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 8)) {
-          ::int32_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
           _internal_set_result_code(static_cast<::yy::core::protocol::ResultCode>(val));
-        } else {
+        } else
           goto handle_unusual;
-        }
         continue;
       default:
         goto handle_unusual;
@@ -719,17 +691,17 @@ failure:
 #undef CHK_
 }
 
-::uint8_t* ResultBody::_InternalSerialize(
-    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+uint8_t* ResultBody::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:yy.core.protocol.ResultBody)
-  ::uint32_t cached_has_bits = 0;
+  uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
   // .yy.core.protocol.ResultCode result_code = 1;
   if (this->_internal_result_code() != 0) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteEnumToArray(
-        1, this->_internal_result_code(), target);
+      1, this->_internal_result_code(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -740,18 +712,18 @@ failure:
   return target;
 }
 
-::size_t ResultBody::ByteSizeLong() const {
+size_t ResultBody::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:yy.core.protocol.ResultBody)
-  ::size_t total_size = 0;
+  size_t total_size = 0;
 
-  ::uint32_t cached_has_bits = 0;
+  uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
   // .yy.core.protocol.ResultCode result_code = 1;
   if (this->_internal_result_code() != 0) {
     total_size += 1 +
-                  ::_pbi::WireFormatLite::EnumSize(this->_internal_result_code());
+      ::_pbi::WireFormatLite::EnumSize(this->_internal_result_code());
   }
 
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
@@ -768,8 +740,8 @@ void ResultBody::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PRO
   auto* const _this = static_cast<ResultBody*>(&to_msg);
   auto& from = static_cast<const ResultBody&>(from_msg);
   // @@protoc_insertion_point(class_specific_merge_from_start:yy.core.protocol.ResultBody)
-  ABSL_DCHECK_NE(&from, _this);
-  ::uint32_t cached_has_bits = 0;
+  GOOGLE_DCHECK_NE(&from, _this);
+  uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
   if (from._internal_result_code() != 0) {
@@ -800,6 +772,7 @@ void ResultBody::InternalSwap(ResultBody* other) {
       &descriptor_table_connection_2eproto_getter, &descriptor_table_connection_2eproto_once,
       file_level_metadata_connection_2eproto[2]);
 }
+
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace protocol
 }  // namespace core
@@ -818,5 +791,6 @@ Arena::CreateMaybeMessage< ::yy::core::protocol::ResultBody >(Arena* arena) {
   return Arena::CreateMessageInternal< ::yy::core::protocol::ResultBody >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
+
 // @@protoc_insertion_point(global_scope)
-#include "google/protobuf/port_undef.inc"
+#include <google/protobuf/port_undef.inc>

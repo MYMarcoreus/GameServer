@@ -2,11 +2,78 @@
 #define GAMESERVER_WINDOWSGAMESERVER_H
 
 #include "IServer.h"
+#include "Singleton.h"
+#include "TcpServer.h"
+#include "codec/ProtobufCodec.h"
+#include "codec/ProtobufDispatcher.h"
+#include "net_definations.h"
+
 
 namespace yy::core {
 
-class WindowsGameServer: public IServer {
 
+
+
+class WindowsGameServer: public IServer, public Singleton<WindowsGameServer> {
+    SINGLETON_NECESSITY(WindowsGameServer);
+public:
+    /// @brief 启动并初始化服务器
+    virtual void Start() override;
+
+    /// @brief 结束服务器
+    virtual void Stop() override;
+
+    /// @brief 在业务层的while(1)中调用Update
+    virtual void Update() override;
+
+
+    /// @brief 通过套接字文件描述符寻找用户连接数据
+    virtual yy::net::TcpConnectionPtr FindUserBySockfd(int sockfd) override;
+    virtual bool   isRunning() const = 0;
+
+    virtual yy::net::TcpConnectionPtr getFreeUser(yy::net::Socket & sock) override;
+    virtual void setUserFree(const yy::net::TcpConnectionPtr& userdata) override;
+
+    virtual const config::AppXmlConfig & GetAppConfig() override { return m_app_configvar->GetValue(); }
+
+
+    /* 在实现类中定义四个回调函数成员，下面这四个函数将会设置其对应的回调函数，而回调函数将由业务层定义并传入 */
+    virtual void setNotifier_Connect   (F_Notifier e) override;
+    virtual void setNotifier_Security  (F_Notifier e) override;
+    virtual void setNotifier_DisConnect(F_Notifier e) override;
+    virtual void setNotifier_Command   (F_Notifier e) override;
+
+private:
+    WindowsGameServer(yy::net::EventLoop* loop, yy::net::IPAddressPtr listenAddr);
+    ~WindowsGameServer() override;
+
+
+    void OnConnectionEstablished(yy::net::TcpConnectionPtr conn);
+    void SendXorCode(const yy::net::TcpConnectionPtr &conn);
+
+    void OnUnknownMessage(yy::net::TcpConnectionPtr conn, const MessagePtr& message);
+
+
+    void AddShutdownConnection(const TcpConnectionPtr &conn);
+    void CloseShutdownConnections();
+
+private:
+    yy::net::EventLoop *        m_loop;
+    yy::net::TcpServer          m_server;
+    ProtobufCodec               m_codec;
+    ProtobufDispatcher          m_dispatcher;
+
+    yy::config::ConfigVar<yy::config::AppXmlConfig>::ptr    m_app_configvar; // 用于获取配置项
+    std::atomic<size_t> m_NumSecurity; //安全连接数
+
+    /* 这几个回调函数由业务层实现，然后通过对应的set方法传入设置 */
+    F_Notifier m_notifierConnect;     // 用户连接成功后，执行业务层回调函数
+    F_Notifier m_notifierSecurity;    // 用户安全验证通过后，执行业务层回调函数
+    F_Notifier m_notifierDisconnect;  // 用户连接断开后，执行业务层回调函数
+    F_Notifier m_notifierCommand;     // 读取用户数据包时，若分析到指令是业务层指令，则执行业务层回调函数
+
+    std::vector<yy::net::TcpConnectionPtr> m_ShutdownConnections;
+    std::mutex                    m_ShutdownConnectionsMutex;
 };
 
 }

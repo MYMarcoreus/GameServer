@@ -65,9 +65,10 @@ include_directories(
 
 set(COMMON_SOURCES
         ${ProtocSrcs}
-        core/LinuxServer.cpp
-        core/LinuxServer_Inner.cpp
-        core/UserBaseData.cpp
+#        core/LinuxServer.cpp
+#        core/LinuxServer_Inner.cpp
+#        core/UserBaseData.cpp
+
         base/log/log.cpp
         base/net/IPAddress.cpp
         base/utils/util_functions.cpp

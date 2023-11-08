@@ -2,7 +2,6 @@
 #define LINUXGAMESERVER_POLLEREVENT_H
 
 #ifdef ____Linux
-
 #include <sys/epoll.h>
 #include <poll.h>
 
@@ -15,10 +14,9 @@ static_assert(EPOLLRDNORM   == POLLRDNORM,   "epoll uses same flag values as pol
 static_assert(EPOLLRDBAND   == POLLRDBAND,   "epoll uses same flag values as poll");
 static_assert(EPOLLWRNORM   == POLLWRNORM,   "epoll uses same flag values as poll");
 static_assert(EPOLLWRBAND   == POLLWRBAND,   "epoll uses same flag values as poll");
-
 #endif
 
-#ifdef
+#ifdef ____WINDOWS
 #include <winsock2.h>
 #endif
 

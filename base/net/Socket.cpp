@@ -109,26 +109,23 @@ void Socket::Close() {
 
 ssize_t Socket::Recv(void *ptr, size_t nbytes, int flags)
 {
-    ssize_t ret = ::recv(m_socketfd, (char *)ptr, nbytes, flags);
-    return ret;
+    return SocketApiWrapper::recv(m_socketfd, (char *)ptr, nbytes, flags);
 }
 
 ssize_t Socket::Send(const void *ptr, size_t nbytes, int flags)
 {
-    ssize_t ret = ::send(m_socketfd, (char *)ptr, nbytes, flags);
-    return ret;
+    return SocketApiWrapper::send(m_socketfd, (char *)ptr, nbytes, flags);
 }
 
 ssize_t Socket::Sendto(const void *ptr, size_t nbytes, int flags, IPAddress::ptr peerAddr)
 {
-    return ::sendto(m_socketfd, (char *)ptr, nbytes, flags, peerAddr->GetRawAddr(), peerAddr->GetRawAddrLen());
+    return SocketApiWrapper::sendto(m_socketfd, (char *)ptr, nbytes, flags, peerAddr);
 }
 
 
 ssize_t Socket::Recvfrom(void *ptr, size_t nbytes, int flags, IPAddress::ptr peerAddr)
 {
-    auto addrLen = peerAddr->GetRawAddrLen();
-    return ::recvfrom(m_socketfd, (char *)ptr, nbytes, flags, peerAddr->GetRawAddr(), &addrLen);
+    return SocketApiWrapper::recvfrom(m_socketfd, (char *)ptr, nbytes, flags, peerAddr);
 }
 
 void Socket::SetNonblocking() {

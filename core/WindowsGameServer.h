@@ -40,8 +40,6 @@ public:
     virtual UserBaseDataPtr & FindUser(const yy::net::TcpConnectionPtr conn) override;
     virtual bool   isRunning() const = 0;
 
-    virtual UserBaseDataPtr & getFreeUser(const yy::net::TcpConnectionPtr conn) override;
-    virtual void setUserFree(const UserBaseDataPtr & userdata) override;
 
     virtual const config::AppXmlConfig & GetAppConfig() override { return m_app_configvar->GetValue(); }
 
@@ -60,7 +58,7 @@ private:
     WindowsGameServer(yy::net::EventLoop* loop, yy::net::IPAddressPtr listenAddr);
     ~WindowsGameServer() override;
 
-    void OnGameMessage(yy::net::TcpConnectionPtr conn, const MessagePtr& message);
+    void OnUnknownMessage(yy::net::TcpConnectionPtr conn, const MessagePtr& message);
 
     void OnConnectionEstablished(yy::net::TcpConnectionPtr conn);
     void SendXorCode(const yy::net::TcpConnectionPtr &conn);

@@ -16,7 +16,7 @@ namespace yy::core {
 WindowsGameServer::WindowsGameServer(EventLoop *loop, IPAddressPtr listenAddr)
         : m_loop{loop},
           m_server(loop, listenAddr, true),
-          m_dispatcher( std::bind(&WindowsGameServer::OnGameMessage, this, _1, _2) ),
+          m_dispatcher( std::bind(&WindowsGameServer::OnUnknownMessage, this, _1, _2) ),
           m_codec(std::bind(&ProtobufDispatcher::OnProtobufMessage, &m_dispatcher, _1, _2)),
           m_app_configvar(g_app_config)
 {
@@ -34,10 +34,8 @@ WindowsGameServer::~WindowsGameServer() {
 
 
 
-void WindowsGameServer::OnGameMessage(TcpConnectionPtr conn, const MessagePtr &message) {
+void WindowsGameServer::OnUnknownMessage(TcpConnectionPtr conn, const MessagePtr &message) {
     YLOG_INFO("游戏消息：{}", message->GetDescriptor()->full_name());
-
-    m_notifierCommand(conn, );
 }
 
 
@@ -95,7 +93,7 @@ void WindowsGameServer::CheckDisconnections() {
                 conn->Close();
 
                 if(m_notifierDisconnect)
-                    m_notifierDisconnect(conn, nullptr);
+                    m_notifierDisconnect(conn);
             }
         }
 
@@ -164,7 +162,7 @@ void WindowsGameServer::OnSecurity(const TcpConnectionPtr & conn, const Security
         m_users[conn.get()] = baseData;
         m_NumSecurity++;
         if(m_notifierSecurity)
-            m_notifierSecurity(conn, resultBody);
+            m_notifierSecurity(conn);
         YLOG_INFO("<%d>解包执行：安全验证通过", conn->GetSocketFD())
     }
     //? 安全验证失败：需要关闭用户连接吗？

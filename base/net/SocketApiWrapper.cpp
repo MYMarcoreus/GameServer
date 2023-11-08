@@ -44,6 +44,16 @@ socket_t create_or_die(sa_family_t family, __socket_type type, bool isNonblock) 
     return sockfd;
 }
 
+socket_t create_tcp_or_die(bool isNonblock) {
+    create_or_die(AF_INET, SOCK_STREAM, isNonblock);
+}
+
+socket_t create_udp_or_die(bool isNonblock) {
+    create_or_die(AF_INET6, SOCK_DGRAM, isNonblock);
+}
+
+
+
 void listen_or_die(socket_t sockfd, int backlog) {
     int ret = ::listen(sockfd, backlog);
     if (ret < 0) {
@@ -162,7 +172,7 @@ int get_socket_error(socket_t sockfd) {
     int optval;
     socklen_t optlen = static_cast<socklen_t>(sizeof optval);
 
-    if (::getsockopt(sockfd, SOL_SOCKET, SO_ERROR, &optval, &optlen) < 0) {
+    if (::getsockopt(sockfd, SOL_SOCKET, SO_ERROR, (char*)&optval, &optlen) < 0) {
         return errno;
     } else {
         return optval;
@@ -191,15 +201,15 @@ IPAddress::ptr GetLocalAddr(SocketApiWrapper::socket_t sockfd) {
     auto ret = ::getsockname(sockfd, (struct sockaddr*)(&localAddr), &addrLen);
     if(ret < 0) {
         YLOG_ERROR("In IPAddress::GetLocalAddr, ::getsockname() error: %s",
-                   util::StatusCode(errno).ToString().c_str());
+                   yy::util::StatusCode(errno).ToString().c_str());
         return nullptr;
     }
 
     IPAddress::ptr addr{};
     if(localAddr.ss_family == AF_INET) {
-        addr = std::make_shared<class IPv4Address>((struct sockaddr_in *)&localAddr);
+        addr = std::make_shared<yy::net::IPv4Address>((struct sockaddr_in *)&localAddr);
     } else {
-        addr = std::make_shared<class IPv6Address>((struct sockaddr_in6 *)&localAddr);
+        addr = std::make_shared<yy::net::IPv6Address>((struct sockaddr_in6 *)&localAddr);
     }
 
     return addr;
@@ -212,25 +222,38 @@ IPAddress::ptr GetPeerAddr(SocketApiWrapper::socket_t sockfd) {
     auto ret = ::getpeername(sockfd, (struct sockaddr*)(&peerAddr), &addrLen);
     if(ret < 0) {
         YLOG_ERROR("In IPAddress::GetPeerAddr, ::getpeername() error: %s",
-                   util::StatusCode(errno).ToString().c_str());
+                   yy::util::StatusCode(errno).ToString().c_str());
         return nullptr;
     }
 
     IPAddress::ptr addr{};
     if(peerAddr.ss_family == AF_INET) {
-        addr = std::make_shared<class IPv4Address>((struct sockaddr_in *)&peerAddr);
+        addr = std::make_shared<yy::net::IPv4Address>((struct sockaddr_in *)&peerAddr);
     } else {
-        addr = std::make_shared<class IPv6Address>((struct sockaddr_in6 *)&peerAddr);
+        addr = std::make_shared<yy::net::IPv6Address>((struct sockaddr_in6 *)&peerAddr);
     }
 
     return addr;
 }
 
+ssize_t recv(socket_t sockfd, void *ptr, size_t nbytes, int flags) {
+    ssize_t ret = ::recv(sockfd, (char *)ptr, nbytes, flags);
+    return ret;
+}
 
+ssize_t send(socket_t sockfd, const void *ptr, size_t nbytes, int flags) {
+    ssize_t ret = ::send(sockfd, (char *)ptr, nbytes, flags);
+    return ret;
+}
 
+ssize_t sendto(socket_t sockfd, const void *ptr, size_t nbytes, int flags, std::shared_ptr<IPAddress> peerAddr) {
+    return ::sendto(sockfd, (char *)ptr, nbytes, flags, peerAddr->GetRawAddr(), peerAddr->GetRawAddrLen());
+}
 
-
-
+ssize_t recvfrom(socket_t sockfd, void *ptr, size_t nbytes, int flags, std::shared_ptr<IPAddress> peerAddr) {
+    auto addrLen = peerAddr->GetRawAddrLen();
+    return ::recvfrom(sockfd, (char *)ptr, nbytes, flags, peerAddr->GetRawAddr(), &addrLen);
+}
 
 
 }

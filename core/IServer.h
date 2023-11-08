@@ -21,8 +21,7 @@ class IServer: util::noncopyable
 public:
     using ptr = std::shared_ptr<IServer>;
     // 第三个参数主要是为了留给传输消息头指令使用的
-    using F_Notifier = void (*)(const yy::net::TcpConnectionPtr &, const MessagePtr & );
-    using F_Notifier = void (*)(const yy::net::TcpConnectionPtr &, const MessagePtr & );
+    using F_Notifier = void (*)(const yy::net::TcpConnectionPtr &);
 public:
     IServer() = default;
  
@@ -42,9 +41,6 @@ public:
     virtual UserBaseDataPtr & FindUser(const yy::net::TcpConnectionPtr conn) = 0;
 
     [[nodiscard]] virtual bool isRunning() const = 0;
-
-    virtual UserBaseDataPtr & getFreeUser(const yy::net::TcpConnectionPtr conn) = 0;
-    virtual void setUserFree(const UserBaseDataPtr & userdata) = 0;
 
     virtual const config::AppXmlConfig & GetAppConfig() = 0;
 

@@ -1,5 +1,5 @@
-#include <sys/socket.h>
 #include "Buffer.h"
+#include "SocketApiWrapper.h"
 
 namespace yy::net {
 Buffer::Buffer(size_t _maxsize)
@@ -65,7 +65,7 @@ ssize_t Buffer::RetrieveDataIntoSocket(SocketApiWrapper::socket_t sockfd) {
     if(GetDataSize() <= 0)
         return 0;
 
-    ssize_t nBytesSend = ::send(sockfd, GetDataBegin(), GetDataSize(), 0);
+    ssize_t nBytesSend = SocketApiWrapper::send(sockfd, GetDataBegin(), GetDataSize(), 0);
 
     if(nBytesSend > 0) {
         MoveHeadAndTryReset(nBytesSend);

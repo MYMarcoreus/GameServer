@@ -3,13 +3,21 @@
 #include "EventLoop.h"
 #include "Timer.h"
 #include "status/Status.h"
+
+#ifdef ____LINUX
 #include <sys/timerfd.h>
+#endif
+
+#ifdef ____WINDOWS
+#endif
 
 namespace yy::net {
 
 using namespace yy::util;
 
 namespace detail {
+
+#ifdef ____LINUX
 
 //! 内部类，用于管理Linux定时器文件描述符
 struct __TimerfdManager
@@ -122,6 +130,13 @@ void __TimerfdManager::ReadTimerfd()
         YLOG_ERROR("read(timerfd) error: except read %lu byte, but only read %zd byte", sizeof buf, n)
     }
 }
+
+
+#endif
+
+#ifdef ____WINDOWS
+#endif
+
 
 } // detail
 

@@ -75,11 +75,12 @@ set(COMMON_SOURCES
         base/public/md5/md5.cpp
         base/public/tinyxml/tinyxml2.cpp
         base/utils/status/Status.cpp
-        game/GameManager.cpp
-        game/GameNotifier.cpp
-        game/GamePlayerManager.cpp
-        game/GameTestManager.cpp
-        core/OnlineUserManager.cpp
+
+#        game/GameManager.cpp
+#        game/GameNotifier.cpp
+#        game/GamePlayerManager.cpp
+#        game/GameTestManager.cpp
+
         base/config/ConfigManager.cpp
         base/config/AppXmlConfig.cpp
         base/config/LogXmlConfig.cpp
@@ -97,7 +98,6 @@ set(COMMON_SOURCES
         base/net/EventLoopThread.cpp
         base/net/Acceptor.cpp
         base/net/Socket.cpp
-        base/net/FileDescriptor.cpp
         base/net/TcpConnection.cpp
         base/net/Buffer.cpp
         base/net/TcpServer.cpp

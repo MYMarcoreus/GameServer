@@ -4,9 +4,15 @@
 #include "log.h"
 #include "util_functions.h"
 #include "TimerManager.h"
+#include "SocketApiWrapper.h"
 
-
+#ifdef ____LINUX
 #include <sys/eventfd.h>
+#endif
+
+#ifdef ____WINDOWS
+#include "socket_definations.h"
+#endif
 
 namespace yy::net {
 
@@ -15,14 +21,23 @@ using namespace yy::util;
 namespace {
 thread_local EventLoop *____EventLoopInThisThread = nullptr;
 
-static int CreatEventFD() {
+static SocketApiWrapper::socket_t CreatEventFD() {
+#ifdef ____LINUX
     //! 相比使用管道，::eventfd更加高效
     int evtfd = ::eventfd(0, EFD_NONBLOCK | EFD_CLOEXEC);
     if (evtfd < 0) {
         YLOG_FATAL("Failed in eventfd")
     }
     return evtfd;
+#endif
+
+#ifdef ____WINDOWS
+    int sockfd = SocketApiWrapper::create_or_die();
+    return sockfd;
+#endif
 }
+
+
 }
 
 
@@ -59,12 +74,12 @@ WakeupManager::~WakeupManager() {
     this->wakeupChannel_->DisableAllEvent();
     this->wakeupChannel_->RemoveFromLoop();
 
-    ::close(wakeupEventFD_);
+    SocketApiWrapper::close(wakeupEventFD_);
 }
 
 void WakeupManager::Read() {
     uint64_t msg = 1;
-    auto ret = ::read(wakeupEventFD_, &msg, sizeof msg);
+    auto ret = SocketApiWrapper::recv(wakeupEventFD_, &msg, sizeof msg, 0);
     if(ret < 0) {
         YLOG_ERROR("EventLoop::WakeupManager::Read() ::read() error: %s", ::yy::util::StrError(errno).c_str())
     }
@@ -73,7 +88,7 @@ void WakeupManager::Read() {
 void WakeupManager::Write() {
     //! 向唤醒事件文件描述符进行写，以触发其epoll事件
     uint64_t msg = 1;
-    auto ret = ::write(wakeupEventFD_, &msg, sizeof msg);
+    auto ret = SocketApiWrapper::send(wakeupEventFD_, &msg, sizeof msg, 0);
     if(ret < 0) {
         YLOG_ERROR("EventLoop::WakeupManager::Write ::write() error: %s", ::yy::util::StrError(errno).c_str())
     }

@@ -36,6 +36,8 @@ std::string Timestamp::ToFormattedString(const std::string &fmt, bool is_UTC) {
 
     // 将始于epoch的秒数转换为年月日时分
     struct tm now_tm{};
+
+#ifdef ____LINUX
     if(is_UTC) {
         // 使用UTC时间，全球所有地方都相同的一个时间
         gmtime_r(&tvTime.tv_sec, &now_tm);
@@ -43,6 +45,19 @@ std::string Timestamp::ToFormattedString(const std::string &fmt, bool is_UTC) {
         // 使用当地时间，如东八区之类的时区时间
         localtime_r(&tvTime.tv_sec, &now_tm);
     }
+#endif
+
+#ifdef ____WINDOWS
+    if(is_UTC) {
+        // 使用UTC时间，全球所有地方都相同的一个时间
+        time_t sec = tvTime.tv_sec;
+        gmtime_s(&now_tm, &sec);
+    } else {
+        // 使用当地时间，如东八区之类的时区时间
+        time_t sec = tvTime.tv_sec;
+        localtime_s(&now_tm, &sec);
+    }
+#endif
 
     char buf[64]{0};
     size_t nByte = strftime(buf, 24, fmt.c_str(), &now_tm);

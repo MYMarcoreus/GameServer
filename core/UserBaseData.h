@@ -11,7 +11,7 @@
 namespace yy::core {
 
 /// @brief 用户连接数据
-class UserBaseData:
+class UserBaseData
 {
 public:
     using ptr = std::shared_ptr<UserBaseData>;
@@ -50,8 +50,6 @@ private:
 
 // #pragma pack(pop, packing) // 恢复字节对齐状态
 
-inline bool operator==(int fd, const UserBaseData &rhs) { return rhs == fd; }
-inline bool operator!=(int fd, const UserBaseData &rhs) { return rhs != fd; }
 
 }
 

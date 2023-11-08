@@ -1,14 +1,47 @@
 #ifndef GAMESERVER_SELECTPOLLER_H
 #define GAMESERVER_SELECTPOLLER_H
 
+#include <winsock2.h>
+#include <set>
+#include <map>
+#include "net_definations.h"
+#include "socket_definations.h"
+#include "Poller.h"
+#include "PollerEvent.h"
+
+
 namespace yy::net {
 
 
-class SelectPoller {
+class SelectPoller: public Poller {
 public:
-    //
+    SelectPoller(EventLoop *loop);
+    ~SelectPoller();
+
+    ///@brief 执行epoll_wait，并将发生的事件channel填入`activeChannel`
+    virtual void PollWait(ChannelList &activeChannel, int timeout = -1) override;
+
+    ///@brief 其实是一个状态机，让Channel的状态转移到下一个状态：对channel映射表和epoll监视列表进行增删覆盖操作
+    virtual void UpdateChannel(Channel *) override;
+
+    ///@brief 其实是一个状态机，让Channel的状态转移到下一个状态：彻底删除channel
+    virtual void RemoveChannel(Channel *) override;
 private:
-    //
+    void FillActiveChannel(int activeEventsNum, ChannelList* channelList);
+
+    void Update(Channel* channel);
+
+private:
+    std::map<SocketApiWrapper::socket_t, Channel*> polledChannelsMap_;
+    fd_set select_readfds_;
+    fd_set select_writefds_;
+    fd_set select_expectfds_;
+
+    fd_set write_fds_;
+    fd_set read_fds_;
+    fd_set expect_fds_;
+
+    std::set<SocketApiWrapper::socket_t, std::greater<SocketApiWrapper::socket_t> > fdSet_;
 };
 
 

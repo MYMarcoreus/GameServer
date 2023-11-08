@@ -4,7 +4,7 @@
 #include <cstring>
 #include <atomic>
 #include "GameProtocol.h"
-#include "wrap_socket.h"
+#include "Socket.h"
 #include "IPAddress.h"
 #include "UserBuffer.h"
 #include <google/protobuf/message.h>

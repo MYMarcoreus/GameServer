@@ -24,12 +24,14 @@ if(CMAKE_BUILD_TYPE MATCHES Debug)
 endif()
 
 
+
+
 #! 加载Protobuf包
-find_package(Protobuf REQUIRED)
+find_package(Protobuf CONFIG REQUIRED)
+
 
 #! 自动执行终端命令生成C++代码文件
 set(ProtocDirname ${CMAKE_SOURCE_DIR}/protobuf)
-#set(ProtocBasename connection)
 
 # 不带引号时，ProtocArgs后面的参数是数组，如果带引号则会变成带;的字符串
 set(ProtocCmd protoc)
@@ -108,6 +110,8 @@ set(COMMON_SOURCES
         base/net/SocketApiWrapper.h
         base/net/SelectPoller.cpp
         base/net/SelectPoller.h
+        core/WindowsGameServer.cpp
+        core/WindowsGameServer.h
 )
 
 add_library(CommonLibrary ${COMMON_SOURCES})
@@ -122,6 +126,13 @@ target_link_libraries(
         ws2_32.lib
         #        yaml-cpp
         #        pthread
+)
+
+target_link_libraries(
+        CommonLibrary
+        protobuf::libprotoc
+        protobuf::libprotobuf
+        protobuf::libprotobuf-lite
 )
 
 #! -lprotobuf：必须在add_executable后面，因为是在可执行文件生成后，再将protobuf库链接的

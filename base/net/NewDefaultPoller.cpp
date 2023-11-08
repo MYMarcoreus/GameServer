@@ -1,4 +1,5 @@
 #include "EpollPoller.h"
+#include "SelectPoller.h"
 
 namespace yy::net {
 
@@ -9,7 +10,7 @@ Poller * Poller::NewDefaultPoller(EventLoop *loop, bool useETIfEpoller)
 #endif
 
 #ifdef ____WINDOWS
-    return new SelectPoller(loop, useETIfEpoller);
+    return new SelectPoller(loop);
 #endif
 }
 

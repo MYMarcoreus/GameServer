@@ -1,13 +1,14 @@
 #ifndef LINUXGAMESERVER_POLLEREVENT_H
 #define LINUXGAMESERVER_POLLEREVENT_H
 
+#ifdef ____Linux
+
 #include <sys/epoll.h>
 #include <poll.h>
 
 static_assert(EPOLLIN    == POLLIN,    "epoll uses same flag values as poll");
 static_assert(EPOLLPRI   == POLLPRI,   "epoll uses same flag values as poll");
 static_assert(EPOLLOUT   == POLLOUT,   "epoll uses same flag values as poll");
-static_assert(EPOLLRDHUP == POLLRDHUP, "epoll uses same flag values as poll");
 static_assert(EPOLLERR   == POLLERR,   "epoll uses same flag values as poll");
 static_assert(EPOLLHUP   == POLLHUP,   "epoll uses same flag values as poll");
 static_assert(EPOLLRDNORM   == POLLRDNORM,   "epoll uses same flag values as poll");
@@ -15,6 +16,11 @@ static_assert(EPOLLRDBAND   == POLLRDBAND,   "epoll uses same flag values as pol
 static_assert(EPOLLWRNORM   == POLLWRNORM,   "epoll uses same flag values as poll");
 static_assert(EPOLLWRBAND   == POLLWRBAND,   "epoll uses same flag values as poll");
 
+#endif
+
+#ifdef
+#include <winsock2.h>
+#endif
 
 namespace yy::net {
 
@@ -36,18 +42,18 @@ public:
 
     enum EventType {
         eNoneEvent = 0,
-        eIN    = EPOLLIN,
-        ePRI   = EPOLLPRI,
-        eOUT   = EPOLLOUT,
+        eIN    = POLLIN,
+        ePRI   = POLLPRI,
+        eOUT   = POLLOUT,
         eWriteEvent = eOUT,
-        eRDHUP = EPOLLRDHUP,
-        eReadEvent = eIN | ePRI | eRDHUP,
-        eERR   = EPOLLERR,
-        eHUP   = EPOLLHUP,
-        eRDNORM = EPOLLRDNORM,
-        eRDBAND = EPOLLRDBAND,
-        eWRNORM = EPOLLWRNORM,
-        eWRBAND = EPOLLWRBAND,
+        // eRDHUP = POLLRDHUP,
+        eReadEvent = eIN | ePRI /*| eRDHUP*/,
+        eERR   = POLLERR,
+        eHUP   = POLLHUP,
+        eRDNORM = POLLRDNORM,
+        eRDBAND = POLLRDBAND,
+        eWRNORM = POLLWRNORM,
+        eWRBAND = POLLWRBAND,
         eNVAL   = POLLNVAL,
         eErrorEvent = eNVAL | eERR,
     };

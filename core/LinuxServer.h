@@ -3,9 +3,7 @@
 
 #include "IServer.h"
 #include "UserBaseData.h"
-#include "wrap_socket.h"
-#include "wrap_epoll.h"
-#include "wrap_pipe.h"
+#include "Socket.h"
 #include "ConfigManager.h"
 #include "ThreadSafeQueue.hpp"
 #include "ObjectPool.h"
@@ -56,7 +54,7 @@ public:
     void setNotifier_DisConnect(F_Notifier f) override { m_notifierDisconnect = f; }
     void setNotifier_Command   (F_Notifier f) override { m_notifierCommand = f; }
 
-    UserBaseData::ptr getFreeUser(util::Socket sock) override;
+    UserBaseData::ptr getFreeUser(yy::net::Socket & sock) override;
     void setUserFree(const UserBaseData::ptr& userdata) override;
 
     config::ConfigVar<config::AppXmlConfig>::ptr GetAppConfig() override { return m_app_configvar; }

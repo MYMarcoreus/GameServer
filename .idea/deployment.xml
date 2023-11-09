@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" remoteFilesAllowedToDisappearOnAutoupload="false">
+  <component name="PublishConfigData" serverName="远程主机 (6ebbc731-63f6-4148-a673-91676a7d2447)" remoteFilesAllowedToDisappearOnAutoupload="false">
     <serverData>
       <paths name="远程主机 (6ebbc731-63f6-4148-a673-91676a7d2447)">
         <serverdata>
           <mappings>
-            <mapping deploy="/tmp/GameServer" local="$PROJECT_DIR$" />
+            <mapping deploy="GameServer" local="$PROJECT_DIR$" />
           </mappings>
+          <excludedPaths>
+            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug-mingw" />
+            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug-linux" />
+            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug" />
+          </excludedPaths>
         </serverdata>
       </paths>
     </serverData>

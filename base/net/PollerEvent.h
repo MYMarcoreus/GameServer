@@ -1,7 +1,7 @@
 #ifndef LINUXGAMESERVER_POLLEREVENT_H
 #define LINUXGAMESERVER_POLLEREVENT_H
 
-#ifdef ____Linux
+#ifdef ____LINUX
 #include <sys/epoll.h>
 #include <poll.h>
 
@@ -19,6 +19,9 @@ static_assert(EPOLLWRBAND   == POLLWRBAND,   "epoll uses same flag values as pol
 #ifdef ____WINDOWS
 #include <winsock2.h>
 #endif
+
+#include <stdint.h>
+
 
 namespace yy::net {
 

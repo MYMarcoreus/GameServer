@@ -1,5 +1,6 @@
 #include "log.h"
 #include "util_functions.h"
+#include "cross_platform_defines.h"
 #include <unistd.h>
 #include <algorithm>
 #include <sys/fcntl.h>
@@ -7,7 +8,7 @@
 #include <cassert>
 #include <map>
 
-
+#include <fcntl.h>
 
 
 namespace yy::Ylog {
@@ -239,8 +240,8 @@ FileLogAppender::FileLogAppender(const std::string& logfilepath, const std::stri
 
     auto start_info = "---------------start---------------\n";
     auto ret  = ::write(m_filefd, start_info, strlen(start_info) );
-    // m_filep = fdopen(m_filefd, "w");
 #endif
+    printf("open file: %s!!!", m_logfilepath.c_str());
 }
 
 FileLogAppender::~FileLogAppender()
@@ -256,10 +257,8 @@ FileLogAppender::~FileLogAppender()
         auto start_info = "---------------finish---------------\n";
         auto ret = ::write(m_filefd, start_info, strlen(start_info) );
 
-        ret = ::_commit(m_filefd);
-        assert(ret  != -1);
-        ret = ::close(m_filefd);
-        assert(ret != -1);
+        FLUSH(m_filefd);
+        ::close(m_filefd);
         // assert( ::fclose(m_filep) != EOF);
     }
 #endif

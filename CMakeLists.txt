@@ -4,6 +4,8 @@ project(GameServer)
 # -std=c++20
 set(CMAKE_CXX_STANDARD 20)
 
+# -DCMAKE_TOOLCHAIN_FILE=C:\Users\Lenovo\.vcpkg-clion\vcpkg\scripts\buildsystems\vcpkg.cmake
+
 # 判断平台
 if(CMAKE_HOST_SYSTEM_NAME MATCHES Windows)
     message(">> Platform: Windows")
@@ -27,7 +29,7 @@ endif()
 
 
 #! 加载Protobuf包
-find_package(Protobuf CONFIG REQUIRED)
+find_package(Protobuf REQUIRED) #  CONFIG
 
 
 #! 自动执行终端命令生成C++代码文件
@@ -75,18 +77,13 @@ set(COMMON_SOURCES
         base/public/md5/md5.cpp
         base/public/tinyxml/tinyxml2.cpp
         base/utils/status/Status.cpp
-
-#        game/GameManager.cpp
-#        game/GameNotifier.cpp
-#        game/GamePlayerManager.cpp
-#        game/GameTestManager.cpp
-
         base/config/ConfigManager.cpp
         base/config/AppXmlConfig.cpp
         base/config/LogXmlConfig.cpp
         base/config/RemoteXmlConfig.cpp
         base/utils/BoundedQueue.hpp
         base/utils/ThreadPool.cpp
+
         base/net/Channel.cpp
         base/net/EpollPoller.cpp
         base/net/EventLoop.cpp
@@ -102,17 +99,25 @@ set(COMMON_SOURCES
         base/net/Buffer.cpp
         base/net/TcpServer.cpp
         base/net/EventLoopThreadPool.cpp
-        core/codec/ProtobufCodec.cpp
-        core/codec/ProtobufDispatcher.cpp
-        core/codec/MessageHeader.cpp
         base/net/Connector.cpp
         base/net/TcpClient.cpp
         base/net/SocketApiWrapper.cpp
         base/net/SocketApiWrapper.h
         base/net/SelectPoller.cpp
         base/net/SelectPoller.h
+
+        core/codec/ProtobufCodec.cpp
+        core/codec/ProtobufDispatcher.cpp
+        core/codec/MessageHeader.cpp
+
         core/WindowsGameServer.cpp
         core/WindowsGameServer.h
+
+
+        #        game/GameManager.cpp
+        #        game/GameNotifier.cpp
+        #        game/GamePlayerManager.cpp
+        #        game/GameTestManager.cpp
 )
 
 add_library(CommonLibrary ${COMMON_SOURCES})
@@ -121,20 +126,26 @@ add_executable(codec_client test/test_codec_client.cpp)
 add_executable(codec_server test/test_codec_server.cpp)
 
 
-target_link_libraries(
-        CommonLibrary
+
+target_link_libraries( CommonLibrary
         ${PROTOBUF_LIBRARIES}
-        ws2_32.lib
         #        yaml-cpp
-        #        pthread
 )
 
-target_link_libraries(
-        CommonLibrary
-        protobuf::libprotoc
-        protobuf::libprotobuf
-        protobuf::libprotobuf-lite
-)
+if(CMAKE_HOST_SYSTEM_NAME MATCHES Windows)
+    target_link_libraries( CommonLibrary
+            ws2_32.lib
+            protobuf::libprotoc
+            protobuf::libprotobuf
+            protobuf::libprotobuf-lite
+    )
+else()
+    target_link_libraries( CommonLibrary
+            protobuf
+            pthread
+    )
+endif()
+
 
 #! -lprotobuf：必须在add_executable后面，因为是在可执行文件生成后，再将protobuf库链接的
 target_link_libraries(
@@ -146,3 +157,21 @@ target_link_libraries(
         codec_server
         CommonLibrary
 )
+
+add_executable( test_log
+        test/test_log.cpp
+
+        base/log/log.cpp
+        base/net/IPAddress.cpp
+        base/utils/util_functions.cpp
+        base/public/md5/md5.cpp
+        base/public/tinyxml/tinyxml2.cpp
+        base/utils/status/Status.cpp
+        base/config/ConfigManager.cpp
+        base/config/AppXmlConfig.cpp
+        base/config/LogXmlConfig.cpp
+        base/config/RemoteXmlConfig.cpp
+        base/utils/BoundedQueue.hpp
+        base/utils/ThreadPool.cpp
+)
+target_link_libraries(test_log ws2_32.lib)

@@ -14,7 +14,7 @@ namespace SocketApiWrapper {
 socket_t create_or_die(sa_family_t family, __socket_type type, bool isNonblock) {
 #ifdef ____LINUX
     int realType = isNonblock ? (int) type | SOCK_NONBLOCK | SOCK_CLOEXEC : (int) type;
-    socket_t socketfd = ::socket(family, realType, 0);
+    socket_t sockfd = ::socket(family, realType, 0);
     if (sockfd < 0) {
         YLOG_FATAL("In Socket::Socket(), socket() error: {}", yy::util::StatusCode{errno}.ToString())
     }
@@ -73,18 +73,16 @@ int connect(socket_t sockfd, const std::shared_ptr<IPAddress> &peerAddr) {
 }
 
 void close(socket_t sockfd) {
-    if (sockfd != INVALID_SOCKET) {
 #ifdef ____LINUX
-        auto ret = ::close(sockfd);
+    auto ret = ::close(sockfd);
 #endif
 #ifdef ____WINDOWS
-        auto ret = ::closesocket(sockfd);
+    auto ret = ::closesocket(sockfd);
 #endif
-        if (ret < 0) {
-            YLOG_ERROR("In Socket::Close(), close error: %s", yy::util::StatusCode(errno).ToString().c_str())
-        } else {
-            YLOG_DEBUG("套接字<%d>已Close！", sockfd)
-        }
+    if (ret < 0) {
+        YLOG_ERROR("In Socket::Close(), close error: %s", yy::util::StatusCode(errno).ToString().c_str())
+    } else {
+        YLOG_DEBUG("套接字<%d>已Close！", sockfd)
     }
 }
 

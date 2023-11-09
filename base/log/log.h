@@ -61,7 +61,7 @@
 
 #define CLOSE_YLOG() Ylog::LoggerManager::getInstance().StopAsyncThread();
 
-#define USE_CPP_STREAM false
+#define USE_CPP_STREAM true
 
 
 

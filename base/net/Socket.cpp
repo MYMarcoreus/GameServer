@@ -29,7 +29,7 @@ Socket::Socket(SocketApiWrapper::socket_t sockfd, Socket::Type type, Socket::Fam
 Socket::Socket(Type type, Family family, bool isNonblock)
     : m_IsNonblocking {isNonblock}, m_type{type}, m_family{family}
 {
-    m_socketfd = SocketApiWrapper::create_or_die((int)family, (int)type, isNonblock);
+    m_socketfd = SocketApiWrapper::create_or_die((sa_family_t)family, (__socket_type)type, isNonblock);
 }
 
 

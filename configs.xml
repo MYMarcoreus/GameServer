@@ -68,7 +68,12 @@
                     time_use_us="true" >
                 description
             </appender>
-
+            <appender
+                    type = "file"
+                    format="[%t][%l][%i][%f:%L] %c%n"
+                    time_format="%Y-%m-%d %H:%M:%S."
+                    time_use_us="true">
+            </appender>
         </logger>
 
         <logger m_TypeName  = "b"

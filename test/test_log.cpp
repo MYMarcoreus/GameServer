@@ -1,31 +1,33 @@
 #include "log.h"
+#include "ConfigManager.h"
 
 using namespace yy::Ylog;
 
 void test_log_mutex()
 {
     std::vector<std::thread> my_threads;
-    for (char i = 0; i < 3; i++) {
+    for (char i = 0; i < 1; i++) {
         std::thread t([]() {
-            for(int j = 0 ; j < 10000 ; ++j) {
-                YLOG_INFO("gogogo <%d>", j);
-                YLOG_LEVEL("a", LogLevel::INFO, "nice to meet <%d>", j);
-                YLOG_LEVEL("b", LogLevel::INFO, "I am fine <%d>", j);
+            for(int j = 0 ; j < 10 ; ++j) {
+                YLOG_INFO("gogogo <{}>", j);
             }
         });
-        t.detach();
+        // t.detach();
+        t.join();
     }
-
-    getchar();
 }
 
 
 int main() {
-    yy::config::LoadConfigs();
-    LoggerManager::getInstance()->getLogger("b")->Log( std::make_shared<LogMessage>(LogLevel::INFO, __FILE__, __LINE__, std::this_thread::get_id(), "fuck you!"));
+    yy::config::ConfigManager::LoadConfigs();
 
-    sleep(3);
+    // test_log_mutex();
 
+    YLOG_INFO("gogogo <{}>", 1);
+    YLOG_INFO("gogogo <{}>", 2);
+    YLOG_INFO("gogogo <{}>", "fine");
+
+    getchar();
 }
 
 

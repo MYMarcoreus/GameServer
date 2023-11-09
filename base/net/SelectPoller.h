@@ -1,7 +1,7 @@
 #ifndef GAMESERVER_SELECTPOLLER_H
 #define GAMESERVER_SELECTPOLLER_H
 
-#include <winsock2.h>
+
 #include <set>
 #include <map>
 #include "net_definations.h"

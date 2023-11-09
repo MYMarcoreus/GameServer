@@ -39,8 +39,8 @@ ssize_t recvfrom(socket_t sockfd, void *ptr, size_t nbytes, int flags, std::shar
 
 
 
-static std::shared_ptr<IPAddress> GetLocalAddr(SocketApiWrapper::socket_t sockfd);
-static std::shared_ptr<IPAddress> GetPeerAddr (SocketApiWrapper::socket_t sockfd);
+std::shared_ptr<IPAddress> GetLocalAddr(SocketApiWrapper::socket_t sockfd);
+std::shared_ptr<IPAddress> GetPeerAddr (SocketApiWrapper::socket_t sockfd);
 
 }
 

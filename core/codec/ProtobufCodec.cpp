@@ -3,6 +3,7 @@
 #include "TcpConnection.h"
 #include "AppXmlConfig.h"
 #include "log.h"
+#include <google/protobuf/message.h>
 
 
 namespace yy::core {

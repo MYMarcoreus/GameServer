@@ -126,14 +126,9 @@ add_executable(codec_client test/test_codec_client.cpp)
 add_executable(codec_server test/test_codec_server.cpp)
 
 
-
-target_link_libraries( CommonLibrary
-        ${PROTOBUF_LIBRARIES}
-        #        yaml-cpp
-)
-
 if(CMAKE_HOST_SYSTEM_NAME MATCHES Windows)
     target_link_libraries( CommonLibrary
+            ${PROTOBUF_LIBRARIES}
             ws2_32.lib
             protobuf::libprotoc
             protobuf::libprotobuf
@@ -141,6 +136,7 @@ if(CMAKE_HOST_SYSTEM_NAME MATCHES Windows)
     )
 else()
     target_link_libraries( CommonLibrary
+            ${PROTOBUF_LIBRARIES}
             protobuf
             pthread
     )
@@ -158,20 +154,19 @@ target_link_libraries(
         CommonLibrary
 )
 
-add_executable( test_log
-        test/test_log.cpp
-
-        base/log/log.cpp
-        base/net/IPAddress.cpp
-        base/utils/util_functions.cpp
-        base/public/md5/md5.cpp
-        base/public/tinyxml/tinyxml2.cpp
-        base/utils/status/Status.cpp
-        base/config/ConfigManager.cpp
-        base/config/AppXmlConfig.cpp
-        base/config/LogXmlConfig.cpp
-        base/config/RemoteXmlConfig.cpp
-        base/utils/BoundedQueue.hpp
-        base/utils/ThreadPool.cpp
-)
-target_link_libraries(test_log ws2_32.lib)
+#add_executable( test_log
+#        test/test_log.cpp
+#        base/log/log.cpp
+#        base/net/IPAddress.cpp
+#        base/utils/util_functions.cpp
+#        base/public/md5/md5.cpp
+#        base/public/tinyxml/tinyxml2.cpp
+#        base/utils/status/Status.cpp
+#        base/config/ConfigManager.cpp
+#        base/config/AppXmlConfig.cpp
+#        base/config/LogXmlConfig.cpp
+#        base/config/RemoteXmlConfig.cpp
+#        base/utils/BoundedQueue.hpp
+#        base/utils/ThreadPool.cpp
+#)
+#target_link_libraries(test_log ws2_32.lib)

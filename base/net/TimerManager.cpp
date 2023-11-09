@@ -9,6 +9,7 @@
 #endif
 
 #ifdef ____WINDOWS
+#  include <windows.h>
 #endif
 
 namespace yy::net {
@@ -135,6 +136,37 @@ void __TimerfdManager::ReadTimerfd()
 #endif
 
 #ifdef ____WINDOWS
+
+struct __TimerfdManager
+{
+    using tick_t = unsigned __int64;
+public:
+    ///@param cb 定时器到期回调
+    __TimerfdManager(EventLoop * owner_loop, std::function<void()> cb);
+    ~__TimerfdManager() {}
+
+    void ReadTimerfd() {}
+    void ResetTimerfd(Timestamp expireTime) {}
+
+private:
+    // int     m_LinuxTimerFD;
+    // Channel m_LinuxTimerChannel;
+    tick_t timerlib_freq;
+
+    const Microseconds  kMinInterval = 100us;
+};
+
+__TimerfdManager::__TimerfdManager(EventLoop *owner_loop, std::function<void()> cb) {
+    timerlib_freq = 0;
+
+    tick_t unused;
+    if( !QueryPerformanceFrequency( (LARGE_INTEGER*)&timerlib_freq ) ||
+        !QueryPerformanceCounter( (LARGE_INTEGER*)&unused ) ) {
+        YLOG_FATAL("__TimerfdManager::__TimerfdManager Init Fatal!");
+    }
+}
+
+
 #endif
 
 

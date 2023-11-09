@@ -45,11 +45,11 @@ socket_t create_or_die(sa_family_t family, __socket_type type, bool isNonblock) 
 }
 
 socket_t create_tcp_or_die(bool isNonblock) {
-    create_or_die(AF_INET, SOCK_STREAM, isNonblock);
+    return create_or_die(AF_INET, SOCK_STREAM, isNonblock);
 }
 
 socket_t create_udp_or_die(bool isNonblock) {
-    create_or_die(AF_INET6, SOCK_DGRAM, isNonblock);
+    return create_or_die(AF_INET6, SOCK_DGRAM, isNonblock);
 }
 
 

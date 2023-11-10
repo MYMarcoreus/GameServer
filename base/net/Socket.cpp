@@ -35,7 +35,7 @@ Socket::Socket(Type type, Family family, bool isNonblock)
 
 
 Socket::~Socket() {
-    YLOG_TRACE("套接字<%d>被析构", m_socketfd);
+    YLOG_TRACE("套接字<{}>被析构", m_socketfd);
     Close();
 
 

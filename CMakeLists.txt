@@ -110,8 +110,8 @@ set(COMMON_SOURCES
         core/codec/ProtobufDispatcher.cpp
         core/codec/MessageHeader.cpp
 
-        core/WindowsGameServer.cpp
-        core/WindowsGameServer.h
+        core/GameServer.cpp
+        core/GameServer.h
 
 
         #        game/GameManager.cpp
@@ -124,6 +124,7 @@ add_library(CommonLibrary ${COMMON_SOURCES})
 
 add_executable(codec_client test/test_codec_client.cpp)
 add_executable(codec_server test/test_codec_server.cpp)
+add_executable(main main.cpp)
 
 
 if(CMAKE_HOST_SYSTEM_NAME MATCHES Windows)
@@ -151,6 +152,11 @@ target_link_libraries(
 
 target_link_libraries(
         codec_server
+        CommonLibrary
+)
+
+target_link_libraries(
+        main
         CommonLibrary
 )
 

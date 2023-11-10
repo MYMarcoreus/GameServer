@@ -36,11 +36,14 @@ MessagePtr ProtobufCodec::Parse(const TcpConnectionPtr &conn, Buffer &buf, Messa
             if(!isOk) {
                 outErrCode = MessageParseErrorCode::eParseError;
             }
+
+            YLOG_TRACE("解析消息体<{}>：", header.CalcBodyLen());
+
         } else {
             outErrCode = MessageParseErrorCode::eUnkonwnMessage;
         }
     } else {
-        YLOG_ERROR("解析消息头失败<%d:%s>，%s", conn->GetSocketFD(), conn->GetName().c_str(), ToString(outErrCode).c_str())
+        YLOG_ERROR("解析消息头失败<{}:{}>，{}", conn->GetSocketFD(), conn->GetName().c_str(), ToString(outErrCode).c_str())
     }
 
     return message;
@@ -48,7 +51,7 @@ MessagePtr ProtobufCodec::Parse(const TcpConnectionPtr &conn, Buffer &buf, Messa
 
 
 
-void ProtobufCodec::OnMessage(const TcpConnectionPtr &conn, Buffer &buf) {
+void ProtobufCodec::OnData(const TcpConnectionPtr &conn, Buffer &buf) {
     // 不断解析接收缓冲中的字节流，直到遇到不完整的信息或解析完毕
     while(buf.GetDataSize() >= MessageHeader::kMinHeaderLen)
     {
@@ -82,16 +85,20 @@ void ProtobufCodec::OnMessage(const TcpConnectionPtr &conn, Buffer &buf) {
 void ProtobufCodec::Send(const TcpConnectionPtr &conn, const google::protobuf::Message & message) {
 
     //! 设置消息头
-    MessageHeader header;
-    header.SetAllFieldsFromMessage(message);
-
-    Buffer buffer{header.GetFullLength()+4};
+    MessageHeader header{message};
 
     /* 不用关系buffer空间不足，因为我们已经分配好了足够的空间 */
     //! 填充消息头
+    Buffer buffer{header.GetFullLength()+4};
     header.AppendIntoBuffer(buffer, conn->GetXorCode());
+
+    YLOG_TRACE("发送消息头<{}>：[{}][{}][{}][{}]", header.CalcHeaderLen(),
+               header.GetCheckCode(), header.GetFullLength(), header.GetTypeNameLength(), header.GetTypeName());
+
     //! 填充消息体
     buffer.AppendDataFromProtobuf(message);
+
+    YLOG_TRACE("发送消息体<{}>", header.CalcBodyLen());
 
     //! 发送
     conn->Send(buffer);

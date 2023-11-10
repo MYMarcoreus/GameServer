@@ -6,6 +6,7 @@
 #include "core_definations.h"
 #include "net_definations.h"
 #include "MessageHeader.h"
+#include "Buffer.h"
 
 
 namespace google::protobuf {
@@ -53,7 +54,7 @@ public:
     ProtobufCodec(F_ProtobufMessageDispatchCallback msgCb, F_ProtobufErrorMessageCallback errCb = DefaultErrorCallback);
 
     ///@brief TcpConnection接收字节流到输入缓冲以后调用的回调函数，该函数用于处理字节流，解析并创建出消息，然后传递消息给ProtobufDispatcher
-    void OnMessage(const yy::net::TcpConnectionPtr & conn, yy::net::Buffer & buf);
+    void OnData(const yy::net::TcpConnectionPtr &conn, yy::net::Buffer &buf);
 
     ///@brief 发送message（加Header后Send）
     void Send(const yy::net::TcpConnectionPtr & conn, const google::protobuf::Message & message);

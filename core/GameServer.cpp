@@ -1,4 +1,4 @@
-#include "WindowsGameServer.h"
+#include "GameServer.h"
 #include "TcpConnection.h"
 #include "log.h"
 #include "connection.pb.h"
@@ -13,54 +13,58 @@ using namespace yy::config;
 namespace yy::core {
 
 
-WindowsGameServer::WindowsGameServer(EventLoop *loop, IPAddressPtr listenAddr)
+GameServer::GameServer(EventLoop *loop, IPAddressPtr listenAddr)
         : m_loop{loop},
           m_server(loop, listenAddr, true),
-          m_dispatcher( std::bind(&WindowsGameServer::OnUnknownMessage, this, _1, _2) ),
+          m_dispatcher( std::bind(&GameServer::OnUnknownMessage, this, _1, _2) ),
           m_codec(std::bind(&ProtobufDispatcher::OnProtobufMessage, &m_dispatcher, _1, _2)),
           m_app_configvar(g_app_config)
 {
-    m_dispatcher.RegisterMessageCallback<protocol::HeartBody>(std::bind(&WindowsGameServer::OnHeart, this, _1, _2));
-    m_dispatcher.RegisterMessageCallback<protocol::SecurityBody>(std::bind(&WindowsGameServer::OnSecurity, this, _1, _2));
-    m_server.SetMessageCallback( std::bind(&ProtobufCodec::OnMessage, &m_codec, _1, _2));
-    m_server.SetConnectionEstablishedCallback( std::bind(&WindowsGameServer::OnConnectionEstablished, this, _1));
+    m_dispatcher.RegisterMessageCallback<protocol::HeartBody>(std::bind(&GameServer::OnHeart, this, _1, _2));
+    m_dispatcher.RegisterMessageCallback<protocol::SecurityBody>(std::bind(&GameServer::OnSecurity, this, _1, _2));
+    m_server.SetMessageCallback( std::bind(&ProtobufCodec::OnData, &m_codec, _1, _2));
+    m_server.SetConnectionEstablishedCallback( std::bind(&GameServer::OnConnectionEstablished, this, _1));
     m_server.SetConnectionShutdownCallback([this](const TcpConnectionPtr & conn) { this->AddShutdownConnection(conn); });
     m_server.SetCloseSocketsCallback([this]() { this->CheckDisconnections(); });
 }
 
-WindowsGameServer::~WindowsGameServer() {
+GameServer::~GameServer() {
 
 }
 
 
 
-void WindowsGameServer::OnUnknownMessage(TcpConnectionPtr conn, const MessagePtr &message) {
+void GameServer::OnUnknownMessage(TcpConnectionPtr conn, const MessagePtr &message) {
     YLOG_INFO("游戏消息：{}", message->GetDescriptor()->full_name());
 }
 
 
 
 
-void WindowsGameServer::OnConnectionEstablished(TcpConnectionPtr conn) {
+void GameServer::OnConnectionEstablished(TcpConnectionPtr conn) {
     YLOG_INFO("███████████████████连接成功<{}:{}, {}>！",
               conn->GetPeerAddr()->GetIPStr().c_str(), conn->GetPeerAddr()->GetPort(), conn->GetSocketFD());
 
     SendXorCode(conn);
 }
 
-void WindowsGameServer::SendXorCode(const TcpConnectionPtr &conn) {
+void GameServer::SendXorCode(const TcpConnectionPtr &conn) {
     // 发送随机生成的异或码给用户，之后的通信都用该异或码进行加密
     auto gen_val = MessageHeader::GenerateXorCode();
     yy::core::protocol::XorBody xorBody;
-    xorBody.set_xor_code(gen_val ^ m_app_configvar->GetValue().app_xor_code()); //! 记得与初始异或码异或
+    xorBody.set_xor_code(gen_val ^ GetAppConfig().app_xor_code()); //! 记得与初始异或码异或
 
-    conn->SetXorCode(gen_val);
-    conn->Send(xorBody);
-    YLOG_TRACE("Thread_Accepter: 封包异或码<{},{}>给用户<{}>", gen_val,xorBody.xor_code(), conn->GetSocketFD())
+    m_codec.Send(conn, xorBody);
+    conn->SetXorCode(gen_val); //! 必须在Send后面
+
+    YLOG_TRACE("Thread_Accepter: 封包异或码<{},{}>给用户<{}>，<{},{}>异或标识头<{},{}>", gen_val, xorBody.xor_code(), conn->GetSocketFD(),
+               (int)(GetAppConfig().check_code()[0] ), (int)(GetAppConfig().check_code()[1] ),
+               (int)(GetAppConfig().check_code()[0] ^ gen_val), (int)(GetAppConfig().check_code()[1] ^ gen_val)
+   );
 }
 
 
-void WindowsGameServer::AddShutdownConnection(const TcpConnectionPtr & conn) {
+void GameServer::AddShutdownConnection(const TcpConnectionPtr & conn) {
     {
         std::lock_guard lg{m_ShutdownConnectionsMutex};
         m_ShutdownConnections.push_back(conn);
@@ -69,7 +73,7 @@ void WindowsGameServer::AddShutdownConnection(const TcpConnectionPtr & conn) {
 }
 
 //! 每个IO线程中运行
-void WindowsGameServer::CheckDisconnections() {
+void GameServer::CheckDisconnections() {
     YLOG_TRACE("In TcpServer::CheckDisconnections, 有 {} 个shutdown连接", m_ShutdownConnections.size());
 
     std::vector<TcpConnectionPtr> shutdownConnections;
@@ -116,15 +120,15 @@ void WindowsGameServer::CheckDisconnections() {
     }
 }
 
-void WindowsGameServer::OnHeart(const TcpConnectionPtr & conn, const HeartPtr & message) {
+void GameServer::OnHeart(const TcpConnectionPtr & conn, const HeartPtr & message) {
     assert(conn != nullptr);
 
     // 只需发一个只有消息头的包
     protocol::HeartBody heartBody;
-    conn->Send(heartBody);
+    m_codec.Send(conn, heartBody);
 }
 
-void WindowsGameServer::OnSecurity(const TcpConnectionPtr & conn, const SecurityPtr & message)
+void GameServer::OnSecurity(const TcpConnectionPtr & conn, const SecurityPtr & message)
 {
     assert(conn != nullptr);
 
@@ -153,7 +157,7 @@ void WindowsGameServer::OnSecurity(const TcpConnectionPtr & conn, const Security
     }
     yy::core::protocol::ResultBody resultBody;
     resultBody.set_result_code(resultCode);
-    conn->Send(resultBody);
+    m_codec.Send(conn, resultBody);
 
     // 安全验证通过：交由业务层
     if(resultBody.result_code() == yy::core::protocol::ResultCode::eSuccess) {
@@ -163,11 +167,11 @@ void WindowsGameServer::OnSecurity(const TcpConnectionPtr & conn, const Security
         m_NumSecurity++;
         if(m_notifierSecurity)
             m_notifierSecurity(conn);
-        YLOG_INFO("<%d>解包执行：安全验证通过", conn->GetSocketFD())
+        YLOG_INFO("<{}>解包执行：安全验证通过", conn->GetSocketFD())
     }
     //? 安全验证失败：需要关闭用户连接吗？
     else {
-        YLOG_INFO("<%d>解包执行：用户安全验证失败！", conn->GetSocketFD())
+        YLOG_INFO("<{}>解包执行：用户安全验证失败！", conn->GetSocketFD())
     }
 }
 

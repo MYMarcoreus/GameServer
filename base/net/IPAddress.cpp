@@ -22,7 +22,7 @@ IPv4Address::IPv4Address(const std::string & ipv4_str, uint16_t port): m_address
         YLOG_FATAL("inet_pton() error: invalid format of ipv4 address.")
         throw std::invalid_argument("invalid format of ipv4 address.");
     } else if (ret == -1 and errno == EAFNOSUPPORT) {
-        YLOG_FATAL("inet_pton() error, invalid address family: %s.", strerror(errno))
+        YLOG_FATAL("inet_pton() error, invalid address family: {}.", strerror(errno))
         throw std::invalid_argument("invalid address family");
     }
     m_address.sin_port = ::htons(port);

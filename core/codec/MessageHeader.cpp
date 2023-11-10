@@ -2,6 +2,7 @@
 #include "Buffer.h"
 #include "core_definations.h"
 #include "AppXmlConfig.h"
+#include "log.h"
 #include <algorithm>
 
 namespace yy::core {
@@ -49,6 +50,11 @@ T CalcXor(T val, uint8_t xorCode) {
 
 
 
+MessageHeader::MessageHeader(const google::protobuf::Message & message) {
+    SetAllFieldsFromMessage(message);
+}
+
+
 MessageParseErrorCode MessageHeader::RetrieveFromBuffer(net::Buffer &buf, uint8_t xorCode) {
     if(buf.GetDataSize() < kMinHeaderLen)
         return MessageParseErrorCode::eNotReceiveFullHeader;
@@ -89,6 +95,9 @@ MessageParseErrorCode MessageHeader::RetrieveFromBuffer(net::Buffer &buf, uint8_
     }
     peekedLen += m_TypeNameLength;
 
+
+    YLOG_TRACE("收到消息头<%d>：[{}][{}][{}][{}]", CalcHeaderLen(), m_CheckCode, m_FullLength, m_TypeNameLength, m_TypeName);
+
     //! Peek成功，移动Head
     buf.MoveHead(CalcHeaderLen());
 
@@ -128,21 +137,19 @@ void MessageHeader::SetAllFieldsFromMessage(const google::protobuf::Message &mes
 }
 
 
-// std::string MessageHeader::XorCheckCode(uint8_t xorCode) { return CalcXor(std::string (m_CheckCode), xorCode); }
 std::string MessageHeader::XorCheckCode(uint8_t xorCode) { std::string rst = m_CheckCode; rst[0]^=xorCode; rst[1]^=xorCode; return rst; }
 
-// uint32_t MessageHeader::XorFullLength(uint8_t xorCode) { return CalcXor(m_FullLength, xorCode); }
 uint32_t MessageHeader::XorFullLength(uint8_t xorCode) { return m_FullLength ^ xorCode; }
 
-// uint16_t MessageHeader::XorNameLength(uint8_t xorCode) { return CalcXor(m_TypeNameLength, xorCode); }
 uint16_t MessageHeader::XorNameLength(uint8_t xorCode) { return m_TypeNameLength ^ xorCode; }
 
-// std::string MessageHeader::XorTypeName(uint8_t xorCode) { return CalcXor(m_TypeName, xorCode); }
 std::string MessageHeader::XorTypeName(uint8_t xorCode) {
     std::string val = m_TypeName;
     std::for_each(std::begin(val), std::end(val), [xorCode](char & ch) { ch ^= xorCode; });
     return val;
 }
+
+
 
 
 }

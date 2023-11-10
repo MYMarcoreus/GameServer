@@ -9,8 +9,12 @@
           </mappings>
           <excludedPaths>
             <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug-mingw" />
+            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug-mingw" />
             <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug-linux" />
+            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-release-linux" />
             <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug" />
+            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug-linux" />
+            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-release-linux" />
           </excludedPaths>
         </serverdata>
       </paths>

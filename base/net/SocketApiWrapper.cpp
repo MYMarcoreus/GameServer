@@ -80,9 +80,9 @@ void close(socket_t sockfd) {
     auto ret = ::closesocket(sockfd);
 #endif
     if (ret < 0) {
-        YLOG_ERROR("In Socket::Close(), close error: %s", yy::util::StatusCode(errno).ToString().c_str())
+        YLOG_ERROR("In Socket::Close(), close error: {}", yy::util::StatusCode(errno).ToString().c_str())
     } else {
-        YLOG_DEBUG("套接字<%d>已Close！", sockfd)
+        YLOG_DEBUG("套接字<{}>已Close！", sockfd)
     }
 }
 
@@ -198,7 +198,7 @@ IPAddress::ptr GetLocalAddr(SocketApiWrapper::socket_t sockfd) {
 
     auto ret = ::getsockname(sockfd, (struct sockaddr*)(&localAddr), &addrLen);
     if(ret < 0) {
-        YLOG_ERROR("In IPAddress::GetLocalAddr, ::getsockname() error: %s",
+        YLOG_ERROR("In IPAddress::GetLocalAddr, ::getsockname() error: {}",
                    yy::util::StatusCode(errno).ToString().c_str());
         return nullptr;
     }
@@ -219,7 +219,7 @@ IPAddress::ptr GetPeerAddr(SocketApiWrapper::socket_t sockfd) {
 
     auto ret = ::getpeername(sockfd, (struct sockaddr*)(&peerAddr), &addrLen);
     if(ret < 0) {
-        YLOG_ERROR("In IPAddress::GetPeerAddr, ::getpeername() error: %s",
+        YLOG_ERROR("In IPAddress::GetPeerAddr, ::getpeername() error: {}",
                    yy::util::StatusCode(errno).ToString().c_str());
         return nullptr;
     }

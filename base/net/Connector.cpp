@@ -45,7 +45,7 @@ void Connector::StartInLoop() {
     //! 创建非阻塞套接字并开始非阻塞connect
     SocketApiWrapper::socket_t sockfd = SocketApiWrapper::create_or_die();
     int ret = SocketApiWrapper::connect(sockfd, m_ServerAddr);
-    YLOG_TRACE("In Connector::StartInLoop(), 开始连接服务器<%s:%d>", m_ServerAddr->GetIPStr().c_str(), m_ServerAddr->GetPort())
+    YLOG_TRACE("In Connector::StartInLoop(), 开始连接服务器<{}:{}>", m_ServerAddr->GetIPStr().c_str(), m_ServerAddr->GetPort())
 
     int errnoSaver = ret==0 ? 0 : errno;
     switch (errnoSaver) {
@@ -81,19 +81,19 @@ void Connector::StartInLoop() {
         case EFAULT:
         case ENOTSOCK:
             SocketApiWrapper::close(sockfd);
-            YLOG_FATAL("connect error in Connector::StartInLoop: %s", yy::util::StatusCode{errnoSaver}.ToString().c_str());
+            YLOG_FATAL("connect error in Connector::StartInLoop: {}", yy::util::StatusCode{errnoSaver}.ToString().c_str());
             break;
 
         default:
             SocketApiWrapper::close(sockfd);
-            YLOG_FATAL("Unexpected error in Connector::StartInLoop: %s", yy::util::StatusCode{errnoSaver}.ToString().c_str());
+            YLOG_FATAL("Unexpected error in Connector::StartInLoop: {}", yy::util::StatusCode{errnoSaver}.ToString().c_str());
             // connectErrorCallback_();
             break;
     }
 }
 
 void Connector::RestartInLoop() {
-    YLOG_TRACE("In Connector::RestartInLoop(), 重新开始连接，自动重连延时重置<%s:%d>", m_ServerAddr->GetIPStr().c_str(), m_ServerAddr->GetPort())
+    YLOG_TRACE("In Connector::RestartInLoop(), 重新开始连接，自动重连延时重置<{}:{}>", m_ServerAddr->GetIPStr().c_str(), m_ServerAddr->GetPort())
     SetState(eDisconnected);
     m_RetryDelay = kInitRetryDelay; //! 重置延时
     m_IsStarted = true;
@@ -101,7 +101,7 @@ void Connector::RestartInLoop() {
 }
 
 void Connector::StopInLoop() {
-    YLOG_TRACE("In Connector::StopInLoop(), 中止连接服务器<%s:%d>", m_ServerAddr->GetIPStr().c_str(), m_ServerAddr->GetPort())
+    YLOG_TRACE("In Connector::StopInLoop(), 中止连接服务器<{}:{}>", m_ServerAddr->GetIPStr().c_str(), m_ServerAddr->GetPort())
     //! 中止未连接完成的连接
     if(m_State == eConnecting) {
         if(m_NextRetryTimerID != -1)
@@ -122,7 +122,7 @@ void Connector::HandleWrite() {
 
     //! socket可写时，并非一定是套接字连接完成，也可能是发生了错误
     if(err) {
-        YLOG_ERROR("In Connector::HandleWrite(), Socket Error: %s", util::StatusCode{err}.ToString().c_str())
+        YLOG_ERROR("In Connector::HandleWrite(), Socket Error: {}", util::StatusCode{err}.ToString().c_str())
         Retry(sockfd);
     }
     //! 发生了自连接的情况：即客户端随机分配的端口号与服务端发生了重复
@@ -132,7 +132,7 @@ void Connector::HandleWrite() {
     }
     //! 连接成功！
     else {
-        YLOG_TRACE("In Connector::HandleWrite(), 连接服务器成功<%s:%d>", m_ServerAddr->GetIPStr().c_str(), m_ServerAddr->GetPort())
+        YLOG_TRACE("In Connector::HandleWrite(), 连接服务器成功<{}:{}>", m_ServerAddr->GetIPStr().c_str(), m_ServerAddr->GetPort())
         SetState(eConnected);
         if(m_IsStarted) {
             m_NewConnectionCallback(sockfd);
@@ -149,12 +149,12 @@ void Connector::HandleError() {
 
     SocketApiWrapper::socket_t sockfd = RemoveAndResetChannel();
     int err = SocketApiWrapper::get_socket_error(sockfd);
-    YLOG_ERROR("In Connector::HandleError(), Socket Error: %s", util::StatusCode{err}.ToString().c_str())
+    YLOG_ERROR("In Connector::HandleError(), Socket Error: {}", util::StatusCode{err}.ToString().c_str())
     Retry(sockfd);
 }
 
 void Connector::Connecting(SocketApiWrapper::socket_t sockfd) {
-    YLOG_TRACE("In Connector::Connecting, sockfd = %d", sockfd)
+    YLOG_TRACE("In Connector::Connecting, sockfd = {}", sockfd)
     SetState(eConnecting);
     m_Channel.reset(new Channel(m_Loop, sockfd, "Connector Channel"));
     m_Channel->SetWriteCallback([this](){ this->HandleWrite(); });
@@ -168,7 +168,7 @@ void Connector::Retry(SocketApiWrapper::socket_t sockfd) {
 
     if(m_IsStarted)
     {
-        YLOG_TRACE("In Connector::Retry, <sockfd:%d>服务器连接失败，将在 %f 秒后重连<%s:%d>",
+        YLOG_TRACE("In Connector::Retry, <sockfd:{}>服务器连接失败，将在 {} 秒后重连<{}:{}>",
                    sockfd, m_RetryDelay.count() / 1000.0, m_ServerAddr->GetIPStr().c_str(), m_ServerAddr->GetPort())
 
         m_NextRetryTimerID = m_Loop->RunAfter(m_RetryDelay, [this](){ this->StartInLoop(); });

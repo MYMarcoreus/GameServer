@@ -17,7 +17,7 @@ Timer::Timer(F_TimerCallback timerCallback, Timestamp expiredTime, Microseconds 
 
 void Timer::ExecuteCallback() {
     if(m_Callback) {
-        YLOG_TRACE("执行定时器回调<%s>！", GetDemangleName(m_Callback.target_type().name()).c_str())
+        YLOG_TRACE("执行定时器回调<{}>！", GetDemangleName(m_Callback.target_type().name()).c_str())
         m_Callback();
     }
 }

@@ -21,7 +21,7 @@ TcpClient::TcpClient(EventLoop *loop, IPAddressPtr serverAddr)
 {
     InitLog();
     m_Connector->SetNewConnectionCallback( std::bind(&TcpClient::NewConnection, this, _1) );
-    m_Connector->SetConnectFailedCallback( [this]() { YLOG_WARN("coonect to <%s:%d>", this->m_ServerAddr->GetIPStr().c_str(), m_ServerAddr->GetPort()) } );
+    m_Connector->SetConnectFailedCallback( [this]() { YLOG_WARN("coonect to <{}:{}>", this->m_ServerAddr->GetIPStr().c_str(), m_ServerAddr->GetPort()) } );
 }
 
 TcpClient::~TcpClient() {
@@ -64,8 +64,8 @@ void TcpClient::StopConnecting() {
 void TcpClient::NewConnection(SocketApiWrapper::socket_t sockfd) {
     IPAddressPtr localAddr = SocketApiWrapper::GetLocalAddr(sockfd);
     IPAddressPtr peerAddr = SocketApiWrapper::GetPeerAddr(sockfd);
-    char name[64]{};
-    snprintf(name, sizeof name, "%lld:%llu", Timestamp::Now().GetMircoSecondSinceEpoch().count(), m_NextConnID++);
+
+    auto name = std::format("{}:{}", Timestamp::Now().GetMircoSecondSinceEpoch().count(), m_NextConnID++);
 
     TcpConnectionPtr conn = std::make_shared<TcpConnection>(
             name,

@@ -33,7 +33,7 @@ public:
     {
         dispatcher_.RegisterMessageCallback<Empty>(std::bind(&QueryClient::OnEmpty, this, _1, _2));
         dispatcher_.RegisterMessageCallback<Answer>(std::bind(&QueryClient::OnAnswer, this, _1, _2));
-        client_.SetMessageCallback(std::bind(&ProtobufCodec::OnMessage, &codec_, _1, _2));
+        client_.SetMessageCallback(std::bind(&ProtobufCodec::OnData, &codec_, _1, _2));
         client_.SetConnectionEstablishedCallback(std::bind(&QueryClient::ConnectionEstablished, this, _1));
         client_.SetConnectionWriteCompleteCallback(std::bind(&QueryClient::ConnectionWriteComplete, this, _1));
         client_.SetCanAutoRetry(CanRetry);
@@ -51,7 +51,7 @@ public:
 
 private:
     void ConnectionEstablished(TcpConnectionPtr conn) {
-        YLOG_INFO("连接至<%s:%d>，我方地址为<%s:%d>", conn->GetPeerAddr()->GetIPStr().c_str(), conn->GetPeerAddr()->GetPort()
+        YLOG_INFO("连接至<{}:{}>，我方地址为<{}:{}>", conn->GetPeerAddr()->GetIPStr().c_str(), conn->GetPeerAddr()->GetPort()
                                                  , conn->GetLocalAddr()->GetIPStr().c_str(), conn->GetLocalAddr()->GetPort());
 
         SendQuery(conn);
@@ -59,7 +59,7 @@ private:
     }
 
     void ConnectionWriteComplete(TcpConnectionPtr conn) {
-        YLOG_INFO("数据已发送给服务器<%s:%d>", conn->GetPeerAddr()->GetIPStr().c_str(), conn->GetPeerAddr()->GetPort())
+        YLOG_INFO("数据已发送给服务器<{}:{}>", conn->GetPeerAddr()->GetIPStr().c_str(), conn->GetPeerAddr()->GetPort())
     }
 
     void SendQuery(TcpConnectionPtr conn)
@@ -70,18 +70,18 @@ private:
         query.add_question("What time?");
         // Empty empty;
         google::protobuf::Message* messageToSend = &query;
-        YLOG_INFO("即将向<%d: %s>发送Query：\n%s", conn->GetSocketFD(), conn->GetName().c_str(), query.DebugString().c_str())
+        YLOG_INFO("即将向<{}: {}>发送Query：\n{}", conn->GetSocketFD(), conn->GetName().c_str(), query.DebugString().c_str())
         codec_.Send(conn, *messageToSend);
     }
 
     void OnUnknownMessage(TcpConnectionPtr conn, const MessagePtr& message)
     {
-        YLOG_INFO("未知的消息类型：%s", message->GetDescriptor()->full_name().c_str())
+        YLOG_INFO("未知的消息类型：{}", message->GetDescriptor()->full_name().c_str())
     }
 
     void OnEmpty(const TcpConnectionPtr& conn, const EmptyPtr & message)
     {
-        YLOG_INFO("OnEmpty: %s\n%s\n",   message->GetTypeName().c_str(), message->DebugString().c_str());
+        YLOG_INFO("OnEmpty: {}\n{}\n",   message->GetTypeName().c_str(), message->DebugString().c_str());
     }
 
     void OnAnswer(const TcpConnectionPtr& conn, const AnswerPtr& message)
@@ -91,7 +91,7 @@ private:
             solu += message->solution(i).c_str();
         }
 
-        YLOG_INFO("OnAnswer: %s\n%s\n", message->GetTypeName().c_str(), message->DebugString().c_str())
+        YLOG_INFO("OnAnswer: {}\n{}\n", message->GetTypeName(), message->DebugString())
         // loop_->QuitLoop();
         loop_->RunAfter(100ms, [l = loop_](){ l->QuitLoop();} );
     }

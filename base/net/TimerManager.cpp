@@ -104,11 +104,11 @@ void __TimerfdManager::ResetTimerfd(Timestamp expireTime)
     int ret = ::timerfd_settime(m_LinuxTimerFD, 0, &newValue, &oldValue);
     if(ret < 0) {
         if(errno == EINVAL) {
-            YLOG_ERROR("::timerfd_settime() error, %s, %f, %ld", util::StatusCode{errno}.ToString().c_str(),
+            YLOG_ERROR("::timerfd_settime() error, {}, {}, {}", util::StatusCode{errno}.ToString().c_str(),
                        interval.count() / 10e6, TimespecToDuration(newValue.it_value).count());
         }
         else {
-            YLOG_ERROR("::timerfd_settime() error, %s", util::StatusCode{errno}.ToString().c_str())
+            YLOG_ERROR("::timerfd_settime() error, {}", util::StatusCode{errno}.ToString().c_str())
         }
     }
 
@@ -128,7 +128,7 @@ void __TimerfdManager::ReadTimerfd()
     uint64_t buf;
     ssize_t n = ::read(m_LinuxTimerFD, &buf, sizeof buf);
     if(n != sizeof buf) {
-        YLOG_ERROR("read(timerfd) error: except read %lu byte, but only read %zd byte", sizeof buf, n)
+        YLOG_ERROR("read(timerfd) error: except read {} byte, but only read {} byte", sizeof buf, n)
     }
 }
 

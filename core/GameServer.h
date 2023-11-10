@@ -1,5 +1,5 @@
-#ifndef GAMESERVER_WINDOWSGAMESERVER_H
-#define GAMESERVER_WINDOWSGAMESERVER_H
+#ifndef GAMESERVER_GAMESERVER_H
+#define GAMESERVER_GAMESERVER_H
 
 #include "IServer.h"
 #include "Singleton.h"
@@ -7,6 +7,7 @@
 #include "codec/ProtobufCodec.h"
 #include "codec/ProtobufDispatcher.h"
 #include "net_definations.h"
+#include "ThreadPool.h"
 
 
 namespace yy::core {
@@ -19,26 +20,32 @@ class SecurityBody;
 
 
 
-class WindowsGameServer: public IServer, public Singleton<WindowsGameServer> {
-    SINGLETON_NECESSITY(WindowsGameServer);
+class GameServer: public IServer{
 
     using HeartPtr    = std::shared_ptr<yy::core::protocol::HeartBody> ;
     using SecurityPtr = std::shared_ptr<yy::core::protocol::SecurityBody> ;
 
 public:
+    GameServer(yy::net::EventLoop* loop, yy::net::IPAddressPtr listenAddr);
+    ~GameServer() override;
+
     /// @brief 启动并初始化服务器
-    virtual void Start() override;
+    virtual void Start() override {
+        m_server.Start(1);
+        m_workThreads.Start(1);
+    }
 
     /// @brief 结束服务器
-    virtual void Stop() override;
+    virtual void Stop() override {
+        m_workThreads.Stop();
+    }
 
     /// @brief 在业务层的while(1)中调用Update
-    virtual void Update() override;
-
+    virtual void Update() override {}
 
     /// @brief 通过套接字文件描述符寻找用户连接数据
-    virtual UserBaseDataPtr & FindUser(const yy::net::TcpConnectionPtr conn) override;
-    virtual bool   isRunning() const = 0;
+    virtual UserBaseDataPtr & FindUser(const yy::net::TcpConnectionPtr conn) override {}
+    virtual bool   isRunning() const override {}
 
 
     virtual const config::AppXmlConfig & GetAppConfig() override { return m_app_configvar->GetValue(); }
@@ -54,10 +61,8 @@ public:
     }
 
 
-private:
-    WindowsGameServer(yy::net::EventLoop* loop, yy::net::IPAddressPtr listenAddr);
-    ~WindowsGameServer() override;
 
+private:
     void OnUnknownMessage(yy::net::TcpConnectionPtr conn, const MessagePtr& message);
 
     void OnConnectionEstablished(yy::net::TcpConnectionPtr conn);
@@ -65,7 +70,6 @@ private:
 
     void OnHeart(const yy::net::TcpConnectionPtr & conn, const HeartPtr & message);
     void OnSecurity(const yy::net::TcpConnectionPtr & conn, const SecurityPtr & message);
-
 
 
     void AddShutdownConnection(const yy::net::TcpConnectionPtr &conn);
@@ -88,8 +92,11 @@ private:
     std::mutex                              m_ShutdownConnectionsMutex;
 
     std::map<yy::net::TcpConnection *, UserBaseDataPtr> m_users;
+
+
+    yy::util::ThreadPool m_workThreads;
 };
 
 }
 
-#endif //GAMESERVER_WINDOWSGAMESERVER_H
+#endif //GAMESERVER_GAMESERVER_H

@@ -22,7 +22,7 @@ void EventLoopThreadPool::Start(int threadNum, F_CloseShutdownConnectionsCallbac
         m_Threads.emplace_back(std::unique_ptr<EventLoopThread>(t));
         m_Loops.emplace_back(t->StartLoop());
         m_Loops.back()->SetCloseSocketsCallback(CloseShutdownCallbacks);
-        YLOG_INFO("启动io线程<%lu>！", t->GetThreadID())
+        YLOG_INFO("启动io线程<{}>！", t->GetThreadID())
     }
 
     // 没有额外的线程，只有主线程，仍要执行线程初始化回调

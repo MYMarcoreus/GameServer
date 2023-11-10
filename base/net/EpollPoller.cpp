@@ -80,7 +80,7 @@ void EpollPoller::PollWait(ChannelList &activeChannel, int timeout) {
                                (int) m_EpollEventList.size(), timeout);
     ::yy::util::ErrnoSaver savedErrno;
     if(numEvents > 0) {
-        YLOG_TRACE("epoll_wait() return %d events, m_EpollEventList.size = %zu", numEvents, m_EpollEventList.size())
+        YLOG_TRACE("epoll_wait() return {} events, m_EpollEventList.size = {}", numEvents, m_EpollEventList.size())
 
         // 将发生了事件的channel加入activeChannel
         FillActiveChannels(activeChannel, numEvents);
@@ -96,7 +96,7 @@ void EpollPoller::PollWait(ChannelList &activeChannel, int timeout) {
         //! 不处理EINTR，对于其它错误，并不会让程序终止
         if(savedErrno != EINTR)  {
             errno = savedErrno;
-            YLOG_ERROR("epoll_wait() error: %s", ::yy::util::StatusCode{savedErrno}.ToString().c_str())
+            YLOG_ERROR("epoll_wait() error: {}", ::yy::util::StatusCode{savedErrno}.ToString().c_str())
         }
     }
 }
@@ -122,7 +122,7 @@ void EpollPoller::UpdateChannel(Channel * channel) {
                 //! 只是从epoll底层数据结构中删除，并不从channel映射表中删除
                 SetEpollOperation(channel, EPOLL_CTL_DEL);
                 channel->SetState(Channel::State::eDeleted); //* 状态转换: eAdded -> eDeleted
-                YLOG_TRACE("已将Channel<%d>从epoll底层删除，但是仍在channel映射表中", channel->GetFD())
+                YLOG_TRACE("已将Channel<{}>从epoll底层删除，但是仍在channel映射表中", channel->GetFD())
             } else {
                 //! 覆盖原来的事件
                 SetEpollOperation(channel, EPOLL_CTL_MOD);
@@ -142,7 +142,7 @@ void EpollPoller::RemoveChannel(Channel * channel) {
     }
     channel->SetState(Channel::State::eNew); //* 状态转换: eAdded -> eNew
     m_ChannelMap.erase(channel->GetFD());
-    YLOG_TRACE("已完全删除Channel<%d>", channel->GetFD())
+    YLOG_TRACE("已完全删除Channel<{}>", channel->GetFD())
 }
 
 void EpollPoller::FillActiveChannels(ChannelList & activeChannel, int numEvents) {

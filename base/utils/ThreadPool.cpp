@@ -22,7 +22,7 @@ void ThreadPool::Start(int threadNum) {
     for(std::thread & work_thread: m_Threads)
     {
         work_thread = std::thread{&ThreadPool::PopAndExecuteTask, this};
-        YLOG_INFO("启动线程池线程<%lu>", CastThreadIDToInt(work_thread.get_id()))
+        YLOG_INFO("启动线程池线程<{}>", CastThreadIDToInt(work_thread.get_id()))
     }
 
 }

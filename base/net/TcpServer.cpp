@@ -48,8 +48,7 @@ void TcpServer::HandleNewConnection(SocketApiWrapper::socket_t sockfd, IPAddress
     IPAddressPtr localAddr = SocketApiWrapper::GetLocalAddr(sockfd);
 
     //! 以"连接时间:连接编号"作为连接的唯一标记，相同连接时间的连接编号一定不同
-    char name[64]{};
-    snprintf(name, sizeof name, "%lld:%llu", Timestamp::Now().GetMircoSecondSinceEpoch().count(), m_NextConnID++);
+    auto name = std::format("{}:{}", Timestamp::Now().GetMircoSecondSinceEpoch().count(), m_NextConnID++);
 
     TcpConnectionPtr conn = std::make_shared<TcpConnection>(
             name,

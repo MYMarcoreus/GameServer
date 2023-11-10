@@ -52,7 +52,7 @@ void Acceptor::HandleAccept() {
     SocketApiWrapper::socket_t connfd = m_AcceptSocket.Accept(outPeerAddr, true); //! 非阻塞连接套接字
 
     if(connfd >= 0) {
-        YLOG_TRACE("In Acceptor::HandleAccept，套接字<%d>被Accept", connfd)
+        YLOG_TRACE("In Acceptor::HandleAccept，套接字<{}>被Accept", connfd)
         if(m_NewConnectionCallback) {
             // TcpServer定义
             m_NewConnectionCallback(connfd, outPeerAddr);
@@ -60,7 +60,7 @@ void Acceptor::HandleAccept() {
             SocketApiWrapper::close(connfd);
         }
     } else {
-        YLOG_INFO("In Acceptor::HandleAccept(), 失败！%s", util::StatusCode{errno}.ToString().c_str())
+        YLOG_INFO("In Acceptor::HandleAccept(), 失败！{}", util::StatusCode{errno}.ToString().c_str())
     }
 }
 
@@ -71,7 +71,7 @@ void Acceptor::StartListenInLoop() {
     m_AcceptChannel.SetReadCallback([this](){ this->HandleAccept(); });
     m_AcceptChannel.EnableReading();
     m_AcceptSocket.Listen();
-    YLOG_INFO("线程<%lu>开始监听，监听地址为：<%s:%d>", CastThreadIDToInt(std::this_thread::get_id()),
+    YLOG_INFO("线程<{}>开始监听，监听地址为：<{}:{}>", CastThreadIDToInt(std::this_thread::get_id()),
               m_ListenAddr->GetIPStr().c_str(), m_ListenAddr->GetPort());
 
 }

@@ -37,7 +37,7 @@ public:
         dispatcher_.RegisterMessageCallback<Query>(std::bind(&QueryServer::OnQuery, this, _1, _2));
         dispatcher_.RegisterMessageCallback<Answer>(std::bind(&QueryServer::OnAnswer, this, _1, _2));
         server_.SetConnectionEstablishedCallback( std::bind(&QueryServer::OnConnectionEstablished, this, _1));
-        server_.SetMessageCallback( std::bind(&ProtobufCodec::OnMessage, &codec_, _1, _2));
+        server_.SetMessageCallback( std::bind(&ProtobufCodec::OnData, &codec_, _1, _2));
     }
 
     void Start()
@@ -55,7 +55,7 @@ public:
         answer.set_answerer("Server");
         answer.add_solution(now.ToString());
         answer.add_solution("Win!");
-        YLOG_INFO("即将向<%d: %s>发送Answer：\n%s", conn->GetSocketFD(), conn->GetName().c_str(), answer.DebugString().c_str())
+        YLOG_INFO("即将向<%d: {}>发送Answer：\n{}", conn->GetSocketFD(), conn->GetName().c_str(), answer.DebugString().c_str())
         codec_.Send(conn, answer);
     }
 
@@ -67,7 +67,7 @@ private:
 
     void OnQuery(const TcpConnectionPtr& conn, const QueryPtr& message)
     {
-        YLOG_INFO("OnQuery<%d>: %s\n %s\n", conn->GetSocketFD(), message->GetTypeName().c_str(), message->DebugString().c_str());
+        YLOG_INFO("OnQuery<%d>: {}\n {}\n", conn->GetSocketFD(), message->GetTypeName().c_str(), message->DebugString().c_str());
 
         SendAnswer(conn, message);
     }
@@ -79,13 +79,13 @@ private:
             solu += message->solution(i).c_str();
         }
 
-        YLOG_INFO("OnAnswer: %s, %ld, %s, %s, %s", message->GetTypeName().c_str(),
+        YLOG_INFO("OnAnswer: {}, {}, {}, {}, {}", message->GetTypeName().c_str(),
                   message->id(), message->questioner().c_str(), message->answerer().c_str(), solu.c_str())
     }
 
     void OnUnknownMessage(TcpConnectionPtr conn, const MessagePtr& message)
     {
-        YLOG_INFO("未知的消息类型：%s", message->GetDescriptor()->full_name().c_str())
+        YLOG_INFO("未知的消息类型：{}", message->GetDescriptor()->full_name().c_str())
     }
 
 

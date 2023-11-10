@@ -79,18 +79,18 @@ WakeupManager::~WakeupManager() {
 
 void WakeupManager::Read() {
     uint64_t msg = 1;
-    auto ret = SocketApiWrapper::recv(wakeupEventFD_, &msg, sizeof msg, 0);
+    auto ret = ::read(wakeupEventFD_, &msg, sizeof msg);
     if(ret < 0) {
-        YLOG_ERROR("EventLoop::WakeupManager::Read() ::read() error: %s", ::yy::util::StrError(errno).c_str())
+        YLOG_ERROR("EventLoop::WakeupManager::Read() ::read() error: {}", ::yy::util::StrError(errno).c_str())
     }
 }
 
 void WakeupManager::Write() {
     //! 向唤醒事件文件描述符进行写，以触发其epoll事件
     uint64_t msg = 1;
-    auto ret = SocketApiWrapper::send(wakeupEventFD_, &msg, sizeof msg, 0);
+    auto ret = ::write(wakeupEventFD_, &msg, sizeof msg);
     if(ret < 0) {
-        YLOG_ERROR("EventLoop::WakeupManager::Write ::write() error: %s", ::yy::util::StrError(errno).c_str())
+        YLOG_ERROR("EventLoop::WakeupManager::Write ::write() error: {}", ::yy::util::StrError(errno).c_str())
     }
 }
 
@@ -109,7 +109,7 @@ EventLoop::EventLoop(bool useETIfEpoller) :
         m_WakeupManager(std::make_unique<WakeupManager>(this))                             // wakefd
 {
     if(____EventLoopInThisThread) {
-        YLOG_FATAL("There is already a EventLoop Object in this thread<%lu>!", ::yy::util::GetIntThreadID())
+        YLOG_FATAL("There is already a EventLoop Object in this thread<{}>!", ::yy::util::GetIntThreadID())
     } else {
         ____EventLoopInThisThread = this;
     }
@@ -140,7 +140,7 @@ bool EventLoop::HasChannel(Channel *channel) {
 
 void EventLoop::AssertInLoopingThread() {
     if(!IsInLoopingThread()) {
-        YLOG_FATAL("EventLoop Created In thread<%lu>, but now in %lu",
+        YLOG_FATAL("EventLoop Created In thread<{}>, but now in {}",
             ::yy::util::CastThreadIDToInt(m_ThreadID), ::yy::util::GetIntThreadID())
     }
 }
@@ -161,7 +161,7 @@ void EventLoop::Loop() {
 
         //todo 对发生的事件进行优先级排序
 
-        YLOG_TRACE("\nAfter PollWait(), 发生了%zu个事件", m_ActiveChannels.size())
+        YLOG_TRACE("\nAfter PollWait(), 发生了{}个事件", m_ActiveChannels.size())
 
         // 处理发生了事件的channel
         for(Channel * activeChannel: m_ActiveChannels) {
@@ -204,7 +204,7 @@ EventLoop *EventLoop::GetEventLoopOfThisThread() {
 void EventLoop::RunCallbackInLoop(F_PendingCallback cb) {
     //! 如果是EventLoop所在线程调用，则直接执行；如果在其他线程，则将函数放入代办函数列表中。
     if(IsInLoopingThread()) {
-        YLOG_TRACE("直接执行代办函数<%s>", GetDemangleName(cb.target_type().name()).c_str())
+        YLOG_TRACE("直接执行代办函数<{}>", GetDemangleName(cb.target_type().name()).c_str())
         cb();
     } else {
         EnqueueCallbackInLoop(cb);
@@ -227,7 +227,7 @@ void EventLoop::EnqueueCallbackInLoop(F_PendingCallback cb) {
     if(!IsInLoopingThread() or m_IsCallingPenddingFunctors) {
         Wakeup();
     }
-    YLOG_TRACE("已将函数<%s>加入代办函数列表", GetDemangleName(cb.target_type().name()).c_str())
+    YLOG_TRACE("已将函数<{}>加入代办函数列表", GetDemangleName(cb.target_type().name()).c_str())
 }
 
 void EventLoop::CallPenddingCallbacks() {
@@ -247,7 +247,7 @@ void EventLoop::CallPenddingCallbacks() {
 
     for (const F_PendingCallback& functor: callingFunctors) {
         functor();
-        YLOG_TRACE("执行代办函数<%s>！", GetDemangleName(functor.target_type().name()).c_str())
+        YLOG_TRACE("执行代办函数<{}>！", GetDemangleName(functor.target_type().name()).c_str())
     }
 
     // YLOG_TRACE("代办函数执行完毕！")

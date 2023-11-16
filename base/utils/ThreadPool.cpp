@@ -69,5 +69,4 @@ void ThreadPool::PopAndExecuteTask() {
     std::cout << "thread<" << std::this_thread::get_id() << "> finished!\n";
 }
 
-
 } // yy::util

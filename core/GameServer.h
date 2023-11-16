@@ -7,6 +7,7 @@
 #include "codec/ProtobufCodec.h"
 #include "codec/ProtobufDispatcher.h"
 #include "net_definations.h"
+#include "ThreadPool.h"
 
 
 namespace yy::protocol::core {
@@ -27,13 +28,19 @@ public:
     GameServer(yy::net::EventLoop* loop, yy::net::IPAddressPtr listenAddr);
     ~GameServer() override;
 
-    /// @brief Start Listen & IOLoop
-    virtual void Start() override;
+    /// @brief 启动并初始化服务器
+    virtual void Start() override {
+        m_server.Start(1);
+        m_workThreads.Start(1);
+    }
 
     /// @brief 结束服务器
     virtual void Stop() override {
+        m_workThreads.Stop();
     }
 
+    /// @brief 在业务层的while(1)中调用Update
+    virtual void Update() override;
 
     /// @brief 通过套接字文件描述符寻找用户连接数据
     virtual UserBaseDataPtr FindUser(const std::string & conn) override;
@@ -55,10 +62,7 @@ public:
     //     m_dispatcher.RegisterMessageCallback<T>(callback);
     // }
 
-    virtual net::TimerID RunAt(net::Timestamp time, net::F_TimerCallback cb) override;
-    virtual net::TimerID RunAfter(net::Microseconds delay, net::F_TimerCallback cb) override;
-    virtual net::TimerID RunEvery(net::Microseconds interval, net::F_TimerCallback cb) override;
-    virtual void CancelTimer(net::TimerID timerid) override;
+    net::EventLoop * GetAcceptorLoop() const { return m_server.GetAcceptorLoop(); }
 
 
 private:
@@ -75,7 +79,7 @@ private:
     void CheckDisconnections();
 
 private:
-    yy::net::EventLoop *        m_accpetorLoop;
+    yy::net::EventLoop *        m_loop;
     yy::net::TcpServer          m_server;
     ProtobufCodec               m_codec;
     ProtobufDispatcher<yy::net::TcpConnectionPtr>        m_dispatcher;
@@ -92,6 +96,9 @@ private:
     std::mutex                              m_ShutdownConnectionsMutex;
 
     std::map<std::string , UserBaseDataPtr> m_users;
+
+
+    yy::util::ThreadPool m_workThreads;
 };
 
 }

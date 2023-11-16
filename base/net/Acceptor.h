@@ -27,8 +27,6 @@ public:
     ///@brief 设置套接字的监听回调函数为HandleAccept，并开始监听套接字
     void StartListen();
 
-    void StopListen();
-
     bool IsListening() { return m_IsListening; };
 private:
     ///@brief 接受新连接，并执行m_NewConnectionCallback

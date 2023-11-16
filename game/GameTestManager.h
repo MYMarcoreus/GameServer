@@ -6,13 +6,13 @@
 
 namespace yy::app {
 
-class GameTestManager final: public Singleton<GameTestManager>
+class GameTestManager final: public IGameBase, public Singleton<GameTestManager>
 {
     SINGLETON_NECESSITY(GameTestManager)
 public:
-    void Init() ;
+    void Init() override;
 
-    // void StartListenAndIOLoop() override;
+    // void Update() override;
 
 private:
     ~GameTestManager() override;

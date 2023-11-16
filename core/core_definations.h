@@ -23,6 +23,7 @@ namespace yy::core {
 class UserBaseData;
 using UserBaseDataPtr = std::shared_ptr<UserBaseData>;
 
+
 enum class MessageParseErrorCode {
     eNoError = 0,
     eInvalidCheckCode = 1,

@@ -25,8 +25,6 @@ public:
     ///@brief 不会立即停止所有线程，而是等待它们将任务队列中的余下任务完成后再停止
     void Stop();
 
-    // void SetUpdate(std::chrono::microseconds internal);
-
     ///@brief 加入一个任务到任务队列中
     void PushTask(Task task);
 

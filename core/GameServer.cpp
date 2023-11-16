@@ -14,7 +14,7 @@ using namespace yy::config;
 namespace yy::core {
 
 GameServer::GameServer(EventLoop *loop, IPAddressPtr listenAddr)
-        : m_accpetorLoop{loop},
+        : m_loop{loop},
           m_server(loop, listenAddr, true),
           m_dispatcher( std::bind(&GameServer::OnUnknownMessage, this, _1, _2) ),
           m_codec(std::bind(&ProtobufDispatcher<TcpConnectionPtr>::OnProtobufMessage, &m_dispatcher, _1, _2)),
@@ -30,13 +30,13 @@ GameServer::GameServer(EventLoop *loop, IPAddressPtr listenAddr)
 }
 
 GameServer::~GameServer() {
-    m_accpetorLoop->QuitLoop();
+    m_loop->QuitLoop();
 }
 
 
 
 void GameServer::OnUnknownMessage(TcpConnectionPtr conn, const MessagePtr &message) {
-    YLOG_TRACE("游戏消息：{}，交由业务层", message->GetDescriptor()->full_name());
+    YLOG_INFO("游戏消息：{}，交由业务层", message->GetDescriptor()->full_name());
 
     m_notifierCommand(FindUser(conn->GetName()), message);
 }
@@ -68,15 +68,11 @@ void GameServer::SendXorCode(const TcpConnectionPtr &conn) {
 
 
 void GameServer::AddShutdownConnection(const TcpConnectionPtr & conn) {
-
     {
         std::lock_guard lg{m_ShutdownConnectionsMutex};
         m_ShutdownConnections.push_back(conn);
     }
     YLOG_TRACE("In TcpServer::AddShutdownConnection<{}>", conn->GetSocketFD());
-    // YLOG_INFO("{} ?= {}", static_cast<void*>(m_accpetorLoop), static_cast<void*>(m_server.GetAcceptorLoop()));
-    //FIXME 潜在的线程安全问题
-    m_accpetorLoop->Wakeup();
 }
 
 //! 每个IO线程中运行
@@ -91,8 +87,7 @@ void GameServer::CheckDisconnections() {
 
     for (const auto & conn: shutdownConnections)
     {
-        // YLOG_DEBUG("In TcpServer::CheckDisconnections, 有 {} 个shutdown连接", m_ShutdownConnections.size());
-        YLOG_DEBUG("In TcpServer::CheckDisconnections, close shutdown socket<{}>", conn->GetSocketFD());
+        YLOG_TRACE("In TcpServer::CheckDisconnections, close shutdown socket<{}>", conn->GetSocketFD());
 
         //! 被Shutdown的用户连接在1秒后正式关闭回收资源
         auto elapsed_time = Timestamp::Now() - conn->GetShudownTime();
@@ -101,14 +96,11 @@ void GameServer::CheckDisconnections() {
             if(elapsed_time > Seconds{GetAppConfig().close_delay()}) {
                 YLOG_INFO("<{}>主线程Update_CheckDisconnetion: 时辰已到，正式关闭用户连接，回收套接字资源！", conn->GetSocketFD())
 
-                //! 应用层处理
-                if(m_notifierDisconnect)
-                    m_notifierDisconnect(conn);
-
-                //! 核心层处理
                 m_users.erase(conn->GetName());
                 conn->Close();
 
+                if(m_notifierDisconnect)
+                    m_notifierDisconnect(conn);
             }
         }
 
@@ -172,9 +164,9 @@ void GameServer::OnSecurity(const TcpConnectionPtr & conn, const SecurityPtr & m
 
     // 安全验证通过：交由业务层
     if(resultBody.result_code() == yy::protocol::core::ResultCode::eSuccess) {
-        auto userdata = std::make_shared<UserBaseData>(conn, message->app_id(), m_codec);
-        userdata->SetState(UserBaseData::E_UserBaseState::eSecure);
-        m_users[conn->GetName()] = userdata;
+        auto baseData = std::make_shared<UserBaseData>(conn, message->app_id(), m_codec);
+        baseData->SetState(UserBaseData::E_UserBaseState::eSecure);
+        m_users[conn->GetName()] = baseData;
         m_NumSecurity++;
         if(m_notifierSecurity)
             m_notifierSecurity(conn);
@@ -192,36 +184,12 @@ UserBaseDataPtr GameServer::FindUser(const std::string & conn) {
 }
 
 void GameServer::SetUserFree(const UserBaseDataPtr &userdata) {
-    userdata->Shutdown();
     m_users.erase(userdata->GetConnection()->GetName());
 }
 
-void GameServer::Start() {
-    m_server.Start(config::g_app_config->GetValue().io_thread_num());
-    m_accpetorLoop->Loop();
+void GameServer::Update() {
+    m_loop->Loop();
 }
-
-
-
-
-net::TimerID GameServer::RunAt(net::Timestamp time, net::F_TimerCallback cb) {
-    return m_accpetorLoop->RunAt(time, std::move(cb));
-}
-
-net::TimerID GameServer::RunAfter(net::Microseconds delay, net::F_TimerCallback cb) {
-    return m_accpetorLoop->RunAfter(delay, std::move(cb));
-}
-
-net::TimerID GameServer::RunEvery(net::Microseconds interval, net::F_TimerCallback cb) {
-    return m_accpetorLoop->RunEvery(interval, std::move(cb));
-}
-
-void GameServer::CancelTimer(net::TimerID timerid) {
-    m_accpetorLoop->CancelTimer(timerid);
-}
-
-
-
 
 
 }

@@ -108,7 +108,7 @@ static void MD5Update(MD5_CTX *context, unsigned char *input, unsigned int input
     unsigned int i, index, partLen;
     /* Compute number of bytes mod 64 */
     index = (unsigned int) ((context->count[0] >> 3) & 0x3F);
-    /* StartListenAndIOLoop number of bits */
+    /* Update number of bits */
     if ((context->count[0] += ((unsigned int) inputLen << 3))
         < ((unsigned int) inputLen << 3))
         context->count[1]++;

@@ -76,10 +76,5 @@ void Acceptor::StartListenInLoop() {
 
 }
 
-void Acceptor::StopListen() {
-    m_Loop->QuitLoop();
-    m_IsListening = false;
-}
-
 
 } // yy::net

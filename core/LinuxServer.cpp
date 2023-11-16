@@ -143,7 +143,7 @@ void LinuxServer::ParsePackage(const UserBaseData::ptr& userdata, google::protob
 }
 
 
-void LinuxServer::Start()
+void LinuxServer::Update()
 {
     INTERVAL_DO(1 ,YLOG_DEBUG("usernum = %lu", m_numConnect.load()) )
 

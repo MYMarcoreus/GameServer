@@ -31,7 +31,7 @@ public:
 
     void Stop() override;
 
-    void Start() override;
+    void Update() override;
 
     /// @brief 根据指令cmd，将指定类型「序列化」为send_buf中的字节流，并且添上首部
     void BuildPackage(

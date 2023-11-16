@@ -5,21 +5,12 @@
 #include "GameData.h"
 #include "IGameBase.h"
 #include "codec/ProtobufDispatcher.h"
-#include "ThreadPool.h"
 
 using yy::core::IServer;
 using std::shared_ptr;
 
-
-
 // 业务层
 namespace yy::app {
-
-class GamePlayerManager;
-class GameTestManager;
-
-
-
 
 class GameManager : public Singleton<GameManager>
 {
@@ -39,7 +30,7 @@ private:
 
     void Init();
 
-    void StartListenAndIOLoop();
+    void Update();
 
     void AppNotifier_Secutiry(const yy::net::TcpConnectionPtr& conn) ;
 
@@ -53,12 +44,10 @@ private:
 
 
     IServer   * m_server;
-    GamePlayerManager * m_player;
-    GameTestManager   * m_test;
+    IGameBase * m_player;
+    IGameBase * m_test;
     core::ProtobufDispatcher<core::UserBaseDataPtr> m_dispatcher;
     yy::net::EventLoop * m_loop;
-
-    yy::util::ThreadPool m_threadPool;
 };
 
 

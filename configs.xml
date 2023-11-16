@@ -16,7 +16,6 @@
         securityCode     = "csdnxxxx"
         checkCode        = "DE"
         closeDelay       = "1"
-        ioThreadNum      = "1"
     />
 
     <remote
@@ -60,7 +59,7 @@
 
     <log> good description
         <logger m_TypeName  = "default"
-                level = "debug"
+                level = "trace"
                 is_async = "true" >
             <appender
                     type = "stdout"

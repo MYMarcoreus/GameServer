@@ -362,15 +362,15 @@ private:
 
 
 
-// template <typename... Args>
-// void Test(std::string ____loggername, LogLevel ____level, std::string ____format, Args ... args)
-// {
-//     if (GET_LOGGER(____loggername)->getLevel() <= ____level)
-//     {
-//         std::string _logMessage = std::format(____format, args...);
-//         GET_LOGGER(____loggername)->Log(MAKE_LOG_MESSAGE(____level, _logMessage));
-//     }
-// }
+template <typename... Args>
+void Test(std::string ____loggername, LogLevel ____level, std::string ____format, Args ... args)
+{
+    if (GET_LOGGER(____loggername)->getLevel() <= ____level)
+    {
+        std::string _logMessage = std::format(____format, args...);
+        GET_LOGGER(____loggername)->Log(MAKE_LOG_MESSAGE(____level, _logMessage));
+    }
+}
 
 
 

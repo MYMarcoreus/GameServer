@@ -28,7 +28,6 @@ void AppXmlConfig::load(const XMLElement *xml_app)
     maxHeartTime     = XmlAttributeTo<int32_t>(xml_app->FindAttribute("maxHeartTime"));
     maxSecurityTime  = XmlAttributeTo<int32_t>(xml_app->FindAttribute("maxSecurityTime"));
     closeDelay       = XmlAttributeTo<int32_t>(xml_app->FindAttribute("closeDelay"));
-    ioThreadNum      = XmlAttributeTo<uint32_t>(xml_app->FindAttribute("ioThreadNum"));
 
     memcpy(securityCode, XmlAttributeTo<std::string>(xml_app->FindAttribute("securityCode")).c_str(), 20);
     memcpy(checkCode, XmlAttributeTo<std::string>(xml_app->FindAttribute("checkCode")).c_str(), 3);

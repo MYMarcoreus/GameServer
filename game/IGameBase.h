@@ -5,19 +5,19 @@
 
 namespace yy::app {
 
-// class IGameBase
-// {
-// public:
-//     using ptr = std::shared_ptr<IGameBase>;
-// public:
-//
-//     virtual void Init() = 0;
-//
-//     // virtual void StartListenAndIOLoop() = 0;
-// protected:
-//     IGameBase() = default;
-//     virtual ~IGameBase() = default;
-// };
+class IGameBase
+{
+public:
+    using ptr = std::shared_ptr<IGameBase>;
+public:
+
+    virtual void Init() = 0;
+
+    // virtual void Update() = 0;
+protected:
+    IGameBase() = default;
+    virtual ~IGameBase() = default;
+};
 
 
 }

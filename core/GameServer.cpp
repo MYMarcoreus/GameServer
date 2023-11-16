@@ -97,7 +97,8 @@ void GameServer::CheckDisconnections() {
         auto elapsed_time = Timestamp::Now() - conn->GetShudownTime();
         if(conn->IsShutdown())
         {
-            if(elapsed_time > Seconds{GetAppConfig().close_delay()}) {
+            // if(elapsed_time > Seconds{GetAppConfig().close_delay()})
+            {
                 YLOG_INFO("<{}>主线程Update_CheckDisconnetion: 时辰已到，正式关闭用户连接，回收套接字资源！", conn->GetSocketFD())
 
                 //! 应用层处理

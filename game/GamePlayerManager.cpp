@@ -147,7 +147,6 @@ void GamePlayerManager::LeaveAndSave(UserBaseDataPtr leave_user) {
     Broadcast(leave_user, playerLeave);
     YLOG_INFO("玩家<{}>离开", playerLeave.leaver_uid())
 
-
     leave_user->SetState(core::UserBaseData::E_UserBaseState::eSavingData);
 
     auto playerdata = FindPlayerByUID(leave_user->GetUID());
@@ -258,9 +257,6 @@ void GamePlayerManager::OnLogin(const UserBaseDataPtr& userdata, const Ptr<proto
 void GamePlayerManager::OnLeave(const UserBaseDataPtr& userdata_self, const Ptr<protocol::app::PlayerLeave> & leave) //NOLINT
 {
     if(userdata_self == nullptr) return;
-
-
-
     LeaveAndSave(userdata_self);
 }
 

@@ -20,7 +20,7 @@ void GameManager::AppNotifier_Secutiry(const yy::net::TcpConnectionPtr& conn) {
 }
 
 void GameManager::AppNotifier_Disconnect(const yy::net::TcpConnectionPtr& conn) {
-    YLOG_INFO("用户<{},{}>断开连接", conn->GetSocketFD(), conn->GetName())
+    YLOG_INFO("↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑ 用户<{},{}>断开连接", conn->GetSocketFD(), conn->GetName())
 
     auto userdata = m_server->FindUser(conn->GetName());
 

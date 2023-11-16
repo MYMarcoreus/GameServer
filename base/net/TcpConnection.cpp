@@ -66,10 +66,10 @@ void TcpConnection::Send(const std::shared_ptr<google::protobuf::Message> &messa
 
 void TcpConnection::Send(const std::string_view & message) {
     if(m_Loop->IsInLoopingThread()) {
-        m_Loop->RunCallbackInLoop([conn = shared_from_this(), &message](){ conn->SendInLoop(message); });
+        m_Loop->RunCallbackInLoop([conn = shared_from_this(), message](){ conn->SendInLoop(message); });
     } else {
         //! 需要将数据拷贝到IO线程中（否则线程不安全），这里SendInLoop使用const引用延长临时对象生命周期
-        m_Loop->RunCallbackInLoop([conn = shared_from_this(), &message](){ conn->SendInLoop(std::string(message)); });
+        m_Loop->RunCallbackInLoop([conn = shared_from_this(), msg = std::string(message)](){ conn->SendInLoop(msg); });
     }
 }
 

@@ -4,7 +4,7 @@
         appID            = "2000"
         appPort          = "16666"
         appMaxPlayer     = "30"
-        appMaxConnection = "11000"
+        appMaxConnection = "2000"
         appXorCode       = "130"
         appVersion       = "20230123"
         recvBytesOne     = "1"

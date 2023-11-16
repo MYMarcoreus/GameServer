@@ -116,6 +116,8 @@ set(COMMON_SOURCES
                 game/GameManager.cpp
         game/GamePlayerManager.cpp
                 game/GameTestManager.cpp
+        base/net/FullDuplexPipe.cpp
+        base/net/FullDuplexPipe.h
 )
 
 add_library(CommonLibrary ${COMMON_SOURCES})

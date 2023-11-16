@@ -8,6 +8,7 @@
 #include "codec/ProtobufDispatcher.h"
 #include "net_definations.h"
 #include "ThreadPool.h"
+#include <future>
 
 
 namespace yy::protocol::core {
@@ -20,7 +21,6 @@ namespace yy::core {
 
 
 class GameServer: public IServer{
-
     using HeartPtr    = std::shared_ptr<yy::protocol::core::HeartBody> ;
     using SecurityPtr = std::shared_ptr<yy::protocol::core::SecurityBody> ;
 
@@ -28,27 +28,28 @@ public:
     GameServer(yy::net::EventLoop* loop, yy::net::IPAddressPtr listenAddr);
     ~GameServer() override;
 
-    /// @brief 启动并初始化服务器
-    virtual void Start() override {
-        m_server.Start(1);
-        m_workThreads.Start(1);
-    }
+    /// @brief Start Listen & IOLoop
+    virtual void Start() override;
 
     /// @brief 结束服务器
     virtual void Stop() override {
-        m_workThreads.Stop();
     }
 
-    /// @brief 在业务层的while(1)中调用Update
     virtual void Update() override;
 
+
+
     /// @brief 通过套接字文件描述符寻找用户连接数据
+
     virtual UserBaseDataPtr FindUser(const std::string & conn) override;
+    virtual void FreeUser(const UserBaseDataPtr & userdata) override;
+    virtual void AddUser(const std::string & name, const UserBaseDataPtr & userdata) override;
+
+
     virtual bool IsRunning() const override {
         return m_server.IsRunning();
     }
 
-    virtual void SetUserFree(const UserBaseDataPtr & userdata) override;
 
     virtual const config::AppXmlConfig & GetAppConfig() override { return m_app_configvar->GetValue(); }
 
@@ -62,7 +63,10 @@ public:
     //     m_dispatcher.RegisterMessageCallback<T>(callback);
     // }
 
-    net::EventLoop * GetAcceptorLoop() const { return m_server.GetAcceptorLoop(); }
+    virtual net::TimerID RunAt(net::Timestamp time, net::F_TaskCallback cb) override;
+    virtual net::TimerID RunAfter(net::Microseconds delay, net::F_TaskCallback cb) override;
+    virtual net::TimerID RunEvery(net::Microseconds interval, net::F_TaskCallback cb) override;
+    virtual void CancelTimer(net::TimerID timerid) override;
 
 
 private:
@@ -74,12 +78,12 @@ private:
     void OnHeart(const yy::net::TcpConnectionPtr & conn, const HeartPtr & message);
     void OnSecurity(const yy::net::TcpConnectionPtr & conn, const SecurityPtr & message);
 
-
-    void AddShutdownConnection(const yy::net::TcpConnectionPtr &conn);
-    void CheckDisconnections();
+    void CheckDisconnections_Update(const UserBaseDataPtr & userdata);
+    // void AddShutdownConnection(const yy::net::TcpConnectionPtr &conn);
+    // void CheckDisconnections();
 
 private:
-    yy::net::EventLoop *        m_loop;
+    yy::net::EventLoop *        m_accpetorLoop;
     yy::net::TcpServer          m_server;
     ProtobufCodec               m_codec;
     ProtobufDispatcher<yy::net::TcpConnectionPtr>        m_dispatcher;
@@ -91,14 +95,14 @@ private:
     F_Notifier m_notifierSecurity;    // 用户安全验证通过后，执行业务层回调函数
     F_Notifier m_notifierDisconnect;  // 用户连接断开后，执行业务层回调函数
     F_NotifierCommand m_notifierCommand;
+    std::atomic_bool m_IsUpdating;
 
-    std::vector<yy::net::TcpConnectionPtr>  m_ShutdownConnections;
-    std::mutex                              m_ShutdownConnectionsMutex;
+    // std::vector<yy::net::TcpConnectionPtr>  m_ShutdownConnections;
+    // std::mutex                              m_ShutdownConnectionsMutex;
 
+    std::mutex m_users_mutex;
     std::map<std::string , UserBaseDataPtr> m_users;
-
-
-    yy::util::ThreadPool m_workThreads;
+    std::vector<std::string> m_closeUsers;
 };
 
 }

@@ -14,34 +14,33 @@ using yy::core::UserBaseDataPtr;
 
 namespace yy::app {
 
-class GamePlayerManager final: public IGameBase, public Singleton<GamePlayerManager>
+class GamePlayerManager final: public Singleton<GamePlayerManager>
 {
     SINGLETON_NECESSITY(GamePlayerManager)
 public:
-    void Init() override;
+    void Init() ;
 
-    // void Update() override;
+    // void StartListenAndIOLoop() override;
+    void LeaveAndSave(UserBaseDataPtr leave_user);
 
 private:
     GamePlayerManager();
     ~GamePlayerManager() override;
 
     /// @brief 玩家发来登录请求，验证，然后将储存的游戏数据发送回玩家
-    void onLogin(const UserBaseDataPtr& userdata, const Ptr<protocol::app::LoginRequest> &);
+    void OnLogin(const UserBaseDataPtr& userdata, const Ptr<protocol::app::LoginRequest> & request);
 
     /// @brief 玩家退出
-    void onLeave(const UserBaseDataPtr& userdata_self, const Ptr<protocol::app::PlayerLeave> &);
+    void OnLeave(const UserBaseDataPtr& userdata_self, const Ptr<protocol::app::PlayerLeave> & leave);
 
     /// @brief 玩家移动
-    void onOtherMovement(const UserBaseDataPtr& userdata_self, const Ptr<protocol::app::OtherMovement> &othermove);
-    void onSelfMovement (const UserBaseDataPtr& userdata_self, const Ptr<protocol::app::SelfMovement> &selfmove);
+    void OnSelfMovement (const UserBaseDataPtr& userdata_self, const Ptr<protocol::app::SelfMovement> &selfmove);
 
     /// @brief　玩家申请获取另一玩家的数据
-    void onOtherPlayerDataRequest(const UserBaseDataPtr& userdata_self, const Ptr<protocol::app::OtherPlayerDataRequest> &request);
+    void OnOtherPlayerDataRequest(const UserBaseDataPtr& userdata_self, const Ptr<protocol::app::OtherPlayerDataRequest> &request);
 
     /// @brief 玩家跳跃
-    void onOtherJumpAndGravity(const UserBaseDataPtr& userdata_self, const Ptr<protocol::app::OtherJumpAndGravity> &otherJumpAndGravity);
-    void onSelfJumpAndGravity(const UserBaseDataPtr& userdata_self, const Ptr<protocol::app::SelfJumpAndGravity> &selfJumpAndGravity);
+    void OnSelfJumpAndGravity(const UserBaseDataPtr& userdata_self, const Ptr<protocol::app::SelfJumpAndGravity> &selfJumpAndGravity);
 
     Ptr<yy::protocol::app::PlayerBaseData> FindPlayerByUID(UID_t onlineid);
 

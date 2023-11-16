@@ -14,29 +14,30 @@ using namespace yy::config;
 namespace yy::core {
 
 GameServer::GameServer(EventLoop *loop, IPAddressPtr listenAddr)
-        : m_loop{loop},
+        : m_accpetorLoop{loop},
           m_server(loop, listenAddr, true),
           m_dispatcher( std::bind(&GameServer::OnUnknownMessage, this, _1, _2) ),
           m_codec(std::bind(&ProtobufDispatcher<TcpConnectionPtr>::OnProtobufMessage, &m_dispatcher, _1, _2)),
-          m_app_configvar(g_app_config)
+          m_app_configvar(g_app_config),
+          m_IsUpdating{false}
 {
     m_dispatcher.RegisterMessageCallback<yy::protocol::core::HeartBody>(std::bind(&GameServer::OnHeart, this, _1, _2));
     m_dispatcher.RegisterMessageCallback<yy::protocol::core::SecurityBody>(std::bind(&GameServer::OnSecurity, this, _1, _2));
 
     m_server.SetMessageCallback( std::bind(&ProtobufCodec::OnData, &m_codec, _1, _2));
     m_server.SetConnectionEstablishedCallback( std::bind(&GameServer::OnConnectionEstablished, this, _1));
-    m_server.SetConnectionShutdownCallback([this](const TcpConnectionPtr & conn) { this->AddShutdownConnection(conn); });
-    m_server.SetCloseSocketsCallback([this]() { this->CheckDisconnections(); });
+    // m_server.SetConnectionShutdownCallback([this](const TcpConnectionPtr & conn) { this->AddShutdownConnection(conn); });
+    // m_server.SetCloseSocketsCallback([this]() { this->CheckDisconnections(); });
 }
 
 GameServer::~GameServer() {
-    m_loop->QuitLoop();
+    m_accpetorLoop->QuitLoop();
 }
 
 
 
 void GameServer::OnUnknownMessage(TcpConnectionPtr conn, const MessagePtr &message) {
-    YLOG_INFO("游戏消息：{}，交由业务层", message->GetDescriptor()->full_name());
+    YLOG_TRACE("游戏消息：{}，交由业务层", message->GetDescriptor()->full_name());
 
     m_notifierCommand(FindUser(conn->GetName()), message);
 }
@@ -67,61 +68,50 @@ void GameServer::SendXorCode(const TcpConnectionPtr &conn) {
 }
 
 
-void GameServer::AddShutdownConnection(const TcpConnectionPtr & conn) {
-    {
-        std::lock_guard lg{m_ShutdownConnectionsMutex};
-        m_ShutdownConnections.push_back(conn);
-    }
-    YLOG_TRACE("In TcpServer::AddShutdownConnection<{}>", conn->GetSocketFD());
-}
+// void GameServer::AddShutdownConnection(const TcpConnectionPtr & conn) {
+//     {
+//         std::lock_guard lg{m_ShutdownConnectionsMutex};
+//         m_ShutdownConnections.push_back(conn);
+//     }
+//     YLOG_TRACE("In TcpServer::AddShutdownConnection<{}>", conn->GetSocketFD());
+//     // YLOG_INFO("{} ?= {}", static_cast<void*>(m_accpetorLoop), static_cast<void*>(m_server.GetAcceptorLoop()));
+//     //FIXME 潜在的线程安全问题
+//     m_accpetorLoop->Wakeup();
+// }
 
 //! 每个IO线程中运行
-void GameServer::CheckDisconnections() {
-    YLOG_TRACE("In TcpServer::CheckDisconnections, 有 {} 个shutdown连接", m_ShutdownConnections.size());
-
-    std::vector<TcpConnectionPtr> shutdownConnections;
-    {
-        std::lock_guard lg{m_ShutdownConnectionsMutex};
-        m_ShutdownConnections.swap(shutdownConnections);
-    }
-
-    for (const auto & conn: shutdownConnections)
-    {
-        YLOG_TRACE("In TcpServer::CheckDisconnections, close shutdown socket<{}>", conn->GetSocketFD());
-
-        //! 被Shutdown的用户连接在1秒后正式关闭回收资源
-        auto elapsed_time = Timestamp::Now() - conn->GetShudownTime();
-        if(conn->IsShutdown())
-        {
-            if(elapsed_time > Seconds{GetAppConfig().close_delay()}) {
-                YLOG_INFO("<{}>主线程Update_CheckDisconnetion: 时辰已到，正式关闭用户连接，回收套接字资源！", conn->GetSocketFD())
-
-                m_users.erase(conn->GetName());
-                conn->Close();
-
-                if(m_notifierDisconnect)
-                    m_notifierDisconnect(conn);
-            }
-        }
-
-        //! ①检查已连接的用户是否在指定时间内通过安全验证，若未通过，则shutdown连接
-        elapsed_time = Timestamp::Now() - conn->GetConnectedTime();
-        if (conn->IsConnected() and elapsed_time > Seconds{GetAppConfig().time_security_max()})
-        {
-            YLOG_WARN("<{}>主线程Update_CheckDisconnetion: 用户安全验证超时，关闭用户连接！", conn->GetSocketFD());
-            conn->Shutdown();
-            return;
-        }
-
-        //! ②检查是否收到心跳包，如未收到，则shutdown连接
-        elapsed_time = Timestamp::Now() - conn->GetHeartTime();
-        if (elapsed_time > Seconds{GetAppConfig().time_heart_max()}) {
-            YLOG_WARN("<{}>主线程Update_CheckDisconnetion: 用户心跳包超时，关闭用户连接！", conn->GetSocketFD());
-            conn->Shutdown();
-            return;
-        }
-    }
-}
+// void GameServer::CheckDisconnections() {
+//     YLOG_TRACE("In TcpServer::CheckDisconnections, 有 {} 个shutdown连接", m_ShutdownConnections.size());
+//
+//     std::vector<TcpConnectionPtr> shutdownConnections;
+//     {
+//         std::lock_guard lg{m_ShutdownConnectionsMutex};
+//         m_ShutdownConnections.swap(shutdownConnections);
+//     }
+//
+//     for (const auto & conn: shutdownConnections)
+//     {
+//         // YLOG_DEBUG("In TcpServer::CheckDisconnections, 有 {} 个shutdown连接", m_ShutdownConnections.size());
+//         YLOG_DEBUG("In TcpServer::CheckDisconnections, close shutdown socket<{}>", conn->GetSocketFD());
+//
+//         //! 被Shutdown的用户连接在1秒后正式关闭回收资源
+//         auto elapsed_time = Timestamp::Now() - conn->GetShudownTime();
+//         if(conn->IsShutdown())
+//         {
+//             if(elapsed_time > Seconds{GetAppConfig().close_delay()}) {
+//                 YLOG_INFO("<{}>主线程Update_CheckDisconnetion: 时辰已到，正式关闭用户连接，回收套接字资源！", conn->GetSocketFD())
+//
+//                 //! 应用层处理
+//                 if(m_notifierDisconnect)
+//                     m_notifierDisconnect(conn);
+//
+//                 //! 核心层处理
+//                 m_users.erase(conn->GetName());
+//                 conn->Close();
+//             }
+//         }
+//     }
+// }
 
 void GameServer::OnHeart(const TcpConnectionPtr & conn, const HeartPtr & message) {
     assert(conn != nullptr);
@@ -164,9 +154,9 @@ void GameServer::OnSecurity(const TcpConnectionPtr & conn, const SecurityPtr & m
 
     // 安全验证通过：交由业务层
     if(resultBody.result_code() == yy::protocol::core::ResultCode::eSuccess) {
-        auto baseData = std::make_shared<UserBaseData>(conn, message->app_id(), m_codec);
-        baseData->SetState(UserBaseData::E_UserBaseState::eSecure);
-        m_users[conn->GetName()] = baseData;
+        auto userdata = std::make_shared<UserBaseData>(conn, message->app_id(), m_codec);
+        userdata->SetState(UserBaseData::E_UserBaseState::eSecure);
+        AddUser(conn->GetName(), userdata);
         m_NumSecurity++;
         if(m_notifierSecurity)
             m_notifierSecurity(conn);
@@ -178,17 +168,125 @@ void GameServer::OnSecurity(const TcpConnectionPtr & conn, const SecurityPtr & m
     }
 }
 
+
+
+// void GameServer::FreeUser(const UserBaseDataPtr &userdata) {
+//     userdata->Shutdown();
+//     m_users.erase(userdata->GetConnection()->GetName());
+// }
+
+void GameServer::Start() {
+    m_server.Start(config::g_app_config->GetValue().io_thread_num());
+}
+
+
+
+
+net::TimerID GameServer::RunAt(net::Timestamp time, net::F_TaskCallback cb) {
+    return m_accpetorLoop->RunAt(time, std::move(cb));
+}
+
+net::TimerID GameServer::RunAfter(net::Microseconds delay, net::F_TaskCallback cb) {
+    return m_accpetorLoop->RunAfter(delay, std::move(cb));
+}
+
+net::TimerID GameServer::RunEvery(net::Microseconds interval, net::F_TaskCallback cb) {
+    return m_accpetorLoop->RunEvery(interval, std::move(cb));
+}
+
+void GameServer::CancelTimer(net::TimerID timerid) {
+    m_accpetorLoop->CancelTimer(timerid);
+}
+
+void GameServer::CheckDisconnections_Update(const UserBaseDataPtr & userdata) {
+    auto conn = userdata->GetConnection();
+
+    //! 被Shutdown的用户连接在1秒后正式关闭回收资源
+    auto elapsed_time = Timestamp::Now() - conn->GetShudownTime();
+    if(conn->IsShutdown())
+    {
+        if(elapsed_time > Seconds{GetAppConfig().close_delay()}) {
+            YLOG_INFO("<{}>主线程Update_CheckDisconnetion: 时辰已到，正式关闭用户连接，回收套接字资源！", conn->GetSocketFD())
+
+            //! 应用层处理
+            if(m_notifierDisconnect)
+                m_notifierDisconnect(conn);
+
+            //! 核心层处理
+            m_closeUsers.push_back(conn->GetName());
+            conn->Close();
+        }
+    }
+
+
+    //! ①检查已连接的用户是否在指定时间内通过安全验证，若未通过，则shutdown连接
+    elapsed_time = Timestamp::Now() - conn->GetConnectedTime();
+    if (userdata->isConnected() and !userdata->isSecure()
+        and elapsed_time > Seconds{GetAppConfig().time_security_max()})
+    {
+        YLOG_WARN("<{}>主线程Update_CheckDisconnetion: 用户安全验证超时，关闭用户连接！", conn->GetSocketFD());
+        conn->Shutdown();
+        return;
+    }
+
+    //! ②检查是否收到心跳包，如未收到，则shutdown连接
+    elapsed_time = Timestamp::Now() - conn->GetHeartTime();
+    if (elapsed_time > Seconds{GetAppConfig().time_heart_max()}) {
+        YLOG_WARN("<{}>主线程Update_CheckDisconnetion: 用户心跳包超时，关闭用户连接！", conn->GetSocketFD());
+        conn->Shutdown();
+        return;
+    }
+
+
+}
+
+void GameServer::Update() {
+
+
+    // if(m_IsUpdating) {
+    //     YLOG_FATAL("==========Update时间过长，应该改进程序！！！！！===========")
+    // }
+
+    std::lock_guard lg{m_users_mutex};
+
+
+    m_IsUpdating = true;
+
+    // YLOG_DEBUG("Updating!!!!!!!!");
+
+    for(auto & p: m_users)
+    {
+        auto userdata = p.second;
+        auto conn = userdata->GetConnection();
+
+        CheckDisconnections_Update(userdata);
+    }
+
+
+    for(const auto & name: m_closeUsers) {
+        m_users.erase(name);
+    }
+
+    m_IsUpdating = false;
+}
+
 UserBaseDataPtr GameServer::FindUser(const std::string & conn) {
+    std::lock_guard lg{m_users_mutex};
+
     auto it = m_users.find(conn);
     return (it == m_users.end()) ? nullptr : it->second;
 }
 
-void GameServer::SetUserFree(const UserBaseDataPtr &userdata) {
+void GameServer::FreeUser(const UserBaseDataPtr &userdata) {
+    std::lock_guard lg{m_users_mutex};
+
     m_users.erase(userdata->GetConnection()->GetName());
 }
 
-void GameServer::Update() {
-    m_loop->Loop();
+void GameServer::AddUser(const std::string &name, const UserBaseDataPtr & userdata) {
+    std::lock_guard lg{m_users_mutex};
+
+    m_users[userdata->GetConnection()->GetName()] = userdata;
 }
 
 

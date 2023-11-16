@@ -31,7 +31,7 @@ class Buffer;
 class Timestamp;
 class Connector;
 
-using F_TimerCallback = std::function<void()>;
+using F_TaskCallback = std::function<void()>;
 using TimerID = int64_t;
 
 using TcpConnectionPtr = std::shared_ptr<TcpConnection>;

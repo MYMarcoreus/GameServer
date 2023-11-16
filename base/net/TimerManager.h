@@ -35,7 +35,7 @@ public:
     };
 
     ///@brief 在定时器列表中新建一个定时器
-    TimerID AddTimer(F_TimerCallback cb, Timestamp expiredTime, Microseconds  interval = 0us);
+    TimerID AddTimer(F_TaskCallback cb, Timestamp expiredTime, Microseconds  interval = 0us);
 
     ///@brief 按照定时器id来取消定时器
     void CancelTimer(TimerID timerid);

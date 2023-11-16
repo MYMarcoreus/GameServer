@@ -230,8 +230,8 @@ class PlayerBaseData PROTOBUF_FINAL :
 
   enum : int {
     kConnNameFieldNumber = 2,
-    kPlayerMoveFieldNumber = 6,
-    kAniJumpAndGravityFieldNumber = 7,
+    kMovementFieldNumber = 6,
+    kJumpAndGravityFieldNumber = 7,
     kUidFieldNumber = 1,
     kStateFieldNumber = 3,
     kHpCurrentFieldNumber = 4,
@@ -262,41 +262,41 @@ class PlayerBaseData PROTOBUF_FINAL :
   std::string* _internal_mutable_conn_name();
   public:
 
-  // .yy.protocol.app.PlayerMove player_move = 6;
-  bool has_player_move() const;
+  // .yy.protocol.app.PlayerMove movement = 6;
+  bool has_movement() const;
   private:
-  bool _internal_has_player_move() const;
+  bool _internal_has_movement() const;
   public:
-  void clear_player_move();
-  const ::yy::protocol::app::PlayerMove& player_move() const;
-  ::yy::protocol::app::PlayerMove* release_player_move();
-  ::yy::protocol::app::PlayerMove* mutable_player_move();
-  void set_allocated_player_move(::yy::protocol::app::PlayerMove* player_move);
+  void clear_movement();
+  const ::yy::protocol::app::PlayerMove& movement() const;
+  ::yy::protocol::app::PlayerMove* release_movement();
+  ::yy::protocol::app::PlayerMove* mutable_movement();
+  void set_allocated_movement(::yy::protocol::app::PlayerMove* movement);
   private:
-  const ::yy::protocol::app::PlayerMove& _internal_player_move() const;
-  ::yy::protocol::app::PlayerMove* _internal_mutable_player_move();
+  const ::yy::protocol::app::PlayerMove& _internal_movement() const;
+  ::yy::protocol::app::PlayerMove* _internal_mutable_movement();
   public:
-  void unsafe_arena_set_allocated_player_move(
-      ::yy::protocol::app::PlayerMove* player_move);
-  ::yy::protocol::app::PlayerMove* unsafe_arena_release_player_move();
+  void unsafe_arena_set_allocated_movement(
+      ::yy::protocol::app::PlayerMove* movement);
+  ::yy::protocol::app::PlayerMove* unsafe_arena_release_movement();
 
-  // .yy.protocol.app.PlayerJumpAndGravity ani_jump_and_gravity = 7;
-  bool has_ani_jump_and_gravity() const;
+  // .yy.protocol.app.PlayerJumpAndGravity jump_and_gravity = 7;
+  bool has_jump_and_gravity() const;
   private:
-  bool _internal_has_ani_jump_and_gravity() const;
+  bool _internal_has_jump_and_gravity() const;
   public:
-  void clear_ani_jump_and_gravity();
-  const ::yy::protocol::app::PlayerJumpAndGravity& ani_jump_and_gravity() const;
-  ::yy::protocol::app::PlayerJumpAndGravity* release_ani_jump_and_gravity();
-  ::yy::protocol::app::PlayerJumpAndGravity* mutable_ani_jump_and_gravity();
-  void set_allocated_ani_jump_and_gravity(::yy::protocol::app::PlayerJumpAndGravity* ani_jump_and_gravity);
+  void clear_jump_and_gravity();
+  const ::yy::protocol::app::PlayerJumpAndGravity& jump_and_gravity() const;
+  ::yy::protocol::app::PlayerJumpAndGravity* release_jump_and_gravity();
+  ::yy::protocol::app::PlayerJumpAndGravity* mutable_jump_and_gravity();
+  void set_allocated_jump_and_gravity(::yy::protocol::app::PlayerJumpAndGravity* jump_and_gravity);
   private:
-  const ::yy::protocol::app::PlayerJumpAndGravity& _internal_ani_jump_and_gravity() const;
-  ::yy::protocol::app::PlayerJumpAndGravity* _internal_mutable_ani_jump_and_gravity();
+  const ::yy::protocol::app::PlayerJumpAndGravity& _internal_jump_and_gravity() const;
+  ::yy::protocol::app::PlayerJumpAndGravity* _internal_mutable_jump_and_gravity();
   public:
-  void unsafe_arena_set_allocated_ani_jump_and_gravity(
-      ::yy::protocol::app::PlayerJumpAndGravity* ani_jump_and_gravity);
-  ::yy::protocol::app::PlayerJumpAndGravity* unsafe_arena_release_ani_jump_and_gravity();
+  void unsafe_arena_set_allocated_jump_and_gravity(
+      ::yy::protocol::app::PlayerJumpAndGravity* jump_and_gravity);
+  ::yy::protocol::app::PlayerJumpAndGravity* unsafe_arena_release_jump_and_gravity();
 
   // uint32 uid = 1;
   void clear_uid();
@@ -342,8 +342,8 @@ class PlayerBaseData PROTOBUF_FINAL :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr conn_name_;
-  ::yy::protocol::app::PlayerMove* player_move_;
-  ::yy::protocol::app::PlayerJumpAndGravity* ani_jump_and_gravity_;
+  ::yy::protocol::app::PlayerMove* movement_;
+  ::yy::protocol::app::PlayerJumpAndGravity* jump_and_gravity_;
   ::PROTOBUF_NAMESPACE_ID::uint32 uid_;
   ::PROTOBUF_NAMESPACE_ID::int32 state_;
   ::PROTOBUF_NAMESPACE_ID::int32 hp_current_;
@@ -854,15 +854,15 @@ class PlayerLeave PROTOBUF_FINAL :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kUidFieldNumber = 1,
+    kLeaverUidFieldNumber = 1,
   };
-  // uint32 uid = 1;
-  void clear_uid();
-  ::PROTOBUF_NAMESPACE_ID::uint32 uid() const;
-  void set_uid(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  // uint32 leaver_uid = 1;
+  void clear_leaver_uid();
+  ::PROTOBUF_NAMESPACE_ID::uint32 leaver_uid() const;
+  void set_leaver_uid(::PROTOBUF_NAMESPACE_ID::uint32 value);
   private:
-  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_uid() const;
-  void _internal_set_uid(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_leaver_uid() const;
+  void _internal_set_leaver_uid(::PROTOBUF_NAMESPACE_ID::uint32 value);
   public:
 
   // @@protoc_insertion_point(class_scope:yy.protocol.app.PlayerLeave)
@@ -872,7 +872,7 @@ class PlayerLeave PROTOBUF_FINAL :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  ::PROTOBUF_NAMESPACE_ID::uint32 uid_;
+  ::PROTOBUF_NAMESPACE_ID::uint32 leaver_uid_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_player_2eproto;
 };
@@ -991,26 +991,26 @@ class SelfMovement PROTOBUF_FINAL :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kSelfMoveFieldNumber = 2,
+    kMovementFieldNumber = 2,
     kUidFieldNumber = 1,
   };
-  // .yy.protocol.app.PlayerMove self_move = 2;
-  bool has_self_move() const;
+  // .yy.protocol.app.PlayerMove movement = 2;
+  bool has_movement() const;
   private:
-  bool _internal_has_self_move() const;
+  bool _internal_has_movement() const;
   public:
-  void clear_self_move();
-  const ::yy::protocol::app::PlayerMove& self_move() const;
-  ::yy::protocol::app::PlayerMove* release_self_move();
-  ::yy::protocol::app::PlayerMove* mutable_self_move();
-  void set_allocated_self_move(::yy::protocol::app::PlayerMove* self_move);
+  void clear_movement();
+  const ::yy::protocol::app::PlayerMove& movement() const;
+  ::yy::protocol::app::PlayerMove* release_movement();
+  ::yy::protocol::app::PlayerMove* mutable_movement();
+  void set_allocated_movement(::yy::protocol::app::PlayerMove* movement);
   private:
-  const ::yy::protocol::app::PlayerMove& _internal_self_move() const;
-  ::yy::protocol::app::PlayerMove* _internal_mutable_self_move();
+  const ::yy::protocol::app::PlayerMove& _internal_movement() const;
+  ::yy::protocol::app::PlayerMove* _internal_mutable_movement();
   public:
-  void unsafe_arena_set_allocated_self_move(
-      ::yy::protocol::app::PlayerMove* self_move);
-  ::yy::protocol::app::PlayerMove* unsafe_arena_release_self_move();
+  void unsafe_arena_set_allocated_movement(
+      ::yy::protocol::app::PlayerMove* movement);
+  ::yy::protocol::app::PlayerMove* unsafe_arena_release_movement();
 
   // uint32 uid = 1;
   void clear_uid();
@@ -1028,7 +1028,7 @@ class SelfMovement PROTOBUF_FINAL :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  ::yy::protocol::app::PlayerMove* self_move_;
+  ::yy::protocol::app::PlayerMove* movement_;
   ::PROTOBUF_NAMESPACE_ID::uint32 uid_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_player_2eproto;
@@ -1148,26 +1148,26 @@ class OtherMovement PROTOBUF_FINAL :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kOtherMoveFieldNumber = 2,
+    kMovementFieldNumber = 2,
     kUidFieldNumber = 1,
   };
-  // .yy.protocol.app.PlayerMove other_move = 2;
-  bool has_other_move() const;
+  // .yy.protocol.app.PlayerMove movement = 2;
+  bool has_movement() const;
   private:
-  bool _internal_has_other_move() const;
+  bool _internal_has_movement() const;
   public:
-  void clear_other_move();
-  const ::yy::protocol::app::PlayerMove& other_move() const;
-  ::yy::protocol::app::PlayerMove* release_other_move();
-  ::yy::protocol::app::PlayerMove* mutable_other_move();
-  void set_allocated_other_move(::yy::protocol::app::PlayerMove* other_move);
+  void clear_movement();
+  const ::yy::protocol::app::PlayerMove& movement() const;
+  ::yy::protocol::app::PlayerMove* release_movement();
+  ::yy::protocol::app::PlayerMove* mutable_movement();
+  void set_allocated_movement(::yy::protocol::app::PlayerMove* movement);
   private:
-  const ::yy::protocol::app::PlayerMove& _internal_other_move() const;
-  ::yy::protocol::app::PlayerMove* _internal_mutable_other_move();
+  const ::yy::protocol::app::PlayerMove& _internal_movement() const;
+  ::yy::protocol::app::PlayerMove* _internal_mutable_movement();
   public:
-  void unsafe_arena_set_allocated_other_move(
-      ::yy::protocol::app::PlayerMove* other_move);
-  ::yy::protocol::app::PlayerMove* unsafe_arena_release_other_move();
+  void unsafe_arena_set_allocated_movement(
+      ::yy::protocol::app::PlayerMove* movement);
+  ::yy::protocol::app::PlayerMove* unsafe_arena_release_movement();
 
   // uint32 uid = 1;
   void clear_uid();
@@ -1185,7 +1185,7 @@ class OtherMovement PROTOBUF_FINAL :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  ::yy::protocol::app::PlayerMove* other_move_;
+  ::yy::protocol::app::PlayerMove* movement_;
   ::PROTOBUF_NAMESPACE_ID::uint32 uid_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_player_2eproto;
@@ -1305,26 +1305,26 @@ class SelfJumpAndGravity PROTOBUF_FINAL :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kSelfJumpAndGravityFieldNumber = 2,
+    kJumpAndGravityFieldNumber = 2,
     kUidFieldNumber = 1,
   };
-  // .yy.protocol.app.PlayerJumpAndGravity self_jump_and_gravity = 2;
-  bool has_self_jump_and_gravity() const;
+  // .yy.protocol.app.PlayerJumpAndGravity jump_and_gravity = 2;
+  bool has_jump_and_gravity() const;
   private:
-  bool _internal_has_self_jump_and_gravity() const;
+  bool _internal_has_jump_and_gravity() const;
   public:
-  void clear_self_jump_and_gravity();
-  const ::yy::protocol::app::PlayerJumpAndGravity& self_jump_and_gravity() const;
-  ::yy::protocol::app::PlayerJumpAndGravity* release_self_jump_and_gravity();
-  ::yy::protocol::app::PlayerJumpAndGravity* mutable_self_jump_and_gravity();
-  void set_allocated_self_jump_and_gravity(::yy::protocol::app::PlayerJumpAndGravity* self_jump_and_gravity);
+  void clear_jump_and_gravity();
+  const ::yy::protocol::app::PlayerJumpAndGravity& jump_and_gravity() const;
+  ::yy::protocol::app::PlayerJumpAndGravity* release_jump_and_gravity();
+  ::yy::protocol::app::PlayerJumpAndGravity* mutable_jump_and_gravity();
+  void set_allocated_jump_and_gravity(::yy::protocol::app::PlayerJumpAndGravity* jump_and_gravity);
   private:
-  const ::yy::protocol::app::PlayerJumpAndGravity& _internal_self_jump_and_gravity() const;
-  ::yy::protocol::app::PlayerJumpAndGravity* _internal_mutable_self_jump_and_gravity();
+  const ::yy::protocol::app::PlayerJumpAndGravity& _internal_jump_and_gravity() const;
+  ::yy::protocol::app::PlayerJumpAndGravity* _internal_mutable_jump_and_gravity();
   public:
-  void unsafe_arena_set_allocated_self_jump_and_gravity(
-      ::yy::protocol::app::PlayerJumpAndGravity* self_jump_and_gravity);
-  ::yy::protocol::app::PlayerJumpAndGravity* unsafe_arena_release_self_jump_and_gravity();
+  void unsafe_arena_set_allocated_jump_and_gravity(
+      ::yy::protocol::app::PlayerJumpAndGravity* jump_and_gravity);
+  ::yy::protocol::app::PlayerJumpAndGravity* unsafe_arena_release_jump_and_gravity();
 
   // uint32 uid = 1;
   void clear_uid();
@@ -1342,7 +1342,7 @@ class SelfJumpAndGravity PROTOBUF_FINAL :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  ::yy::protocol::app::PlayerJumpAndGravity* self_jump_and_gravity_;
+  ::yy::protocol::app::PlayerJumpAndGravity* jump_and_gravity_;
   ::PROTOBUF_NAMESPACE_ID::uint32 uid_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_player_2eproto;
@@ -1462,26 +1462,26 @@ class OtherJumpAndGravity PROTOBUF_FINAL :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kOtherJumpAndGravityFieldNumber = 2,
+    kJumpAndGravityFieldNumber = 2,
     kUidFieldNumber = 1,
   };
-  // .yy.protocol.app.PlayerJumpAndGravity other_jump_and_gravity = 2;
-  bool has_other_jump_and_gravity() const;
+  // .yy.protocol.app.PlayerJumpAndGravity jump_and_gravity = 2;
+  bool has_jump_and_gravity() const;
   private:
-  bool _internal_has_other_jump_and_gravity() const;
+  bool _internal_has_jump_and_gravity() const;
   public:
-  void clear_other_jump_and_gravity();
-  const ::yy::protocol::app::PlayerJumpAndGravity& other_jump_and_gravity() const;
-  ::yy::protocol::app::PlayerJumpAndGravity* release_other_jump_and_gravity();
-  ::yy::protocol::app::PlayerJumpAndGravity* mutable_other_jump_and_gravity();
-  void set_allocated_other_jump_and_gravity(::yy::protocol::app::PlayerJumpAndGravity* other_jump_and_gravity);
+  void clear_jump_and_gravity();
+  const ::yy::protocol::app::PlayerJumpAndGravity& jump_and_gravity() const;
+  ::yy::protocol::app::PlayerJumpAndGravity* release_jump_and_gravity();
+  ::yy::protocol::app::PlayerJumpAndGravity* mutable_jump_and_gravity();
+  void set_allocated_jump_and_gravity(::yy::protocol::app::PlayerJumpAndGravity* jump_and_gravity);
   private:
-  const ::yy::protocol::app::PlayerJumpAndGravity& _internal_other_jump_and_gravity() const;
-  ::yy::protocol::app::PlayerJumpAndGravity* _internal_mutable_other_jump_and_gravity();
+  const ::yy::protocol::app::PlayerJumpAndGravity& _internal_jump_and_gravity() const;
+  ::yy::protocol::app::PlayerJumpAndGravity* _internal_mutable_jump_and_gravity();
   public:
-  void unsafe_arena_set_allocated_other_jump_and_gravity(
-      ::yy::protocol::app::PlayerJumpAndGravity* other_jump_and_gravity);
-  ::yy::protocol::app::PlayerJumpAndGravity* unsafe_arena_release_other_jump_and_gravity();
+  void unsafe_arena_set_allocated_jump_and_gravity(
+      ::yy::protocol::app::PlayerJumpAndGravity* jump_and_gravity);
+  ::yy::protocol::app::PlayerJumpAndGravity* unsafe_arena_release_jump_and_gravity();
 
   // uint32 uid = 1;
   void clear_uid();
@@ -1499,7 +1499,7 @@ class OtherJumpAndGravity PROTOBUF_FINAL :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  ::yy::protocol::app::PlayerJumpAndGravity* other_jump_and_gravity_;
+  ::yy::protocol::app::PlayerJumpAndGravity* jump_and_gravity_;
   ::PROTOBUF_NAMESPACE_ID::uint32 uid_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_player_2eproto;
@@ -1618,6 +1618,34 @@ class LoginRequest PROTOBUF_FINAL :
 
   // accessors -------------------------------------------------------
 
+  enum : int {
+    kConnNameFieldNumber = 1,
+  };
+  // bytes conn_name = 1;
+  void clear_conn_name();
+  const std::string& conn_name() const;
+  void set_conn_name(const std::string& value);
+  void set_conn_name(std::string&& value);
+  void set_conn_name(const char* value);
+  void set_conn_name(const void* value, size_t size);
+  std::string* mutable_conn_name();
+  std::string* release_conn_name();
+  void set_allocated_conn_name(std::string* conn_name);
+  GOOGLE_PROTOBUF_RUNTIME_DEPRECATED("The unsafe_arena_ accessors for"
+  "    string fields are deprecated and will be removed in a"
+  "    future release.")
+  std::string* unsafe_arena_release_conn_name();
+  GOOGLE_PROTOBUF_RUNTIME_DEPRECATED("The unsafe_arena_ accessors for"
+  "    string fields are deprecated and will be removed in a"
+  "    future release.")
+  void unsafe_arena_set_allocated_conn_name(
+      std::string* conn_name);
+  private:
+  const std::string& _internal_conn_name() const;
+  void _internal_set_conn_name(const std::string& value);
+  std::string* _internal_mutable_conn_name();
+  public:
+
   // @@protoc_insertion_point(class_scope:yy.protocol.app.LoginRequest)
  private:
   class _Internal;
@@ -1625,6 +1653,7 @@ class LoginRequest PROTOBUF_FINAL :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr conn_name_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_player_2eproto;
 };
@@ -1920,15 +1949,25 @@ class OtherPlayerDataRequest PROTOBUF_FINAL :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kUidFieldNumber = 1,
+    kRequesterUidFieldNumber = 1,
+    kRequestedUidFieldNumber = 2,
   };
-  // uint32 uid = 1;
-  void clear_uid();
-  ::PROTOBUF_NAMESPACE_ID::uint32 uid() const;
-  void set_uid(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  // uint32 requester_uid = 1;
+  void clear_requester_uid();
+  ::PROTOBUF_NAMESPACE_ID::uint32 requester_uid() const;
+  void set_requester_uid(::PROTOBUF_NAMESPACE_ID::uint32 value);
   private:
-  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_uid() const;
-  void _internal_set_uid(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_requester_uid() const;
+  void _internal_set_requester_uid(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  public:
+
+  // uint32 requested_uid = 2;
+  void clear_requested_uid();
+  ::PROTOBUF_NAMESPACE_ID::uint32 requested_uid() const;
+  void set_requested_uid(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_requested_uid() const;
+  void _internal_set_requested_uid(::PROTOBUF_NAMESPACE_ID::uint32 value);
   public:
 
   // @@protoc_insertion_point(class_scope:yy.protocol.app.OtherPlayerDataRequest)
@@ -1938,7 +1977,8 @@ class OtherPlayerDataRequest PROTOBUF_FINAL :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  ::PROTOBUF_NAMESPACE_ID::uint32 uid_;
+  ::PROTOBUF_NAMESPACE_ID::uint32 requester_uid_;
+  ::PROTOBUF_NAMESPACE_ID::uint32 requested_uid_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_player_2eproto;
 };
@@ -2260,166 +2300,166 @@ inline void PlayerBaseData::set_hp_max(::PROTOBUF_NAMESPACE_ID::int32 value) {
   // @@protoc_insertion_point(field_set:yy.protocol.app.PlayerBaseData.hp_max)
 }
 
-// .yy.protocol.app.PlayerMove player_move = 6;
-inline bool PlayerBaseData::_internal_has_player_move() const {
-  return this != internal_default_instance() && player_move_ != nullptr;
+// .yy.protocol.app.PlayerMove movement = 6;
+inline bool PlayerBaseData::_internal_has_movement() const {
+  return this != internal_default_instance() && movement_ != nullptr;
 }
-inline bool PlayerBaseData::has_player_move() const {
-  return _internal_has_player_move();
+inline bool PlayerBaseData::has_movement() const {
+  return _internal_has_movement();
 }
-inline void PlayerBaseData::clear_player_move() {
-  if (GetArena() == nullptr && player_move_ != nullptr) {
-    delete player_move_;
+inline void PlayerBaseData::clear_movement() {
+  if (GetArena() == nullptr && movement_ != nullptr) {
+    delete movement_;
   }
-  player_move_ = nullptr;
+  movement_ = nullptr;
 }
-inline const ::yy::protocol::app::PlayerMove& PlayerBaseData::_internal_player_move() const {
-  const ::yy::protocol::app::PlayerMove* p = player_move_;
+inline const ::yy::protocol::app::PlayerMove& PlayerBaseData::_internal_movement() const {
+  const ::yy::protocol::app::PlayerMove* p = movement_;
   return p != nullptr ? *p : *reinterpret_cast<const ::yy::protocol::app::PlayerMove*>(
       &::yy::protocol::app::_PlayerMove_default_instance_);
 }
-inline const ::yy::protocol::app::PlayerMove& PlayerBaseData::player_move() const {
-  // @@protoc_insertion_point(field_get:yy.protocol.app.PlayerBaseData.player_move)
-  return _internal_player_move();
+inline const ::yy::protocol::app::PlayerMove& PlayerBaseData::movement() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.PlayerBaseData.movement)
+  return _internal_movement();
 }
-inline void PlayerBaseData::unsafe_arena_set_allocated_player_move(
-    ::yy::protocol::app::PlayerMove* player_move) {
+inline void PlayerBaseData::unsafe_arena_set_allocated_movement(
+    ::yy::protocol::app::PlayerMove* movement) {
   if (GetArena() == nullptr) {
-    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(player_move_);
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(movement_);
   }
-  player_move_ = player_move;
-  if (player_move) {
+  movement_ = movement;
+  if (movement) {
     
   } else {
     
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:yy.protocol.app.PlayerBaseData.player_move)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:yy.protocol.app.PlayerBaseData.movement)
 }
-inline ::yy::protocol::app::PlayerMove* PlayerBaseData::release_player_move() {
-  auto temp = unsafe_arena_release_player_move();
+inline ::yy::protocol::app::PlayerMove* PlayerBaseData::release_movement() {
+  auto temp = unsafe_arena_release_movement();
   if (GetArena() != nullptr) {
     temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
   }
   return temp;
 }
-inline ::yy::protocol::app::PlayerMove* PlayerBaseData::unsafe_arena_release_player_move() {
-  // @@protoc_insertion_point(field_release:yy.protocol.app.PlayerBaseData.player_move)
+inline ::yy::protocol::app::PlayerMove* PlayerBaseData::unsafe_arena_release_movement() {
+  // @@protoc_insertion_point(field_release:yy.protocol.app.PlayerBaseData.movement)
   
-  ::yy::protocol::app::PlayerMove* temp = player_move_;
-  player_move_ = nullptr;
+  ::yy::protocol::app::PlayerMove* temp = movement_;
+  movement_ = nullptr;
   return temp;
 }
-inline ::yy::protocol::app::PlayerMove* PlayerBaseData::_internal_mutable_player_move() {
+inline ::yy::protocol::app::PlayerMove* PlayerBaseData::_internal_mutable_movement() {
   
-  if (player_move_ == nullptr) {
+  if (movement_ == nullptr) {
     auto* p = CreateMaybeMessage<::yy::protocol::app::PlayerMove>(GetArena());
-    player_move_ = p;
+    movement_ = p;
   }
-  return player_move_;
+  return movement_;
 }
-inline ::yy::protocol::app::PlayerMove* PlayerBaseData::mutable_player_move() {
-  // @@protoc_insertion_point(field_mutable:yy.protocol.app.PlayerBaseData.player_move)
-  return _internal_mutable_player_move();
+inline ::yy::protocol::app::PlayerMove* PlayerBaseData::mutable_movement() {
+  // @@protoc_insertion_point(field_mutable:yy.protocol.app.PlayerBaseData.movement)
+  return _internal_mutable_movement();
 }
-inline void PlayerBaseData::set_allocated_player_move(::yy::protocol::app::PlayerMove* player_move) {
+inline void PlayerBaseData::set_allocated_movement(::yy::protocol::app::PlayerMove* movement) {
   ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArena();
   if (message_arena == nullptr) {
-    delete player_move_;
+    delete movement_;
   }
-  if (player_move) {
+  if (movement) {
     ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
-      ::PROTOBUF_NAMESPACE_ID::Arena::GetArena(player_move);
+      ::PROTOBUF_NAMESPACE_ID::Arena::GetArena(movement);
     if (message_arena != submessage_arena) {
-      player_move = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
-          message_arena, player_move, submessage_arena);
+      movement = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, movement, submessage_arena);
     }
     
   } else {
     
   }
-  player_move_ = player_move;
-  // @@protoc_insertion_point(field_set_allocated:yy.protocol.app.PlayerBaseData.player_move)
+  movement_ = movement;
+  // @@protoc_insertion_point(field_set_allocated:yy.protocol.app.PlayerBaseData.movement)
 }
 
-// .yy.protocol.app.PlayerJumpAndGravity ani_jump_and_gravity = 7;
-inline bool PlayerBaseData::_internal_has_ani_jump_and_gravity() const {
-  return this != internal_default_instance() && ani_jump_and_gravity_ != nullptr;
+// .yy.protocol.app.PlayerJumpAndGravity jump_and_gravity = 7;
+inline bool PlayerBaseData::_internal_has_jump_and_gravity() const {
+  return this != internal_default_instance() && jump_and_gravity_ != nullptr;
 }
-inline bool PlayerBaseData::has_ani_jump_and_gravity() const {
-  return _internal_has_ani_jump_and_gravity();
+inline bool PlayerBaseData::has_jump_and_gravity() const {
+  return _internal_has_jump_and_gravity();
 }
-inline void PlayerBaseData::clear_ani_jump_and_gravity() {
-  if (GetArena() == nullptr && ani_jump_and_gravity_ != nullptr) {
-    delete ani_jump_and_gravity_;
+inline void PlayerBaseData::clear_jump_and_gravity() {
+  if (GetArena() == nullptr && jump_and_gravity_ != nullptr) {
+    delete jump_and_gravity_;
   }
-  ani_jump_and_gravity_ = nullptr;
+  jump_and_gravity_ = nullptr;
 }
-inline const ::yy::protocol::app::PlayerJumpAndGravity& PlayerBaseData::_internal_ani_jump_and_gravity() const {
-  const ::yy::protocol::app::PlayerJumpAndGravity* p = ani_jump_and_gravity_;
+inline const ::yy::protocol::app::PlayerJumpAndGravity& PlayerBaseData::_internal_jump_and_gravity() const {
+  const ::yy::protocol::app::PlayerJumpAndGravity* p = jump_and_gravity_;
   return p != nullptr ? *p : *reinterpret_cast<const ::yy::protocol::app::PlayerJumpAndGravity*>(
       &::yy::protocol::app::_PlayerJumpAndGravity_default_instance_);
 }
-inline const ::yy::protocol::app::PlayerJumpAndGravity& PlayerBaseData::ani_jump_and_gravity() const {
-  // @@protoc_insertion_point(field_get:yy.protocol.app.PlayerBaseData.ani_jump_and_gravity)
-  return _internal_ani_jump_and_gravity();
+inline const ::yy::protocol::app::PlayerJumpAndGravity& PlayerBaseData::jump_and_gravity() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.PlayerBaseData.jump_and_gravity)
+  return _internal_jump_and_gravity();
 }
-inline void PlayerBaseData::unsafe_arena_set_allocated_ani_jump_and_gravity(
-    ::yy::protocol::app::PlayerJumpAndGravity* ani_jump_and_gravity) {
+inline void PlayerBaseData::unsafe_arena_set_allocated_jump_and_gravity(
+    ::yy::protocol::app::PlayerJumpAndGravity* jump_and_gravity) {
   if (GetArena() == nullptr) {
-    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(ani_jump_and_gravity_);
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(jump_and_gravity_);
   }
-  ani_jump_and_gravity_ = ani_jump_and_gravity;
-  if (ani_jump_and_gravity) {
+  jump_and_gravity_ = jump_and_gravity;
+  if (jump_and_gravity) {
     
   } else {
     
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:yy.protocol.app.PlayerBaseData.ani_jump_and_gravity)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:yy.protocol.app.PlayerBaseData.jump_and_gravity)
 }
-inline ::yy::protocol::app::PlayerJumpAndGravity* PlayerBaseData::release_ani_jump_and_gravity() {
-  auto temp = unsafe_arena_release_ani_jump_and_gravity();
+inline ::yy::protocol::app::PlayerJumpAndGravity* PlayerBaseData::release_jump_and_gravity() {
+  auto temp = unsafe_arena_release_jump_and_gravity();
   if (GetArena() != nullptr) {
     temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
   }
   return temp;
 }
-inline ::yy::protocol::app::PlayerJumpAndGravity* PlayerBaseData::unsafe_arena_release_ani_jump_and_gravity() {
-  // @@protoc_insertion_point(field_release:yy.protocol.app.PlayerBaseData.ani_jump_and_gravity)
+inline ::yy::protocol::app::PlayerJumpAndGravity* PlayerBaseData::unsafe_arena_release_jump_and_gravity() {
+  // @@protoc_insertion_point(field_release:yy.protocol.app.PlayerBaseData.jump_and_gravity)
   
-  ::yy::protocol::app::PlayerJumpAndGravity* temp = ani_jump_and_gravity_;
-  ani_jump_and_gravity_ = nullptr;
+  ::yy::protocol::app::PlayerJumpAndGravity* temp = jump_and_gravity_;
+  jump_and_gravity_ = nullptr;
   return temp;
 }
-inline ::yy::protocol::app::PlayerJumpAndGravity* PlayerBaseData::_internal_mutable_ani_jump_and_gravity() {
+inline ::yy::protocol::app::PlayerJumpAndGravity* PlayerBaseData::_internal_mutable_jump_and_gravity() {
   
-  if (ani_jump_and_gravity_ == nullptr) {
+  if (jump_and_gravity_ == nullptr) {
     auto* p = CreateMaybeMessage<::yy::protocol::app::PlayerJumpAndGravity>(GetArena());
-    ani_jump_and_gravity_ = p;
+    jump_and_gravity_ = p;
   }
-  return ani_jump_and_gravity_;
+  return jump_and_gravity_;
 }
-inline ::yy::protocol::app::PlayerJumpAndGravity* PlayerBaseData::mutable_ani_jump_and_gravity() {
-  // @@protoc_insertion_point(field_mutable:yy.protocol.app.PlayerBaseData.ani_jump_and_gravity)
-  return _internal_mutable_ani_jump_and_gravity();
+inline ::yy::protocol::app::PlayerJumpAndGravity* PlayerBaseData::mutable_jump_and_gravity() {
+  // @@protoc_insertion_point(field_mutable:yy.protocol.app.PlayerBaseData.jump_and_gravity)
+  return _internal_mutable_jump_and_gravity();
 }
-inline void PlayerBaseData::set_allocated_ani_jump_and_gravity(::yy::protocol::app::PlayerJumpAndGravity* ani_jump_and_gravity) {
+inline void PlayerBaseData::set_allocated_jump_and_gravity(::yy::protocol::app::PlayerJumpAndGravity* jump_and_gravity) {
   ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArena();
   if (message_arena == nullptr) {
-    delete ani_jump_and_gravity_;
+    delete jump_and_gravity_;
   }
-  if (ani_jump_and_gravity) {
+  if (jump_and_gravity) {
     ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
-      ::PROTOBUF_NAMESPACE_ID::Arena::GetArena(ani_jump_and_gravity);
+      ::PROTOBUF_NAMESPACE_ID::Arena::GetArena(jump_and_gravity);
     if (message_arena != submessage_arena) {
-      ani_jump_and_gravity = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
-          message_arena, ani_jump_and_gravity, submessage_arena);
+      jump_and_gravity = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, jump_and_gravity, submessage_arena);
     }
     
   } else {
     
   }
-  ani_jump_and_gravity_ = ani_jump_and_gravity;
-  // @@protoc_insertion_point(field_set_allocated:yy.protocol.app.PlayerBaseData.ani_jump_and_gravity)
+  jump_and_gravity_ = jump_and_gravity;
+  // @@protoc_insertion_point(field_set_allocated:yy.protocol.app.PlayerBaseData.jump_and_gravity)
 }
 
 // -------------------------------------------------------------------
@@ -2777,24 +2817,24 @@ inline void PlayerJumpAndGravity::set_ani_is_freefall(bool value) {
 
 // PlayerLeave
 
-// uint32 uid = 1;
-inline void PlayerLeave::clear_uid() {
-  uid_ = 0u;
+// uint32 leaver_uid = 1;
+inline void PlayerLeave::clear_leaver_uid() {
+  leaver_uid_ = 0u;
 }
-inline ::PROTOBUF_NAMESPACE_ID::uint32 PlayerLeave::_internal_uid() const {
-  return uid_;
+inline ::PROTOBUF_NAMESPACE_ID::uint32 PlayerLeave::_internal_leaver_uid() const {
+  return leaver_uid_;
 }
-inline ::PROTOBUF_NAMESPACE_ID::uint32 PlayerLeave::uid() const {
-  // @@protoc_insertion_point(field_get:yy.protocol.app.PlayerLeave.uid)
-  return _internal_uid();
+inline ::PROTOBUF_NAMESPACE_ID::uint32 PlayerLeave::leaver_uid() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.PlayerLeave.leaver_uid)
+  return _internal_leaver_uid();
 }
-inline void PlayerLeave::_internal_set_uid(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+inline void PlayerLeave::_internal_set_leaver_uid(::PROTOBUF_NAMESPACE_ID::uint32 value) {
   
-  uid_ = value;
+  leaver_uid_ = value;
 }
-inline void PlayerLeave::set_uid(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  _internal_set_uid(value);
-  // @@protoc_insertion_point(field_set:yy.protocol.app.PlayerLeave.uid)
+inline void PlayerLeave::set_leaver_uid(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+  _internal_set_leaver_uid(value);
+  // @@protoc_insertion_point(field_set:yy.protocol.app.PlayerLeave.leaver_uid)
 }
 
 // -------------------------------------------------------------------
@@ -2821,85 +2861,85 @@ inline void SelfMovement::set_uid(::PROTOBUF_NAMESPACE_ID::uint32 value) {
   // @@protoc_insertion_point(field_set:yy.protocol.app.SelfMovement.uid)
 }
 
-// .yy.protocol.app.PlayerMove self_move = 2;
-inline bool SelfMovement::_internal_has_self_move() const {
-  return this != internal_default_instance() && self_move_ != nullptr;
+// .yy.protocol.app.PlayerMove movement = 2;
+inline bool SelfMovement::_internal_has_movement() const {
+  return this != internal_default_instance() && movement_ != nullptr;
 }
-inline bool SelfMovement::has_self_move() const {
-  return _internal_has_self_move();
+inline bool SelfMovement::has_movement() const {
+  return _internal_has_movement();
 }
-inline void SelfMovement::clear_self_move() {
-  if (GetArena() == nullptr && self_move_ != nullptr) {
-    delete self_move_;
+inline void SelfMovement::clear_movement() {
+  if (GetArena() == nullptr && movement_ != nullptr) {
+    delete movement_;
   }
-  self_move_ = nullptr;
+  movement_ = nullptr;
 }
-inline const ::yy::protocol::app::PlayerMove& SelfMovement::_internal_self_move() const {
-  const ::yy::protocol::app::PlayerMove* p = self_move_;
+inline const ::yy::protocol::app::PlayerMove& SelfMovement::_internal_movement() const {
+  const ::yy::protocol::app::PlayerMove* p = movement_;
   return p != nullptr ? *p : *reinterpret_cast<const ::yy::protocol::app::PlayerMove*>(
       &::yy::protocol::app::_PlayerMove_default_instance_);
 }
-inline const ::yy::protocol::app::PlayerMove& SelfMovement::self_move() const {
-  // @@protoc_insertion_point(field_get:yy.protocol.app.SelfMovement.self_move)
-  return _internal_self_move();
+inline const ::yy::protocol::app::PlayerMove& SelfMovement::movement() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.SelfMovement.movement)
+  return _internal_movement();
 }
-inline void SelfMovement::unsafe_arena_set_allocated_self_move(
-    ::yy::protocol::app::PlayerMove* self_move) {
+inline void SelfMovement::unsafe_arena_set_allocated_movement(
+    ::yy::protocol::app::PlayerMove* movement) {
   if (GetArena() == nullptr) {
-    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(self_move_);
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(movement_);
   }
-  self_move_ = self_move;
-  if (self_move) {
+  movement_ = movement;
+  if (movement) {
     
   } else {
     
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:yy.protocol.app.SelfMovement.self_move)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:yy.protocol.app.SelfMovement.movement)
 }
-inline ::yy::protocol::app::PlayerMove* SelfMovement::release_self_move() {
-  auto temp = unsafe_arena_release_self_move();
+inline ::yy::protocol::app::PlayerMove* SelfMovement::release_movement() {
+  auto temp = unsafe_arena_release_movement();
   if (GetArena() != nullptr) {
     temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
   }
   return temp;
 }
-inline ::yy::protocol::app::PlayerMove* SelfMovement::unsafe_arena_release_self_move() {
-  // @@protoc_insertion_point(field_release:yy.protocol.app.SelfMovement.self_move)
+inline ::yy::protocol::app::PlayerMove* SelfMovement::unsafe_arena_release_movement() {
+  // @@protoc_insertion_point(field_release:yy.protocol.app.SelfMovement.movement)
   
-  ::yy::protocol::app::PlayerMove* temp = self_move_;
-  self_move_ = nullptr;
+  ::yy::protocol::app::PlayerMove* temp = movement_;
+  movement_ = nullptr;
   return temp;
 }
-inline ::yy::protocol::app::PlayerMove* SelfMovement::_internal_mutable_self_move() {
+inline ::yy::protocol::app::PlayerMove* SelfMovement::_internal_mutable_movement() {
   
-  if (self_move_ == nullptr) {
+  if (movement_ == nullptr) {
     auto* p = CreateMaybeMessage<::yy::protocol::app::PlayerMove>(GetArena());
-    self_move_ = p;
+    movement_ = p;
   }
-  return self_move_;
+  return movement_;
 }
-inline ::yy::protocol::app::PlayerMove* SelfMovement::mutable_self_move() {
-  // @@protoc_insertion_point(field_mutable:yy.protocol.app.SelfMovement.self_move)
-  return _internal_mutable_self_move();
+inline ::yy::protocol::app::PlayerMove* SelfMovement::mutable_movement() {
+  // @@protoc_insertion_point(field_mutable:yy.protocol.app.SelfMovement.movement)
+  return _internal_mutable_movement();
 }
-inline void SelfMovement::set_allocated_self_move(::yy::protocol::app::PlayerMove* self_move) {
+inline void SelfMovement::set_allocated_movement(::yy::protocol::app::PlayerMove* movement) {
   ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArena();
   if (message_arena == nullptr) {
-    delete self_move_;
+    delete movement_;
   }
-  if (self_move) {
+  if (movement) {
     ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
-      ::PROTOBUF_NAMESPACE_ID::Arena::GetArena(self_move);
+      ::PROTOBUF_NAMESPACE_ID::Arena::GetArena(movement);
     if (message_arena != submessage_arena) {
-      self_move = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
-          message_arena, self_move, submessage_arena);
+      movement = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, movement, submessage_arena);
     }
     
   } else {
     
   }
-  self_move_ = self_move;
-  // @@protoc_insertion_point(field_set_allocated:yy.protocol.app.SelfMovement.self_move)
+  movement_ = movement;
+  // @@protoc_insertion_point(field_set_allocated:yy.protocol.app.SelfMovement.movement)
 }
 
 // -------------------------------------------------------------------
@@ -2926,85 +2966,85 @@ inline void OtherMovement::set_uid(::PROTOBUF_NAMESPACE_ID::uint32 value) {
   // @@protoc_insertion_point(field_set:yy.protocol.app.OtherMovement.uid)
 }
 
-// .yy.protocol.app.PlayerMove other_move = 2;
-inline bool OtherMovement::_internal_has_other_move() const {
-  return this != internal_default_instance() && other_move_ != nullptr;
+// .yy.protocol.app.PlayerMove movement = 2;
+inline bool OtherMovement::_internal_has_movement() const {
+  return this != internal_default_instance() && movement_ != nullptr;
 }
-inline bool OtherMovement::has_other_move() const {
-  return _internal_has_other_move();
+inline bool OtherMovement::has_movement() const {
+  return _internal_has_movement();
 }
-inline void OtherMovement::clear_other_move() {
-  if (GetArena() == nullptr && other_move_ != nullptr) {
-    delete other_move_;
+inline void OtherMovement::clear_movement() {
+  if (GetArena() == nullptr && movement_ != nullptr) {
+    delete movement_;
   }
-  other_move_ = nullptr;
+  movement_ = nullptr;
 }
-inline const ::yy::protocol::app::PlayerMove& OtherMovement::_internal_other_move() const {
-  const ::yy::protocol::app::PlayerMove* p = other_move_;
+inline const ::yy::protocol::app::PlayerMove& OtherMovement::_internal_movement() const {
+  const ::yy::protocol::app::PlayerMove* p = movement_;
   return p != nullptr ? *p : *reinterpret_cast<const ::yy::protocol::app::PlayerMove*>(
       &::yy::protocol::app::_PlayerMove_default_instance_);
 }
-inline const ::yy::protocol::app::PlayerMove& OtherMovement::other_move() const {
-  // @@protoc_insertion_point(field_get:yy.protocol.app.OtherMovement.other_move)
-  return _internal_other_move();
+inline const ::yy::protocol::app::PlayerMove& OtherMovement::movement() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.OtherMovement.movement)
+  return _internal_movement();
 }
-inline void OtherMovement::unsafe_arena_set_allocated_other_move(
-    ::yy::protocol::app::PlayerMove* other_move) {
+inline void OtherMovement::unsafe_arena_set_allocated_movement(
+    ::yy::protocol::app::PlayerMove* movement) {
   if (GetArena() == nullptr) {
-    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(other_move_);
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(movement_);
   }
-  other_move_ = other_move;
-  if (other_move) {
+  movement_ = movement;
+  if (movement) {
     
   } else {
     
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:yy.protocol.app.OtherMovement.other_move)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:yy.protocol.app.OtherMovement.movement)
 }
-inline ::yy::protocol::app::PlayerMove* OtherMovement::release_other_move() {
-  auto temp = unsafe_arena_release_other_move();
+inline ::yy::protocol::app::PlayerMove* OtherMovement::release_movement() {
+  auto temp = unsafe_arena_release_movement();
   if (GetArena() != nullptr) {
     temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
   }
   return temp;
 }
-inline ::yy::protocol::app::PlayerMove* OtherMovement::unsafe_arena_release_other_move() {
-  // @@protoc_insertion_point(field_release:yy.protocol.app.OtherMovement.other_move)
+inline ::yy::protocol::app::PlayerMove* OtherMovement::unsafe_arena_release_movement() {
+  // @@protoc_insertion_point(field_release:yy.protocol.app.OtherMovement.movement)
   
-  ::yy::protocol::app::PlayerMove* temp = other_move_;
-  other_move_ = nullptr;
+  ::yy::protocol::app::PlayerMove* temp = movement_;
+  movement_ = nullptr;
   return temp;
 }
-inline ::yy::protocol::app::PlayerMove* OtherMovement::_internal_mutable_other_move() {
+inline ::yy::protocol::app::PlayerMove* OtherMovement::_internal_mutable_movement() {
   
-  if (other_move_ == nullptr) {
+  if (movement_ == nullptr) {
     auto* p = CreateMaybeMessage<::yy::protocol::app::PlayerMove>(GetArena());
-    other_move_ = p;
+    movement_ = p;
   }
-  return other_move_;
+  return movement_;
 }
-inline ::yy::protocol::app::PlayerMove* OtherMovement::mutable_other_move() {
-  // @@protoc_insertion_point(field_mutable:yy.protocol.app.OtherMovement.other_move)
-  return _internal_mutable_other_move();
+inline ::yy::protocol::app::PlayerMove* OtherMovement::mutable_movement() {
+  // @@protoc_insertion_point(field_mutable:yy.protocol.app.OtherMovement.movement)
+  return _internal_mutable_movement();
 }
-inline void OtherMovement::set_allocated_other_move(::yy::protocol::app::PlayerMove* other_move) {
+inline void OtherMovement::set_allocated_movement(::yy::protocol::app::PlayerMove* movement) {
   ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArena();
   if (message_arena == nullptr) {
-    delete other_move_;
+    delete movement_;
   }
-  if (other_move) {
+  if (movement) {
     ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
-      ::PROTOBUF_NAMESPACE_ID::Arena::GetArena(other_move);
+      ::PROTOBUF_NAMESPACE_ID::Arena::GetArena(movement);
     if (message_arena != submessage_arena) {
-      other_move = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
-          message_arena, other_move, submessage_arena);
+      movement = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, movement, submessage_arena);
     }
     
   } else {
     
   }
-  other_move_ = other_move;
-  // @@protoc_insertion_point(field_set_allocated:yy.protocol.app.OtherMovement.other_move)
+  movement_ = movement;
+  // @@protoc_insertion_point(field_set_allocated:yy.protocol.app.OtherMovement.movement)
 }
 
 // -------------------------------------------------------------------
@@ -3031,85 +3071,85 @@ inline void SelfJumpAndGravity::set_uid(::PROTOBUF_NAMESPACE_ID::uint32 value) {
   // @@protoc_insertion_point(field_set:yy.protocol.app.SelfJumpAndGravity.uid)
 }
 
-// .yy.protocol.app.PlayerJumpAndGravity self_jump_and_gravity = 2;
-inline bool SelfJumpAndGravity::_internal_has_self_jump_and_gravity() const {
-  return this != internal_default_instance() && self_jump_and_gravity_ != nullptr;
+// .yy.protocol.app.PlayerJumpAndGravity jump_and_gravity = 2;
+inline bool SelfJumpAndGravity::_internal_has_jump_and_gravity() const {
+  return this != internal_default_instance() && jump_and_gravity_ != nullptr;
 }
-inline bool SelfJumpAndGravity::has_self_jump_and_gravity() const {
-  return _internal_has_self_jump_and_gravity();
+inline bool SelfJumpAndGravity::has_jump_and_gravity() const {
+  return _internal_has_jump_and_gravity();
 }
-inline void SelfJumpAndGravity::clear_self_jump_and_gravity() {
-  if (GetArena() == nullptr && self_jump_and_gravity_ != nullptr) {
-    delete self_jump_and_gravity_;
+inline void SelfJumpAndGravity::clear_jump_and_gravity() {
+  if (GetArena() == nullptr && jump_and_gravity_ != nullptr) {
+    delete jump_and_gravity_;
   }
-  self_jump_and_gravity_ = nullptr;
+  jump_and_gravity_ = nullptr;
 }
-inline const ::yy::protocol::app::PlayerJumpAndGravity& SelfJumpAndGravity::_internal_self_jump_and_gravity() const {
-  const ::yy::protocol::app::PlayerJumpAndGravity* p = self_jump_and_gravity_;
+inline const ::yy::protocol::app::PlayerJumpAndGravity& SelfJumpAndGravity::_internal_jump_and_gravity() const {
+  const ::yy::protocol::app::PlayerJumpAndGravity* p = jump_and_gravity_;
   return p != nullptr ? *p : *reinterpret_cast<const ::yy::protocol::app::PlayerJumpAndGravity*>(
       &::yy::protocol::app::_PlayerJumpAndGravity_default_instance_);
 }
-inline const ::yy::protocol::app::PlayerJumpAndGravity& SelfJumpAndGravity::self_jump_and_gravity() const {
-  // @@protoc_insertion_point(field_get:yy.protocol.app.SelfJumpAndGravity.self_jump_and_gravity)
-  return _internal_self_jump_and_gravity();
+inline const ::yy::protocol::app::PlayerJumpAndGravity& SelfJumpAndGravity::jump_and_gravity() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.SelfJumpAndGravity.jump_and_gravity)
+  return _internal_jump_and_gravity();
 }
-inline void SelfJumpAndGravity::unsafe_arena_set_allocated_self_jump_and_gravity(
-    ::yy::protocol::app::PlayerJumpAndGravity* self_jump_and_gravity) {
+inline void SelfJumpAndGravity::unsafe_arena_set_allocated_jump_and_gravity(
+    ::yy::protocol::app::PlayerJumpAndGravity* jump_and_gravity) {
   if (GetArena() == nullptr) {
-    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(self_jump_and_gravity_);
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(jump_and_gravity_);
   }
-  self_jump_and_gravity_ = self_jump_and_gravity;
-  if (self_jump_and_gravity) {
+  jump_and_gravity_ = jump_and_gravity;
+  if (jump_and_gravity) {
     
   } else {
     
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:yy.protocol.app.SelfJumpAndGravity.self_jump_and_gravity)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:yy.protocol.app.SelfJumpAndGravity.jump_and_gravity)
 }
-inline ::yy::protocol::app::PlayerJumpAndGravity* SelfJumpAndGravity::release_self_jump_and_gravity() {
-  auto temp = unsafe_arena_release_self_jump_and_gravity();
+inline ::yy::protocol::app::PlayerJumpAndGravity* SelfJumpAndGravity::release_jump_and_gravity() {
+  auto temp = unsafe_arena_release_jump_and_gravity();
   if (GetArena() != nullptr) {
     temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
   }
   return temp;
 }
-inline ::yy::protocol::app::PlayerJumpAndGravity* SelfJumpAndGravity::unsafe_arena_release_self_jump_and_gravity() {
-  // @@protoc_insertion_point(field_release:yy.protocol.app.SelfJumpAndGravity.self_jump_and_gravity)
+inline ::yy::protocol::app::PlayerJumpAndGravity* SelfJumpAndGravity::unsafe_arena_release_jump_and_gravity() {
+  // @@protoc_insertion_point(field_release:yy.protocol.app.SelfJumpAndGravity.jump_and_gravity)
   
-  ::yy::protocol::app::PlayerJumpAndGravity* temp = self_jump_and_gravity_;
-  self_jump_and_gravity_ = nullptr;
+  ::yy::protocol::app::PlayerJumpAndGravity* temp = jump_and_gravity_;
+  jump_and_gravity_ = nullptr;
   return temp;
 }
-inline ::yy::protocol::app::PlayerJumpAndGravity* SelfJumpAndGravity::_internal_mutable_self_jump_and_gravity() {
+inline ::yy::protocol::app::PlayerJumpAndGravity* SelfJumpAndGravity::_internal_mutable_jump_and_gravity() {
   
-  if (self_jump_and_gravity_ == nullptr) {
+  if (jump_and_gravity_ == nullptr) {
     auto* p = CreateMaybeMessage<::yy::protocol::app::PlayerJumpAndGravity>(GetArena());
-    self_jump_and_gravity_ = p;
+    jump_and_gravity_ = p;
   }
-  return self_jump_and_gravity_;
+  return jump_and_gravity_;
 }
-inline ::yy::protocol::app::PlayerJumpAndGravity* SelfJumpAndGravity::mutable_self_jump_and_gravity() {
-  // @@protoc_insertion_point(field_mutable:yy.protocol.app.SelfJumpAndGravity.self_jump_and_gravity)
-  return _internal_mutable_self_jump_and_gravity();
+inline ::yy::protocol::app::PlayerJumpAndGravity* SelfJumpAndGravity::mutable_jump_and_gravity() {
+  // @@protoc_insertion_point(field_mutable:yy.protocol.app.SelfJumpAndGravity.jump_and_gravity)
+  return _internal_mutable_jump_and_gravity();
 }
-inline void SelfJumpAndGravity::set_allocated_self_jump_and_gravity(::yy::protocol::app::PlayerJumpAndGravity* self_jump_and_gravity) {
+inline void SelfJumpAndGravity::set_allocated_jump_and_gravity(::yy::protocol::app::PlayerJumpAndGravity* jump_and_gravity) {
   ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArena();
   if (message_arena == nullptr) {
-    delete self_jump_and_gravity_;
+    delete jump_and_gravity_;
   }
-  if (self_jump_and_gravity) {
+  if (jump_and_gravity) {
     ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
-      ::PROTOBUF_NAMESPACE_ID::Arena::GetArena(self_jump_and_gravity);
+      ::PROTOBUF_NAMESPACE_ID::Arena::GetArena(jump_and_gravity);
     if (message_arena != submessage_arena) {
-      self_jump_and_gravity = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
-          message_arena, self_jump_and_gravity, submessage_arena);
+      jump_and_gravity = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, jump_and_gravity, submessage_arena);
     }
     
   } else {
     
   }
-  self_jump_and_gravity_ = self_jump_and_gravity;
-  // @@protoc_insertion_point(field_set_allocated:yy.protocol.app.SelfJumpAndGravity.self_jump_and_gravity)
+  jump_and_gravity_ = jump_and_gravity;
+  // @@protoc_insertion_point(field_set_allocated:yy.protocol.app.SelfJumpAndGravity.jump_and_gravity)
 }
 
 // -------------------------------------------------------------------
@@ -3136,90 +3176,171 @@ inline void OtherJumpAndGravity::set_uid(::PROTOBUF_NAMESPACE_ID::uint32 value) 
   // @@protoc_insertion_point(field_set:yy.protocol.app.OtherJumpAndGravity.uid)
 }
 
-// .yy.protocol.app.PlayerJumpAndGravity other_jump_and_gravity = 2;
-inline bool OtherJumpAndGravity::_internal_has_other_jump_and_gravity() const {
-  return this != internal_default_instance() && other_jump_and_gravity_ != nullptr;
+// .yy.protocol.app.PlayerJumpAndGravity jump_and_gravity = 2;
+inline bool OtherJumpAndGravity::_internal_has_jump_and_gravity() const {
+  return this != internal_default_instance() && jump_and_gravity_ != nullptr;
 }
-inline bool OtherJumpAndGravity::has_other_jump_and_gravity() const {
-  return _internal_has_other_jump_and_gravity();
+inline bool OtherJumpAndGravity::has_jump_and_gravity() const {
+  return _internal_has_jump_and_gravity();
 }
-inline void OtherJumpAndGravity::clear_other_jump_and_gravity() {
-  if (GetArena() == nullptr && other_jump_and_gravity_ != nullptr) {
-    delete other_jump_and_gravity_;
+inline void OtherJumpAndGravity::clear_jump_and_gravity() {
+  if (GetArena() == nullptr && jump_and_gravity_ != nullptr) {
+    delete jump_and_gravity_;
   }
-  other_jump_and_gravity_ = nullptr;
+  jump_and_gravity_ = nullptr;
 }
-inline const ::yy::protocol::app::PlayerJumpAndGravity& OtherJumpAndGravity::_internal_other_jump_and_gravity() const {
-  const ::yy::protocol::app::PlayerJumpAndGravity* p = other_jump_and_gravity_;
+inline const ::yy::protocol::app::PlayerJumpAndGravity& OtherJumpAndGravity::_internal_jump_and_gravity() const {
+  const ::yy::protocol::app::PlayerJumpAndGravity* p = jump_and_gravity_;
   return p != nullptr ? *p : *reinterpret_cast<const ::yy::protocol::app::PlayerJumpAndGravity*>(
       &::yy::protocol::app::_PlayerJumpAndGravity_default_instance_);
 }
-inline const ::yy::protocol::app::PlayerJumpAndGravity& OtherJumpAndGravity::other_jump_and_gravity() const {
-  // @@protoc_insertion_point(field_get:yy.protocol.app.OtherJumpAndGravity.other_jump_and_gravity)
-  return _internal_other_jump_and_gravity();
+inline const ::yy::protocol::app::PlayerJumpAndGravity& OtherJumpAndGravity::jump_and_gravity() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.OtherJumpAndGravity.jump_and_gravity)
+  return _internal_jump_and_gravity();
 }
-inline void OtherJumpAndGravity::unsafe_arena_set_allocated_other_jump_and_gravity(
-    ::yy::protocol::app::PlayerJumpAndGravity* other_jump_and_gravity) {
+inline void OtherJumpAndGravity::unsafe_arena_set_allocated_jump_and_gravity(
+    ::yy::protocol::app::PlayerJumpAndGravity* jump_and_gravity) {
   if (GetArena() == nullptr) {
-    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(other_jump_and_gravity_);
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(jump_and_gravity_);
   }
-  other_jump_and_gravity_ = other_jump_and_gravity;
-  if (other_jump_and_gravity) {
+  jump_and_gravity_ = jump_and_gravity;
+  if (jump_and_gravity) {
     
   } else {
     
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:yy.protocol.app.OtherJumpAndGravity.other_jump_and_gravity)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:yy.protocol.app.OtherJumpAndGravity.jump_and_gravity)
 }
-inline ::yy::protocol::app::PlayerJumpAndGravity* OtherJumpAndGravity::release_other_jump_and_gravity() {
-  auto temp = unsafe_arena_release_other_jump_and_gravity();
+inline ::yy::protocol::app::PlayerJumpAndGravity* OtherJumpAndGravity::release_jump_and_gravity() {
+  auto temp = unsafe_arena_release_jump_and_gravity();
   if (GetArena() != nullptr) {
     temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
   }
   return temp;
 }
-inline ::yy::protocol::app::PlayerJumpAndGravity* OtherJumpAndGravity::unsafe_arena_release_other_jump_and_gravity() {
-  // @@protoc_insertion_point(field_release:yy.protocol.app.OtherJumpAndGravity.other_jump_and_gravity)
+inline ::yy::protocol::app::PlayerJumpAndGravity* OtherJumpAndGravity::unsafe_arena_release_jump_and_gravity() {
+  // @@protoc_insertion_point(field_release:yy.protocol.app.OtherJumpAndGravity.jump_and_gravity)
   
-  ::yy::protocol::app::PlayerJumpAndGravity* temp = other_jump_and_gravity_;
-  other_jump_and_gravity_ = nullptr;
+  ::yy::protocol::app::PlayerJumpAndGravity* temp = jump_and_gravity_;
+  jump_and_gravity_ = nullptr;
   return temp;
 }
-inline ::yy::protocol::app::PlayerJumpAndGravity* OtherJumpAndGravity::_internal_mutable_other_jump_and_gravity() {
+inline ::yy::protocol::app::PlayerJumpAndGravity* OtherJumpAndGravity::_internal_mutable_jump_and_gravity() {
   
-  if (other_jump_and_gravity_ == nullptr) {
+  if (jump_and_gravity_ == nullptr) {
     auto* p = CreateMaybeMessage<::yy::protocol::app::PlayerJumpAndGravity>(GetArena());
-    other_jump_and_gravity_ = p;
+    jump_and_gravity_ = p;
   }
-  return other_jump_and_gravity_;
+  return jump_and_gravity_;
 }
-inline ::yy::protocol::app::PlayerJumpAndGravity* OtherJumpAndGravity::mutable_other_jump_and_gravity() {
-  // @@protoc_insertion_point(field_mutable:yy.protocol.app.OtherJumpAndGravity.other_jump_and_gravity)
-  return _internal_mutable_other_jump_and_gravity();
+inline ::yy::protocol::app::PlayerJumpAndGravity* OtherJumpAndGravity::mutable_jump_and_gravity() {
+  // @@protoc_insertion_point(field_mutable:yy.protocol.app.OtherJumpAndGravity.jump_and_gravity)
+  return _internal_mutable_jump_and_gravity();
 }
-inline void OtherJumpAndGravity::set_allocated_other_jump_and_gravity(::yy::protocol::app::PlayerJumpAndGravity* other_jump_and_gravity) {
+inline void OtherJumpAndGravity::set_allocated_jump_and_gravity(::yy::protocol::app::PlayerJumpAndGravity* jump_and_gravity) {
   ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArena();
   if (message_arena == nullptr) {
-    delete other_jump_and_gravity_;
+    delete jump_and_gravity_;
   }
-  if (other_jump_and_gravity) {
+  if (jump_and_gravity) {
     ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
-      ::PROTOBUF_NAMESPACE_ID::Arena::GetArena(other_jump_and_gravity);
+      ::PROTOBUF_NAMESPACE_ID::Arena::GetArena(jump_and_gravity);
     if (message_arena != submessage_arena) {
-      other_jump_and_gravity = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
-          message_arena, other_jump_and_gravity, submessage_arena);
+      jump_and_gravity = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, jump_and_gravity, submessage_arena);
     }
     
   } else {
     
   }
-  other_jump_and_gravity_ = other_jump_and_gravity;
-  // @@protoc_insertion_point(field_set_allocated:yy.protocol.app.OtherJumpAndGravity.other_jump_and_gravity)
+  jump_and_gravity_ = jump_and_gravity;
+  // @@protoc_insertion_point(field_set_allocated:yy.protocol.app.OtherJumpAndGravity.jump_and_gravity)
 }
 
 // -------------------------------------------------------------------
 
 // LoginRequest
+
+// bytes conn_name = 1;
+inline void LoginRequest::clear_conn_name() {
+  conn_name_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
+}
+inline const std::string& LoginRequest::conn_name() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.LoginRequest.conn_name)
+  return _internal_conn_name();
+}
+inline void LoginRequest::set_conn_name(const std::string& value) {
+  _internal_set_conn_name(value);
+  // @@protoc_insertion_point(field_set:yy.protocol.app.LoginRequest.conn_name)
+}
+inline std::string* LoginRequest::mutable_conn_name() {
+  // @@protoc_insertion_point(field_mutable:yy.protocol.app.LoginRequest.conn_name)
+  return _internal_mutable_conn_name();
+}
+inline const std::string& LoginRequest::_internal_conn_name() const {
+  return conn_name_.Get();
+}
+inline void LoginRequest::_internal_set_conn_name(const std::string& value) {
+  
+  conn_name_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value, GetArena());
+}
+inline void LoginRequest::set_conn_name(std::string&& value) {
+  
+  conn_name_.Set(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value), GetArena());
+  // @@protoc_insertion_point(field_set_rvalue:yy.protocol.app.LoginRequest.conn_name)
+}
+inline void LoginRequest::set_conn_name(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  conn_name_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
+              GetArena());
+  // @@protoc_insertion_point(field_set_char:yy.protocol.app.LoginRequest.conn_name)
+}
+inline void LoginRequest::set_conn_name(const void* value,
+    size_t size) {
+  
+  conn_name_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(
+      reinterpret_cast<const char*>(value), size), GetArena());
+  // @@protoc_insertion_point(field_set_pointer:yy.protocol.app.LoginRequest.conn_name)
+}
+inline std::string* LoginRequest::_internal_mutable_conn_name() {
+  
+  return conn_name_.Mutable(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
+}
+inline std::string* LoginRequest::release_conn_name() {
+  // @@protoc_insertion_point(field_release:yy.protocol.app.LoginRequest.conn_name)
+  return conn_name_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
+}
+inline void LoginRequest::set_allocated_conn_name(std::string* conn_name) {
+  if (conn_name != nullptr) {
+    
+  } else {
+    
+  }
+  conn_name_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), conn_name,
+      GetArena());
+  // @@protoc_insertion_point(field_set_allocated:yy.protocol.app.LoginRequest.conn_name)
+}
+inline std::string* LoginRequest::unsafe_arena_release_conn_name() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:yy.protocol.app.LoginRequest.conn_name)
+  GOOGLE_DCHECK(GetArena() != nullptr);
+  
+  return conn_name_.UnsafeArenaRelease(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      GetArena());
+}
+inline void LoginRequest::unsafe_arena_set_allocated_conn_name(
+    std::string* conn_name) {
+  GOOGLE_DCHECK(GetArena() != nullptr);
+  if (conn_name != nullptr) {
+    
+  } else {
+    
+  }
+  conn_name_.UnsafeArenaSetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      conn_name, GetArena());
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:yy.protocol.app.LoginRequest.conn_name)
+}
 
 // -------------------------------------------------------------------
 
@@ -3369,24 +3490,44 @@ LoginResponse::other_datas() const {
 
 // OtherPlayerDataRequest
 
-// uint32 uid = 1;
-inline void OtherPlayerDataRequest::clear_uid() {
-  uid_ = 0u;
+// uint32 requester_uid = 1;
+inline void OtherPlayerDataRequest::clear_requester_uid() {
+  requester_uid_ = 0u;
 }
-inline ::PROTOBUF_NAMESPACE_ID::uint32 OtherPlayerDataRequest::_internal_uid() const {
-  return uid_;
+inline ::PROTOBUF_NAMESPACE_ID::uint32 OtherPlayerDataRequest::_internal_requester_uid() const {
+  return requester_uid_;
 }
-inline ::PROTOBUF_NAMESPACE_ID::uint32 OtherPlayerDataRequest::uid() const {
-  // @@protoc_insertion_point(field_get:yy.protocol.app.OtherPlayerDataRequest.uid)
-  return _internal_uid();
+inline ::PROTOBUF_NAMESPACE_ID::uint32 OtherPlayerDataRequest::requester_uid() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.OtherPlayerDataRequest.requester_uid)
+  return _internal_requester_uid();
 }
-inline void OtherPlayerDataRequest::_internal_set_uid(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+inline void OtherPlayerDataRequest::_internal_set_requester_uid(::PROTOBUF_NAMESPACE_ID::uint32 value) {
   
-  uid_ = value;
+  requester_uid_ = value;
 }
-inline void OtherPlayerDataRequest::set_uid(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  _internal_set_uid(value);
-  // @@protoc_insertion_point(field_set:yy.protocol.app.OtherPlayerDataRequest.uid)
+inline void OtherPlayerDataRequest::set_requester_uid(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+  _internal_set_requester_uid(value);
+  // @@protoc_insertion_point(field_set:yy.protocol.app.OtherPlayerDataRequest.requester_uid)
+}
+
+// uint32 requested_uid = 2;
+inline void OtherPlayerDataRequest::clear_requested_uid() {
+  requested_uid_ = 0u;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint32 OtherPlayerDataRequest::_internal_requested_uid() const {
+  return requested_uid_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint32 OtherPlayerDataRequest::requested_uid() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.OtherPlayerDataRequest.requested_uid)
+  return _internal_requested_uid();
+}
+inline void OtherPlayerDataRequest::_internal_set_requested_uid(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+  
+  requested_uid_ = value;
+}
+inline void OtherPlayerDataRequest::set_requested_uid(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+  _internal_set_requested_uid(value);
+  // @@protoc_insertion_point(field_set:yy.protocol.app.OtherPlayerDataRequest.requested_uid)
 }
 
 // -------------------------------------------------------------------

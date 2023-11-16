@@ -193,7 +193,7 @@ TimerManager::~TimerManager() {
     //TODO
 }
 
-TimerID TimerManager::AddTimer(F_TimerCallback cb, Timestamp expiredTime, Microseconds interval) {
+TimerID TimerManager::AddTimer(F_TaskCallback cb, Timestamp expiredTime, Microseconds interval) {
     TimerPtr timer = std::make_shared<Timer>(cb, expiredTime, interval);
     m_OwnerLoop->RunCallbackInLoop([this, timer](){TimerManager::AddTimerInLoop(timer);});
     return timer->GetID();

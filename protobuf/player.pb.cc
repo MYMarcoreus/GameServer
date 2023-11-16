@@ -262,8 +262,8 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_player_2eproto::offsets[] PROT
   PROTOBUF_FIELD_OFFSET(::yy::protocol::app::PlayerBaseData, state_),
   PROTOBUF_FIELD_OFFSET(::yy::protocol::app::PlayerBaseData, hp_current_),
   PROTOBUF_FIELD_OFFSET(::yy::protocol::app::PlayerBaseData, hp_max_),
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::PlayerBaseData, player_move_),
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::PlayerBaseData, ani_jump_and_gravity_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::PlayerBaseData, movement_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::PlayerBaseData, jump_and_gravity_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::yy::protocol::app::PlayerMove, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -287,40 +287,41 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_player_2eproto::offsets[] PROT
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::PlayerLeave, uid_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::PlayerLeave, leaver_uid_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::yy::protocol::app::SelfMovement, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   PROTOBUF_FIELD_OFFSET(::yy::protocol::app::SelfMovement, uid_),
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::SelfMovement, self_move_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::SelfMovement, movement_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::yy::protocol::app::OtherMovement, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   PROTOBUF_FIELD_OFFSET(::yy::protocol::app::OtherMovement, uid_),
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::OtherMovement, other_move_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::OtherMovement, movement_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::yy::protocol::app::SelfJumpAndGravity, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   PROTOBUF_FIELD_OFFSET(::yy::protocol::app::SelfJumpAndGravity, uid_),
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::SelfJumpAndGravity, self_jump_and_gravity_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::SelfJumpAndGravity, jump_and_gravity_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::yy::protocol::app::OtherJumpAndGravity, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   PROTOBUF_FIELD_OFFSET(::yy::protocol::app::OtherJumpAndGravity, uid_),
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::OtherJumpAndGravity, other_jump_and_gravity_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::OtherJumpAndGravity, jump_and_gravity_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::yy::protocol::app::LoginRequest, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::LoginRequest, conn_name_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::yy::protocol::app::LoginResponse, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -334,7 +335,8 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_player_2eproto::offsets[] PROT
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::OtherPlayerDataRequest, uid_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::OtherPlayerDataRequest, requester_uid_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::OtherPlayerDataRequest, requested_uid_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::yy::protocol::app::OtherPlayerDataResponse, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -352,9 +354,9 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOB
   { 50, -1, sizeof(::yy::protocol::app::SelfJumpAndGravity)},
   { 57, -1, sizeof(::yy::protocol::app::OtherJumpAndGravity)},
   { 64, -1, sizeof(::yy::protocol::app::LoginRequest)},
-  { 69, -1, sizeof(::yy::protocol::app::LoginResponse)},
-  { 77, -1, sizeof(::yy::protocol::app::OtherPlayerDataRequest)},
-  { 83, -1, sizeof(::yy::protocol::app::OtherPlayerDataResponse)},
+  { 70, -1, sizeof(::yy::protocol::app::LoginResponse)},
+  { 78, -1, sizeof(::yy::protocol::app::OtherPlayerDataRequest)},
+  { 85, -1, sizeof(::yy::protocol::app::OtherPlayerDataResponse)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
@@ -373,35 +375,36 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
 };
 
 const char descriptor_table_protodef_player_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
-  "\n\014player.proto\022\017yy.protocol.app\"\332\001\n\016Play"
+  "\n\014player.proto\022\017yy.protocol.app\"\323\001\n\016Play"
   "erBaseData\022\013\n\003uid\030\001 \001(\r\022\021\n\tconn_name\030\002 \001"
   "(\014\022\r\n\005state\030\003 \001(\005\022\022\n\nhp_current\030\004 \001(\005\022\016\n"
-  "\006hp_max\030\005 \001(\005\0220\n\013player_move\030\006 \001(\0132\033.yy."
-  "protocol.app.PlayerMove\022C\n\024ani_jump_and_"
-  "gravity\030\007 \001(\0132%.yy.protocol.app.PlayerJu"
-  "mpAndGravity\"r\n\nPlayerMove\022\020\n\010position\030\002"
-  " \001(\014\022\020\n\010rotation\030\003 \001(\014\022\021\n\tani_speed\030\005 \001("
-  "\002\022\030\n\020ani_motion_speed\030\006 \001(\002\022\023\n\013move_targ"
-  "et\030\004 \001(\014\"[\n\024PlayerJumpAndGravity\022\023\n\013ani_"
-  "is_jump\030\002 \001(\010\022\025\n\rani_is_ground\030\003 \001(\010\022\027\n\017"
-  "ani_is_freefall\030\004 \001(\010\"\032\n\013PlayerLeave\022\013\n\003"
-  "uid\030\001 \001(\r\"K\n\014SelfMovement\022\013\n\003uid\030\001 \001(\r\022."
-  "\n\tself_move\030\002 \001(\0132\033.yy.protocol.app.Play"
-  "erMove\"M\n\rOtherMovement\022\013\n\003uid\030\001 \001(\r\022/\n\n"
-  "other_move\030\002 \001(\0132\033.yy.protocol.app.Playe"
-  "rMove\"g\n\022SelfJumpAndGravity\022\013\n\003uid\030\001 \001(\r"
-  "\022D\n\025self_jump_and_gravity\030\002 \001(\0132%.yy.pro"
-  "tocol.app.PlayerJumpAndGravity\"i\n\023OtherJ"
-  "umpAndGravity\022\013\n\003uid\030\001 \001(\r\022E\n\026other_jump"
-  "_and_gravity\030\002 \001(\0132%.yy.protocol.app.Pla"
-  "yerJumpAndGravity\"\016\n\014LoginRequest\"\211\001\n\rLo"
-  "ginResponse\022\016\n\006result\030\001 \001(\010\0222\n\tself_data"
-  "\030\002 \001(\0132\037.yy.protocol.app.PlayerBaseData\022"
-  "4\n\013other_datas\030\003 \003(\0132\037.yy.protocol.app.P"
-  "layerBaseData\"%\n\026OtherPlayerDataRequest\022"
-  "\013\n\003uid\030\001 \001(\r\"N\n\027OtherPlayerDataResponse\022"
-  "3\n\nother_data\030\001 \001(\0132\037.yy.protocol.app.Pl"
-  "ayerBaseDatab\006proto3"
+  "\006hp_max\030\005 \001(\005\022-\n\010movement\030\006 \001(\0132\033.yy.pro"
+  "tocol.app.PlayerMove\022\?\n\020jump_and_gravity"
+  "\030\007 \001(\0132%.yy.protocol.app.PlayerJumpAndGr"
+  "avity\"r\n\nPlayerMove\022\020\n\010position\030\002 \001(\014\022\020\n"
+  "\010rotation\030\003 \001(\014\022\021\n\tani_speed\030\005 \001(\002\022\030\n\020an"
+  "i_motion_speed\030\006 \001(\002\022\023\n\013move_target\030\004 \001("
+  "\014\"[\n\024PlayerJumpAndGravity\022\023\n\013ani_is_jump"
+  "\030\002 \001(\010\022\025\n\rani_is_ground\030\003 \001(\010\022\027\n\017ani_is_"
+  "freefall\030\004 \001(\010\"!\n\013PlayerLeave\022\022\n\nleaver_"
+  "uid\030\001 \001(\r\"J\n\014SelfMovement\022\013\n\003uid\030\001 \001(\r\022-"
+  "\n\010movement\030\002 \001(\0132\033.yy.protocol.app.Playe"
+  "rMove\"K\n\rOtherMovement\022\013\n\003uid\030\001 \001(\r\022-\n\010m"
+  "ovement\030\002 \001(\0132\033.yy.protocol.app.PlayerMo"
+  "ve\"b\n\022SelfJumpAndGravity\022\013\n\003uid\030\001 \001(\r\022\?\n"
+  "\020jump_and_gravity\030\002 \001(\0132%.yy.protocol.ap"
+  "p.PlayerJumpAndGravity\"c\n\023OtherJumpAndGr"
+  "avity\022\013\n\003uid\030\001 \001(\r\022\?\n\020jump_and_gravity\030\002"
+  " \001(\0132%.yy.protocol.app.PlayerJumpAndGrav"
+  "ity\"!\n\014LoginRequest\022\021\n\tconn_name\030\001 \001(\014\"\211"
+  "\001\n\rLoginResponse\022\016\n\006result\030\001 \001(\010\0222\n\tself"
+  "_data\030\002 \001(\0132\037.yy.protocol.app.PlayerBase"
+  "Data\0224\n\013other_datas\030\003 \003(\0132\037.yy.protocol."
+  "app.PlayerBaseData\"F\n\026OtherPlayerDataReq"
+  "uest\022\025\n\rrequester_uid\030\001 \001(\r\022\025\n\rrequested"
+  "_uid\030\002 \001(\r\"N\n\027OtherPlayerDataResponse\0223\n"
+  "\nother_data\030\001 \001(\0132\037.yy.protocol.app.Play"
+  "erBaseDatab\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_player_2eproto_deps[1] = {
 };
@@ -421,7 +424,7 @@ static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_pla
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_player_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_player_2eproto = {
-  false, false, descriptor_table_protodef_player_2eproto, "player.proto", 1140,
+  false, false, descriptor_table_protodef_player_2eproto, "player.proto", 1178,
   &descriptor_table_player_2eproto_once, descriptor_table_player_2eproto_sccs, descriptor_table_player_2eproto_deps, 12, 0,
   schemas, file_default_instances, TableStruct_player_2eproto::offsets,
   file_level_metadata_player_2eproto, 12, file_level_enum_descriptors_player_2eproto, file_level_service_descriptors_player_2eproto,
@@ -436,24 +439,24 @@ namespace app {
 // ===================================================================
 
 void PlayerBaseData::InitAsDefaultInstance() {
-  ::yy::protocol::app::_PlayerBaseData_default_instance_._instance.get_mutable()->player_move_ = const_cast< ::yy::protocol::app::PlayerMove*>(
+  ::yy::protocol::app::_PlayerBaseData_default_instance_._instance.get_mutable()->movement_ = const_cast< ::yy::protocol::app::PlayerMove*>(
       ::yy::protocol::app::PlayerMove::internal_default_instance());
-  ::yy::protocol::app::_PlayerBaseData_default_instance_._instance.get_mutable()->ani_jump_and_gravity_ = const_cast< ::yy::protocol::app::PlayerJumpAndGravity*>(
+  ::yy::protocol::app::_PlayerBaseData_default_instance_._instance.get_mutable()->jump_and_gravity_ = const_cast< ::yy::protocol::app::PlayerJumpAndGravity*>(
       ::yy::protocol::app::PlayerJumpAndGravity::internal_default_instance());
 }
 class PlayerBaseData::_Internal {
  public:
-  static const ::yy::protocol::app::PlayerMove& player_move(const PlayerBaseData* msg);
-  static const ::yy::protocol::app::PlayerJumpAndGravity& ani_jump_and_gravity(const PlayerBaseData* msg);
+  static const ::yy::protocol::app::PlayerMove& movement(const PlayerBaseData* msg);
+  static const ::yy::protocol::app::PlayerJumpAndGravity& jump_and_gravity(const PlayerBaseData* msg);
 };
 
 const ::yy::protocol::app::PlayerMove&
-PlayerBaseData::_Internal::player_move(const PlayerBaseData* msg) {
-  return *msg->player_move_;
+PlayerBaseData::_Internal::movement(const PlayerBaseData* msg) {
+  return *msg->movement_;
 }
 const ::yy::protocol::app::PlayerJumpAndGravity&
-PlayerBaseData::_Internal::ani_jump_and_gravity(const PlayerBaseData* msg) {
-  return *msg->ani_jump_and_gravity_;
+PlayerBaseData::_Internal::jump_and_gravity(const PlayerBaseData* msg) {
+  return *msg->jump_and_gravity_;
 }
 PlayerBaseData::PlayerBaseData(::PROTOBUF_NAMESPACE_ID::Arena* arena)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
@@ -469,15 +472,15 @@ PlayerBaseData::PlayerBaseData(const PlayerBaseData& from)
     conn_name_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from._internal_conn_name(),
       GetArena());
   }
-  if (from._internal_has_player_move()) {
-    player_move_ = new ::yy::protocol::app::PlayerMove(*from.player_move_);
+  if (from._internal_has_movement()) {
+    movement_ = new ::yy::protocol::app::PlayerMove(*from.movement_);
   } else {
-    player_move_ = nullptr;
+    movement_ = nullptr;
   }
-  if (from._internal_has_ani_jump_and_gravity()) {
-    ani_jump_and_gravity_ = new ::yy::protocol::app::PlayerJumpAndGravity(*from.ani_jump_and_gravity_);
+  if (from._internal_has_jump_and_gravity()) {
+    jump_and_gravity_ = new ::yy::protocol::app::PlayerJumpAndGravity(*from.jump_and_gravity_);
   } else {
-    ani_jump_and_gravity_ = nullptr;
+    jump_and_gravity_ = nullptr;
   }
   ::memcpy(&uid_, &from.uid_,
     static_cast<size_t>(reinterpret_cast<char*>(&hp_max_) -
@@ -488,9 +491,9 @@ PlayerBaseData::PlayerBaseData(const PlayerBaseData& from)
 void PlayerBaseData::SharedCtor() {
   ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_PlayerBaseData_player_2eproto.base);
   conn_name_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-  ::memset(&player_move_, 0, static_cast<size_t>(
+  ::memset(&movement_, 0, static_cast<size_t>(
       reinterpret_cast<char*>(&hp_max_) -
-      reinterpret_cast<char*>(&player_move_)) + sizeof(hp_max_));
+      reinterpret_cast<char*>(&movement_)) + sizeof(hp_max_));
 }
 
 PlayerBaseData::~PlayerBaseData() {
@@ -502,8 +505,8 @@ PlayerBaseData::~PlayerBaseData() {
 void PlayerBaseData::SharedDtor() {
   GOOGLE_DCHECK(GetArena() == nullptr);
   conn_name_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
-  if (this != internal_default_instance()) delete player_move_;
-  if (this != internal_default_instance()) delete ani_jump_and_gravity_;
+  if (this != internal_default_instance()) delete movement_;
+  if (this != internal_default_instance()) delete jump_and_gravity_;
 }
 
 void PlayerBaseData::ArenaDtor(void* object) {
@@ -528,14 +531,14 @@ void PlayerBaseData::Clear() {
   (void) cached_has_bits;
 
   conn_name_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
-  if (GetArena() == nullptr && player_move_ != nullptr) {
-    delete player_move_;
+  if (GetArena() == nullptr && movement_ != nullptr) {
+    delete movement_;
   }
-  player_move_ = nullptr;
-  if (GetArena() == nullptr && ani_jump_and_gravity_ != nullptr) {
-    delete ani_jump_and_gravity_;
+  movement_ = nullptr;
+  if (GetArena() == nullptr && jump_and_gravity_ != nullptr) {
+    delete jump_and_gravity_;
   }
-  ani_jump_and_gravity_ = nullptr;
+  jump_and_gravity_ = nullptr;
   ::memset(&uid_, 0, static_cast<size_t>(
       reinterpret_cast<char*>(&hp_max_) -
       reinterpret_cast<char*>(&uid_)) + sizeof(hp_max_));
@@ -586,17 +589,17 @@ const char* PlayerBaseData::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
-      // .yy.protocol.app.PlayerMove player_move = 6;
+      // .yy.protocol.app.PlayerMove movement = 6;
       case 6:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 50)) {
-          ptr = ctx->ParseMessage(_internal_mutable_player_move(), ptr);
+          ptr = ctx->ParseMessage(_internal_mutable_movement(), ptr);
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
-      // .yy.protocol.app.PlayerJumpAndGravity ani_jump_and_gravity = 7;
+      // .yy.protocol.app.PlayerJumpAndGravity jump_and_gravity = 7;
       case 7:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 58)) {
-          ptr = ctx->ParseMessage(_internal_mutable_ani_jump_and_gravity(), ptr);
+          ptr = ctx->ParseMessage(_internal_mutable_jump_and_gravity(), ptr);
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
@@ -658,20 +661,20 @@ failure:
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(5, this->_internal_hp_max(), target);
   }
 
-  // .yy.protocol.app.PlayerMove player_move = 6;
-  if (this->has_player_move()) {
+  // .yy.protocol.app.PlayerMove movement = 6;
+  if (this->has_movement()) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
       InternalWriteMessage(
-        6, _Internal::player_move(this), target, stream);
+        6, _Internal::movement(this), target, stream);
   }
 
-  // .yy.protocol.app.PlayerJumpAndGravity ani_jump_and_gravity = 7;
-  if (this->has_ani_jump_and_gravity()) {
+  // .yy.protocol.app.PlayerJumpAndGravity jump_and_gravity = 7;
+  if (this->has_jump_and_gravity()) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
       InternalWriteMessage(
-        7, _Internal::ani_jump_and_gravity(this), target, stream);
+        7, _Internal::jump_and_gravity(this), target, stream);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -697,18 +700,18 @@ size_t PlayerBaseData::ByteSizeLong() const {
         this->_internal_conn_name());
   }
 
-  // .yy.protocol.app.PlayerMove player_move = 6;
-  if (this->has_player_move()) {
+  // .yy.protocol.app.PlayerMove movement = 6;
+  if (this->has_movement()) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-        *player_move_);
+        *movement_);
   }
 
-  // .yy.protocol.app.PlayerJumpAndGravity ani_jump_and_gravity = 7;
-  if (this->has_ani_jump_and_gravity()) {
+  // .yy.protocol.app.PlayerJumpAndGravity jump_and_gravity = 7;
+  if (this->has_jump_and_gravity()) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-        *ani_jump_and_gravity_);
+        *jump_and_gravity_);
   }
 
   // uint32 uid = 1;
@@ -773,11 +776,11 @@ void PlayerBaseData::MergeFrom(const PlayerBaseData& from) {
   if (from.conn_name().size() > 0) {
     _internal_set_conn_name(from._internal_conn_name());
   }
-  if (from.has_player_move()) {
-    _internal_mutable_player_move()->::yy::protocol::app::PlayerMove::MergeFrom(from._internal_player_move());
+  if (from.has_movement()) {
+    _internal_mutable_movement()->::yy::protocol::app::PlayerMove::MergeFrom(from._internal_movement());
   }
-  if (from.has_ani_jump_and_gravity()) {
-    _internal_mutable_ani_jump_and_gravity()->::yy::protocol::app::PlayerJumpAndGravity::MergeFrom(from._internal_ani_jump_and_gravity());
+  if (from.has_jump_and_gravity()) {
+    _internal_mutable_jump_and_gravity()->::yy::protocol::app::PlayerJumpAndGravity::MergeFrom(from._internal_jump_and_gravity());
   }
   if (from.uid() != 0) {
     _internal_set_uid(from._internal_uid());
@@ -818,9 +821,9 @@ void PlayerBaseData::InternalSwap(PlayerBaseData* other) {
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
       PROTOBUF_FIELD_OFFSET(PlayerBaseData, hp_max_)
       + sizeof(PlayerBaseData::hp_max_)
-      - PROTOBUF_FIELD_OFFSET(PlayerBaseData, player_move_)>(
-          reinterpret_cast<char*>(&player_move_),
-          reinterpret_cast<char*>(&other->player_move_));
+      - PROTOBUF_FIELD_OFFSET(PlayerBaseData, movement_)>(
+          reinterpret_cast<char*>(&movement_),
+          reinterpret_cast<char*>(&other->movement_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata PlayerBaseData::GetMetadata() const {
@@ -1420,12 +1423,12 @@ PlayerLeave::PlayerLeave(::PROTOBUF_NAMESPACE_ID::Arena* arena)
 PlayerLeave::PlayerLeave(const PlayerLeave& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  uid_ = from.uid_;
+  leaver_uid_ = from.leaver_uid_;
   // @@protoc_insertion_point(copy_constructor:yy.protocol.app.PlayerLeave)
 }
 
 void PlayerLeave::SharedCtor() {
-  uid_ = 0u;
+  leaver_uid_ = 0u;
 }
 
 PlayerLeave::~PlayerLeave() {
@@ -1459,7 +1462,7 @@ void PlayerLeave::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  uid_ = 0u;
+  leaver_uid_ = 0u;
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -1471,10 +1474,10 @@ const char* PlayerLeave::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID
     ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
     CHK_(ptr);
     switch (tag >> 3) {
-      // uint32 uid = 1;
+      // uint32 leaver_uid = 1;
       case 1:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 8)) {
-          uid_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          leaver_uid_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
@@ -1506,10 +1509,10 @@ failure:
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // uint32 uid = 1;
-  if (this->uid() != 0) {
+  // uint32 leaver_uid = 1;
+  if (this->leaver_uid() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt32ToArray(1, this->_internal_uid(), target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt32ToArray(1, this->_internal_leaver_uid(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -1528,11 +1531,11 @@ size_t PlayerLeave::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // uint32 uid = 1;
-  if (this->uid() != 0) {
+  // uint32 leaver_uid = 1;
+  if (this->leaver_uid() != 0) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt32Size(
-        this->_internal_uid());
+        this->_internal_leaver_uid());
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -1566,8 +1569,8 @@ void PlayerLeave::MergeFrom(const PlayerLeave& from) {
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (from.uid() != 0) {
-    _internal_set_uid(from._internal_uid());
+  if (from.leaver_uid() != 0) {
+    _internal_set_leaver_uid(from._internal_leaver_uid());
   }
 }
 
@@ -1592,7 +1595,7 @@ bool PlayerLeave::IsInitialized() const {
 void PlayerLeave::InternalSwap(PlayerLeave* other) {
   using std::swap;
   _internal_metadata_.Swap<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(&other->_internal_metadata_);
-  swap(uid_, other->uid_);
+  swap(leaver_uid_, other->leaver_uid_);
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata PlayerLeave::GetMetadata() const {
@@ -1603,17 +1606,17 @@ void PlayerLeave::InternalSwap(PlayerLeave* other) {
 // ===================================================================
 
 void SelfMovement::InitAsDefaultInstance() {
-  ::yy::protocol::app::_SelfMovement_default_instance_._instance.get_mutable()->self_move_ = const_cast< ::yy::protocol::app::PlayerMove*>(
+  ::yy::protocol::app::_SelfMovement_default_instance_._instance.get_mutable()->movement_ = const_cast< ::yy::protocol::app::PlayerMove*>(
       ::yy::protocol::app::PlayerMove::internal_default_instance());
 }
 class SelfMovement::_Internal {
  public:
-  static const ::yy::protocol::app::PlayerMove& self_move(const SelfMovement* msg);
+  static const ::yy::protocol::app::PlayerMove& movement(const SelfMovement* msg);
 };
 
 const ::yy::protocol::app::PlayerMove&
-SelfMovement::_Internal::self_move(const SelfMovement* msg) {
-  return *msg->self_move_;
+SelfMovement::_Internal::movement(const SelfMovement* msg) {
+  return *msg->movement_;
 }
 SelfMovement::SelfMovement(::PROTOBUF_NAMESPACE_ID::Arena* arena)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
@@ -1624,10 +1627,10 @@ SelfMovement::SelfMovement(::PROTOBUF_NAMESPACE_ID::Arena* arena)
 SelfMovement::SelfMovement(const SelfMovement& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  if (from._internal_has_self_move()) {
-    self_move_ = new ::yy::protocol::app::PlayerMove(*from.self_move_);
+  if (from._internal_has_movement()) {
+    movement_ = new ::yy::protocol::app::PlayerMove(*from.movement_);
   } else {
-    self_move_ = nullptr;
+    movement_ = nullptr;
   }
   uid_ = from.uid_;
   // @@protoc_insertion_point(copy_constructor:yy.protocol.app.SelfMovement)
@@ -1635,9 +1638,9 @@ SelfMovement::SelfMovement(const SelfMovement& from)
 
 void SelfMovement::SharedCtor() {
   ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_SelfMovement_player_2eproto.base);
-  ::memset(&self_move_, 0, static_cast<size_t>(
+  ::memset(&movement_, 0, static_cast<size_t>(
       reinterpret_cast<char*>(&uid_) -
-      reinterpret_cast<char*>(&self_move_)) + sizeof(uid_));
+      reinterpret_cast<char*>(&movement_)) + sizeof(uid_));
 }
 
 SelfMovement::~SelfMovement() {
@@ -1648,7 +1651,7 @@ SelfMovement::~SelfMovement() {
 
 void SelfMovement::SharedDtor() {
   GOOGLE_DCHECK(GetArena() == nullptr);
-  if (this != internal_default_instance()) delete self_move_;
+  if (this != internal_default_instance()) delete movement_;
 }
 
 void SelfMovement::ArenaDtor(void* object) {
@@ -1672,10 +1675,10 @@ void SelfMovement::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  if (GetArena() == nullptr && self_move_ != nullptr) {
-    delete self_move_;
+  if (GetArena() == nullptr && movement_ != nullptr) {
+    delete movement_;
   }
-  self_move_ = nullptr;
+  movement_ = nullptr;
   uid_ = 0u;
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
@@ -1695,10 +1698,10 @@ const char* SelfMovement::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_I
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
-      // .yy.protocol.app.PlayerMove self_move = 2;
+      // .yy.protocol.app.PlayerMove movement = 2;
       case 2:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 18)) {
-          ptr = ctx->ParseMessage(_internal_mutable_self_move(), ptr);
+          ptr = ctx->ParseMessage(_internal_mutable_movement(), ptr);
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
@@ -1736,12 +1739,12 @@ failure:
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt32ToArray(1, this->_internal_uid(), target);
   }
 
-  // .yy.protocol.app.PlayerMove self_move = 2;
-  if (this->has_self_move()) {
+  // .yy.protocol.app.PlayerMove movement = 2;
+  if (this->has_movement()) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
       InternalWriteMessage(
-        2, _Internal::self_move(this), target, stream);
+        2, _Internal::movement(this), target, stream);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -1760,11 +1763,11 @@ size_t SelfMovement::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // .yy.protocol.app.PlayerMove self_move = 2;
-  if (this->has_self_move()) {
+  // .yy.protocol.app.PlayerMove movement = 2;
+  if (this->has_movement()) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-        *self_move_);
+        *movement_);
   }
 
   // uint32 uid = 1;
@@ -1805,8 +1808,8 @@ void SelfMovement::MergeFrom(const SelfMovement& from) {
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (from.has_self_move()) {
-    _internal_mutable_self_move()->::yy::protocol::app::PlayerMove::MergeFrom(from._internal_self_move());
+  if (from.has_movement()) {
+    _internal_mutable_movement()->::yy::protocol::app::PlayerMove::MergeFrom(from._internal_movement());
   }
   if (from.uid() != 0) {
     _internal_set_uid(from._internal_uid());
@@ -1837,9 +1840,9 @@ void SelfMovement::InternalSwap(SelfMovement* other) {
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
       PROTOBUF_FIELD_OFFSET(SelfMovement, uid_)
       + sizeof(SelfMovement::uid_)
-      - PROTOBUF_FIELD_OFFSET(SelfMovement, self_move_)>(
-          reinterpret_cast<char*>(&self_move_),
-          reinterpret_cast<char*>(&other->self_move_));
+      - PROTOBUF_FIELD_OFFSET(SelfMovement, movement_)>(
+          reinterpret_cast<char*>(&movement_),
+          reinterpret_cast<char*>(&other->movement_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata SelfMovement::GetMetadata() const {
@@ -1850,17 +1853,17 @@ void SelfMovement::InternalSwap(SelfMovement* other) {
 // ===================================================================
 
 void OtherMovement::InitAsDefaultInstance() {
-  ::yy::protocol::app::_OtherMovement_default_instance_._instance.get_mutable()->other_move_ = const_cast< ::yy::protocol::app::PlayerMove*>(
+  ::yy::protocol::app::_OtherMovement_default_instance_._instance.get_mutable()->movement_ = const_cast< ::yy::protocol::app::PlayerMove*>(
       ::yy::protocol::app::PlayerMove::internal_default_instance());
 }
 class OtherMovement::_Internal {
  public:
-  static const ::yy::protocol::app::PlayerMove& other_move(const OtherMovement* msg);
+  static const ::yy::protocol::app::PlayerMove& movement(const OtherMovement* msg);
 };
 
 const ::yy::protocol::app::PlayerMove&
-OtherMovement::_Internal::other_move(const OtherMovement* msg) {
-  return *msg->other_move_;
+OtherMovement::_Internal::movement(const OtherMovement* msg) {
+  return *msg->movement_;
 }
 OtherMovement::OtherMovement(::PROTOBUF_NAMESPACE_ID::Arena* arena)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
@@ -1871,10 +1874,10 @@ OtherMovement::OtherMovement(::PROTOBUF_NAMESPACE_ID::Arena* arena)
 OtherMovement::OtherMovement(const OtherMovement& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  if (from._internal_has_other_move()) {
-    other_move_ = new ::yy::protocol::app::PlayerMove(*from.other_move_);
+  if (from._internal_has_movement()) {
+    movement_ = new ::yy::protocol::app::PlayerMove(*from.movement_);
   } else {
-    other_move_ = nullptr;
+    movement_ = nullptr;
   }
   uid_ = from.uid_;
   // @@protoc_insertion_point(copy_constructor:yy.protocol.app.OtherMovement)
@@ -1882,9 +1885,9 @@ OtherMovement::OtherMovement(const OtherMovement& from)
 
 void OtherMovement::SharedCtor() {
   ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_OtherMovement_player_2eproto.base);
-  ::memset(&other_move_, 0, static_cast<size_t>(
+  ::memset(&movement_, 0, static_cast<size_t>(
       reinterpret_cast<char*>(&uid_) -
-      reinterpret_cast<char*>(&other_move_)) + sizeof(uid_));
+      reinterpret_cast<char*>(&movement_)) + sizeof(uid_));
 }
 
 OtherMovement::~OtherMovement() {
@@ -1895,7 +1898,7 @@ OtherMovement::~OtherMovement() {
 
 void OtherMovement::SharedDtor() {
   GOOGLE_DCHECK(GetArena() == nullptr);
-  if (this != internal_default_instance()) delete other_move_;
+  if (this != internal_default_instance()) delete movement_;
 }
 
 void OtherMovement::ArenaDtor(void* object) {
@@ -1919,10 +1922,10 @@ void OtherMovement::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  if (GetArena() == nullptr && other_move_ != nullptr) {
-    delete other_move_;
+  if (GetArena() == nullptr && movement_ != nullptr) {
+    delete movement_;
   }
-  other_move_ = nullptr;
+  movement_ = nullptr;
   uid_ = 0u;
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
@@ -1942,10 +1945,10 @@ const char* OtherMovement::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
-      // .yy.protocol.app.PlayerMove other_move = 2;
+      // .yy.protocol.app.PlayerMove movement = 2;
       case 2:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 18)) {
-          ptr = ctx->ParseMessage(_internal_mutable_other_move(), ptr);
+          ptr = ctx->ParseMessage(_internal_mutable_movement(), ptr);
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
@@ -1983,12 +1986,12 @@ failure:
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt32ToArray(1, this->_internal_uid(), target);
   }
 
-  // .yy.protocol.app.PlayerMove other_move = 2;
-  if (this->has_other_move()) {
+  // .yy.protocol.app.PlayerMove movement = 2;
+  if (this->has_movement()) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
       InternalWriteMessage(
-        2, _Internal::other_move(this), target, stream);
+        2, _Internal::movement(this), target, stream);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -2007,11 +2010,11 @@ size_t OtherMovement::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // .yy.protocol.app.PlayerMove other_move = 2;
-  if (this->has_other_move()) {
+  // .yy.protocol.app.PlayerMove movement = 2;
+  if (this->has_movement()) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-        *other_move_);
+        *movement_);
   }
 
   // uint32 uid = 1;
@@ -2052,8 +2055,8 @@ void OtherMovement::MergeFrom(const OtherMovement& from) {
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (from.has_other_move()) {
-    _internal_mutable_other_move()->::yy::protocol::app::PlayerMove::MergeFrom(from._internal_other_move());
+  if (from.has_movement()) {
+    _internal_mutable_movement()->::yy::protocol::app::PlayerMove::MergeFrom(from._internal_movement());
   }
   if (from.uid() != 0) {
     _internal_set_uid(from._internal_uid());
@@ -2084,9 +2087,9 @@ void OtherMovement::InternalSwap(OtherMovement* other) {
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
       PROTOBUF_FIELD_OFFSET(OtherMovement, uid_)
       + sizeof(OtherMovement::uid_)
-      - PROTOBUF_FIELD_OFFSET(OtherMovement, other_move_)>(
-          reinterpret_cast<char*>(&other_move_),
-          reinterpret_cast<char*>(&other->other_move_));
+      - PROTOBUF_FIELD_OFFSET(OtherMovement, movement_)>(
+          reinterpret_cast<char*>(&movement_),
+          reinterpret_cast<char*>(&other->movement_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata OtherMovement::GetMetadata() const {
@@ -2097,17 +2100,17 @@ void OtherMovement::InternalSwap(OtherMovement* other) {
 // ===================================================================
 
 void SelfJumpAndGravity::InitAsDefaultInstance() {
-  ::yy::protocol::app::_SelfJumpAndGravity_default_instance_._instance.get_mutable()->self_jump_and_gravity_ = const_cast< ::yy::protocol::app::PlayerJumpAndGravity*>(
+  ::yy::protocol::app::_SelfJumpAndGravity_default_instance_._instance.get_mutable()->jump_and_gravity_ = const_cast< ::yy::protocol::app::PlayerJumpAndGravity*>(
       ::yy::protocol::app::PlayerJumpAndGravity::internal_default_instance());
 }
 class SelfJumpAndGravity::_Internal {
  public:
-  static const ::yy::protocol::app::PlayerJumpAndGravity& self_jump_and_gravity(const SelfJumpAndGravity* msg);
+  static const ::yy::protocol::app::PlayerJumpAndGravity& jump_and_gravity(const SelfJumpAndGravity* msg);
 };
 
 const ::yy::protocol::app::PlayerJumpAndGravity&
-SelfJumpAndGravity::_Internal::self_jump_and_gravity(const SelfJumpAndGravity* msg) {
-  return *msg->self_jump_and_gravity_;
+SelfJumpAndGravity::_Internal::jump_and_gravity(const SelfJumpAndGravity* msg) {
+  return *msg->jump_and_gravity_;
 }
 SelfJumpAndGravity::SelfJumpAndGravity(::PROTOBUF_NAMESPACE_ID::Arena* arena)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
@@ -2118,10 +2121,10 @@ SelfJumpAndGravity::SelfJumpAndGravity(::PROTOBUF_NAMESPACE_ID::Arena* arena)
 SelfJumpAndGravity::SelfJumpAndGravity(const SelfJumpAndGravity& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  if (from._internal_has_self_jump_and_gravity()) {
-    self_jump_and_gravity_ = new ::yy::protocol::app::PlayerJumpAndGravity(*from.self_jump_and_gravity_);
+  if (from._internal_has_jump_and_gravity()) {
+    jump_and_gravity_ = new ::yy::protocol::app::PlayerJumpAndGravity(*from.jump_and_gravity_);
   } else {
-    self_jump_and_gravity_ = nullptr;
+    jump_and_gravity_ = nullptr;
   }
   uid_ = from.uid_;
   // @@protoc_insertion_point(copy_constructor:yy.protocol.app.SelfJumpAndGravity)
@@ -2129,9 +2132,9 @@ SelfJumpAndGravity::SelfJumpAndGravity(const SelfJumpAndGravity& from)
 
 void SelfJumpAndGravity::SharedCtor() {
   ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_SelfJumpAndGravity_player_2eproto.base);
-  ::memset(&self_jump_and_gravity_, 0, static_cast<size_t>(
+  ::memset(&jump_and_gravity_, 0, static_cast<size_t>(
       reinterpret_cast<char*>(&uid_) -
-      reinterpret_cast<char*>(&self_jump_and_gravity_)) + sizeof(uid_));
+      reinterpret_cast<char*>(&jump_and_gravity_)) + sizeof(uid_));
 }
 
 SelfJumpAndGravity::~SelfJumpAndGravity() {
@@ -2142,7 +2145,7 @@ SelfJumpAndGravity::~SelfJumpAndGravity() {
 
 void SelfJumpAndGravity::SharedDtor() {
   GOOGLE_DCHECK(GetArena() == nullptr);
-  if (this != internal_default_instance()) delete self_jump_and_gravity_;
+  if (this != internal_default_instance()) delete jump_and_gravity_;
 }
 
 void SelfJumpAndGravity::ArenaDtor(void* object) {
@@ -2166,10 +2169,10 @@ void SelfJumpAndGravity::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  if (GetArena() == nullptr && self_jump_and_gravity_ != nullptr) {
-    delete self_jump_and_gravity_;
+  if (GetArena() == nullptr && jump_and_gravity_ != nullptr) {
+    delete jump_and_gravity_;
   }
-  self_jump_and_gravity_ = nullptr;
+  jump_and_gravity_ = nullptr;
   uid_ = 0u;
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
@@ -2189,10 +2192,10 @@ const char* SelfJumpAndGravity::_InternalParse(const char* ptr, ::PROTOBUF_NAMES
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
-      // .yy.protocol.app.PlayerJumpAndGravity self_jump_and_gravity = 2;
+      // .yy.protocol.app.PlayerJumpAndGravity jump_and_gravity = 2;
       case 2:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 18)) {
-          ptr = ctx->ParseMessage(_internal_mutable_self_jump_and_gravity(), ptr);
+          ptr = ctx->ParseMessage(_internal_mutable_jump_and_gravity(), ptr);
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
@@ -2230,12 +2233,12 @@ failure:
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt32ToArray(1, this->_internal_uid(), target);
   }
 
-  // .yy.protocol.app.PlayerJumpAndGravity self_jump_and_gravity = 2;
-  if (this->has_self_jump_and_gravity()) {
+  // .yy.protocol.app.PlayerJumpAndGravity jump_and_gravity = 2;
+  if (this->has_jump_and_gravity()) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
       InternalWriteMessage(
-        2, _Internal::self_jump_and_gravity(this), target, stream);
+        2, _Internal::jump_and_gravity(this), target, stream);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -2254,11 +2257,11 @@ size_t SelfJumpAndGravity::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // .yy.protocol.app.PlayerJumpAndGravity self_jump_and_gravity = 2;
-  if (this->has_self_jump_and_gravity()) {
+  // .yy.protocol.app.PlayerJumpAndGravity jump_and_gravity = 2;
+  if (this->has_jump_and_gravity()) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-        *self_jump_and_gravity_);
+        *jump_and_gravity_);
   }
 
   // uint32 uid = 1;
@@ -2299,8 +2302,8 @@ void SelfJumpAndGravity::MergeFrom(const SelfJumpAndGravity& from) {
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (from.has_self_jump_and_gravity()) {
-    _internal_mutable_self_jump_and_gravity()->::yy::protocol::app::PlayerJumpAndGravity::MergeFrom(from._internal_self_jump_and_gravity());
+  if (from.has_jump_and_gravity()) {
+    _internal_mutable_jump_and_gravity()->::yy::protocol::app::PlayerJumpAndGravity::MergeFrom(from._internal_jump_and_gravity());
   }
   if (from.uid() != 0) {
     _internal_set_uid(from._internal_uid());
@@ -2331,9 +2334,9 @@ void SelfJumpAndGravity::InternalSwap(SelfJumpAndGravity* other) {
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
       PROTOBUF_FIELD_OFFSET(SelfJumpAndGravity, uid_)
       + sizeof(SelfJumpAndGravity::uid_)
-      - PROTOBUF_FIELD_OFFSET(SelfJumpAndGravity, self_jump_and_gravity_)>(
-          reinterpret_cast<char*>(&self_jump_and_gravity_),
-          reinterpret_cast<char*>(&other->self_jump_and_gravity_));
+      - PROTOBUF_FIELD_OFFSET(SelfJumpAndGravity, jump_and_gravity_)>(
+          reinterpret_cast<char*>(&jump_and_gravity_),
+          reinterpret_cast<char*>(&other->jump_and_gravity_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata SelfJumpAndGravity::GetMetadata() const {
@@ -2344,17 +2347,17 @@ void SelfJumpAndGravity::InternalSwap(SelfJumpAndGravity* other) {
 // ===================================================================
 
 void OtherJumpAndGravity::InitAsDefaultInstance() {
-  ::yy::protocol::app::_OtherJumpAndGravity_default_instance_._instance.get_mutable()->other_jump_and_gravity_ = const_cast< ::yy::protocol::app::PlayerJumpAndGravity*>(
+  ::yy::protocol::app::_OtherJumpAndGravity_default_instance_._instance.get_mutable()->jump_and_gravity_ = const_cast< ::yy::protocol::app::PlayerJumpAndGravity*>(
       ::yy::protocol::app::PlayerJumpAndGravity::internal_default_instance());
 }
 class OtherJumpAndGravity::_Internal {
  public:
-  static const ::yy::protocol::app::PlayerJumpAndGravity& other_jump_and_gravity(const OtherJumpAndGravity* msg);
+  static const ::yy::protocol::app::PlayerJumpAndGravity& jump_and_gravity(const OtherJumpAndGravity* msg);
 };
 
 const ::yy::protocol::app::PlayerJumpAndGravity&
-OtherJumpAndGravity::_Internal::other_jump_and_gravity(const OtherJumpAndGravity* msg) {
-  return *msg->other_jump_and_gravity_;
+OtherJumpAndGravity::_Internal::jump_and_gravity(const OtherJumpAndGravity* msg) {
+  return *msg->jump_and_gravity_;
 }
 OtherJumpAndGravity::OtherJumpAndGravity(::PROTOBUF_NAMESPACE_ID::Arena* arena)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
@@ -2365,10 +2368,10 @@ OtherJumpAndGravity::OtherJumpAndGravity(::PROTOBUF_NAMESPACE_ID::Arena* arena)
 OtherJumpAndGravity::OtherJumpAndGravity(const OtherJumpAndGravity& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  if (from._internal_has_other_jump_and_gravity()) {
-    other_jump_and_gravity_ = new ::yy::protocol::app::PlayerJumpAndGravity(*from.other_jump_and_gravity_);
+  if (from._internal_has_jump_and_gravity()) {
+    jump_and_gravity_ = new ::yy::protocol::app::PlayerJumpAndGravity(*from.jump_and_gravity_);
   } else {
-    other_jump_and_gravity_ = nullptr;
+    jump_and_gravity_ = nullptr;
   }
   uid_ = from.uid_;
   // @@protoc_insertion_point(copy_constructor:yy.protocol.app.OtherJumpAndGravity)
@@ -2376,9 +2379,9 @@ OtherJumpAndGravity::OtherJumpAndGravity(const OtherJumpAndGravity& from)
 
 void OtherJumpAndGravity::SharedCtor() {
   ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_OtherJumpAndGravity_player_2eproto.base);
-  ::memset(&other_jump_and_gravity_, 0, static_cast<size_t>(
+  ::memset(&jump_and_gravity_, 0, static_cast<size_t>(
       reinterpret_cast<char*>(&uid_) -
-      reinterpret_cast<char*>(&other_jump_and_gravity_)) + sizeof(uid_));
+      reinterpret_cast<char*>(&jump_and_gravity_)) + sizeof(uid_));
 }
 
 OtherJumpAndGravity::~OtherJumpAndGravity() {
@@ -2389,7 +2392,7 @@ OtherJumpAndGravity::~OtherJumpAndGravity() {
 
 void OtherJumpAndGravity::SharedDtor() {
   GOOGLE_DCHECK(GetArena() == nullptr);
-  if (this != internal_default_instance()) delete other_jump_and_gravity_;
+  if (this != internal_default_instance()) delete jump_and_gravity_;
 }
 
 void OtherJumpAndGravity::ArenaDtor(void* object) {
@@ -2413,10 +2416,10 @@ void OtherJumpAndGravity::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  if (GetArena() == nullptr && other_jump_and_gravity_ != nullptr) {
-    delete other_jump_and_gravity_;
+  if (GetArena() == nullptr && jump_and_gravity_ != nullptr) {
+    delete jump_and_gravity_;
   }
-  other_jump_and_gravity_ = nullptr;
+  jump_and_gravity_ = nullptr;
   uid_ = 0u;
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
@@ -2436,10 +2439,10 @@ const char* OtherJumpAndGravity::_InternalParse(const char* ptr, ::PROTOBUF_NAME
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
-      // .yy.protocol.app.PlayerJumpAndGravity other_jump_and_gravity = 2;
+      // .yy.protocol.app.PlayerJumpAndGravity jump_and_gravity = 2;
       case 2:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 18)) {
-          ptr = ctx->ParseMessage(_internal_mutable_other_jump_and_gravity(), ptr);
+          ptr = ctx->ParseMessage(_internal_mutable_jump_and_gravity(), ptr);
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
@@ -2477,12 +2480,12 @@ failure:
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt32ToArray(1, this->_internal_uid(), target);
   }
 
-  // .yy.protocol.app.PlayerJumpAndGravity other_jump_and_gravity = 2;
-  if (this->has_other_jump_and_gravity()) {
+  // .yy.protocol.app.PlayerJumpAndGravity jump_and_gravity = 2;
+  if (this->has_jump_and_gravity()) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
       InternalWriteMessage(
-        2, _Internal::other_jump_and_gravity(this), target, stream);
+        2, _Internal::jump_and_gravity(this), target, stream);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -2501,11 +2504,11 @@ size_t OtherJumpAndGravity::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // .yy.protocol.app.PlayerJumpAndGravity other_jump_and_gravity = 2;
-  if (this->has_other_jump_and_gravity()) {
+  // .yy.protocol.app.PlayerJumpAndGravity jump_and_gravity = 2;
+  if (this->has_jump_and_gravity()) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-        *other_jump_and_gravity_);
+        *jump_and_gravity_);
   }
 
   // uint32 uid = 1;
@@ -2546,8 +2549,8 @@ void OtherJumpAndGravity::MergeFrom(const OtherJumpAndGravity& from) {
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (from.has_other_jump_and_gravity()) {
-    _internal_mutable_other_jump_and_gravity()->::yy::protocol::app::PlayerJumpAndGravity::MergeFrom(from._internal_other_jump_and_gravity());
+  if (from.has_jump_and_gravity()) {
+    _internal_mutable_jump_and_gravity()->::yy::protocol::app::PlayerJumpAndGravity::MergeFrom(from._internal_jump_and_gravity());
   }
   if (from.uid() != 0) {
     _internal_set_uid(from._internal_uid());
@@ -2578,9 +2581,9 @@ void OtherJumpAndGravity::InternalSwap(OtherJumpAndGravity* other) {
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
       PROTOBUF_FIELD_OFFSET(OtherJumpAndGravity, uid_)
       + sizeof(OtherJumpAndGravity::uid_)
-      - PROTOBUF_FIELD_OFFSET(OtherJumpAndGravity, other_jump_and_gravity_)>(
-          reinterpret_cast<char*>(&other_jump_and_gravity_),
-          reinterpret_cast<char*>(&other->other_jump_and_gravity_));
+      - PROTOBUF_FIELD_OFFSET(OtherJumpAndGravity, jump_and_gravity_)>(
+          reinterpret_cast<char*>(&jump_and_gravity_),
+          reinterpret_cast<char*>(&other->jump_and_gravity_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata OtherJumpAndGravity::GetMetadata() const {
@@ -2605,10 +2608,17 @@ LoginRequest::LoginRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena)
 LoginRequest::LoginRequest(const LoginRequest& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  conn_name_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_conn_name().empty()) {
+    conn_name_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from._internal_conn_name(),
+      GetArena());
+  }
   // @@protoc_insertion_point(copy_constructor:yy.protocol.app.LoginRequest)
 }
 
 void LoginRequest::SharedCtor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_LoginRequest_player_2eproto.base);
+  conn_name_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
 
 LoginRequest::~LoginRequest() {
@@ -2619,6 +2629,7 @@ LoginRequest::~LoginRequest() {
 
 void LoginRequest::SharedDtor() {
   GOOGLE_DCHECK(GetArena() == nullptr);
+  conn_name_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
 
 void LoginRequest::ArenaDtor(void* object) {
@@ -2642,6 +2653,7 @@ void LoginRequest::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
+  conn_name_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -2652,6 +2664,17 @@ const char* LoginRequest::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_I
     ::PROTOBUF_NAMESPACE_ID::uint32 tag;
     ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
     CHK_(ptr);
+    switch (tag >> 3) {
+      // bytes conn_name = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
+          auto str = _internal_mutable_conn_name();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      default: {
+      handle_unusual:
         if ((tag & 7) == 4 || tag == 0) {
           ctx->SetLastTag(tag);
           goto success;
@@ -2661,6 +2684,8 @@ const char* LoginRequest::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_I
             ptr, ctx);
         CHK_(ptr != nullptr);
         continue;
+      }
+    }  // switch
   }  // while
 success:
   return ptr;
@@ -2675,6 +2700,12 @@ failure:
   // @@protoc_insertion_point(serialize_to_array_start:yy.protocol.app.LoginRequest)
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
+
+  // bytes conn_name = 1;
+  if (this->conn_name().size() > 0) {
+    target = stream->WriteBytesMaybeAliased(
+        1, this->_internal_conn_name(), target);
+  }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
@@ -2691,6 +2722,13 @@ size_t LoginRequest::ByteSizeLong() const {
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
+
+  // bytes conn_name = 1;
+  if (this->conn_name().size() > 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::BytesSize(
+        this->_internal_conn_name());
+  }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
@@ -2723,6 +2761,9 @@ void LoginRequest::MergeFrom(const LoginRequest& from) {
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
+  if (from.conn_name().size() > 0) {
+    _internal_set_conn_name(from._internal_conn_name());
+  }
 }
 
 void LoginRequest::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
@@ -2746,6 +2787,7 @@ bool LoginRequest::IsInitialized() const {
 void LoginRequest::InternalSwap(LoginRequest* other) {
   using std::swap;
   _internal_metadata_.Swap<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(&other->_internal_metadata_);
+  conn_name_.Swap(&other->conn_name_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata LoginRequest::GetMetadata() const {
@@ -3047,12 +3089,16 @@ OtherPlayerDataRequest::OtherPlayerDataRequest(::PROTOBUF_NAMESPACE_ID::Arena* a
 OtherPlayerDataRequest::OtherPlayerDataRequest(const OtherPlayerDataRequest& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  uid_ = from.uid_;
+  ::memcpy(&requester_uid_, &from.requester_uid_,
+    static_cast<size_t>(reinterpret_cast<char*>(&requested_uid_) -
+    reinterpret_cast<char*>(&requester_uid_)) + sizeof(requested_uid_));
   // @@protoc_insertion_point(copy_constructor:yy.protocol.app.OtherPlayerDataRequest)
 }
 
 void OtherPlayerDataRequest::SharedCtor() {
-  uid_ = 0u;
+  ::memset(&requester_uid_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&requested_uid_) -
+      reinterpret_cast<char*>(&requester_uid_)) + sizeof(requested_uid_));
 }
 
 OtherPlayerDataRequest::~OtherPlayerDataRequest() {
@@ -3086,7 +3132,9 @@ void OtherPlayerDataRequest::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  uid_ = 0u;
+  ::memset(&requester_uid_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&requested_uid_) -
+      reinterpret_cast<char*>(&requester_uid_)) + sizeof(requested_uid_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -3098,10 +3146,17 @@ const char* OtherPlayerDataRequest::_InternalParse(const char* ptr, ::PROTOBUF_N
     ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
     CHK_(ptr);
     switch (tag >> 3) {
-      // uint32 uid = 1;
+      // uint32 requester_uid = 1;
       case 1:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 8)) {
-          uid_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          requester_uid_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // uint32 requested_uid = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 16)) {
+          requested_uid_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
@@ -3133,10 +3188,16 @@ failure:
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // uint32 uid = 1;
-  if (this->uid() != 0) {
+  // uint32 requester_uid = 1;
+  if (this->requester_uid() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt32ToArray(1, this->_internal_uid(), target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt32ToArray(1, this->_internal_requester_uid(), target);
+  }
+
+  // uint32 requested_uid = 2;
+  if (this->requested_uid() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt32ToArray(2, this->_internal_requested_uid(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -3155,11 +3216,18 @@ size_t OtherPlayerDataRequest::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // uint32 uid = 1;
-  if (this->uid() != 0) {
+  // uint32 requester_uid = 1;
+  if (this->requester_uid() != 0) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt32Size(
-        this->_internal_uid());
+        this->_internal_requester_uid());
+  }
+
+  // uint32 requested_uid = 2;
+  if (this->requested_uid() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt32Size(
+        this->_internal_requested_uid());
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -3193,8 +3261,11 @@ void OtherPlayerDataRequest::MergeFrom(const OtherPlayerDataRequest& from) {
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (from.uid() != 0) {
-    _internal_set_uid(from._internal_uid());
+  if (from.requester_uid() != 0) {
+    _internal_set_requester_uid(from._internal_requester_uid());
+  }
+  if (from.requested_uid() != 0) {
+    _internal_set_requested_uid(from._internal_requested_uid());
   }
 }
 
@@ -3219,7 +3290,12 @@ bool OtherPlayerDataRequest::IsInitialized() const {
 void OtherPlayerDataRequest::InternalSwap(OtherPlayerDataRequest* other) {
   using std::swap;
   _internal_metadata_.Swap<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(&other->_internal_metadata_);
-  swap(uid_, other->uid_);
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(OtherPlayerDataRequest, requested_uid_)
+      + sizeof(OtherPlayerDataRequest::requested_uid_)
+      - PROTOBUF_FIELD_OFFSET(OtherPlayerDataRequest, requester_uid_)>(
+          reinterpret_cast<char*>(&requester_uid_),
+          reinterpret_cast<char*>(&other->requester_uid_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata OtherPlayerDataRequest::GetMetadata() const {

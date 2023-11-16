@@ -30,19 +30,23 @@ GamePlayerManager::GamePlayerManager()
       m_player_pool{m_server->GetAppConfig().app_player_max()}
 {
     GameManager::getInstance().RegisterMessageCallback<LoginRequest>(
-            std::bind(&GamePlayerManager::onLogin, this, _1, _2));
+            std::bind(&GamePlayerManager::OnLogin, this, _1, _2));
     GameManager::getInstance().RegisterMessageCallback<OtherPlayerDataRequest>(
-            std::bind( &GamePlayerManager::onOtherPlayerDataRequest, this, _1, _2));
+            std::bind(&GamePlayerManager::OnOtherPlayerDataRequest, this, _1, _2));
     GameManager::getInstance().RegisterMessageCallback<SelfMovement>(
-            std::bind(&GamePlayerManager::onSelfMovement, this, _1, _2));
+            std::bind(&GamePlayerManager::OnSelfMovement, this, _1, _2));
     GameManager::getInstance().RegisterMessageCallback<SelfJumpAndGravity>(
-            std::bind(&GamePlayerManager::onSelfJumpAndGravity, this, _1, _2));
-    GameManager::getInstance().RegisterMessageCallback<OtherMovement>(
-            std::bind(&GamePlayerManager::onOtherMovement, this, _1, _2));
-    GameManager::getInstance().RegisterMessageCallback<OtherJumpAndGravity>(
-            std::bind(&GamePlayerManager::onOtherJumpAndGravity, this, _1, _2));
+            std::bind(&GamePlayerManager::OnSelfJumpAndGravity, this, _1, _2));
     GameManager::getInstance().RegisterMessageCallback<PlayerLeave>(
-            std::bind(&GamePlayerManager::onLeave, this, _1, _2));
+            std::bind(&GamePlayerManager::OnLeave, this, _1, _2));
+
+    // m_server->RunTaskEvery(1s, [this]() {
+    //     std::lock_guard lg{this->m_online_players_mutex};
+    //
+    //     for(auto it = m_online_players.begin(); it != m_online_players.end() ;it++) {
+    //         if()
+    //     }
+    // });
 }
 
 GamePlayerManager::~GamePlayerManager() // NOLINT(modernize-use-equals-default)
@@ -59,7 +63,7 @@ void GamePlayerManager::Init()
 #if 0
 void GamePlayerManager::Update()
 {
-    // YLOG_TRACE("GamePlayerManager Update")
+    // YLOG_TRACE("GamePlayerManager StartListenAndIOLoop")
     static clock_t temptime = 0;
     auto value = clock() - temptime;
     if (value < 33) return;
@@ -87,7 +91,7 @@ void GamePlayerManager::Update()
             // YLOG_INFO("玩家<{}>离开，数据已保存", playerLeave.uid())
             //
             // // 重置数据，从在线玩家列表中删除，回收至对象池
-            // m_server->SetUserFree(userdata);
+            // m_server->FreeUser(userdata);
             // playerdata->Clear();
             // m_player_pool.push(playerdata);
             //
@@ -113,20 +117,19 @@ Ptr<yy::protocol::app::PlayerBaseData> GamePlayerManager::FindPlayerByUID(UID_t 
     }
 }
 
-
 void GamePlayerManager::Broadcast(const UserBaseDataPtr &from, const google::protobuf::Message &data) {
     std::lock_guard lg{m_online_players_mutex};
 
     for(const auto& p: m_online_players)
     {
-        YLOG_INFO("Broadcast: {},{}", p.second->uid(), from->GetUID())
-
         if(p.second->uid() == from->GetUID())
             continue;
+
+        YLOG_TRACE("Broadcast<{}>: from {} to {}, ", data.GetDescriptor()->full_name(), from->GetUID(), p.second->uid())
         auto to = m_server->FindUser(p.second->conn_name());
         if(to == nullptr) continue;
 
-        from->Send(data);
+        to->Send(data);
     }
 }
 
@@ -137,6 +140,30 @@ void GamePlayerManager::Broadcast(const UserBaseDataPtr& from, const MessagePtr 
     }
 }
 
+void GamePlayerManager::LeaveAndSave(UserBaseDataPtr leave_user) {
+    // 给其他玩家客户端发送离线通告
+    yy::protocol::app::PlayerLeave playerLeave;
+    playerLeave.set_leaver_uid(leave_user->GetUID());
+    Broadcast(leave_user, playerLeave);
+    YLOG_INFO("玩家<{}>离开", playerLeave.leaver_uid())
+
+
+    leave_user->SetState(core::UserBaseData::E_UserBaseState::eSavingData);
+
+    auto playerdata = FindPlayerByUID(leave_user->GetUID());
+    // 重置数据，从在线玩家列表中删除，回收至对象池
+    {
+        std::lock_guard lg{m_online_players_mutex};
+        m_online_players.erase(playerdata->uid());
+    }
+    playerdata->Clear();
+    m_player_pool.push(playerdata);
+
+    // m_server->FreeUser(leave_user);
+    YLOG_INFO("玩家<{}>离开并保存数据！", leave_user->GetUID());
+
+    leave_user->SetState(core::UserBaseData::E_UserBaseState::eFree);
+}
 
 
 
@@ -149,8 +176,7 @@ void GamePlayerManager::Broadcast(const UserBaseDataPtr& from, const MessagePtr 
 
 
 
-
-void GamePlayerManager::onLogin(const UserBaseDataPtr& userdata, const Ptr<LoginRequest> & loginRequest ) //NOLINT
+void GamePlayerManager::OnLogin(const UserBaseDataPtr& userdata, const Ptr<protocol::app::LoginRequest> &) //NOLINT
 {
     if(userdata->isLoggedIn()) {
         return;
@@ -181,7 +207,7 @@ void GamePlayerManager::onLogin(const UserBaseDataPtr& userdata, const Ptr<Login
     PlayerMove selfMove;
     selfMove.set_position("");
     selfMove.set_rotation("");
-    *selfdata->mutable_player_move() = selfMove;
+    *selfdata->mutable_movement() = selfMove;
 
     {
         std::lock_guard lg{m_online_players_mutex};
@@ -189,6 +215,9 @@ void GamePlayerManager::onLogin(const UserBaseDataPtr& userdata, const Ptr<Login
         // ②登陆请求：填充其他玩家数据
         for (const auto &p: m_online_players) {
             const auto &otherdata = *p.second;
+            if(otherdata.uid() == selfdata->uid())
+                continue;
+
             // add_othersdata为repeated字段增加元素，返回值就是该元素的指针
             auto data = loginResponse.add_other_datas();
             data->CopyFrom(otherdata); // 复制
@@ -200,17 +229,14 @@ void GamePlayerManager::onLogin(const UserBaseDataPtr& userdata, const Ptr<Login
     *loginResponse.mutable_self_data() = *selfdata;
 
 
-
-    {
-        YLOG_INFO("loginResponse = {}, {}, {}, {}, {}; size = {}",
-                  loginResponse.self_data().uid(),
-                  loginResponse.self_data().conn_name(),
-                  loginResponse.self_data().state(),
-                  loginResponse.self_data().hp_current(),
-                  loginResponse.self_data().hp_max(),
-                  loginResponse.ByteSizeLong()
-        );
-    }
+    YLOG_INFO("发送loginResponse = {}, {}, {}, {}, {}; size = {}",
+              loginResponse.self_data().uid(),
+              loginResponse.self_data().conn_name(),
+              loginResponse.self_data().state(),
+              loginResponse.self_data().hp_current(),
+              loginResponse.self_data().hp_max(),
+              loginResponse.ByteSizeLong()
+    );
 
 
     // 转换状态
@@ -221,74 +247,29 @@ void GamePlayerManager::onLogin(const UserBaseDataPtr& userdata, const Ptr<Login
     // 返回登录用户的信息给其他用户
     OtherPlayerDataResponse otherPlayerDataResponse;
     *otherPlayerDataResponse.mutable_other_data() = *selfdata;
-    Broadcast(userdata,  otherPlayerDataResponse);
+    YLOG_INFO("OtherPlayerDataResponse = {}, {}",
+              otherPlayerDataResponse.other_data().uid(),
+              otherPlayerDataResponse.other_data().conn_name());
+    // Broadcast(userdata,  otherPlayerDataResponse);
 
     YLOG_INFO("玩家<{}:{}>登录", selfdata->conn_name(), selfdata->uid())
 }
 
-void GamePlayerManager::onLeave(const UserBaseDataPtr& userdata_self, const Ptr<protocol::app::PlayerLeave> & leave) //NOLINT
+void GamePlayerManager::OnLeave(const UserBaseDataPtr& userdata_self, const Ptr<protocol::app::PlayerLeave> & leave) //NOLINT
 {
     if(userdata_self == nullptr) return;
 
-    auto playerdata = FindPlayerByUID(userdata_self->GetUID());
 
-    // 给其他玩家客户端发送离线通告
-    yy::protocol::app::PlayerLeave playerLeave;
-    playerLeave.set_uid(playerdata->uid());
-    Broadcast(userdata_self, playerLeave);
-    YLOG_INFO("玩家<{}>离开，数据已保存", playerLeave.uid())
 
-    // 重置数据，从在线玩家列表中删除，回收至对象池
-    m_server->SetUserFree(userdata_self);
-    playerdata->Clear();
-    m_player_pool.push(playerdata);
-
-    std::lock_guard lg{m_online_players_mutex};
-    m_online_players.erase(playerdata->uid());
+    LeaveAndSave(userdata_self);
 }
-
-void GamePlayerManager::onOtherMovement(const UserBaseDataPtr& userdata_self, const Ptr<protocol::app::OtherMovement> & othermove)
-{
-    // 收到玩家A移动后的数据
-    auto playerdata_self = FindPlayerByUID(othermove->uid());
-    if(playerdata_self == nullptr) {
-        YLOG_WARN("Get playerdata<{}> not found", othermove->uid())
-        return;
-    }
-
-    // playerdata_self->set_allocated_player_move(new PlayerMove(othermove->other_move()));
-    *playerdata_self->mutable_player_move() = othermove->other_move();
-
-    // 转发给其它玩家
-    Broadcast(userdata_self, othermove);
-
-//    INTERVAL_DO(1, YLOG_DEBUG("玩家<%d>移动：%s, %s", playerdata_self->uid(),
-//                   othermove.position.ToString().c_str(), othermove.rotation.ToString().c_str()) )
-}
-
-void GamePlayerManager::onSelfMovement(const UserBaseDataPtr& userdata_self, const Ptr<protocol::app::SelfMovement> & selfmove)
-{
-    auto playerdata_self = FindPlayerByUID(selfmove->uid());
-    if(playerdata_self == nullptr) {
-        YLOG_WARN("Get playerdata<{}> not found", selfmove->uid())
-        return;
-    }
-
-    // playerdata_self->set_allocated_player_move(new PlayerMove(selfmove->self_move()));
-    *playerdata_self->mutable_player_move() = selfmove->self_move();
-
-
-    userdata_self->Send(selfmove);
-}
-
 
 /// 当userdata_self收到其他人的移动的数据时，便会申请获取id为id_other的用户的玩家数据
-void GamePlayerManager::onOtherPlayerDataRequest(const UserBaseDataPtr& userdata_self, const Ptr<protocol::app::OtherPlayerDataRequest> & request) //NOLINT
+void GamePlayerManager::OnOtherPlayerDataRequest(const UserBaseDataPtr& userdata_self, const Ptr<protocol::app::OtherPlayerDataRequest> & request) //NOLINT
 {
-
-    auto player_other = FindPlayerByUID(request->uid());
+    auto player_other = FindPlayerByUID(request->requested_uid());
     if(player_other == nullptr) {
-        YLOG_WARN("Get playerdata<{}> not found", request->uid())
+        YLOG_WARN("Get playerdata<{}> not found", request->requested_uid())
         return;
     }
     // auto userdata_other = m_server.FindUserBySockfd(player_other->sockfd);
@@ -298,21 +279,26 @@ void GamePlayerManager::onOtherPlayerDataRequest(const UserBaseDataPtr& userdata
     userdata_self->Send(response);
 }
 
-void GamePlayerManager::onOtherJumpAndGravity(const UserBaseDataPtr& userdata_self, const Ptr<protocol::app::OtherJumpAndGravity> & otherJumpAndGravity) //NOLINT
+void GamePlayerManager::OnSelfMovement(const UserBaseDataPtr& userdata_self, const Ptr<protocol::app::SelfMovement> & selfmove)
 {
-    auto playerdata_self = FindPlayerByUID(otherJumpAndGravity->uid());
+    auto playerdata_self = FindPlayerByUID(selfmove->uid());
     if(playerdata_self == nullptr) {
-        YLOG_WARN("Jump playerdata<{}> not found", otherJumpAndGravity->uid())
+        YLOG_WARN("Get playerdata<{}> not found", selfmove->uid())
         return;
     }
 
-    // 记录玩家状态
-    *playerdata_self->mutable_ani_jump_and_gravity() = otherJumpAndGravity->other_jump_and_gravity();
-    Broadcast(userdata_self, otherJumpAndGravity);
+    // playerdata_self->set_allocated_player_move(new PlayerMove(selfmove->self_move()));
+    *playerdata_self->mutable_movement() = selfmove->movement();
+    userdata_self->Send(selfmove);
+
+    OtherMovement othermove;
+    othermove.set_uid(selfmove->uid());
+    *othermove.mutable_movement() = selfmove->movement();
+
+    Broadcast(userdata_self, othermove);
 }
 
-
-void GamePlayerManager::onSelfJumpAndGravity(const UserBaseDataPtr& userdata_self, const Ptr<protocol::app::SelfJumpAndGravity> & selfJumpAndGravity) //NOLINT
+void GamePlayerManager::OnSelfJumpAndGravity(const UserBaseDataPtr& userdata_self, const Ptr<protocol::app::SelfJumpAndGravity> & selfJumpAndGravity) //NOLINT
 {
     auto playerdata_self = FindPlayerByUID(selfJumpAndGravity->uid());
     if(playerdata_self == nullptr) {
@@ -322,9 +308,16 @@ void GamePlayerManager::onSelfJumpAndGravity(const UserBaseDataPtr& userdata_sel
 
     // 记录玩家状态
     // playerdata_self->mutable_ani_jump_and_gravity()->CopyFrom(selfJumpAndGravity->self_jump_and_gravity());
-    *playerdata_self->mutable_ani_jump_and_gravity() = selfJumpAndGravity->self_jump_and_gravity();
-    Broadcast(userdata_self, selfJumpAndGravity);
+    *playerdata_self->mutable_jump_and_gravity() = selfJumpAndGravity->jump_and_gravity();
+    userdata_self->Send(selfJumpAndGravity);
+
+    OtherJumpAndGravity otherJumpAndGravity;
+    otherJumpAndGravity.set_uid(selfJumpAndGravity->uid());
+    *otherJumpAndGravity.mutable_jump_and_gravity() = selfJumpAndGravity->jump_and_gravity();
+
+    Broadcast(userdata_self, otherJumpAndGravity);
 }
+
 
 
 

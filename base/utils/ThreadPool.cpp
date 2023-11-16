@@ -1,12 +1,19 @@
 #include "ThreadPool.h"
 #include "log.h"
+#include "EventLoop.h"
 #include <functional>
 #include <iostream>
 
-namespace yy::util {
+namespace yy::net {
 
+using namespace yy::util;
 
-ThreadPool::ThreadPool(int queueSize) : m_IsRunning(false), m_Threads{}, m_Queue(queueSize) {}
+ThreadPool::ThreadPool(int queueSize)
+        : m_IsRunning(false)
+        , m_Threads{}
+        , m_Queue(queueSize)
+        // , m_TimerManager{nullptr}
+{}
 
 ThreadPool::~ThreadPool() {
     while(m_IsRunning)
@@ -15,16 +22,19 @@ ThreadPool::~ThreadPool() {
     }
 }
 
-void ThreadPool::Start(int threadNum) {
+void ThreadPool::Start(net::EventLoop * timerloop, int threadNum) {
     m_IsRunning = true;
     m_Threads.resize(threadNum);
+
+    m_TimerLoop = timerloop;
+
+    // m_TimerManager = std::make_unique<yy::net::TimerManager>(timerloop);
 
     for(std::thread & work_thread: m_Threads)
     {
         work_thread = std::thread{&ThreadPool::PopAndExecuteTask, this};
         YLOG_INFO("启动线程池线程<{}>", CastThreadIDToInt(work_thread.get_id()))
     }
-
 }
 
 void ThreadPool::Stop() {
@@ -68,5 +78,22 @@ void ThreadPool::PopAndExecuteTask() {
 
     std::cout << "thread<" << std::this_thread::get_id() << "> finished!\n";
 }
+
+net::TimerID ThreadPool::RunTaskAt(net::Timestamp time, Task cb) {
+    return m_TimerLoop->RunAt(time, [this, taskcb = std::move(cb)](){this->PushTask(taskcb);});
+}
+
+net::TimerID ThreadPool::RunTaskAfter(net::Microseconds delay, Task cb) {
+    return m_TimerLoop->RunAfter(delay, [this, taskcb = std::move(cb)](){this->PushTask(taskcb);});
+}
+
+net::TimerID ThreadPool::RunTaskEvery(net::Microseconds interval, Task cb) {
+    return m_TimerLoop->RunEvery(interval, [this, taskcb = std::move(cb)](){ this->PushTask(taskcb); });
+}
+
+void ThreadPool::CancelTimer(net::TimerID timerid) {
+    m_TimerLoop->CancelTimer(timerid);
+}
+
 
 } // yy::util

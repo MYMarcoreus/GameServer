@@ -235,12 +235,12 @@ IPAddress::ptr GetPeerAddr(SocketApiWrapper::socket_t sockfd) {
 }
 
 ssize_t recv(socket_t sockfd, void *ptr, size_t nbytes, int flags) {
-    ssize_t ret = ::recv(sockfd, (char *)ptr, nbytes, flags);
+    ssize_t ret = ::recv(sockfd, (char *)ptr, nbytes, flags | MSG_NOSIGNAL);
     return ret;
 }
 
 ssize_t send(socket_t sockfd, const void *ptr, size_t nbytes, int flags) {
-    ssize_t ret = ::send(sockfd, (char *)ptr, nbytes, flags);
+    ssize_t ret = ::send(sockfd, (char *)ptr, nbytes, flags | MSG_NOSIGNAL);
     return ret;
 }
 

@@ -28,22 +28,23 @@ public:
  
     virtual ~IServer() = default;
 
-    /// @brief 启动并初始化服务器
+    /// @brief 开始监听并启动IO线程
     virtual void Start() = 0;
 
     /// @brief 结束服务器
     virtual void Stop() = 0;
 
-    /// @brief 在业务层的while(1)中调用Update
     virtual void Update() = 0;
+
 
     /// @brief 通过套接字文件描述符寻找用户连接数据
     virtual UserBaseDataPtr FindUser(const std::string & conn) = 0;
 
-    virtual void SetUserFree(const UserBaseDataPtr & userdata) = 0;
+    virtual void FreeUser(const UserBaseDataPtr & userdata) = 0;
 
+    virtual void AddUser(const std::string & name, const UserBaseDataPtr &) = 0;
 
-    [[nodiscard]] virtual bool IsRunning() const = 0;
+    virtual bool IsRunning() const = 0;
 
     virtual const config::AppXmlConfig & GetAppConfig() = 0;
 
@@ -52,6 +53,11 @@ public:
     virtual void setNotifier_Security  (F_Notifier e) = 0;
     virtual void setNotifier_DisConnect(F_Notifier e) = 0;
     virtual void setNotifier_Command(F_NotifierCommand cb) = 0;
+
+    virtual net::TimerID RunAt(net::Timestamp time, net::F_TaskCallback cb) = 0;
+    virtual net::TimerID RunAfter(net::Microseconds delay, net::F_TaskCallback cb) = 0;
+    virtual net::TimerID RunEvery(net::Microseconds interval, net::F_TaskCallback cb) = 0;
+    virtual void CancelTimer(net::TimerID timerid) = 0;
 };
 
 // 用于实现跨平台的函数：在此返回LinuxServer的实例

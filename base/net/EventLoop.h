@@ -52,11 +52,11 @@ public:
 
     //Region 定时器相关函数
     ///@brief 在某个时间点time执行回调函数cb
-    TimerID RunAt(Timestamp time, F_TimerCallback cb);
+    TimerID RunAt(Timestamp time, F_TaskCallback cb);
     ///@brief 在delay微妙后执行回调函数cb
-    TimerID RunAfter(Microseconds delay, F_TimerCallback cb);
+    TimerID RunAfter(Microseconds delay, F_TaskCallback cb);
     ///@brief 以interval的时间间隔循环执行回调函数cb
-    TimerID RunEvery(Microseconds interval, F_TimerCallback cb);
+    TimerID RunEvery(Microseconds interval, F_TaskCallback cb);
     ///@brief 撤销id为timerid的定时器
     void CancelTimer(TimerID timerid);
     //End 定时器相关函数
@@ -70,11 +70,13 @@ public:
     ///@brief 获取当前线程的EventLoop
     static EventLoop * GetEventLoopOfThisThread();
 
-    void SetCloseSocketsCallback(F_CloseSocketsCallback cb) { m_CloseSocketsCallback = cb; }
+    bool IsLooping() const { return m_IsLooping; }
 
-private:
-    ///@brief QuitLoop()调用，唤醒正在阻塞在PollWait的EventLoop线程
+    // void SetCloseSocketsCallback(F_CloseSocketsCallback cb) { m_CloseSocketsCallback = cb; }
+
+    ///@brief 唤醒正在阻塞在PollWait的EventLoop线程
     void Wakeup();
+private:
 
     ///@brief 在EventLoop::Loop()每一轮循环的最后执行代办函数列表
     void CallPenddingCallbacks();
@@ -97,8 +99,7 @@ private:
     std::mutex           m_PenddingFunctorsMutex; // 保护代办函数列表
     std::atomic_bool     m_IsCallingPenddingFunctors;
 
-    F_CloseSocketsCallback m_CloseSocketsCallback;
-
+    // F_CloseSocketsCallback m_CloseSocketsCallback;
 };
 
 }

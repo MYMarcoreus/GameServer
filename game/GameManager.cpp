@@ -81,7 +81,6 @@ void GameManager::Init()
     m_server->setNotifier_Command   (std::bind(&GameManager::AppNotifier_Command, this, _1, _2));
 
 
-
     m_player = &GamePlayerManager::getInstance();
     m_player->Init();
 

@@ -158,9 +158,9 @@ void TcpServer::InitLog() {
 //     yy::Ylog::LoggerManager::getInstance().getLogger()->addAppender(appender);
 }
 
-// void TcpServer::SetCloseSocketsCallback(F_CloseShutdownConnectionsCallback cb) {
-//     m_AcceptorLoop->SetCloseSocketsCallback(cb);
-// }
+void TcpServer::SetCloseSocketsCallback(F_CloseShutdownConnectionsCallback cb) {
+    m_AcceptorLoop->SetCloseSocketsCallback(cb);
+}
 
 void TcpServer::HandleSignal() {
     auto sigs = SignalManager::ReadPipe();

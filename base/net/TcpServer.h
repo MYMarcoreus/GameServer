@@ -34,7 +34,7 @@ public:
     // void SetConnectionDestroyedCallback(F_ConnectionDestroyedCallback cb) { m_ConnectionDestroyedCallback = cb; };
     void SetConnectionWriteCompleteCallback(F_ConnectionWriteCompleteCallback cb) { m_ConnectionWriteCompleteCallback = cb; };
     void SetConnectionShutdownCallback     (F_ConnectionShutdownCallback cb)      { m_ConnectionShutdownCallback = cb; }
-    // void SetCloseSocketsCallback(F_CloseShutdownConnectionsCallback cb);
+    void SetCloseSocketsCallback(F_CloseShutdownConnectionsCallback cb);
 
 
     /* ! 注意：当使用线程池时，不要把recvBuf的引用或指针作为参数传递给另一线程（如线程池中的线程），

@@ -72,7 +72,7 @@ public:
 
     bool IsLooping() const { return m_IsLooping; }
 
-    // void SetCloseSocketsCallback(F_CloseSocketsCallback cb) { m_CloseSocketsCallback = cb; }
+    void SetCloseSocketsCallback(F_CloseSocketsCallback cb) { m_CloseSocketsCallback = cb; }
 
     ///@brief 唤醒正在阻塞在PollWait的EventLoop线程
     void Wakeup();
@@ -99,7 +99,7 @@ private:
     std::mutex           m_PenddingFunctorsMutex; // 保护代办函数列表
     std::atomic_bool     m_IsCallingPenddingFunctors;
 
-    // F_CloseSocketsCallback m_CloseSocketsCallback;
+    F_CloseSocketsCallback m_CloseSocketsCallback;
 };
 
 }

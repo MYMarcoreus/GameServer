@@ -79,8 +79,8 @@ private:
     void OnSecurity(const yy::net::TcpConnectionPtr & conn, const SecurityPtr & message);
 
     void CheckDisconnections_Update(const UserBaseDataPtr & userdata);
-    // void AddShutdownConnection(const yy::net::TcpConnectionPtr &conn);
-    // void CheckDisconnections();
+    void AddShutdownConnection(const yy::net::TcpConnectionPtr &conn);
+    void CheckDisconnections();
 
 private:
     yy::net::EventLoop *        m_accpetorLoop;
@@ -95,10 +95,9 @@ private:
     F_Notifier m_notifierSecurity;    // 用户安全验证通过后，执行业务层回调函数
     F_Notifier m_notifierDisconnect;  // 用户连接断开后，执行业务层回调函数
     F_NotifierCommand m_notifierCommand;
-    std::atomic_bool m_IsUpdating;
 
-    // std::vector<yy::net::TcpConnectionPtr>  m_ShutdownConnections;
-    // std::mutex                              m_ShutdownConnectionsMutex;
+    std::vector<yy::net::TcpConnectionPtr>  m_ShutdownConnections;
+    std::mutex                              m_ShutdownConnectionsMutex;
 
     std::mutex m_users_mutex;
     std::map<std::string , UserBaseDataPtr> m_users;

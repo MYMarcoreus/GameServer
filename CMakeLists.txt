@@ -113,11 +113,9 @@ set(COMMON_SOURCES
         core/GameServer.cpp
         core/GameServer.h
 
-
-        #        game/GameManager.cpp
-        #        game/GameNotifier.cpp
-        #        game/GamePlayerManager.cpp
-        #        game/GameTestManager.cpp
+                game/GameManager.cpp
+        game/GamePlayerManager.cpp
+                game/GameTestManager.cpp
 )
 
 add_library(CommonLibrary ${COMMON_SOURCES})

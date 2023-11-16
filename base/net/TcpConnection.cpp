@@ -60,6 +60,10 @@ void TcpConnection::Send(const google::protobuf::Message & message) {
     Send(std::string_view(message.SerializeAsString())); //! const引用延长临时对象生命周期
 }
 
+void TcpConnection::Send(const std::shared_ptr<google::protobuf::Message> &message) {
+    if(message) { Send(*message);  }
+}
+
 void TcpConnection::Send(const std::string_view & message) {
     if(m_Loop->IsInLoopingThread()) {
         m_Loop->RunCallbackInLoop([conn = shared_from_this(), &message](){ conn->SendInLoop(message); });
@@ -351,6 +355,7 @@ bool TcpConnection::HandleRead_ET() {
 int TcpConnection::GetSocketFD() const {
     return m_Socket->GetFD();
 }
+
 
 
 

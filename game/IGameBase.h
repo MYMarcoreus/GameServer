@@ -13,9 +13,7 @@ public:
 
     virtual void Init() = 0;
 
-    virtual void Update() = 0;
-
-    virtual void AppCommand(const yy::core::UserBaseData::ptr &, int32_t) = 0;
+    // virtual void Update() = 0;
 protected:
     IGameBase() = default;
     virtual ~IGameBase() = default;

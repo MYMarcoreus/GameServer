@@ -1,58 +1,91 @@
 syntax = "proto3";
-package yy.app.protocol;
+package yy.protocol.app;
 
 
-
-message PlayerID
-{
-  uint32   uid = 1;
-};
 
 message PlayerBaseData
 {
-    uint32     uid        = 1;
-    int32      sockfd     = 2;
-    int32      state      = 3;
-    int32      hp_current = 4;
-    int32      hp_max     = 5;
-
-    bytes      position = 6;
-    bytes      rotation = 7;
-
-    float      ani_speed = 8;
-    bool       ani_isJump = 9;
-    bool       ani_isGround = 10;
-    bool       ani_isFreeFall = 11;
-    float      ani_motionSpeed = 12;
+    uint32   uid         = 1;
+    bytes      conn_name   = 2;
+    int32      state       = 3;
+    int32      hp_current  = 4;
+    int32      hp_max      = 5;
+    PlayerMove player_move = 6;
+    PlayerJumpAndGravity ani_jump_and_gravity = 7;
 }
-
-
 message PlayerMove
 {
-    uint32      uid = 1;
     bytes       position = 2;
     bytes       rotation = 3;
-    bytes       move_target = 4;
     float       ani_speed = 5;
-    float       ani_motionSpeed = 6;
+    float       ani_motion_speed = 6;
+
+    bytes       move_target = 4;
 }
-
-
-
 message PlayerJumpAndGravity
 {
+    bool     ani_is_jump = 2;
+    bool     ani_is_ground = 3;
+    bool     ani_is_freefall = 4;
+}
+
+//! 客户端发送和接收
+message PlayerLeave
+{
     uint32   uid = 1;
-    bool     ani_isJump = 2;
-    bool     ani_isGround = 3;
-    bool     ani_isFreeFall = 4;
+};
+
+
+//! 客户端发送自己的移动数据，服务端验证，然后返回让客户端接收
+message SelfMovement
+{
+    uint32      uid = 1;
+    PlayerMove self_move = 2;
+}
+//! 客户端接收其它玩家的移动
+message OtherMovement
+{
+    uint32      uid = 1;
+    PlayerMove other_move = 2;
 }
 
 
+//! 客户端发送自己的跳跃数据，服务端验证，然后返回让客户端接收
+message SelfJumpAndGravity
+{
+    uint32      uid = 1;
+    PlayerJumpAndGravity self_jump_and_gravity = 2;
+}
+//! 客户端接收其它玩家的跳跃
+message OtherJumpAndGravity
+{
+    uint32      uid = 1;
+    PlayerJumpAndGravity other_jump_and_gravity = 2;
+}
 
-// 服务器端返回给客户端的登录结果
+
+//! 客户端的登录请求
+message LoginRequest
+{
+}
+//! 服务器端返回给客户端的登录结果
 message LoginResponse
 {
     bool result = 1;
-    PlayerBaseData selfdata = 2;
-    repeated PlayerBaseData othersdata = 3;
+    PlayerBaseData self_data = 2;
+    repeated PlayerBaseData other_datas = 3;
 }
+
+
+//! 如果收到其它玩家的移动或跳跃数据，但是没有该玩家的基础数据，则先请求之
+message OtherPlayerDataRequest
+{
+    uint32     uid        = 1;
+}
+
+//! 如果收到其它玩家的移动或跳跃数据，但是没有该玩家的基础数据，则先请求之
+message OtherPlayerDataResponse
+{
+    PlayerBaseData other_data = 1;
+}
+

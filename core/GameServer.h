@@ -10,20 +10,19 @@
 #include "ThreadPool.h"
 
 
-namespace yy::core {
-
-
-namespace protocol {
+namespace yy::protocol::core {
 class HeartBody;
 class SecurityBody;
 }
 
 
+namespace yy::core {
+
 
 class GameServer: public IServer{
 
-    using HeartPtr    = std::shared_ptr<yy::core::protocol::HeartBody> ;
-    using SecurityPtr = std::shared_ptr<yy::core::protocol::SecurityBody> ;
+    using HeartPtr    = std::shared_ptr<yy::protocol::core::HeartBody> ;
+    using SecurityPtr = std::shared_ptr<yy::protocol::core::SecurityBody> ;
 
 public:
     GameServer(yy::net::EventLoop* loop, yy::net::IPAddressPtr listenAddr);
@@ -41,25 +40,29 @@ public:
     }
 
     /// @brief 在业务层的while(1)中调用Update
-    virtual void Update() override {}
+    virtual void Update() override;
 
     /// @brief 通过套接字文件描述符寻找用户连接数据
-    virtual UserBaseDataPtr & FindUser(const yy::net::TcpConnectionPtr conn) override {}
-    virtual bool   isRunning() const override {}
+    virtual UserBaseDataPtr FindUser(const std::string & conn) override;
+    virtual bool IsRunning() const override {
+        return m_server.IsRunning();
+    }
 
+    virtual void SetUserFree(const UserBaseDataPtr & userdata) override;
 
     virtual const config::AppXmlConfig & GetAppConfig() override { return m_app_configvar->GetValue(); }
-
 
     /* 在实现类中定义四个回调函数成员，下面这四个函数将会设置其对应的回调函数，而回调函数将由业务层定义并传入 */
     virtual void setNotifier_Security  (F_Notifier cb) override { m_notifierSecurity   = cb; }
     virtual void setNotifier_DisConnect(F_Notifier cb) override { m_notifierDisconnect = cb; }
+    virtual void setNotifier_Command(F_NotifierCommand cb) override { m_notifierCommand = cb; }
 
-    template<typename T>
-    void RegisterMessageCallback(const CallbackT<T>::ProtobufMessageTCallback &callback) {
-        m_dispatcher.RegisterMessageCallback<T>(callback);
-    }
+    // template<typename T>
+    // void RegisterMessageCallback(const CallbackT<T>::ProtobufMessageTCallback &callback) {
+    //     m_dispatcher.RegisterMessageCallback<T>(callback);
+    // }
 
+    net::EventLoop * GetAcceptorLoop() const { return m_server.GetAcceptorLoop(); }
 
 
 private:
@@ -79,7 +82,7 @@ private:
     yy::net::EventLoop *        m_loop;
     yy::net::TcpServer          m_server;
     ProtobufCodec               m_codec;
-    ProtobufDispatcher          m_dispatcher;
+    ProtobufDispatcher<yy::net::TcpConnectionPtr>        m_dispatcher;
 
     yy::config::ConfigVar<yy::config::AppXmlConfig>::ptr    m_app_configvar; // 用于获取配置项
     std::atomic<size_t> m_NumSecurity; //安全连接数
@@ -87,11 +90,12 @@ private:
     /* 这几个回调函数由业务层实现，然后通过对应的set方法传入设置 */
     F_Notifier m_notifierSecurity;    // 用户安全验证通过后，执行业务层回调函数
     F_Notifier m_notifierDisconnect;  // 用户连接断开后，执行业务层回调函数
+    F_NotifierCommand m_notifierCommand;
 
     std::vector<yy::net::TcpConnectionPtr>  m_ShutdownConnections;
     std::mutex                              m_ShutdownConnectionsMutex;
 
-    std::map<yy::net::TcpConnection *, UserBaseDataPtr> m_users;
+    std::map<std::string , UserBaseDataPtr> m_users;
 
 
     yy::util::ThreadPool m_workThreads;

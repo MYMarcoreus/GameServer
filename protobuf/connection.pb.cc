@@ -15,8 +15,8 @@
 // @@protoc_insertion_point(includes)
 #include <google/protobuf/port_def.inc>
 namespace yy {
-namespace core {
 namespace protocol {
+namespace core {
 class XorBodyDefaultTypeInternal {
  public:
   ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<XorBody> _instance;
@@ -33,18 +33,18 @@ class ResultBodyDefaultTypeInternal {
  public:
   ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<ResultBody> _instance;
 } _ResultBody_default_instance_;
-}  // namespace protocol
 }  // namespace core
+}  // namespace protocol
 }  // namespace yy
 static void InitDefaultsscc_info_HeartBody_connection_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::yy::core::protocol::_HeartBody_default_instance_;
-    new (ptr) ::yy::core::protocol::HeartBody();
+    void* ptr = &::yy::protocol::core::_HeartBody_default_instance_;
+    new (ptr) ::yy::protocol::core::HeartBody();
     ::PROTOBUF_NAMESPACE_ID::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::yy::core::protocol::HeartBody::InitAsDefaultInstance();
+  ::yy::protocol::core::HeartBody::InitAsDefaultInstance();
 }
 
 ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_HeartBody_connection_2eproto =
@@ -54,11 +54,11 @@ static void InitDefaultsscc_info_ResultBody_connection_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::yy::core::protocol::_ResultBody_default_instance_;
-    new (ptr) ::yy::core::protocol::ResultBody();
+    void* ptr = &::yy::protocol::core::_ResultBody_default_instance_;
+    new (ptr) ::yy::protocol::core::ResultBody();
     ::PROTOBUF_NAMESPACE_ID::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::yy::core::protocol::ResultBody::InitAsDefaultInstance();
+  ::yy::protocol::core::ResultBody::InitAsDefaultInstance();
 }
 
 ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_ResultBody_connection_2eproto =
@@ -68,11 +68,11 @@ static void InitDefaultsscc_info_SecurityBody_connection_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::yy::core::protocol::_SecurityBody_default_instance_;
-    new (ptr) ::yy::core::protocol::SecurityBody();
+    void* ptr = &::yy::protocol::core::_SecurityBody_default_instance_;
+    new (ptr) ::yy::protocol::core::SecurityBody();
     ::PROTOBUF_NAMESPACE_ID::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::yy::core::protocol::SecurityBody::InitAsDefaultInstance();
+  ::yy::protocol::core::SecurityBody::InitAsDefaultInstance();
 }
 
 ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_SecurityBody_connection_2eproto =
@@ -82,11 +82,11 @@ static void InitDefaultsscc_info_XorBody_connection_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   {
-    void* ptr = &::yy::core::protocol::_XorBody_default_instance_;
-    new (ptr) ::yy::core::protocol::XorBody();
+    void* ptr = &::yy::protocol::core::_XorBody_default_instance_;
+    new (ptr) ::yy::protocol::core::XorBody();
     ::PROTOBUF_NAMESPACE_ID::internal::OnShutdownDestroyMessage(ptr);
   }
-  ::yy::core::protocol::XorBody::InitAsDefaultInstance();
+  ::yy::protocol::core::XorBody::InitAsDefaultInstance();
 }
 
 ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_XorBody_connection_2eproto =
@@ -98,52 +98,52 @@ static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_s
 
 const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_connection_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::yy::core::protocol::XorBody, _internal_metadata_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::core::XorBody, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::yy::core::protocol::XorBody, xor_code_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::core::XorBody, xor_code_),
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::yy::core::protocol::HeartBody, _internal_metadata_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::core::HeartBody, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::yy::core::protocol::SecurityBody, _internal_metadata_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::core::SecurityBody, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::yy::core::protocol::SecurityBody, app_id_),
-  PROTOBUF_FIELD_OFFSET(::yy::core::protocol::SecurityBody, app_version_),
-  PROTOBUF_FIELD_OFFSET(::yy::core::protocol::SecurityBody, app_md5_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::core::SecurityBody, app_id_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::core::SecurityBody, app_version_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::core::SecurityBody, app_md5_),
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::yy::core::protocol::ResultBody, _internal_metadata_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::core::ResultBody, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::yy::core::protocol::ResultBody, result_code_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::core::ResultBody, result_code_),
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  { 0, -1, sizeof(::yy::core::protocol::XorBody)},
-  { 6, -1, sizeof(::yy::core::protocol::HeartBody)},
-  { 11, -1, sizeof(::yy::core::protocol::SecurityBody)},
-  { 19, -1, sizeof(::yy::core::protocol::ResultBody)},
+  { 0, -1, sizeof(::yy::protocol::core::XorBody)},
+  { 6, -1, sizeof(::yy::protocol::core::HeartBody)},
+  { 11, -1, sizeof(::yy::protocol::core::SecurityBody)},
+  { 19, -1, sizeof(::yy::protocol::core::ResultBody)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::yy::core::protocol::_XorBody_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::yy::core::protocol::_HeartBody_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::yy::core::protocol::_SecurityBody_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::yy::core::protocol::_ResultBody_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::yy::protocol::core::_XorBody_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::yy::protocol::core::_HeartBody_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::yy::protocol::core::_SecurityBody_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::yy::protocol::core::_ResultBody_default_instance_),
 };
 
 const char descriptor_table_protodef_connection_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
-  "\n\020connection.proto\022\020yy.core.protocol\"\033\n\007"
+  "\n\020connection.proto\022\020yy.protocol.core\"\033\n\007"
   "XorBody\022\020\n\010xor_code\030\001 \001(\r\"\013\n\tHeartBody\"D"
   "\n\014SecurityBody\022\016\n\006app_id\030\001 \001(\r\022\023\n\013app_ve"
   "rsion\030\002 \001(\r\022\017\n\007app_md5\030\003 \001(\t\"\?\n\nResultBo"
-  "dy\0221\n\013result_code\030\001 \001(\0162\034.yy.core.protoc"
-  "ol.ResultCode*A\n\nResultCode\022\014\n\010eSuccess\020"
+  "dy\0221\n\013result_code\030\001 \001(\0162\034.yy.protocol.co"
+  "re.ResultCode*A\n\nResultCode\022\014\n\010eSuccess\020"
   "\000\022\025\n\021eAppVersionFailed\020\001\022\016\n\neMd5Failed\020\002"
   "b\006proto3"
   ;
@@ -166,8 +166,8 @@ const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_connec
 // Force running AddDescriptors() at dynamic initialization time.
 static bool dynamic_init_dummy_connection_2eproto = (static_cast<void>(::PROTOBUF_NAMESPACE_ID::internal::AddDescriptors(&descriptor_table_connection_2eproto)), true);
 namespace yy {
-namespace core {
 namespace protocol {
+namespace core {
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ResultCode_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_connection_2eproto);
   return file_level_enum_descriptors_connection_2eproto[0];
@@ -196,13 +196,13 @@ XorBody::XorBody(::PROTOBUF_NAMESPACE_ID::Arena* arena)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:yy.core.protocol.XorBody)
+  // @@protoc_insertion_point(arena_constructor:yy.protocol.core.XorBody)
 }
 XorBody::XorBody(const XorBody& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   xor_code_ = from.xor_code_;
-  // @@protoc_insertion_point(copy_constructor:yy.core.protocol.XorBody)
+  // @@protoc_insertion_point(copy_constructor:yy.protocol.core.XorBody)
 }
 
 void XorBody::SharedCtor() {
@@ -210,7 +210,7 @@ void XorBody::SharedCtor() {
 }
 
 XorBody::~XorBody() {
-  // @@protoc_insertion_point(destructor:yy.core.protocol.XorBody)
+  // @@protoc_insertion_point(destructor:yy.protocol.core.XorBody)
   SharedDtor();
   _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
@@ -235,7 +235,7 @@ const XorBody& XorBody::default_instance() {
 
 
 void XorBody::Clear() {
-// @@protoc_insertion_point(message_clear_start:yy.core.protocol.XorBody)
+// @@protoc_insertion_point(message_clear_start:yy.protocol.core.XorBody)
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -283,7 +283,7 @@ failure:
 
 ::PROTOBUF_NAMESPACE_ID::uint8* XorBody::_InternalSerialize(
     ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:yy.core.protocol.XorBody)
+  // @@protoc_insertion_point(serialize_to_array_start:yy.protocol.core.XorBody)
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -297,12 +297,12 @@ failure:
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
-  // @@protoc_insertion_point(serialize_to_array_end:yy.core.protocol.XorBody)
+  // @@protoc_insertion_point(serialize_to_array_end:yy.protocol.core.XorBody)
   return target;
 }
 
 size_t XorBody::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:yy.core.protocol.XorBody)
+// @@protoc_insertion_point(message_byte_size_start:yy.protocol.core.XorBody)
   size_t total_size = 0;
 
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
@@ -326,22 +326,22 @@ size_t XorBody::ByteSizeLong() const {
 }
 
 void XorBody::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-// @@protoc_insertion_point(generalized_merge_from_start:yy.core.protocol.XorBody)
+// @@protoc_insertion_point(generalized_merge_from_start:yy.protocol.core.XorBody)
   GOOGLE_DCHECK_NE(&from, this);
   const XorBody* source =
       ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<XorBody>(
           &from);
   if (source == nullptr) {
-  // @@protoc_insertion_point(generalized_merge_from_cast_fail:yy.core.protocol.XorBody)
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:yy.protocol.core.XorBody)
     ::PROTOBUF_NAMESPACE_ID::internal::ReflectionOps::Merge(from, this);
   } else {
-  // @@protoc_insertion_point(generalized_merge_from_cast_success:yy.core.protocol.XorBody)
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:yy.protocol.core.XorBody)
     MergeFrom(*source);
   }
 }
 
 void XorBody::MergeFrom(const XorBody& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:yy.core.protocol.XorBody)
+// @@protoc_insertion_point(class_specific_merge_from_start:yy.protocol.core.XorBody)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
@@ -353,14 +353,14 @@ void XorBody::MergeFrom(const XorBody& from) {
 }
 
 void XorBody::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-// @@protoc_insertion_point(generalized_copy_from_start:yy.core.protocol.XorBody)
+// @@protoc_insertion_point(generalized_copy_from_start:yy.protocol.core.XorBody)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
 void XorBody::CopyFrom(const XorBody& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:yy.core.protocol.XorBody)
+// @@protoc_insertion_point(class_specific_copy_from_start:yy.protocol.core.XorBody)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -393,19 +393,19 @@ HeartBody::HeartBody(::PROTOBUF_NAMESPACE_ID::Arena* arena)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:yy.core.protocol.HeartBody)
+  // @@protoc_insertion_point(arena_constructor:yy.protocol.core.HeartBody)
 }
 HeartBody::HeartBody(const HeartBody& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  // @@protoc_insertion_point(copy_constructor:yy.core.protocol.HeartBody)
+  // @@protoc_insertion_point(copy_constructor:yy.protocol.core.HeartBody)
 }
 
 void HeartBody::SharedCtor() {
 }
 
 HeartBody::~HeartBody() {
-  // @@protoc_insertion_point(destructor:yy.core.protocol.HeartBody)
+  // @@protoc_insertion_point(destructor:yy.protocol.core.HeartBody)
   SharedDtor();
   _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
@@ -430,7 +430,7 @@ const HeartBody& HeartBody::default_instance() {
 
 
 void HeartBody::Clear() {
-// @@protoc_insertion_point(message_clear_start:yy.core.protocol.HeartBody)
+// @@protoc_insertion_point(message_clear_start:yy.protocol.core.HeartBody)
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -465,7 +465,7 @@ failure:
 
 ::PROTOBUF_NAMESPACE_ID::uint8* HeartBody::_InternalSerialize(
     ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:yy.core.protocol.HeartBody)
+  // @@protoc_insertion_point(serialize_to_array_start:yy.protocol.core.HeartBody)
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -473,12 +473,12 @@ failure:
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
-  // @@protoc_insertion_point(serialize_to_array_end:yy.core.protocol.HeartBody)
+  // @@protoc_insertion_point(serialize_to_array_end:yy.protocol.core.HeartBody)
   return target;
 }
 
 size_t HeartBody::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:yy.core.protocol.HeartBody)
+// @@protoc_insertion_point(message_byte_size_start:yy.protocol.core.HeartBody)
   size_t total_size = 0;
 
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
@@ -495,22 +495,22 @@ size_t HeartBody::ByteSizeLong() const {
 }
 
 void HeartBody::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-// @@protoc_insertion_point(generalized_merge_from_start:yy.core.protocol.HeartBody)
+// @@protoc_insertion_point(generalized_merge_from_start:yy.protocol.core.HeartBody)
   GOOGLE_DCHECK_NE(&from, this);
   const HeartBody* source =
       ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<HeartBody>(
           &from);
   if (source == nullptr) {
-  // @@protoc_insertion_point(generalized_merge_from_cast_fail:yy.core.protocol.HeartBody)
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:yy.protocol.core.HeartBody)
     ::PROTOBUF_NAMESPACE_ID::internal::ReflectionOps::Merge(from, this);
   } else {
-  // @@protoc_insertion_point(generalized_merge_from_cast_success:yy.core.protocol.HeartBody)
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:yy.protocol.core.HeartBody)
     MergeFrom(*source);
   }
 }
 
 void HeartBody::MergeFrom(const HeartBody& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:yy.core.protocol.HeartBody)
+// @@protoc_insertion_point(class_specific_merge_from_start:yy.protocol.core.HeartBody)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
@@ -519,14 +519,14 @@ void HeartBody::MergeFrom(const HeartBody& from) {
 }
 
 void HeartBody::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-// @@protoc_insertion_point(generalized_copy_from_start:yy.core.protocol.HeartBody)
+// @@protoc_insertion_point(generalized_copy_from_start:yy.protocol.core.HeartBody)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
 void HeartBody::CopyFrom(const HeartBody& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:yy.core.protocol.HeartBody)
+// @@protoc_insertion_point(class_specific_copy_from_start:yy.protocol.core.HeartBody)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -558,7 +558,7 @@ SecurityBody::SecurityBody(::PROTOBUF_NAMESPACE_ID::Arena* arena)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:yy.core.protocol.SecurityBody)
+  // @@protoc_insertion_point(arena_constructor:yy.protocol.core.SecurityBody)
 }
 SecurityBody::SecurityBody(const SecurityBody& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
@@ -571,7 +571,7 @@ SecurityBody::SecurityBody(const SecurityBody& from)
   ::memcpy(&app_id_, &from.app_id_,
     static_cast<size_t>(reinterpret_cast<char*>(&app_version_) -
     reinterpret_cast<char*>(&app_id_)) + sizeof(app_version_));
-  // @@protoc_insertion_point(copy_constructor:yy.core.protocol.SecurityBody)
+  // @@protoc_insertion_point(copy_constructor:yy.protocol.core.SecurityBody)
 }
 
 void SecurityBody::SharedCtor() {
@@ -583,7 +583,7 @@ void SecurityBody::SharedCtor() {
 }
 
 SecurityBody::~SecurityBody() {
-  // @@protoc_insertion_point(destructor:yy.core.protocol.SecurityBody)
+  // @@protoc_insertion_point(destructor:yy.protocol.core.SecurityBody)
   SharedDtor();
   _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
@@ -609,7 +609,7 @@ const SecurityBody& SecurityBody::default_instance() {
 
 
 void SecurityBody::Clear() {
-// @@protoc_insertion_point(message_clear_start:yy.core.protocol.SecurityBody)
+// @@protoc_insertion_point(message_clear_start:yy.protocol.core.SecurityBody)
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -648,7 +648,7 @@ const char* SecurityBody::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_I
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 26)) {
           auto str = _internal_mutable_app_md5();
           ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "yy.core.protocol.SecurityBody.app_md5"));
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "yy.protocol.core.SecurityBody.app_md5"));
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
@@ -676,7 +676,7 @@ failure:
 
 ::PROTOBUF_NAMESPACE_ID::uint8* SecurityBody::_InternalSerialize(
     ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:yy.core.protocol.SecurityBody)
+  // @@protoc_insertion_point(serialize_to_array_start:yy.protocol.core.SecurityBody)
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -697,7 +697,7 @@ failure:
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_app_md5().data(), static_cast<int>(this->_internal_app_md5().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "yy.core.protocol.SecurityBody.app_md5");
+      "yy.protocol.core.SecurityBody.app_md5");
     target = stream->WriteStringMaybeAliased(
         3, this->_internal_app_md5(), target);
   }
@@ -706,12 +706,12 @@ failure:
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
-  // @@protoc_insertion_point(serialize_to_array_end:yy.core.protocol.SecurityBody)
+  // @@protoc_insertion_point(serialize_to_array_end:yy.protocol.core.SecurityBody)
   return target;
 }
 
 size_t SecurityBody::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:yy.core.protocol.SecurityBody)
+// @@protoc_insertion_point(message_byte_size_start:yy.protocol.core.SecurityBody)
   size_t total_size = 0;
 
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
@@ -749,22 +749,22 @@ size_t SecurityBody::ByteSizeLong() const {
 }
 
 void SecurityBody::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-// @@protoc_insertion_point(generalized_merge_from_start:yy.core.protocol.SecurityBody)
+// @@protoc_insertion_point(generalized_merge_from_start:yy.protocol.core.SecurityBody)
   GOOGLE_DCHECK_NE(&from, this);
   const SecurityBody* source =
       ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<SecurityBody>(
           &from);
   if (source == nullptr) {
-  // @@protoc_insertion_point(generalized_merge_from_cast_fail:yy.core.protocol.SecurityBody)
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:yy.protocol.core.SecurityBody)
     ::PROTOBUF_NAMESPACE_ID::internal::ReflectionOps::Merge(from, this);
   } else {
-  // @@protoc_insertion_point(generalized_merge_from_cast_success:yy.core.protocol.SecurityBody)
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:yy.protocol.core.SecurityBody)
     MergeFrom(*source);
   }
 }
 
 void SecurityBody::MergeFrom(const SecurityBody& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:yy.core.protocol.SecurityBody)
+// @@protoc_insertion_point(class_specific_merge_from_start:yy.protocol.core.SecurityBody)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
@@ -782,14 +782,14 @@ void SecurityBody::MergeFrom(const SecurityBody& from) {
 }
 
 void SecurityBody::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-// @@protoc_insertion_point(generalized_copy_from_start:yy.core.protocol.SecurityBody)
+// @@protoc_insertion_point(generalized_copy_from_start:yy.protocol.core.SecurityBody)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
 void SecurityBody::CopyFrom(const SecurityBody& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:yy.core.protocol.SecurityBody)
+// @@protoc_insertion_point(class_specific_copy_from_start:yy.protocol.core.SecurityBody)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -828,13 +828,13 @@ ResultBody::ResultBody(::PROTOBUF_NAMESPACE_ID::Arena* arena)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
   SharedCtor();
   RegisterArenaDtor(arena);
-  // @@protoc_insertion_point(arena_constructor:yy.core.protocol.ResultBody)
+  // @@protoc_insertion_point(arena_constructor:yy.protocol.core.ResultBody)
 }
 ResultBody::ResultBody(const ResultBody& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   result_code_ = from.result_code_;
-  // @@protoc_insertion_point(copy_constructor:yy.core.protocol.ResultBody)
+  // @@protoc_insertion_point(copy_constructor:yy.protocol.core.ResultBody)
 }
 
 void ResultBody::SharedCtor() {
@@ -842,7 +842,7 @@ void ResultBody::SharedCtor() {
 }
 
 ResultBody::~ResultBody() {
-  // @@protoc_insertion_point(destructor:yy.core.protocol.ResultBody)
+  // @@protoc_insertion_point(destructor:yy.protocol.core.ResultBody)
   SharedDtor();
   _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
@@ -867,7 +867,7 @@ const ResultBody& ResultBody::default_instance() {
 
 
 void ResultBody::Clear() {
-// @@protoc_insertion_point(message_clear_start:yy.core.protocol.ResultBody)
+// @@protoc_insertion_point(message_clear_start:yy.protocol.core.ResultBody)
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -884,12 +884,12 @@ const char* ResultBody::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID:
     ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
     CHK_(ptr);
     switch (tag >> 3) {
-      // .yy.core.protocol.ResultCode result_code = 1;
+      // .yy.protocol.core.ResultCode result_code = 1;
       case 1:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 8)) {
           ::PROTOBUF_NAMESPACE_ID::uint64 val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
-          _internal_set_result_code(static_cast<::yy::core::protocol::ResultCode>(val));
+          _internal_set_result_code(static_cast<::yy::protocol::core::ResultCode>(val));
         } else goto handle_unusual;
         continue;
       default: {
@@ -916,11 +916,11 @@ failure:
 
 ::PROTOBUF_NAMESPACE_ID::uint8* ResultBody::_InternalSerialize(
     ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:yy.core.protocol.ResultBody)
+  // @@protoc_insertion_point(serialize_to_array_start:yy.protocol.core.ResultBody)
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // .yy.core.protocol.ResultCode result_code = 1;
+  // .yy.protocol.core.ResultCode result_code = 1;
   if (this->result_code() != 0) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteEnumToArray(
@@ -931,19 +931,19 @@ failure:
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
-  // @@protoc_insertion_point(serialize_to_array_end:yy.core.protocol.ResultBody)
+  // @@protoc_insertion_point(serialize_to_array_end:yy.protocol.core.ResultBody)
   return target;
 }
 
 size_t ResultBody::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:yy.core.protocol.ResultBody)
+// @@protoc_insertion_point(message_byte_size_start:yy.protocol.core.ResultBody)
   size_t total_size = 0;
 
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // .yy.core.protocol.ResultCode result_code = 1;
+  // .yy.protocol.core.ResultCode result_code = 1;
   if (this->result_code() != 0) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::EnumSize(this->_internal_result_code());
@@ -959,22 +959,22 @@ size_t ResultBody::ByteSizeLong() const {
 }
 
 void ResultBody::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-// @@protoc_insertion_point(generalized_merge_from_start:yy.core.protocol.ResultBody)
+// @@protoc_insertion_point(generalized_merge_from_start:yy.protocol.core.ResultBody)
   GOOGLE_DCHECK_NE(&from, this);
   const ResultBody* source =
       ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<ResultBody>(
           &from);
   if (source == nullptr) {
-  // @@protoc_insertion_point(generalized_merge_from_cast_fail:yy.core.protocol.ResultBody)
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:yy.protocol.core.ResultBody)
     ::PROTOBUF_NAMESPACE_ID::internal::ReflectionOps::Merge(from, this);
   } else {
-  // @@protoc_insertion_point(generalized_merge_from_cast_success:yy.core.protocol.ResultBody)
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:yy.protocol.core.ResultBody)
     MergeFrom(*source);
   }
 }
 
 void ResultBody::MergeFrom(const ResultBody& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:yy.core.protocol.ResultBody)
+// @@protoc_insertion_point(class_specific_merge_from_start:yy.protocol.core.ResultBody)
   GOOGLE_DCHECK_NE(&from, this);
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
@@ -986,14 +986,14 @@ void ResultBody::MergeFrom(const ResultBody& from) {
 }
 
 void ResultBody::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-// @@protoc_insertion_point(generalized_copy_from_start:yy.core.protocol.ResultBody)
+// @@protoc_insertion_point(generalized_copy_from_start:yy.protocol.core.ResultBody)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
 void ResultBody::CopyFrom(const ResultBody& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:yy.core.protocol.ResultBody)
+// @@protoc_insertion_point(class_specific_copy_from_start:yy.protocol.core.ResultBody)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
@@ -1015,21 +1015,21 @@ void ResultBody::InternalSwap(ResultBody* other) {
 
 
 // @@protoc_insertion_point(namespace_scope)
-}  // namespace protocol
 }  // namespace core
+}  // namespace protocol
 }  // namespace yy
 PROTOBUF_NAMESPACE_OPEN
-template<> PROTOBUF_NOINLINE ::yy::core::protocol::XorBody* Arena::CreateMaybeMessage< ::yy::core::protocol::XorBody >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::yy::core::protocol::XorBody >(arena);
+template<> PROTOBUF_NOINLINE ::yy::protocol::core::XorBody* Arena::CreateMaybeMessage< ::yy::protocol::core::XorBody >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::yy::protocol::core::XorBody >(arena);
 }
-template<> PROTOBUF_NOINLINE ::yy::core::protocol::HeartBody* Arena::CreateMaybeMessage< ::yy::core::protocol::HeartBody >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::yy::core::protocol::HeartBody >(arena);
+template<> PROTOBUF_NOINLINE ::yy::protocol::core::HeartBody* Arena::CreateMaybeMessage< ::yy::protocol::core::HeartBody >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::yy::protocol::core::HeartBody >(arena);
 }
-template<> PROTOBUF_NOINLINE ::yy::core::protocol::SecurityBody* Arena::CreateMaybeMessage< ::yy::core::protocol::SecurityBody >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::yy::core::protocol::SecurityBody >(arena);
+template<> PROTOBUF_NOINLINE ::yy::protocol::core::SecurityBody* Arena::CreateMaybeMessage< ::yy::protocol::core::SecurityBody >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::yy::protocol::core::SecurityBody >(arena);
 }
-template<> PROTOBUF_NOINLINE ::yy::core::protocol::ResultBody* Arena::CreateMaybeMessage< ::yy::core::protocol::ResultBody >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::yy::core::protocol::ResultBody >(arena);
+template<> PROTOBUF_NOINLINE ::yy::protocol::core::ResultBody* Arena::CreateMaybeMessage< ::yy::protocol::core::ResultBody >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::yy::protocol::core::ResultBody >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
 

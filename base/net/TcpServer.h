@@ -42,6 +42,10 @@ public:
 
     size_t GetConnectionsCount() { return m_NumConnect; }
 
+    bool IsRunning() const { return m_IsStarted; }
+
+    EventLoop * GetAcceptorLoop() const { return m_AcceptorLoop; }
+
 private:
     //! Acceptor回调
     void HandleNewConnection(SocketApiWrapper::socket_t sockfd, IPAddressPtr peerAddr);

@@ -56,8 +56,8 @@ struct TableStruct_connection_2eproto {
 };
 extern const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_connection_2eproto;
 namespace yy {
-namespace core {
 namespace protocol {
+namespace core {
 class HeartBody;
 class HeartBodyDefaultTypeInternal;
 extern HeartBodyDefaultTypeInternal _HeartBody_default_instance_;
@@ -70,18 +70,18 @@ extern SecurityBodyDefaultTypeInternal _SecurityBody_default_instance_;
 class XorBody;
 class XorBodyDefaultTypeInternal;
 extern XorBodyDefaultTypeInternal _XorBody_default_instance_;
-}  // namespace protocol
 }  // namespace core
+}  // namespace protocol
 }  // namespace yy
 PROTOBUF_NAMESPACE_OPEN
-template<> ::yy::core::protocol::HeartBody* Arena::CreateMaybeMessage<::yy::core::protocol::HeartBody>(Arena*);
-template<> ::yy::core::protocol::ResultBody* Arena::CreateMaybeMessage<::yy::core::protocol::ResultBody>(Arena*);
-template<> ::yy::core::protocol::SecurityBody* Arena::CreateMaybeMessage<::yy::core::protocol::SecurityBody>(Arena*);
-template<> ::yy::core::protocol::XorBody* Arena::CreateMaybeMessage<::yy::core::protocol::XorBody>(Arena*);
+template<> ::yy::protocol::core::HeartBody* Arena::CreateMaybeMessage<::yy::protocol::core::HeartBody>(Arena*);
+template<> ::yy::protocol::core::ResultBody* Arena::CreateMaybeMessage<::yy::protocol::core::ResultBody>(Arena*);
+template<> ::yy::protocol::core::SecurityBody* Arena::CreateMaybeMessage<::yy::protocol::core::SecurityBody>(Arena*);
+template<> ::yy::protocol::core::XorBody* Arena::CreateMaybeMessage<::yy::protocol::core::XorBody>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
 namespace yy {
-namespace core {
 namespace protocol {
+namespace core {
 
 enum ResultCode : int {
   eSuccess = 0,
@@ -112,7 +112,7 @@ inline bool ResultCode_Parse(
 // ===================================================================
 
 class XorBody PROTOBUF_FINAL :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:yy.core.protocol.XorBody) */ {
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:yy.protocol.core.XorBody) */ {
  public:
   inline XorBody() : XorBody(nullptr) {};
   virtual ~XorBody();
@@ -201,7 +201,7 @@ class XorBody PROTOBUF_FINAL :
   void InternalSwap(XorBody* other);
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "yy.core.protocol.XorBody";
+    return "yy.protocol.core.XorBody";
   }
   protected:
   explicit XorBody(::PROTOBUF_NAMESPACE_ID::Arena* arena);
@@ -235,7 +235,7 @@ class XorBody PROTOBUF_FINAL :
   void _internal_set_xor_code(::PROTOBUF_NAMESPACE_ID::uint32 value);
   public:
 
-  // @@protoc_insertion_point(class_scope:yy.core.protocol.XorBody)
+  // @@protoc_insertion_point(class_scope:yy.protocol.core.XorBody)
  private:
   class _Internal;
 
@@ -249,7 +249,7 @@ class XorBody PROTOBUF_FINAL :
 // -------------------------------------------------------------------
 
 class HeartBody PROTOBUF_FINAL :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:yy.core.protocol.HeartBody) */ {
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:yy.protocol.core.HeartBody) */ {
  public:
   inline HeartBody() : HeartBody(nullptr) {};
   virtual ~HeartBody();
@@ -338,7 +338,7 @@ class HeartBody PROTOBUF_FINAL :
   void InternalSwap(HeartBody* other);
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "yy.core.protocol.HeartBody";
+    return "yy.protocol.core.HeartBody";
   }
   protected:
   explicit HeartBody(::PROTOBUF_NAMESPACE_ID::Arena* arena);
@@ -360,7 +360,7 @@ class HeartBody PROTOBUF_FINAL :
 
   // accessors -------------------------------------------------------
 
-  // @@protoc_insertion_point(class_scope:yy.core.protocol.HeartBody)
+  // @@protoc_insertion_point(class_scope:yy.protocol.core.HeartBody)
  private:
   class _Internal;
 
@@ -373,7 +373,7 @@ class HeartBody PROTOBUF_FINAL :
 // -------------------------------------------------------------------
 
 class SecurityBody PROTOBUF_FINAL :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:yy.core.protocol.SecurityBody) */ {
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:yy.protocol.core.SecurityBody) */ {
  public:
   inline SecurityBody() : SecurityBody(nullptr) {};
   virtual ~SecurityBody();
@@ -462,7 +462,7 @@ class SecurityBody PROTOBUF_FINAL :
   void InternalSwap(SecurityBody* other);
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "yy.core.protocol.SecurityBody";
+    return "yy.protocol.core.SecurityBody";
   }
   protected:
   explicit SecurityBody(::PROTOBUF_NAMESPACE_ID::Arena* arena);
@@ -532,7 +532,7 @@ class SecurityBody PROTOBUF_FINAL :
   void _internal_set_app_version(::PROTOBUF_NAMESPACE_ID::uint32 value);
   public:
 
-  // @@protoc_insertion_point(class_scope:yy.core.protocol.SecurityBody)
+  // @@protoc_insertion_point(class_scope:yy.protocol.core.SecurityBody)
  private:
   class _Internal;
 
@@ -548,7 +548,7 @@ class SecurityBody PROTOBUF_FINAL :
 // -------------------------------------------------------------------
 
 class ResultBody PROTOBUF_FINAL :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:yy.core.protocol.ResultBody) */ {
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:yy.protocol.core.ResultBody) */ {
  public:
   inline ResultBody() : ResultBody(nullptr) {};
   virtual ~ResultBody();
@@ -637,7 +637,7 @@ class ResultBody PROTOBUF_FINAL :
   void InternalSwap(ResultBody* other);
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "yy.core.protocol.ResultBody";
+    return "yy.protocol.core.ResultBody";
   }
   protected:
   explicit ResultBody(::PROTOBUF_NAMESPACE_ID::Arena* arena);
@@ -662,16 +662,16 @@ class ResultBody PROTOBUF_FINAL :
   enum : int {
     kResultCodeFieldNumber = 1,
   };
-  // .yy.core.protocol.ResultCode result_code = 1;
+  // .yy.protocol.core.ResultCode result_code = 1;
   void clear_result_code();
-  ::yy::core::protocol::ResultCode result_code() const;
-  void set_result_code(::yy::core::protocol::ResultCode value);
+  ::yy::protocol::core::ResultCode result_code() const;
+  void set_result_code(::yy::protocol::core::ResultCode value);
   private:
-  ::yy::core::protocol::ResultCode _internal_result_code() const;
-  void _internal_set_result_code(::yy::core::protocol::ResultCode value);
+  ::yy::protocol::core::ResultCode _internal_result_code() const;
+  void _internal_set_result_code(::yy::protocol::core::ResultCode value);
   public:
 
-  // @@protoc_insertion_point(class_scope:yy.core.protocol.ResultBody)
+  // @@protoc_insertion_point(class_scope:yy.protocol.core.ResultBody)
  private:
   class _Internal;
 
@@ -701,7 +701,7 @@ inline ::PROTOBUF_NAMESPACE_ID::uint32 XorBody::_internal_xor_code() const {
   return xor_code_;
 }
 inline ::PROTOBUF_NAMESPACE_ID::uint32 XorBody::xor_code() const {
-  // @@protoc_insertion_point(field_get:yy.core.protocol.XorBody.xor_code)
+  // @@protoc_insertion_point(field_get:yy.protocol.core.XorBody.xor_code)
   return _internal_xor_code();
 }
 inline void XorBody::_internal_set_xor_code(::PROTOBUF_NAMESPACE_ID::uint32 value) {
@@ -710,7 +710,7 @@ inline void XorBody::_internal_set_xor_code(::PROTOBUF_NAMESPACE_ID::uint32 valu
 }
 inline void XorBody::set_xor_code(::PROTOBUF_NAMESPACE_ID::uint32 value) {
   _internal_set_xor_code(value);
-  // @@protoc_insertion_point(field_set:yy.core.protocol.XorBody.xor_code)
+  // @@protoc_insertion_point(field_set:yy.protocol.core.XorBody.xor_code)
 }
 
 // -------------------------------------------------------------------
@@ -729,7 +729,7 @@ inline ::PROTOBUF_NAMESPACE_ID::uint32 SecurityBody::_internal_app_id() const {
   return app_id_;
 }
 inline ::PROTOBUF_NAMESPACE_ID::uint32 SecurityBody::app_id() const {
-  // @@protoc_insertion_point(field_get:yy.core.protocol.SecurityBody.app_id)
+  // @@protoc_insertion_point(field_get:yy.protocol.core.SecurityBody.app_id)
   return _internal_app_id();
 }
 inline void SecurityBody::_internal_set_app_id(::PROTOBUF_NAMESPACE_ID::uint32 value) {
@@ -738,7 +738,7 @@ inline void SecurityBody::_internal_set_app_id(::PROTOBUF_NAMESPACE_ID::uint32 v
 }
 inline void SecurityBody::set_app_id(::PROTOBUF_NAMESPACE_ID::uint32 value) {
   _internal_set_app_id(value);
-  // @@protoc_insertion_point(field_set:yy.core.protocol.SecurityBody.app_id)
+  // @@protoc_insertion_point(field_set:yy.protocol.core.SecurityBody.app_id)
 }
 
 // uint32 app_version = 2;
@@ -749,7 +749,7 @@ inline ::PROTOBUF_NAMESPACE_ID::uint32 SecurityBody::_internal_app_version() con
   return app_version_;
 }
 inline ::PROTOBUF_NAMESPACE_ID::uint32 SecurityBody::app_version() const {
-  // @@protoc_insertion_point(field_get:yy.core.protocol.SecurityBody.app_version)
+  // @@protoc_insertion_point(field_get:yy.protocol.core.SecurityBody.app_version)
   return _internal_app_version();
 }
 inline void SecurityBody::_internal_set_app_version(::PROTOBUF_NAMESPACE_ID::uint32 value) {
@@ -758,7 +758,7 @@ inline void SecurityBody::_internal_set_app_version(::PROTOBUF_NAMESPACE_ID::uin
 }
 inline void SecurityBody::set_app_version(::PROTOBUF_NAMESPACE_ID::uint32 value) {
   _internal_set_app_version(value);
-  // @@protoc_insertion_point(field_set:yy.core.protocol.SecurityBody.app_version)
+  // @@protoc_insertion_point(field_set:yy.protocol.core.SecurityBody.app_version)
 }
 
 // string app_md5 = 3;
@@ -766,15 +766,15 @@ inline void SecurityBody::clear_app_md5() {
   app_md5_.ClearToEmpty(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
 inline const std::string& SecurityBody::app_md5() const {
-  // @@protoc_insertion_point(field_get:yy.core.protocol.SecurityBody.app_md5)
+  // @@protoc_insertion_point(field_get:yy.protocol.core.SecurityBody.app_md5)
   return _internal_app_md5();
 }
 inline void SecurityBody::set_app_md5(const std::string& value) {
   _internal_set_app_md5(value);
-  // @@protoc_insertion_point(field_set:yy.core.protocol.SecurityBody.app_md5)
+  // @@protoc_insertion_point(field_set:yy.protocol.core.SecurityBody.app_md5)
 }
 inline std::string* SecurityBody::mutable_app_md5() {
-  // @@protoc_insertion_point(field_mutable:yy.core.protocol.SecurityBody.app_md5)
+  // @@protoc_insertion_point(field_mutable:yy.protocol.core.SecurityBody.app_md5)
   return _internal_mutable_app_md5();
 }
 inline const std::string& SecurityBody::_internal_app_md5() const {
@@ -788,28 +788,28 @@ inline void SecurityBody::set_app_md5(std::string&& value) {
   
   app_md5_.Set(
     &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value), GetArena());
-  // @@protoc_insertion_point(field_set_rvalue:yy.core.protocol.SecurityBody.app_md5)
+  // @@protoc_insertion_point(field_set_rvalue:yy.protocol.core.SecurityBody.app_md5)
 }
 inline void SecurityBody::set_app_md5(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   
   app_md5_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
               GetArena());
-  // @@protoc_insertion_point(field_set_char:yy.core.protocol.SecurityBody.app_md5)
+  // @@protoc_insertion_point(field_set_char:yy.protocol.core.SecurityBody.app_md5)
 }
 inline void SecurityBody::set_app_md5(const char* value,
     size_t size) {
   
   app_md5_.Set(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(
       reinterpret_cast<const char*>(value), size), GetArena());
-  // @@protoc_insertion_point(field_set_pointer:yy.core.protocol.SecurityBody.app_md5)
+  // @@protoc_insertion_point(field_set_pointer:yy.protocol.core.SecurityBody.app_md5)
 }
 inline std::string* SecurityBody::_internal_mutable_app_md5() {
   
   return app_md5_.Mutable(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
 inline std::string* SecurityBody::release_app_md5() {
-  // @@protoc_insertion_point(field_release:yy.core.protocol.SecurityBody.app_md5)
+  // @@protoc_insertion_point(field_release:yy.protocol.core.SecurityBody.app_md5)
   return app_md5_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArena());
 }
 inline void SecurityBody::set_allocated_app_md5(std::string* app_md5) {
@@ -820,10 +820,10 @@ inline void SecurityBody::set_allocated_app_md5(std::string* app_md5) {
   }
   app_md5_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), app_md5,
       GetArena());
-  // @@protoc_insertion_point(field_set_allocated:yy.core.protocol.SecurityBody.app_md5)
+  // @@protoc_insertion_point(field_set_allocated:yy.protocol.core.SecurityBody.app_md5)
 }
 inline std::string* SecurityBody::unsafe_arena_release_app_md5() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:yy.core.protocol.SecurityBody.app_md5)
+  // @@protoc_insertion_point(field_unsafe_arena_release:yy.protocol.core.SecurityBody.app_md5)
   GOOGLE_DCHECK(GetArena() != nullptr);
   
   return app_md5_.UnsafeArenaRelease(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
@@ -839,31 +839,31 @@ inline void SecurityBody::unsafe_arena_set_allocated_app_md5(
   }
   app_md5_.UnsafeArenaSetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       app_md5, GetArena());
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:yy.core.protocol.SecurityBody.app_md5)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:yy.protocol.core.SecurityBody.app_md5)
 }
 
 // -------------------------------------------------------------------
 
 // ResultBody
 
-// .yy.core.protocol.ResultCode result_code = 1;
+// .yy.protocol.core.ResultCode result_code = 1;
 inline void ResultBody::clear_result_code() {
   result_code_ = 0;
 }
-inline ::yy::core::protocol::ResultCode ResultBody::_internal_result_code() const {
-  return static_cast< ::yy::core::protocol::ResultCode >(result_code_);
+inline ::yy::protocol::core::ResultCode ResultBody::_internal_result_code() const {
+  return static_cast< ::yy::protocol::core::ResultCode >(result_code_);
 }
-inline ::yy::core::protocol::ResultCode ResultBody::result_code() const {
-  // @@protoc_insertion_point(field_get:yy.core.protocol.ResultBody.result_code)
+inline ::yy::protocol::core::ResultCode ResultBody::result_code() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.core.ResultBody.result_code)
   return _internal_result_code();
 }
-inline void ResultBody::_internal_set_result_code(::yy::core::protocol::ResultCode value) {
+inline void ResultBody::_internal_set_result_code(::yy::protocol::core::ResultCode value) {
   
   result_code_ = value;
 }
-inline void ResultBody::set_result_code(::yy::core::protocol::ResultCode value) {
+inline void ResultBody::set_result_code(::yy::protocol::core::ResultCode value) {
   _internal_set_result_code(value);
-  // @@protoc_insertion_point(field_set:yy.core.protocol.ResultBody.result_code)
+  // @@protoc_insertion_point(field_set:yy.protocol.core.ResultBody.result_code)
 }
 
 #ifdef __GNUC__
@@ -878,16 +878,16 @@ inline void ResultBody::set_result_code(::yy::core::protocol::ResultCode value) 
 
 // @@protoc_insertion_point(namespace_scope)
 
-}  // namespace protocol
 }  // namespace core
+}  // namespace protocol
 }  // namespace yy
 
 PROTOBUF_NAMESPACE_OPEN
 
-template <> struct is_proto_enum< ::yy::core::protocol::ResultCode> : ::std::true_type {};
+template <> struct is_proto_enum< ::yy::protocol::core::ResultCode> : ::std::true_type {};
 template <>
-inline const EnumDescriptor* GetEnumDescriptor< ::yy::core::protocol::ResultCode>() {
-  return ::yy::core::protocol::ResultCode_descriptor();
+inline const EnumDescriptor* GetEnumDescriptor< ::yy::protocol::core::ResultCode>() {
+  return ::yy::protocol::core::ResultCode_descriptor();
 }
 
 PROTOBUF_NAMESPACE_CLOSE

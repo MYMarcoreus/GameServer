@@ -40,6 +40,7 @@ public:
     void Send(const Buffer & buf);
     void Send(const std::string_view & message);
     void Send(const google::protobuf::Message & message);
+    void Send(const std::shared_ptr<google::protobuf::Message> & message);
 
     /// @brief 关闭用户连接，但是不回收文件描述符，仍保留系统分配的套接字的资源(如缓存)，适合用户掉线可能马上再连接的情况。
     void Shutdown();

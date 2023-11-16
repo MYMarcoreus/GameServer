@@ -4,6 +4,7 @@
 #include "connection.pb.h"
 #include "md5/md5.h"
 #include "UserBaseData.h"
+#include "EventLoop.h"
 
 #include <google/protobuf/message.h>
 
@@ -12,16 +13,16 @@ using namespace yy::config;
 
 namespace yy::core {
 
-
 GameServer::GameServer(EventLoop *loop, IPAddressPtr listenAddr)
         : m_loop{loop},
           m_server(loop, listenAddr, true),
           m_dispatcher( std::bind(&GameServer::OnUnknownMessage, this, _1, _2) ),
-          m_codec(std::bind(&ProtobufDispatcher::OnProtobufMessage, &m_dispatcher, _1, _2)),
+          m_codec(std::bind(&ProtobufDispatcher<TcpConnectionPtr>::OnProtobufMessage, &m_dispatcher, _1, _2)),
           m_app_configvar(g_app_config)
 {
-    m_dispatcher.RegisterMessageCallback<protocol::HeartBody>(std::bind(&GameServer::OnHeart, this, _1, _2));
-    m_dispatcher.RegisterMessageCallback<protocol::SecurityBody>(std::bind(&GameServer::OnSecurity, this, _1, _2));
+    m_dispatcher.RegisterMessageCallback<yy::protocol::core::HeartBody>(std::bind(&GameServer::OnHeart, this, _1, _2));
+    m_dispatcher.RegisterMessageCallback<yy::protocol::core::SecurityBody>(std::bind(&GameServer::OnSecurity, this, _1, _2));
+
     m_server.SetMessageCallback( std::bind(&ProtobufCodec::OnData, &m_codec, _1, _2));
     m_server.SetConnectionEstablishedCallback( std::bind(&GameServer::OnConnectionEstablished, this, _1));
     m_server.SetConnectionShutdownCallback([this](const TcpConnectionPtr & conn) { this->AddShutdownConnection(conn); });
@@ -29,13 +30,15 @@ GameServer::GameServer(EventLoop *loop, IPAddressPtr listenAddr)
 }
 
 GameServer::~GameServer() {
-
+    m_loop->QuitLoop();
 }
 
 
 
 void GameServer::OnUnknownMessage(TcpConnectionPtr conn, const MessagePtr &message) {
-    YLOG_INFO("游戏消息：{}", message->GetDescriptor()->full_name());
+    YLOG_INFO("游戏消息：{}，交由业务层", message->GetDescriptor()->full_name());
+
+    m_notifierCommand(FindUser(conn->GetName()), message);
 }
 
 
@@ -51,7 +54,7 @@ void GameServer::OnConnectionEstablished(TcpConnectionPtr conn) {
 void GameServer::SendXorCode(const TcpConnectionPtr &conn) {
     // 发送随机生成的异或码给用户，之后的通信都用该异或码进行加密
     auto gen_val = MessageHeader::GenerateXorCode();
-    yy::core::protocol::XorBody xorBody;
+    yy::protocol::core::XorBody xorBody;
     xorBody.set_xor_code(gen_val ^ GetAppConfig().app_xor_code()); //! 记得与初始异或码异或
 
     m_codec.Send(conn, xorBody);
@@ -93,7 +96,7 @@ void GameServer::CheckDisconnections() {
             if(elapsed_time > Seconds{GetAppConfig().close_delay()}) {
                 YLOG_INFO("<{}>主线程Update_CheckDisconnetion: 时辰已到，正式关闭用户连接，回收套接字资源！", conn->GetSocketFD())
 
-                m_users.erase(conn.get());
+                m_users.erase(conn->GetName());
                 conn->Close();
 
                 if(m_notifierDisconnect)
@@ -124,7 +127,7 @@ void GameServer::OnHeart(const TcpConnectionPtr & conn, const HeartPtr & message
     assert(conn != nullptr);
 
     // 只需发一个只有消息头的包
-    protocol::HeartBody heartBody;
+    yy::protocol::core::HeartBody heartBody;
     m_codec.Send(conn, heartBody);
 }
 
@@ -143,27 +146,27 @@ void GameServer::OnSecurity(const TcpConnectionPtr & conn, const SecurityPtr & m
     YLOG_DEBUG("客户端: {}, {}, {}", message->app_id(),message->app_version(), message->app_md5().c_str())
 
     // 进行安全验证，并返回验证结果给用户
-    yy::core::protocol::ResultCode resultCode;
+    yy::protocol::core::ResultCode resultCode;
     if(message->app_version() != GetAppConfig().app_version()) {
         YLOG_DEBUG("<{}>解包执行：版本不同，安全验证失败！", conn->GetSocketFD())
-        resultCode = yy::core::protocol::ResultCode::eAppVersionFailed;
+        resultCode = yy::protocol::core::ResultCode::eAppVersionFailed;
     }
     else if(util::StrCmp_IgnoreCase(message->app_md5().c_str(), md5Arr)) {
         YLOG_DEBUG("<{}>解包执行：md5码不同，安全验证失败！", conn->GetSocketFD())
-        resultCode = yy::core::protocol::ResultCode::eMd5Failed;
+        resultCode = yy::protocol::core::ResultCode::eMd5Failed;
     }
     else {
-        resultCode = yy::core::protocol::ResultCode::eSuccess;
+        resultCode = yy::protocol::core::ResultCode::eSuccess;
     }
-    yy::core::protocol::ResultBody resultBody;
+    yy::protocol::core::ResultBody resultBody;
     resultBody.set_result_code(resultCode);
     m_codec.Send(conn, resultBody);
 
     // 安全验证通过：交由业务层
-    if(resultBody.result_code() == yy::core::protocol::ResultCode::eSuccess) {
-        auto baseData = std::make_shared<UserBaseData>(conn, message->app_id());
+    if(resultBody.result_code() == yy::protocol::core::ResultCode::eSuccess) {
+        auto baseData = std::make_shared<UserBaseData>(conn, message->app_id(), m_codec);
         baseData->SetState(UserBaseData::E_UserBaseState::eSecure);
-        m_users[conn.get()] = baseData;
+        m_users[conn->GetName()] = baseData;
         m_NumSecurity++;
         if(m_notifierSecurity)
             m_notifierSecurity(conn);
@@ -175,7 +178,18 @@ void GameServer::OnSecurity(const TcpConnectionPtr & conn, const SecurityPtr & m
     }
 }
 
+UserBaseDataPtr GameServer::FindUser(const std::string & conn) {
+    auto it = m_users.find(conn);
+    return (it == m_users.end()) ? nullptr : it->second;
+}
 
+void GameServer::SetUserFree(const UserBaseDataPtr &userdata) {
+    m_users.erase(userdata->GetConnection()->GetName());
+}
+
+void GameServer::Update() {
+    m_loop->Loop();
+}
 
 
 }

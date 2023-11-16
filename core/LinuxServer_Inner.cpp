@@ -245,7 +245,7 @@ void LinuxServer::Event_AcceptOne()
     // 发送随机生成的异或码给用户，之后的通信都用该异或码进行加密
     auto gen_val = genXorCode();
     // XorBody xorBody{(uint8_t)(gen_val ^ m_app_configvar->getValue().app_xor_code())};
-    yy::core::protocol::XorBody xorBody;
+    yy::protocol::core::XorBody xorBody;
     xorBody.set_xor_code(gen_val ^ m_app_configvar->GetValue().app_xor_code()); //! 记得与初始异或码异或
     BuildPackage(userdata, E_PackageCommand::eXor, &xorBody);
     userdata->xorCode = gen_val; //! FIXED BUG
@@ -521,31 +521,31 @@ void LinuxServer::OnSecurity(const UserBaseData::ptr& userdata) // NOLINT
 
     // 读取安全验证请求
     YLOG_TRACE("<%d>解包执行：读取用户安全认证信息至结构体中", userdata->sock.get_fd())
-    yy::core::protocol::SecurityBody securityBody;
+    yy::protocol::core::SecurityBody securityBody;
     ParsePackage(userdata, &securityBody);
 
     YLOG_DEBUG("服务器: %d, %d, %s", m_app_configvar->GetValue().app_id(), m_app_configvar->GetValue().app_version(), md5Arr)
     YLOG_DEBUG("客户端: %d, %d, %s", securityBody.app_id(),securityBody.app_version(), securityBody.app_md5().c_str())
 
     // 进行安全验证，并返回验证结果给用户
-    yy::core::protocol::ResultCode resultCode;
+    yy::protocol::core::ResultCode resultCode;
     if(securityBody.app_version() != m_app_configvar->GetValue().app_version()) {
         YLOG_DEBUG("<%d>解包执行：版本不同，安全验证失败！", userdata->sock.get_fd())
-        resultCode = yy::core::protocol::ResultCode::eAppVersionFailed;
+        resultCode = yy::protocol::core::ResultCode::eAppVersionFailed;
     }
     else if(util::StrCmp_IgnoreCase(securityBody.app_md5().c_str(), md5Arr)) {
         YLOG_DEBUG("<%d>解包执行：md5码不同，安全验证失败！", userdata->sock.get_fd())
-        resultCode = yy::core::protocol::ResultCode::eMd5Failed;
+        resultCode = yy::protocol::core::ResultCode::eMd5Failed;
     }
     else {
-        resultCode = yy::core::protocol::ResultCode::eSuccess;
+        resultCode = yy::protocol::core::ResultCode::eSuccess;
     }
-    yy::core::protocol::ResultBody resultBody;
+    yy::protocol::core::ResultBody resultBody;
     resultBody.set_result_code(resultCode);
     BuildPackage(userdata, E_PackageCommand::eSecurity, &resultBody);
 
     // 安全验证通过：交由业务层
-    if(resultBody.result_code() == yy::core::protocol::ResultCode::eSuccess) {
+    if(resultBody.result_code() == yy::protocol::core::ResultCode::eSuccess) {
         userdata->appID = securityBody.app_id();
         userdata->state = E_ServerSocketState::eSecure; // 转换状态
         m_numSecurity++;

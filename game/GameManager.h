@@ -4,6 +4,7 @@
 #include "IServer.h"
 #include "GameData.h"
 #include "IGameBase.h"
+#include "codec/ProtobufDispatcher.h"
 
 using yy::core::IServer;
 using std::shared_ptr;
@@ -11,17 +12,42 @@ using std::shared_ptr;
 // 业务层
 namespace yy::app {
 
-class GameManager
+class GameManager : public Singleton<GameManager>
 {
+    SINGLETON_NECESSITY(GameManager)
 public:
-    static void StartApp();
-private:
-    static void Init();
-    static void Update();
+    void RunApp();
 
-    static IServer   * m_server;
-    static IGameBase * m_player;
-    static IGameBase * m_test;
+    template<typename T>
+    void RegisterMessageCallback( core::CallbackT<T, core::UserBaseDataPtr>::ProtobufMessageTCallback callback) {
+        m_dispatcher.RegisterMessageCallback<T>(callback);
+    }
+
+    IServer * GetServer() { return m_server; }
+private:
+    GameManager();
+    ~GameManager();
+
+    void Init();
+
+    void Update();
+
+    void AppNotifier_Secutiry(const yy::net::TcpConnectionPtr& conn) ;
+
+    void AppNotifier_Disconnect(const yy::net::TcpConnectionPtr& conn) ;
+
+    void AppNotifier_Command(const core::UserBaseDataPtr &, const core::MessagePtr &);
+
+    void UnkonwnCommand(const core::UserBaseDataPtr &, const core::MessagePtr &);
+
+
+
+
+    IServer   * m_server;
+    IGameBase * m_player;
+    IGameBase * m_test;
+    core::ProtobufDispatcher<core::UserBaseDataPtr> m_dispatcher;
+    yy::net::EventLoop * m_loop;
 };
 
 

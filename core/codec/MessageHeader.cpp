@@ -96,7 +96,7 @@ MessageParseErrorCode MessageHeader::RetrieveFromBuffer(net::Buffer &buf, uint8_
     peekedLen += m_TypeNameLength;
 
 
-    YLOG_TRACE("收到消息头<%d>：[{}][{}][{}][{}]", CalcHeaderLen(), m_CheckCode, m_FullLength, m_TypeNameLength, m_TypeName);
+    YLOG_TRACE("收到消息头<{}>：[{}][{}][{}][{}]", CalcHeaderLen(), m_CheckCode, m_FullLength, m_TypeNameLength, m_TypeName);
 
     //! Peek成功，移动Head
     buf.MoveHead(CalcHeaderLen());

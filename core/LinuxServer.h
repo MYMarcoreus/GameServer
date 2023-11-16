@@ -47,7 +47,7 @@ public:
     /*** GETTER & SETTER ***/
     [[nodiscard]] size_t getConnnectionCount()       const override { return m_numConnect; }  // 连接数
     [[nodiscard]] size_t getSecureConnnectionCount() const override { return m_numSecurity; } // 安全连接数
-    [[nodiscard]] bool   isRunning() const override { return m_isRunning; };
+    [[nodiscard]] bool   IsRunning() const override { return m_isRunning; };
 
     void setNotifier_Connect   (F_Notifier f) override { m_notifierConnect = f; }
     void setNotifier_Security  (F_Notifier f) override { m_notifierSecurity = f; }

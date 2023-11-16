@@ -1,5 +1,5 @@
 syntax = "proto3";
-package yy.core.protocol;
+package yy.protocol.core;
 
 //option optimize_for = CODE_SIZE;      // 减少代码大小，但降低了性能
 //option optimize_for = LITE_RUNTIME;   // 链接libprotobuf-lite.so，减少资源消耗

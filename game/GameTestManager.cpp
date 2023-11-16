@@ -18,9 +18,9 @@ void GameTestManager::Init()
     YLOG_TRACE("GameTestManager Init")
 }
 
-// void GameTestManager::Update()
+// void GameTestManager::StartListenAndIOLoop()
 // {
-//     // YLOG_TRACE("GameTestManager Update")
+//     // YLOG_TRACE("GameTestManager StartListenAndIOLoop")
 // }
 
 

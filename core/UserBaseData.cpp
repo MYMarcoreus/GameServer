@@ -3,6 +3,7 @@
 #include "AppXmlConfig.h"
 #include "log.h"
 #include "codec/ProtobufCodec.h"
+#include "EventLoop.h"
 
 namespace yy::core {
 
@@ -25,6 +26,22 @@ void UserBaseData::Send(const MessagePtr &message) {
 
 void UserBaseData::Send(const google::protobuf::Message &message) {
     m_codec.Send(m_conn, message);
+}
+
+net::TimerID UserBaseData::RunAt(net::Timestamp time, net::F_TimerCallback cb) {
+    return m_conn->GetLoop()->RunAt(time, std::move(cb));
+}
+
+net::TimerID UserBaseData::RunAfter(net::Microseconds delay, net::F_TimerCallback cb) {
+    return m_conn->GetLoop()->RunAfter(delay, std::move(cb));
+}
+
+net::TimerID UserBaseData::RunEvery(net::Microseconds interval, net::F_TimerCallback cb) {
+    return m_conn->GetLoop()->RunEvery(interval, std::move(cb));
+}
+
+void UserBaseData::CancelTimer(net::TimerID timerid) {
+    m_conn->GetLoop()->CancelTimer(timerid);
 }
 
 

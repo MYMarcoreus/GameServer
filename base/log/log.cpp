@@ -241,7 +241,7 @@ FileLogAppender::FileLogAppender(const std::string& logfilepath, const std::stri
     auto start_info = "---------------start---------------\n";
     auto ret  = ::write(m_filefd, start_info, strlen(start_info) );
 #endif
-    printf("open file: %s!!!", m_logfilepath.c_str());
+    printf("open file: %s!!!\n", m_logfilepath.c_str());
 }
 
 FileLogAppender::~FileLogAppender()
@@ -513,8 +513,14 @@ void LoggerManager::AsyncLogFlushThread()
             }
         }
         // 收到结束线程的信号
-        else
+        else {
+            // while(!m_blockqueue.empty()) {
+            //     if(p.first != nullptr)
+            //         p.first->WriteLog(p.second);
+            // }
+
             break;
+        }
     }
 }
 

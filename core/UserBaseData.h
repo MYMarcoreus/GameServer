@@ -25,7 +25,7 @@ public:
         eConnected    = 4,
         eSecure       = 5,
         eLoggedIn     = 6,
-        eNeedSave     = 7,
+        eSavingData     = 7,
     };
 
 public:
@@ -43,7 +43,7 @@ public:
     void SetUID(uint32_t uid) { m_uid = uid; }
 
     /// @brief 是否已连接
-    bool isConnected() const { return m_state != E_UserBaseState::eFree and m_state != E_UserBaseState::eNeedSave; }
+    bool isConnected() const { return m_state != E_UserBaseState::eFree and m_state != E_UserBaseState::eSavingData; }
 
     /// @brief 是否是安全连接
     bool isSecure() const { return m_state == E_UserBaseState::eSecure or m_state == E_UserBaseState::eLoggedIn; }
@@ -52,9 +52,14 @@ public:
     bool isLoggedIn() const { return m_state == E_UserBaseState::eLoggedIn; }
 
     /// @brief 是否需要保存
-    bool isNeedSave() const { return m_state == E_UserBaseState::eNeedSave; }
+    bool isNeedSave() const { return m_state == E_UserBaseState::eSavingData; }
 
     uint32_t GetUID() const { return m_uid; }
+
+    net::TimerID RunAt(net::Timestamp time, net::F_TimerCallback cb);
+    net::TimerID RunAfter(net::Microseconds delay, net::F_TimerCallback cb);
+    net::TimerID RunEvery(net::Microseconds interval, net::F_TimerCallback cb);
+    void CancelTimer(net::TimerID timerid);
 
 private:
     E_UserBaseState       m_state;

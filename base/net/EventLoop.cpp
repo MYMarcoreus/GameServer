@@ -6,10 +6,6 @@
 #include "TimerManager.h"
 #include "SocketApiWrapper.h"
 
-#ifdef ____LINUX
-#include <sys/eventfd.h>
-#endif
-
 #ifdef ____WINDOWS
 #include "socket_definations.h"
 #endif
@@ -20,23 +16,6 @@ using namespace yy::util;
 
 namespace {
 thread_local EventLoop *____EventLoopInThisThread = nullptr;
-
-static SocketApiWrapper::socket_t CreatEventFD() {
-#ifdef ____LINUX
-    //! 相比使用管道，::eventfd更加高效
-    int evtfd = ::eventfd(0, EFD_NONBLOCK | EFD_CLOEXEC);
-    if (evtfd < 0) {
-        YLOG_FATAL("Failed in eventfd")
-    }
-    return evtfd;
-#endif
-
-#ifdef ____WINDOWS
-    int sockfd = SocketApiWrapper::create_or_die();
-    return sockfd;
-#endif
-}
-
 
 }
 
@@ -175,8 +154,9 @@ void EventLoop::Loop() {
         YLOG_TRACE("After CallPenddingCallbacks();")
 
         //! 检查被shutdown的套接字，看是否到达关闭的要求，若到达，关闭之。
-        if(m_CloseSocketsCallback)
+        if(m_CloseSocketsCallback) {
             m_CloseSocketsCallback();
+        }
     }
 
     m_IsLooping = false;

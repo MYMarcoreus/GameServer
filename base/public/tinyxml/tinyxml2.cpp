@@ -1134,7 +1134,7 @@ char* XMLNode::ParseDeep( char* p, StrPair* parentEndTag, int* curLineNumPtr )
                 return p;
             }
 
-            // Handle an end tag returned to this level.
+            // HandleSignal an end tag returned to this level.
             // And handle a bunch of annoying errors.
             bool mismatch = false;
             if ( endTag.Empty() ) {

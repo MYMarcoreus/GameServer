@@ -108,6 +108,12 @@ extern std::string GetDemangleName(std::string_view mangled_name);
 extern struct timespec DurationToTimespec(std::chrono::nanoseconds nanoDuration);
 extern std::chrono::nanoseconds TimespecToDuration(struct timespec spec);
 
+
+
+extern SocketApiWrapper::socket_t CreatEventFD();
+
+
+
 }
 
 

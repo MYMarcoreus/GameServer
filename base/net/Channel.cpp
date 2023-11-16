@@ -55,25 +55,25 @@ void Channel::HandleHappenedEvent() {
 void Channel::HandleEventWithTie() {
     if(m_HappenedEvent.IsCloseEvent() && m_CloseCallback)
     {
-        YLOG_DEBUG("▓▓▓▓▓▓▓▓▓▓▓▓文件描述符<{}>发生关闭事件，进行处理！▓▓▓▓▓▓▓▓▓▓▓▓" , m_FD)
+        YLOG_TRACE("▓▓▓▓▓▓▓▓▓▓▓▓文件描述符<{}>发生关闭事件，进行处理！▓▓▓▓▓▓▓▓▓▓▓▓" , m_FD)
         m_CloseCallback();
     }
 
     if(m_HappenedEvent.IsErrorEvent() && m_ErrorCallback)
     {
-        YLOG_DEBUG("▓▓▓▓▓▓▓▓▓▓▓▓文件描述符<{}>发生错误事件，进行处理！▓▓▓▓▓▓▓▓▓▓▓▓", m_FD)
+        YLOG_TRACE("▓▓▓▓▓▓▓▓▓▓▓▓文件描述符<{}>发生错误事件，进行处理！▓▓▓▓▓▓▓▓▓▓▓▓", m_FD)
         m_ErrorCallback();
     }
 
     if(m_HappenedEvent.IsReadEvent() && m_ReadCallback)
     {
-        YLOG_DEBUG("▓▓▓▓▓▓▓▓▓▓▓▓文件描述符<{}>发生读事件，进行处理！▓▓▓▓▓▓▓▓▓▓▓▓", m_FD)
+        YLOG_TRACE("▓▓▓▓▓▓▓▓▓▓▓▓文件描述符<{}>发生读事件，进行处理！▓▓▓▓▓▓▓▓▓▓▓▓", m_FD)
         m_ReadCallback();
     }
 
     if(m_HappenedEvent.IsWriteEvent() && m_WriteCallback)
     {
-        YLOG_DEBUG("▓▓▓▓▓▓▓▓▓▓▓▓文件描述符<{}>发生写事件，进行处理！▓▓▓▓▓▓▓▓▓▓▓▓", m_FD)
+        YLOG_TRACE("▓▓▓▓▓▓▓▓▓▓▓▓文件描述符<{}>发生写事件，进行处理！▓▓▓▓▓▓▓▓▓▓▓▓", m_FD)
         m_WriteCallback();
     }
 }

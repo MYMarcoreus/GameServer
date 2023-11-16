@@ -129,6 +129,7 @@ void TcpConnection::ShutdownInLoop() {
     SetState(eShutdown);
 
     if(m_ConnectionShutdownCallback) {
+
         m_ConnectionShutdownCallback(shared_from_this());
     }
     //FIXME：不要加这一段，套接字需要统一在某个时刻关闭，且不能和Accept连接同时运行，否则会造成严重的bug！！！！！！！！！
@@ -273,7 +274,7 @@ void TcpConnection::HandleWrite() {
 void TcpConnection::HandleClose() {
     m_Loop->AssertInLoopingThread();
 
-    //! 用户要关闭连接时，并不直接Close，而是先Shundown，等到一定时间之后再Close
+    //! 用户要关闭连接时，并不直接Close，而是先Shundown，等到一定时间之后再统一Close
     switch (m_ConnectionState)
     {
         case eShutdown:

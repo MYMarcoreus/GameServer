@@ -72,9 +72,9 @@ public:
 
     void SetCloseSocketsCallback(F_CloseSocketsCallback cb) { m_CloseSocketsCallback = cb; }
 
-private:
-    ///@brief QuitLoop()调用，唤醒正在阻塞在PollWait的EventLoop线程
+    ///@brief 唤醒正在阻塞在PollWait的EventLoop线程
     void Wakeup();
+private:
 
     ///@brief 在EventLoop::Loop()每一轮循环的最后执行代办函数列表
     void CallPenddingCallbacks();

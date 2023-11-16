@@ -27,12 +27,14 @@ public:
     ///@brief 启动连接池并开启监听套接字
     void Start(int threadNum, F_ThreadInitCallback cb = F_ThreadInitCallback());
 
+    void Stop();
+
     //! TcpConnection回调，由TcpServer的上层定义并实现
     void SetConnectionEstablishedCallback(F_ConnectionEstablishedCallback cb) { m_ConnectionEstablishedCallback = cb; };
     // void SetConnectionDestroyedCallback(F_ConnectionDestroyedCallback cb) { m_ConnectionDestroyedCallback = cb; };
     void SetConnectionWriteCompleteCallback(F_ConnectionWriteCompleteCallback cb) { m_ConnectionWriteCompleteCallback = cb; };
     void SetConnectionShutdownCallback     (F_ConnectionShutdownCallback cb)      { m_ConnectionShutdownCallback = cb; }
-    void SetCloseSocketsCallback(F_CloseShutdownConnectionsCallback cb) { m_CloseSocketsCallback = cb; }
+    void SetCloseSocketsCallback(F_CloseShutdownConnectionsCallback cb);
 
 
     /* ! 注意：当使用线程池时，不要把recvBuf的引用或指针作为参数传递给另一线程（如线程池中的线程），
@@ -55,11 +57,14 @@ private:
 
 
     void InitLog();
+
+    void HandleSignal();
 private:
 
     EventLoop *                          m_AcceptorLoop;
     std::unique_ptr<Acceptor>            m_Acceptor;
     std::unique_ptr<EventLoopThreadPool> m_IOThreadPool;
+    std::unique_ptr<class SignalManager> m_SignalManager;
 
     std::atomic<bool> m_IsStarted{false};
     uint64_t          m_NextConnID{0};
@@ -72,7 +77,7 @@ private:
     F_MessageCallback                    m_MessageCallback;
  // F_ConnectionCloseCallback            m_ConnectionCloseCallback;  // 不允许让用户指定close回调
     F_ConnectionShutdownCallback         m_ConnectionShutdownCallback;
-    F_CloseShutdownConnectionsCallback   m_CloseSocketsCallback;
+    // F_CloseShutdownConnectionsCallback   m_CloseSocketsCallback;
 
     config::ConfigVar<config::AppXmlConfig>::ptr m_AppConfigVar; // 用于获取配置项
     std::map<std::string , TcpConnectionPtr> m_ConnectionMap;

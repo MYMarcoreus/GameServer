@@ -55,6 +55,8 @@ public:
     /// @brief 用来判断数据包是否是我们的游戏协议包的校验码
     [[nodiscard]] const char *check_code() const { return checkCode; }
 
+    uint32_t io_thread_num() const { return ioThreadNum; };
+
 
     /// @brief 读取root元素下名为app的配置项
     void load(const XMLElement *xml_app) ;
@@ -78,6 +80,8 @@ private:
 
     char securityCode[20]{};  // md5码加密
     char checkCode[3]{};      // 游戏协议校验码
+
+    uint32_t ioThreadNum{};
 };
 
 extern ConfigVar<AppXmlConfig>::ptr g_app_config;

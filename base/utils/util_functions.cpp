@@ -14,6 +14,7 @@
 
 #ifdef ____LINUX
     #include <sys/socket.h>
+    #include <sys/eventfd.h>
 #endif
 #ifdef ____WINDOWS
     #include <winsock2.h>
@@ -237,6 +238,22 @@ struct timespec DurationToTimespec(std::chrono::nanoseconds nanoDuration) {
 std::chrono::nanoseconds TimespecToDuration(struct timespec spec) {
     std::chrono::nanoseconds t = std::chrono::seconds{spec.tv_sec} + std::chrono::nanoseconds{spec.tv_nsec};
     return  t;
+}
+
+SocketApiWrapper::socket_t CreatEventFD() {
+#ifdef ____LINUX
+    //! 相比使用管道，::eventfd更加高效
+    int evtfd = ::eventfd(0, EFD_NONBLOCK | EFD_CLOEXEC);
+    if (evtfd < 0) {
+        throw std::system_error(errno, std::system_category(), "eventfd");
+    }
+    return evtfd;
+#endif
+
+#ifdef ____WINDOWS
+    // int sockfd = SocketApiWrapper::create_or_die();
+    // return sockfd;
+#endif
 }
 
 

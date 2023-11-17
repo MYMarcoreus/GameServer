@@ -116,8 +116,6 @@ void TcpServer::HandleNewConnection(SocketApiWrapper::socket_t sockfd, IPAddress
     );
     m_ConnectionMap[name] = conn;
 
-
-
     conn->SetConnectionEstablishedCallback(m_ConnectionEstablishedCallback);
     // conn->SetConnectionDestroyedCallback(m_ConnectionDestroyedCallback);
     conn->SetMessageCallback(m_MessageCallback);

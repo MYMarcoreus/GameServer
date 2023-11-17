@@ -9,8 +9,6 @@
 
 namespace yy::app {
 
-#pragma pack(push, packing)
-#pragma pack(1)
 
 using UID_t = uint32_t;
 
@@ -18,7 +16,6 @@ template<class T>
 using Ptr = std::shared_ptr<T>;
 
 
-#pragma pack(pop, packing)
 }
 
 #endif //____GAMEDATA_H

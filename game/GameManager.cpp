@@ -17,31 +17,36 @@ namespace yy::app {
 void GameManager::AppNotifier_Secutiry(const yy::net::TcpConnectionPtr& conn) {
     // YLOG_TRACE("in AppNotifier_Secutiry")
     // YLOG_INFO("用户<{}>安全验证通过：{}", userdata->sock.get_fd(), result_code)
+
+    auto userdata = m_server->FindUser(conn->GetName());
+    userdata->SetState(core::UserBaseData::E_UserBaseState::eSecure);
 }
 
 void GameManager::AppNotifier_Disconnect(const yy::net::TcpConnectionPtr& conn) {
-    YLOG_INFO("↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑ 用户<{},{}>断开连接", conn->GetSocketFD(), conn->GetName())
+    YLOG_INFO("↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ 用户<{},{}>断开连接", conn->GetSocketFD(), conn->GetName())
 
     auto userdata = m_server->FindUser(conn->GetName());
 
     // 已登陆，保存数据
-    if(userdata->isLoggedIn())
+    if(userdata->IsLoggedIn())
     {
         //! 被动离开时执行
-        YLOG_INFO("<{}> Saving Data Now!", conn->GetSocketFD())
+        YLOG_INFO("<{},{}> Saving Data Now!", conn->GetSocketFD(), conn->GetName())
         m_player->LeaveAndSave(userdata);
-        YLOG_INFO("<{}> USer Data Saved!", conn->GetSocketFD())
+        YLOG_INFO("<{},{}> User Data Saved!", conn->GetSocketFD(), conn->GetName())
     }
     else // 未登录，重置数据
     {
-        YLOG_INFO("<{}> DataReset", conn->GetSocketFD())
+        YLOG_INFO("<{},{}> DataReset", conn->GetSocketFD(), conn->GetName())
         userdata->Shutdown();
     }
 }
 
 void GameManager::AppNotifier_Command(const core::UserBaseDataPtr & userdata, const core::MessagePtr & message)
 {
-    m_dispatcher.OnProtobufMessage(userdata, message);
+    m_wordThreads.PushTask([this, userdata, message](){
+        m_dispatcher.OnProtobufMessage(userdata, message);
+    });
 }
 
 void GameManager::UnkonwnCommand(const core::UserBaseDataPtr & userdata, const core::MessagePtr & message)
@@ -64,7 +69,7 @@ void GameManager::RunApp()
 
     //! 启动服务器的工作线程
     m_wordThreads.Start(m_loop, 2);
-    this->m_wordThreads.RunTaskEvery( 8333us, [this](){this->m_server->Update();});
+    // this->m_wordThreads.RunTaskEvery( 8333us, [this](){this->m_server->Update();});
 
     m_loop->Loop();
 }
@@ -76,9 +81,9 @@ void GameManager::Init()
     m_loop = new net::EventLoop();
     yy::net::IPAddressPtr listenAddr = std::make_shared<net::IPv4Address>(config::g_app_config->GetValue().app_port());
     m_server = new core::GameServer(m_loop, listenAddr);
-    m_server->setNotifier_Security  (std::bind(&GameManager::AppNotifier_Secutiry, this, _1) );
-    m_server->setNotifier_DisConnect(std::bind(&GameManager::AppNotifier_Disconnect, this, _1));
-    m_server->setNotifier_Command   (std::bind(&GameManager::AppNotifier_Command, this, _1, _2));
+    m_server->SetNotifier_Security(std::bind(&GameManager::AppNotifier_Secutiry, this, _1));
+    m_server->SetNotifier_DisConnect(std::bind(&GameManager::AppNotifier_Disconnect, this, _1));
+    m_server->SetNotifier_Command(std::bind(&GameManager::AppNotifier_Command, this, _1, _2));
 
 
     m_player = &GamePlayerManager::getInstance();

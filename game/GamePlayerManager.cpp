@@ -91,7 +91,7 @@ void GamePlayerManager::Update()
             // YLOG_INFO("玩家<{}>离开，数据已保存", playerLeave.uid())
             //
             // // 重置数据，从在线玩家列表中删除，回收至对象池
-            // m_server->FreeUser(userdata);
+            // m_server->DelUser(userdata);
             // playerdata->Clear();
             // m_player_pool.push(playerdata);
             //
@@ -118,9 +118,13 @@ Ptr<yy::protocol::app::PlayerBaseData> GamePlayerManager::FindPlayerByUID(UID_t 
 }
 
 void GamePlayerManager::Broadcast(const UserBaseDataPtr &from, const google::protobuf::Message &data) {
-    std::lock_guard lg{m_online_players_mutex};
+    decltype(m_online_players) players;
+    {
+        std::lock_guard lg{m_online_players_mutex};
+        players = m_online_players;
+    }
 
-    for(const auto& p: m_online_players)
+    for(const auto& p: players)
     {
         if(p.second->uid() == from->GetUID())
             continue;
@@ -156,12 +160,13 @@ void GamePlayerManager::LeaveAndSave(UserBaseDataPtr leave_user) {
         m_online_players.erase(playerdata->uid());
     }
     playerdata->Clear();
+
     m_player_pool.push(playerdata);
 
-    // m_server->FreeUser(leave_user);
     YLOG_INFO("玩家<{}>离开并保存数据！", leave_user->GetUID());
 
     leave_user->SetState(core::UserBaseData::E_UserBaseState::eFree);
+    m_server->DelUser(leave_user->GetConnName());
 }
 
 
@@ -177,7 +182,7 @@ void GamePlayerManager::LeaveAndSave(UserBaseDataPtr leave_user) {
 
 void GamePlayerManager::OnLogin(const UserBaseDataPtr& userdata, const Ptr<protocol::app::LoginRequest> &) //NOLINT
 {
-    if(userdata->isLoggedIn()) {
+    if(userdata->IsLoggedIn()) {
         return;
     }
 
@@ -186,33 +191,42 @@ void GamePlayerManager::OnLogin(const UserBaseDataPtr& userdata, const Ptr<proto
     // ①登陆请求：设置登录结果
     loginResponse.set_result(true);
 
-
-    // ③登陆请求：初始化登录玩家对象，加入玩家数据列表
+    // ②登陆请求：初始化登录玩家对象，加入玩家数据列表
     userdata->SetUID(m_global_id++);
     auto selfdata = m_player_pool.pop();
     assert(selfdata != nullptr);
+
+    // ③登陆请求：
     selfdata->set_uid(userdata->GetUID());
-    selfdata->set_conn_name(userdata->GetConnection()->GetName());
+    selfdata->set_conn_name(userdata->GetConnName());
     selfdata->set_hp_current(100);
     selfdata->set_hp_max(100);
 
-    //! 若使用set_allocated，则需要主动传递堆空间，set_allocated会接管这片堆内存的管理权
-    // PlayerMove  selfMove = new PlayerMove();
-    // selfMove->set_position("");
-    // selfMove->set_rotation("");
-    // selfdata->set_allocated_player_move(selfMove);
-
-    //! 使用mutable和*运算符进行赋值，让protobuf自己创建堆内存，算是一个小trick
-    PlayerMove selfMove;
-    selfMove.set_position("");
-    selfMove.set_rotation("");
-    *selfdata->mutable_movement() = selfMove;
-
+    // ④登陆请求：设置movement(初始position和rotation)
     {
-        std::lock_guard lg{m_online_players_mutex};
+        //! 若使用set_allocated，则需要主动传递堆空间，set_allocated会接管这片堆内存的管理权
+        // PlayerMove  selfMove = new PlayerMove();
+        // selfMove->set_position("");
+        // selfMove->set_rotation("");
+        // selfdata->set_allocated_player_move(selfMove);
+
+        //! 使用mutable和*运算符进行赋值，让protobuf自己创建堆内存，算是一个小trick
+        PlayerMove selfMove;
+        selfMove.set_position("");
+        selfMove.set_rotation("");
+        *selfdata->mutable_movement() = selfMove;
+    }
+
+    // ⑤登陆请求：
+    {
+        decltype(m_online_players) players;
+        {
+            std::lock_guard lg{m_online_players_mutex};
+            players = m_online_players;
+        }
 
         // ②登陆请求：填充其他玩家数据
-        for (const auto &p: m_online_players) {
+        for (const auto &p: players) {
             const auto &otherdata = *p.second;
             if(otherdata.uid() == selfdata->uid())
                 continue;
@@ -222,7 +236,10 @@ void GamePlayerManager::OnLogin(const UserBaseDataPtr& userdata, const Ptr<proto
             data->CopyFrom(otherdata); // 复制
         }
 
-        m_online_players.insert({selfdata->uid(), selfdata});
+        {
+            std::lock_guard lg{m_online_players_mutex};
+            m_online_players.insert({selfdata->uid(), selfdata});
+        }
     }
 
     *loginResponse.mutable_self_data() = *selfdata;

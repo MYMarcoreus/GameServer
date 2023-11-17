@@ -50,8 +50,8 @@ public:
     [[nodiscard]] bool   IsRunning() const override { return m_isRunning; };
 
     void setNotifier_Connect   (F_Notifier f) override { m_notifierConnect = f; }
-    void setNotifier_Security  (F_Notifier f) override { m_notifierSecurity = f; }
-    void setNotifier_DisConnect(F_Notifier f) override { m_notifierDisconnect = f; }
+    void SetNotifier_Security  (F_Notifier f) override { m_notifierSecurity = f; }
+    void SetNotifier_DisConnect(F_Notifier f) override { m_notifierDisconnect = f; }
     void setNotifier_Command   (F_Notifier f) override { m_notifierCommand = f; }
 
     UserBaseData::ptr getFreeUser(yy::net::Socket & sock) override;

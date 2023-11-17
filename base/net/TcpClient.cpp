@@ -37,7 +37,7 @@ TcpClient::~TcpClient() {
     if(conn) {
         m_Loop->EnqueueCallbackInLoop([conn](){ conn->ConnectionDestroyed(); });
         if (isUnique) {
-            conn->Close();
+            conn->Shutdown();
         }
     }
 }

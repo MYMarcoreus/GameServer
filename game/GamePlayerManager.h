@@ -49,12 +49,12 @@ private:
     void Broadcast(const UserBaseDataPtr& from, const core::MessagePtr & data);
 
 private:
-    yy::core::IServer *                                                m_server;
-    std::unordered_map<UID_t,  Ptr<yy::protocol::app::PlayerBaseData>> m_online_players;
-    std::mutex m_online_players_mutex;
+    yy::core::IServer *                                                 m_server;
+    std::unordered_map<UID_t,  Ptr<yy::protocol::app::PlayerBaseData>>  m_online_players;
+    std::mutex                                                          m_online_players_mutex;
 
-    yy::util::ObjectPool<yy::protocol::app::PlayerBaseData>            m_player_pool;
-    int                                                                m_global_id;
+    yy::util::ObjectPool<yy::protocol::app::PlayerBaseData>             m_player_pool;
+    int                                                                 m_global_id;
 };
 
 }

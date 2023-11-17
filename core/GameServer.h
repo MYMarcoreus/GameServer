@@ -20,7 +20,7 @@ class SecurityBody;
 namespace yy::core {
 
 
-class GameServer: public IServer{
+class GameServer final: public IServer{
     using HeartPtr    = std::shared_ptr<yy::protocol::core::HeartBody> ;
     using SecurityPtr = std::shared_ptr<yy::protocol::core::SecurityBody> ;
 
@@ -32,31 +32,20 @@ public:
     virtual void Start() override;
 
     /// @brief 结束服务器
-    virtual void Stop() override {
-    }
+    virtual void Stop() override;
 
-    virtual void Update() override;
+    virtual UserBaseDataPtr FindUser(const std::string & conn_name) override;
+    virtual void            DelUser(const std::string & conn_name) override;
+    virtual void            AddUser(const std::string & conn_name, const UserBaseDataPtr & userdata) override;
 
-
-
-    /// @brief 通过套接字文件描述符寻找用户连接数据
-
-    virtual UserBaseDataPtr FindUser(const std::string & conn) override;
-    virtual void FreeUser(const UserBaseDataPtr & userdata) override;
-    virtual void AddUser(const std::string & name, const UserBaseDataPtr & userdata) override;
-
-
-    virtual bool IsRunning() const override {
-        return m_server.IsRunning();
-    }
-
+    virtual bool IsRunning() const override { return m_server.IsRunning(); }
 
     virtual const config::AppXmlConfig & GetAppConfig() override { return m_app_configvar->GetValue(); }
 
     /* 在实现类中定义四个回调函数成员，下面这四个函数将会设置其对应的回调函数，而回调函数将由业务层定义并传入 */
-    virtual void setNotifier_Security  (F_Notifier cb) override { m_notifierSecurity   = cb; }
-    virtual void setNotifier_DisConnect(F_Notifier cb) override { m_notifierDisconnect = cb; }
-    virtual void setNotifier_Command(F_NotifierCommand cb) override { m_notifierCommand = cb; }
+    virtual void SetNotifier_Security  (F_Notifier cb) override { m_notifier_security   = cb; }
+    virtual void SetNotifier_DisConnect(F_Notifier cb) override { m_notifier_disconnect = cb; }
+    virtual void SetNotifier_Command(F_NotifierCommand cb) override { m_notifier_command = cb; }
 
     // template<typename T>
     // void RegisterMessageCallback(const CallbackT<T>::ProtobufMessageTCallback &callback) {
@@ -70,18 +59,17 @@ public:
 
 
 private:
-    void OnUnknownMessage(yy::net::TcpConnectionPtr conn, const MessagePtr& message);
+    void OnUnknownMessage(const net::TcpConnectionPtr & userdata, const MessagePtr& message);
 
-    void OnConnectionEstablished(yy::net::TcpConnectionPtr conn);
+    void OnConnectionEstablished(const net::TcpConnectionPtr & userdata);
+    void AddCheckTimer(const net::TcpConnectionPtr & conn, const UserBaseDataPtr & userdata);
+    void CheckHeart(const UserBaseDataPtr & conn);
     void SendXorCode(const yy::net::TcpConnectionPtr &conn);
 
-    void OnHeart(const yy::net::TcpConnectionPtr & conn, const HeartPtr & message);
-    void OnSecurity(const yy::net::TcpConnectionPtr & conn, const SecurityPtr & message);
+    void OnHeart(const net::TcpConnectionPtr & conn, const HeartPtr & message);
+    void OnSecurity(const net::TcpConnectionPtr & conn, const SecurityPtr & message);
 
-    void CheckDisconnections_Update(const UserBaseDataPtr & userdata);
-    void AddShutdownConnection(const yy::net::TcpConnectionPtr &conn);
-    void CheckDisconnections();
-
+    void AfterShutdownConnection(const yy::net::TcpConnectionPtr &conn);
 private:
     yy::net::EventLoop *        m_accpetorLoop;
     yy::net::TcpServer          m_server;
@@ -89,19 +77,17 @@ private:
     ProtobufDispatcher<yy::net::TcpConnectionPtr>        m_dispatcher;
 
     yy::config::ConfigVar<yy::config::AppXmlConfig>::ptr    m_app_configvar; // 用于获取配置项
-    std::atomic<size_t> m_NumSecurity; //安全连接数
+    std::atomic<size_t> m_num_security; //安全连接数
 
     /* 这几个回调函数由业务层实现，然后通过对应的set方法传入设置 */
-    F_Notifier m_notifierSecurity;    // 用户安全验证通过后，执行业务层回调函数
-    F_Notifier m_notifierDisconnect;  // 用户连接断开后，执行业务层回调函数
-    F_NotifierCommand m_notifierCommand;
+    F_Notifier m_notifier_security;    // 用户安全验证通过后，执行业务层回调函数
+    F_Notifier m_notifier_disconnect;  // 用户连接断开后，执行业务层回调函数
+    F_NotifierCommand m_notifier_command;
 
-    std::vector<yy::net::TcpConnectionPtr>  m_ShutdownConnections;
-    std::mutex                              m_ShutdownConnectionsMutex;
-
-    std::mutex m_users_mutex;
-    std::map<std::string , UserBaseDataPtr> m_users;
+    std::mutex                                        m_users_mutex;
+    std::unordered_map<std::string , UserBaseDataPtr> m_users;
     std::vector<std::string> m_closeUsers;
+
 };
 
 }

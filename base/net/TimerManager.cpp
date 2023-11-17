@@ -256,7 +256,7 @@ void TimerManager::CancelTimerInLoop(TimerID timerid) {
 
     //! 如果正在执行回调函数（说明用户在timer的回调函数中调用了CancelTimerInLoop进行了自cancel），那么便不能立马释放它，应延迟释放之。
     //! 需要等待它执行完释放，因此将其智能指针存入cancel列表，保留一个引用。
-    if(m_IsCallingExpiredTimers) { //! 如果m_IsCallingExpiredTimers为true，那么必有it == m_TimeridMap.end()
+    if(timer and m_IsCallingExpiredTimers) { //! 如果m_IsCallingExpiredTimers为true，那么必有it == m_TimeridMap.end()
         m_CancelingTimerList.insert({timerid, timer});
     }
 }
@@ -290,7 +290,7 @@ void TimerManager::HandleExpiredTimers() {
 }
 
 std::vector<TimerPtr> TimerManager::GetExpiredTimers() {
-    //! 从定时器列表中删除过期的Timer，并将其存入expired列表中
+    /* ****** 从定时器列表中删除过期的Timer，并将其存入expired列表中 ****** */
     decltype(m_TimerList)::iterator bound_end;
     {
         //! 找到expired timer分界点

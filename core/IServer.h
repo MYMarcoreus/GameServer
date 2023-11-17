@@ -20,7 +20,6 @@ class IServer: util::noncopyable
 {
 public:
     using ptr = std::shared_ptr<IServer>;
-    // 第三个参数主要是为了留给传输消息头指令使用的
     using F_Notifier = std::function<void(const yy::net::TcpConnectionPtr &)>;
     using F_NotifierCommand = std::function<void(const UserBaseDataPtr &, const MessagePtr &)>;
 public:
@@ -34,15 +33,9 @@ public:
     /// @brief 结束服务器
     virtual void Stop() = 0;
 
-    virtual void Update() = 0;
-
-
-    /// @brief 通过套接字文件描述符寻找用户连接数据
-    virtual UserBaseDataPtr FindUser(const std::string & conn) = 0;
-
-    virtual void FreeUser(const UserBaseDataPtr & userdata) = 0;
-
-    virtual void AddUser(const std::string & name, const UserBaseDataPtr &) = 0;
+    virtual UserBaseDataPtr FindUser(const std::string & conn_name) = 0;
+    virtual void            DelUser(const std::string & conn_name) = 0;
+    virtual void            AddUser (const std::string & conn_name, const UserBaseDataPtr &) = 0;
 
     virtual bool IsRunning() const = 0;
 
@@ -50,9 +43,9 @@ public:
 
 
     /* 在实现类中定义四个回调函数成员，下面这四个函数将会设置其对应的回调函数，而回调函数将由业务层定义并传入 */
-    virtual void setNotifier_Security  (F_Notifier e) = 0;
-    virtual void setNotifier_DisConnect(F_Notifier e) = 0;
-    virtual void setNotifier_Command(F_NotifierCommand cb) = 0;
+    virtual void SetNotifier_Security  (F_Notifier e) = 0;
+    virtual void SetNotifier_DisConnect(F_Notifier e) = 0;
+    virtual void SetNotifier_Command(F_NotifierCommand cb) = 0;
 
     virtual net::TimerID RunAt(net::Timestamp time, net::F_TaskCallback cb) = 0;
     virtual net::TimerID RunAfter(net::Microseconds delay, net::F_TaskCallback cb) = 0;

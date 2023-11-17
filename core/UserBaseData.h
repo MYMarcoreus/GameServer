@@ -29,7 +29,7 @@ public:
     };
 
 public:
-    UserBaseData(net::TcpConnectionPtr conn, uint32_t appid, ProtobufCodec & m_codec);
+    UserBaseData(net::TcpConnectionPtr conn, ProtobufCodec & m_codec);
 
     void Shutdown() { m_conn->Shutdown(); }
 
@@ -43,18 +43,21 @@ public:
     void SetUID(uint32_t uid) { m_uid = uid; }
 
     /// @brief 是否已连接
-    bool isConnected() const { return m_state != E_UserBaseState::eFree and m_state != E_UserBaseState::eSavingData; }
+    bool IsConnected() const { return m_state != E_UserBaseState::eFree and m_state != E_UserBaseState::eSavingData; }
 
     /// @brief 是否是安全连接
-    bool isSecure() const { return m_state == E_UserBaseState::eSecure or m_state == E_UserBaseState::eLoggedIn; }
+    bool IsSecure() const { return m_state == E_UserBaseState::eSecure or m_state == E_UserBaseState::eLoggedIn; }
 
     /// @brief 是否已登录
-    bool isLoggedIn() const { return m_state == E_UserBaseState::eLoggedIn; }
+    bool IsLoggedIn() const { return m_state == E_UserBaseState::eLoggedIn; }
 
     /// @brief 是否需要保存
-    bool isNeedSave() const { return m_state == E_UserBaseState::eSavingData; }
+    bool IsNeedSave() const { return m_state == E_UserBaseState::eSavingData; }
 
     uint32_t GetUID() const { return m_uid; }
+    const std::string & GetConnName() const { return m_conn->GetName(); }
+    auto GetSocketFD() const { return m_conn->GetSocketFD(); }
+
 
     net::TimerID RunAt(net::Timestamp time, net::F_TaskCallback cb);
     net::TimerID RunAfter(net::Microseconds delay, net::F_TaskCallback cb);
@@ -63,7 +66,6 @@ public:
 
 private:
     E_UserBaseState       m_state;
-    uint32_t              m_appID;   // 连接程序的ID
     uint32_t              m_uid;
     net::TcpConnectionPtr m_conn;
     ProtobufCodec &       m_codec;

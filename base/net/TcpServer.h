@@ -55,7 +55,6 @@ private:
     void RemoveConnection(const TcpConnectionPtr &conn);
     void RemoveConnectionInLoop(TcpConnectionPtr conn); //! 不能是const引用
 
-
     void InitLog();
 
     void HandleSignal();

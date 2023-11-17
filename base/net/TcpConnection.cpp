@@ -41,6 +41,9 @@ TcpConnection::TcpConnection(std::string name, EventLoop *loop, SocketApiWrapper
 
 
 TcpConnection::~TcpConnection() {
+    m_Channel->DisableAllEvent();
+    m_Channel->RemoveFromLoop();
+
     YLOG_DEBUG("连接<{}: {}>已被析构！", this->GetSocketFD(), m_Name.c_str())
 }
 
@@ -93,10 +96,9 @@ void TcpConnection::SendInLoop(const std::string_view & buf) { //! const引用�
         } else {
             nByteSend = 0;
             if(errno == EPIPE) {
-                Shutdown();
+                ShutdownInLoop();
             }
             YLOG_ERROR("In TcpConnection::SendInLoop, send error: {}", util::StatusCode(errno).ToString().c_str())
-
         }
     }
 
@@ -129,13 +131,20 @@ void TcpConnection::ShutdownInLoop() {
     m_ShudownTime.SetNow();
     m_Channel->DisableAllEvent();
     m_Channel->RemoveFromLoop();
-    m_Socket->Shutdown();
+    // m_Socket->Shutdown();
     SetState(eShutdown);
 
     if(m_ConnectionShutdownCallback) {
-
         m_ConnectionShutdownCallback(shared_from_this());
     }
+
+    SetState(eDisconnected);
+    //m_Socket->Close(); //FIXME 不关闭，让析构函数调用Socket的析构函数来close；
+
+    if(m_ConnectionCloseCallback) { // m_ConnectionCloseCallback == RemoveConnection
+        m_ConnectionCloseCallback(shared_from_this());
+    }
+
     //FIXME：不要加这一段，套接字需要统一在某个时刻关闭，且不能和Accept连接同时运行，否则会造成严重的bug！！！！！！！！！
     // m_Loop->RunTaskAfter(Seconds{g_app_config->GetValue().close_delay()}, [this](){
     //     this->Close();
@@ -143,34 +152,6 @@ void TcpConnection::ShutdownInLoop() {
     // });
 }
 
-
-void TcpConnection::Close() {
-    if(not CanClose()) {
-        YLOG_TRACE("In TcpConnection::CloseInLoop(): 套接字<{}>还不能关闭", this->GetSocketFD())
-        return;
-    }
-
-    // m_Loop->EnqueueCallbackInLoop(std::bind(&TcpConnection::CloseInLoop, shared_from_this()));
-    m_Loop->EnqueueCallbackInLoop([self = shared_from_this()](){self->CloseInLoop();});
-}
-void TcpConnection::CloseInLoop() {
-    m_Loop->AssertInLoopingThread();
-
-    if(not CanClose()) {
-        return;
-    }
-
-    YLOG_TRACE("TcpConnection::CloseInLoop(): Fake Close<{}>", GetSocketFD())
-
-    m_Channel->DisableAllEvent();
-    m_Channel->RemoveFromLoop();
-    SetState(eDisconnected);
-    //m_Socket->Close(); //FIXME 不关闭，让析构函数调用Socket的析构函数来close；
-
-    if(m_ConnectionCloseCallback) { // m_ConnectionCloseCallback == RemoveConnection
-        m_ConnectionCloseCallback(shared_from_this());
-    }
-}
 
 void TcpConnection::ConnectionEstablished() {
     m_Loop->AssertInLoopingThread();
@@ -209,7 +190,7 @@ void TcpConnection::ConnectionDestroyed() {
 void TcpConnection::HandleRead() {
     m_Loop->AssertInLoopingThread();
 
-    YLOG_TRACE("正在读取来自连接<{}>的数据！", this->m_Socket->GetFD())
+    YLOG_TRACE("正在读取来自连接<{}>的数据！", m_Socket->GetFD())
 
     //! ET读取数据到recvBuf中
     bool isReadOK = HandleRead_ET();
@@ -220,13 +201,10 @@ void TcpConnection::HandleRead() {
 
         m_HeartTime.SetNow();
 
-        //FIXME m_MessageCallback的实际任务可能不在本线程运行（在线程池处理消息）！m_MessageCallback可能立即返回，因此需要拷贝数据！
+        // FIXME m_MessageCallback的实际任务可能不在本线程运行（在线程池处理消息）！m_MessageCallback可能立即返回，因此需要拷贝数据！
         m_MessageCallback(shared_from_this(), m_RecvBuf);
 
-        //m_RecvBuf.SetIsCompleted(true); // Receiver线程标记数据接收完成，Handler可处理
-
         // FIXME 如果m_MessageCallback的实际任务不在本线程运行，而是在其他线程（如线程池中的线程），那么该会导致其他线程中的buf已被Reset
-        //m_RecvBuf.Reset();
     }
 }
 

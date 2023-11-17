@@ -83,7 +83,6 @@ void ProtobufCodec::OnData(const TcpConnectionPtr &conn, Buffer &buf) {
 }
 
 void ProtobufCodec::Send(const TcpConnectionPtr &conn, const google::protobuf::Message & message) {
-
     //! 设置消息头
     MessageHeader header{message};
 

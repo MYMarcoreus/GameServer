@@ -42,32 +42,29 @@ public:
     void Send(const google::protobuf::Message & message);
     void Send(const std::shared_ptr<google::protobuf::Message> & message);
 
-    /// @brief 关闭用户连接，但是不回收文件描述符，仍保留系统分配的套接字的资源(如缓存)，适合用户掉线可能马上再连接的情况。
+    /// @brief 关闭用户连接，但是不回收文件描述符，仍保留系统分配的套接字的资源(如缓存)
     void Shutdown();
 
-    /// @brief 关闭用户连接，而且回收文件描述符，释放用户套接字的资源，适合用户连接确认已经关闭的情况。
-    /// Shutdown之后，如果用户连接确实需要关闭，则需要调用Close来释放套接字资源
-    void Close();
 
     ///@brief 因为需要设置状态转换，所以定义在这里
-    // called when TcpServer accepts a new connection
+    // 在m_ConnectionEstablishedCallback(TcpServer上层传入)之前调用，此时map新增一个成员
     void ConnectionEstablished();
-    // called when TcpServer has removed me from its map
+    // 在m_ConnectionCloseCallback(TcpServer::RemoveConnection)之后调用，此时map移除一个成员
     void ConnectionDestroyed();
 
 
     /*! GETTER !*/
-    const std::string &    GetName()      const { return m_Name; }
-    EventLoop *            GetLoop()      const { return m_Loop; }
-    const IPAddress::ptr & GetLocalAddr() const { return m_LocalAddr; }
-    const IPAddress::ptr & GetPeerAddr()  const { return m_PeerAddr; }
-    const Buffer &         GetSendBuf()   const { return m_SendBuf; }
-    const Buffer &         GetReadBuf()   const { return m_RecvBuf; }
+    const std::string &    GetName()          const { return m_Name; }
+    EventLoop *            GetLoop()          const { return m_Loop; }
+    const IPAddress::ptr & GetLocalAddr()     const { return m_LocalAddr; }
+    const IPAddress::ptr & GetPeerAddr()      const { return m_PeerAddr; }
+    const Buffer &         GetSendBuf()       const { return m_SendBuf; }
+    const Buffer &         GetReadBuf()       const { return m_RecvBuf; }
     Timestamp              GetConnectedTime() const { return m_ConnectedTime; }
     Timestamp              GetShudownTime()   const { return m_ShudownTime; }
     Timestamp              GetHeartTime()     const { return m_HeartTime; }
-    uint8_t                GetXorCode() const { return m_XorCode; }
-    int                    GetSocketFD()  const ;
+    uint8_t                GetXorCode()       const { return m_XorCode; }
+    int                    GetSocketFD()      const ;
     bool  IsConnected()    { return m_ConnectionState == eConnected; }
     bool  IsConnecting()   { return m_ConnectionState == eConnecting; }
     bool  IsDisconnected() { return m_ConnectionState == eDisconnected; }
@@ -80,7 +77,6 @@ public:
     void SetConnectionWriteCompleteCallback(F_ConnectionWriteCompleteCallback cb) { m_ConnectionWriteCompleteCallback = cb; }
     void SetConnectionCloseCallback        (F_ConnectionCloseCallback cb)         { m_ConnectionCloseCallback = cb; }
     void SetConnectionShutdownCallback     (F_ConnectionShutdownCallback cb)      { m_ConnectionShutdownCallback = cb; }
-
 
 
     void SetXorCode(uint8_t xorCode) { m_XorCode = xorCode; }
@@ -96,9 +92,7 @@ private:
 
     void SendInLoop(const std::string_view &buf);
     void ShutdownInLoop();
-    void CloseInLoop();
 
-    bool CanClose() { return IsConnected() or IsShutdown(); }
     bool CanShutdown() { return !IsShutdown() and IsConnected(); }
 
 private:

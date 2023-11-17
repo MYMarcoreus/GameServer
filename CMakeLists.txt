@@ -67,23 +67,22 @@ include_directories(
 
 set(COMMON_SOURCES
         ${ProtocSrcs}
-#        core/LinuxServer.cpp
-#        core/LinuxServer_Inner.cpp
-        core/UserBaseData.cpp
 
-        base/log/log.cpp
-        base/net/IPAddress.cpp
-        base/utils/util_functions.cpp
         base/public/md5/md5.cpp
         base/public/tinyxml/tinyxml2.cpp
-        base/utils/status/Status.cpp
+
+        base/log/log.cpp
         base/config/ConfigManager.cpp
         base/config/AppXmlConfig.cpp
         base/config/LogXmlConfig.cpp
         base/config/RemoteXmlConfig.cpp
+
+        base/utils/util_functions.cpp
+        base/utils/status/Status.cpp
         base/utils/BoundedQueue.hpp
         base/utils/ThreadPool.cpp
 
+        base/net/IPAddress.cpp
         base/net/Channel.cpp
         base/net/EpollPoller.cpp
         base/net/EventLoop.cpp
@@ -102,22 +101,20 @@ set(COMMON_SOURCES
         base/net/Connector.cpp
         base/net/TcpClient.cpp
         base/net/SocketApiWrapper.cpp
-        base/net/SocketApiWrapper.h
         base/net/SelectPoller.cpp
-        base/net/SelectPoller.h
+        base/net/FullDuplexPipe.cpp
 
         core/codec/ProtobufCodec.cpp
         core/codec/ProtobufDispatcher.cpp
         core/codec/MessageHeader.cpp
 
         core/GameServer.cpp
-        core/GameServer.h
+        core/UserBaseData.cpp
 
-                game/GameManager.cpp
+        game/GameManager.cpp
         game/GamePlayerManager.cpp
-                game/GameTestManager.cpp
-        base/net/FullDuplexPipe.cpp
-        base/net/FullDuplexPipe.h
+        game/GameTestManager.cpp
+
 )
 
 add_library(CommonLibrary ${COMMON_SOURCES})
@@ -159,20 +156,3 @@ target_link_libraries(
         main
         CommonLibrary
 )
-
-#add_executable( test_log
-#        test/test_log.cpp
-#        base/log/log.cpp
-#        base/net/IPAddress.cpp
-#        base/utils/util_functions.cpp
-#        base/public/md5/md5.cpp
-#        base/public/tinyxml/tinyxml2.cpp
-#        base/utils/status/Status.cpp
-#        base/config/ConfigManager.cpp
-#        base/config/AppXmlConfig.cpp
-#        base/config/LogXmlConfig.cpp
-#        base/config/RemoteXmlConfig.cpp
-#        base/utils/BoundedQueue.hpp
-#        base/utils/ThreadPool.cpp
-#)
-#target_link_libraries(test_log ws2_32.lib)

@@ -14,13 +14,13 @@ EventLoopThreadPool::~EventLoopThreadPool() {
     //! 不用释放EventLoop，因为EventLoop是栈上的对象，在EventLoop结束后会自动销毁，因此根本不用管理EventLoop的生命周期
 }
 
-void EventLoopThreadPool::Start(int threadNum, F_ThreadInitCallback cb) {
+void EventLoopThreadPool::Start(int threadNum, Milliseconds pollwaitTimeout, F_ThreadInitCallback cb) {
     m_BaseLoop->AssertInLoopingThread();
 
     for (int i = 0; i < threadNum; ++i) {
-        auto t = new EventLoopThread(cb);
+        auto t = new EventLoopThread(cb, pollwaitTimeout);
         m_Threads.emplace_back(std::unique_ptr<EventLoopThread>(t));
-        m_Loops.emplace_back(t->StartLoop());
+        m_Loops.emplace_back(t->CreateLoop());
         // m_Loops.back()->SetCloseSocketsCallback(CloseShutdownCallbacks);
         YLOG_INFO("启动io线程<{}>！", t->GetThreadID())
     }

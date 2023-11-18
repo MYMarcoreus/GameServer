@@ -78,9 +78,9 @@ set(COMMON_SOURCES
         base/config/RemoteXmlConfig.cpp
 
         base/utils/util_functions.cpp
-        base/utils/status/Status.cpp
         base/utils/BoundedQueue.hpp
         base/utils/ThreadPool.cpp
+        base/utils/status/Status.cpp
 
         base/net/IPAddress.cpp
         base/net/Channel.cpp

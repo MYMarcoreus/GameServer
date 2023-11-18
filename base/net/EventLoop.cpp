@@ -78,14 +78,15 @@ void WakeupManager::Write() {
 
 
 
-EventLoop::EventLoop(bool useETIfEpoller) :
+EventLoop::EventLoop(Milliseconds pollwaitTimeout) :
         m_Poller(Poller::NewDefaultPoller(this)),     // many channel fd
         m_TimerManager{new TimerManager(this)}, // timerfd
         m_ThreadID(std::this_thread::get_id()),
         m_IsLooping(false),
         m_IsQuit(false),
         m_IsCallingPenddingFunctors(false),
-        m_WakeupManager(std::make_unique<WakeupManager>(this))                             // wakefd
+        m_WakeupManager(std::make_unique<WakeupManager>(this)), // wakefd
+        m_PollwaitTimeout(pollwaitTimeout)
 {
     if(____EventLoopInThisThread) {
         YLOG_FATAL("There is already a EventLoop Object in this thread<{}>!", ::yy::util::GetIntThreadID())
@@ -136,7 +137,7 @@ void EventLoop::Loop() {
         YLOG_TRACE("Before PollWait();")
 
         // 等待事件发生，由Poller填充ActiveChannels
-        m_Poller->PollWait(m_ActiveChannels);
+        m_Poller->PollWait(m_ActiveChannels, m_PollwaitTimeout);
 
         //todo 对发生的事件进行优先级排序
 

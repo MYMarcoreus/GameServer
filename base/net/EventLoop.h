@@ -27,7 +27,7 @@ public:
     using F_CloseSocketsCallback = std::function<void()>;
 
 public:
-    EventLoop(bool useETIfEpoller = true);
+    EventLoop(Milliseconds pollwaitTimeout);
     ~EventLoop();
 
     /*! 核心函数 */
@@ -94,6 +94,7 @@ private:
     std::unique_ptr<TimerManager>  m_TimerManager;
     std::unique_ptr<WakeupManager> m_WakeupManager;   // 用于QuitLoop，唤醒正在Loop()阻塞的PollWait()函数
     ChanneList                     m_ActiveChannels;
+    Milliseconds                   m_PollwaitTimeout;
 
     PendingCallbackList  m_PenddingFunctors;      // 在每一轮Loop最后调用的代办函数列表
     std::mutex           m_PenddingFunctorsMutex; // 保护代办函数列表

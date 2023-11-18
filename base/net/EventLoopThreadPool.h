@@ -16,7 +16,7 @@ public:
     EventLoopThreadPool(EventLoop *baseLoop);
     ~EventLoopThreadPool();
 
-    void Start(int threadNum, F_ThreadInitCallback cb = F_ThreadInitCallback());
+    void Start(int threadNum, Milliseconds pollwaitTimeout, F_ThreadInitCallback cb = F_ThreadInitCallback());
 
 
     ///@brief 轮转法获得下一个EventLoop

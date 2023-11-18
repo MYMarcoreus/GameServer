@@ -15,10 +15,10 @@ class EventLoop;
 class EventLoopThread {
 public:
 
-    EventLoopThread(F_ThreadInitCallback init_cb);
+    EventLoopThread(F_ThreadInitCallback init_cb, Milliseconds pollWaitTimeout);
     ~EventLoopThread();
 
-    EventLoop * StartLoop();
+    EventLoop * CreateLoop();
 
     uint64_t GetThreadID() const;
 
@@ -29,6 +29,7 @@ private:
     F_ThreadInitCallback   m_ThreadInitCallback;
     std::thread            m_LoopThread;
     std::once_flag         m_OnceFlag;
+    Milliseconds           m_PollWaitTimeout;
 
 };
 

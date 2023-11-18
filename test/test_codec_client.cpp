@@ -109,7 +109,7 @@ private:
 int main()
 {
     config::ConfigManager::LoadConfigs();
-    EventLoop loop{true};
+    EventLoop loop{500ms};
     IPAddressPtr serverAddr = std::make_shared<IPv4Address>("127.0.0.1", 16666);
     QueryClient echoClient{&loop, serverAddr};
     echoClient.Start();

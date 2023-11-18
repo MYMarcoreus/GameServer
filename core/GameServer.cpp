@@ -34,7 +34,7 @@ GameServer::~GameServer() {
 }
 
 void GameServer::Start() {
-    m_server.Start(config::g_app_config->GetValue().io_thread_num());
+    m_server.Start(config::g_app_config->GetValue().io_thread_num(), 500ms);
 }
 
 void GameServer::Stop() {

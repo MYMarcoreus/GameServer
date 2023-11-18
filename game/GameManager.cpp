@@ -15,9 +15,6 @@ namespace yy::app {
 
 
 void GameManager::AppNotifier_Secutiry(const yy::net::TcpConnectionPtr& conn) {
-    // YLOG_TRACE("in AppNotifier_Secutiry")
-    // YLOG_INFO("用户<{}>安全验证通过：{}", userdata->sock.get_fd(), result_code)
-
     auto userdata = m_server->FindUser(conn->GetName());
     userdata->SetState(core::UserBaseData::E_UserBaseState::eSecure);
 }
@@ -78,7 +75,7 @@ void GameManager::RunApp()
 void GameManager::Init()
 {
     yy::config::ConfigManager::LoadConfigs();
-    m_loop = new net::EventLoop();
+    m_loop = new net::EventLoop(500ms);
     yy::net::IPAddressPtr listenAddr = std::make_shared<net::IPv4Address>(config::g_app_config->GetValue().app_port());
     m_server = new core::GameServer(m_loop, listenAddr);
     m_server->SetNotifier_Security(std::bind(&GameManager::AppNotifier_Secutiry, this, _1));

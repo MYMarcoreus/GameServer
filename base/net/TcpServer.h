@@ -25,7 +25,7 @@ public:
     ~TcpServer();
 
     ///@brief 启动连接池并开启监听套接字
-    void Start(int threadNum, F_ThreadInitCallback cb = F_ThreadInitCallback());
+    void Start(int threadNum, Milliseconds ioWaitTimeout, F_ThreadInitCallback cb = F_ThreadInitCallback());
 
     void Stop();
 

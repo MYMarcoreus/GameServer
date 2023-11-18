@@ -24,14 +24,9 @@ public:
     /// @brief 返回格式化时间，默认格式为 2023-02-04 20:29:44.961172
     std::string ToFormattedString(const std::string &fmt = "%Y-%m-%d %H:%M:%S.", bool is_UTC = false);
 
-    struct timespec ToTimespec() {
-#ifdef ____LINUX
-        return {GetSecondPart().count(), GetMicroSecondPart().count() * 1000};
-#endif
-#ifdef ____WINDOWS
-        return {GetSecondPart().count(), static_cast<long>(GetMicroSecondPart().count() * 1000)};
-#endif
-    }
+    struct timespec ToTimespec();
+
+    struct timeval ToTimeval();
     ///End 转换函数
 
     //Region GETTER

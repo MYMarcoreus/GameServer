@@ -84,9 +84,9 @@ TcpServer::~TcpServer() {
     m_IsStarted = false;
 }
 
-void TcpServer::Start(int threadNum, F_ThreadInitCallback cb) {
+void TcpServer::Start(int threadNum, Milliseconds ioWaitTimeout,F_ThreadInitCallback cb) {
     if(!m_IsStarted.exchange(true)) {
-        m_IOThreadPool->Start(threadNum, cb);
+        m_IOThreadPool->Start(threadNum, ioWaitTimeout, cb);
         m_Acceptor->SetNewConnectionCallback(std::bind(&TcpServer::HandleNewConnection, this, _1, _2));
         m_Acceptor->StartListen();
     }

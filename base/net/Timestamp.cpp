@@ -73,7 +73,22 @@ Timestamp Timestamp::FromUnixTime(Seconds secondPart, Microseconds microSecondPa
     return Timestamp( Microseconds(secondPart.count() * k10_6.count() + microSecondPart.count()));
 }
 
+struct timespec Timestamp::ToTimespec() {
+#ifdef ____LINUX
+    return {GetSecondPart().count(), GetMicroSecondPart().count() * 1000};
+#endif
+#ifdef ____WINDOWS
+    return {GetSecondPart().count(), static_cast<long>(GetMicroSecondPart().count() * 1000)};
+#endif
+}
 
+struct timeval Timestamp::ToTimeval() {
+    struct timeval tvTime{};
+    tvTime.tv_sec  = GetSecondPart().count();
+    tvTime.tv_usec = GetMicroSecondPart().count();
+
+    return tvTime;
+}
 
 
 }

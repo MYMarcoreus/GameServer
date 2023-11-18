@@ -16,7 +16,7 @@
         securityCode     = "csdnxxxx"
         checkCode        = "DE"
         closeDelay       = "1"
-        ioThreadNum      = "1"
+        ioThreadNum      = "2"
     />
 
     <remote

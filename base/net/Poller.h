@@ -3,6 +3,7 @@
 
 #include <map>
 #include <vector>
+#include <chrono>
 
 
 namespace yy::net {
@@ -19,7 +20,9 @@ public:
     virtual ~Poller();
 
     ///@brief 执行epoll或poll，将发生的事件填充至activeChannel，可设置超时时间timeout
-    virtual void PollWait(ChannelList &activeChannel, int timeout = -1) = 0;
+    /// 阻塞：Milliseconds::max() / std::chrono::milliseconds
+    /// 非阻塞：0s
+    virtual void PollWait(ChannelList &activeChannel, std::chrono::milliseconds timeout) = 0;
 
     ///@brief 在m_ChannelMap中更新channel
     virtual void UpdateChannel(Channel * channel) = 0;
@@ -31,7 +34,7 @@ public:
     bool HasChannel(Channel *channel);
 
     ///@brief 返回epoll或poll实现的Poller实现子类
-    static Poller *NewDefaultPoller(EventLoop *loop, bool useETIfEpoller = false);
+    static Poller *NewDefaultPoller(EventLoop *loop);
 
     //
     void AssertInLoopingThread() const;

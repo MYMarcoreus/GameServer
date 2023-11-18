@@ -6,16 +6,17 @@ namespace yy::net {
 
 using namespace yy::util;
 
-EventLoopThread::EventLoopThread(F_ThreadInitCallback init_cb)
+EventLoopThread::EventLoopThread(F_ThreadInitCallback init_cb, Milliseconds pollWaitTimeout)
     : m_Loop(nullptr),
-    m_ThreadInitCallback(init_cb)
+      m_ThreadInitCallback(init_cb),
+      m_PollWaitTimeout(pollWaitTimeout)
 { }
 
 EventLoopThread::~EventLoopThread() {
     m_LoopThread.join();
 }
 
-EventLoop *EventLoopThread::StartLoop() {
+EventLoop *EventLoopThread::CreateLoop() {
     //! 防止多次启动
     std::call_once(m_OnceFlag,
         [this]()
@@ -38,7 +39,7 @@ EventLoop *EventLoopThread::StartLoop() {
 
 void EventLoopThread::ThreadLoopFunction(std::promise<EventLoop *> & loopPromise) {
     //! 使用栈上的EventLoop线程对象
-    EventLoop eventLoop(true);
+    EventLoop eventLoop(m_PollWaitTimeout);
 
     //! 执行线程初始化回调函数
     if(m_ThreadInitCallback) {

@@ -60,11 +60,10 @@ private:
 
 
 
-EpollPoller::EpollPoller(EventLoop *loop, bool useET)
+EpollPoller::EpollPoller(EventLoop *loop)
         : Poller(loop),
           m_EpollFD{::epoll_create1(EPOLL_CLOEXEC)},
-          m_EpollEventList{kEpollMaxSize},
-          m_useET{useET}
+          m_EpollEventList{kEpollMaxSize}
 {
     if (m_EpollFD < 0) {
         fprintf(stderr,"epoll_create1() error");
@@ -75,9 +74,9 @@ EpollPoller::~EpollPoller() {
     ::close(m_EpollFD);
 }
 
-void EpollPoller::PollWait(ChannelList &activeChannel, int timeout) {
+void EpollPoller::PollWait(ChannelList &activeChannel, std::chrono::milliseconds timeout) {
     int numEvents = epoll_wait(m_EpollFD, &*m_EpollEventList.begin(),
-                               (int) m_EpollEventList.size(), timeout);
+                               (int) m_EpollEventList.size(), timeout == std::chrono::milliseconds::max() ? -1 : timeout.count());
     ::yy::util::ErrnoSaver savedErrno;
     if(numEvents > 0) {
         YLOG_TRACE("epoll_wait() return {} events, m_EpollEventList.size = {}", numEvents, m_EpollEventList.size())
@@ -161,10 +160,7 @@ void EpollPoller::SetEpollOperation(Channel * channel, int EPOLL_CTL_XXX) {
     EpollPollerEvent new_event;
     new_event.SetInterestedEvents(channel->GetInterestedEvent());
     new_event.SetInterestedPtr(channel); // 将和fd相关联的channel保存至data.ptr中
-
-    if(m_useET) {
-        new_event.AddEvent(EPOLLET);
-    }
+    new_event.AddEvent(EPOLLET); //! ET
 
     ::epoll_ctl(m_EpollFD, EPOLL_CTL_XXX, channel->GetFD(), new_event.GetRawEvent());
 }

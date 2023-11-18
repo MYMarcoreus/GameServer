@@ -35,8 +35,8 @@ public:
     virtual void Stop() override;
 
     virtual UserBaseDataPtr FindUser(const std::string & conn_name) override;
-    virtual void            DelUser(const std::string & conn_name) override;
-    virtual void            AddUser(const std::string & conn_name, const UserBaseDataPtr & userdata) override;
+    virtual void            DelUser (const std::string & conn_name) override;
+    virtual void            AddUser (const std::string & conn_name, const UserBaseDataPtr & userdata) override;
 
     virtual bool IsRunning() const override { return m_server.IsRunning(); }
 

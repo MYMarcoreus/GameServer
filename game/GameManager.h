@@ -42,9 +42,7 @@ private:
     void StartListenAndIOLoop();
 
     void AppNotifier_Secutiry(const yy::net::TcpConnectionPtr& conn) ;
-
     void AppNotifier_Disconnect(const yy::net::TcpConnectionPtr& conn) ;
-
     void AppNotifier_Command(const core::UserBaseDataPtr &, const core::MessagePtr &);
 
     void UnkonwnCommand(const core::UserBaseDataPtr &, const core::MessagePtr &);

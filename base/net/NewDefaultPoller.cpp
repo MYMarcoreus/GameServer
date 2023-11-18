@@ -3,10 +3,10 @@
 
 namespace yy::net {
 
-Poller * Poller::NewDefaultPoller(EventLoop *loop, bool useETIfEpoller)
+Poller * Poller::NewDefaultPoller(EventLoop *loop)
 {
 #ifdef ____LINUX
-    return new EpollPoller(loop, useETIfEpoller);
+    return new EpollPoller(loop);
 #endif
 
 #ifdef ____WINDOWS

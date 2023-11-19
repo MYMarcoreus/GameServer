@@ -88,3 +88,4 @@ extern ConfigVar<LogXmlConfig>::ptr g_log_config;
 }
 
 #endif //____LOGXMLCONFIG_H
+

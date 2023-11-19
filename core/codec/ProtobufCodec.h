@@ -75,3 +75,4 @@ private:
 }
 
 #endif //LINUXGAMESERVER_PROTOBUFCODEC_H
+

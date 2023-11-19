@@ -29,7 +29,7 @@ public:
         : client_(loop, serverAddr),
           loop_{loop},
           dispatcher_( std::bind(&QueryClient::OnUnknownMessage, this, _1, _2) ),
-          codec_(std::bind(&ProtobufDispatcher::OnProtobufMessage, &dispatcher_, _1, _2))
+          codec_(std::bind(&decltype(dispatcher_)::OnProtobufMessage, &dispatcher_, _1, _2))
     {
         dispatcher_.RegisterMessageCallback<Empty>(std::bind(&QueryClient::OnEmpty, this, _1, _2));
         dispatcher_.RegisterMessageCallback<Answer>(std::bind(&QueryClient::OnAnswer, this, _1, _2));
@@ -99,7 +99,7 @@ private:
     EventLoop *         loop_;
     TcpClient           client_;
     ProtobufCodec       codec_;
-    ProtobufDispatcher  dispatcher_;
+    ProtobufDispatcher<TcpConnectionPtr>  dispatcher_;
 };
 
 

@@ -9,3 +9,4 @@ int main()
     setbuf(stdout, nullptr);
     yy::app::GameManager::getInstance().RunApp();
 }
+

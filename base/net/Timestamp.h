@@ -78,3 +78,4 @@ inline bool operator==(Timestamp a, Timestamp b)
 }
 
 #endif //LINUXGAMESERVER_TIMESTAMP_H
+

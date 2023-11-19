@@ -32,7 +32,7 @@ public:
         : loop_{loop},
         server_(loop, listenAddr, true),
         dispatcher_( std::bind(&QueryServer::OnUnknownMessage, this, _1, _2) ),
-        codec_(std::bind(&ProtobufDispatcher::OnProtobufMessage, &dispatcher_, _1, _2))
+        codec_(std::bind(&ProtobufDispatcher<TcpConnectionPtr>::OnProtobufMessage, &dispatcher_, _1, _2))
     {
         dispatcher_.RegisterMessageCallback<Query>(std::bind(&QueryServer::OnQuery, this, _1, _2));
         dispatcher_.RegisterMessageCallback<Answer>(std::bind(&QueryServer::OnAnswer, this, _1, _2));
@@ -42,7 +42,7 @@ public:
 
     void Start()
     {
-        server_.Start(2);      // IO线程
+        server_.Start(2, 500ms);      // IO线程
     }
 
     void SendAnswer(const TcpConnectionPtr& conn, const QueryPtr& query)

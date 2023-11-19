@@ -442,3 +442,4 @@ struct MoveAssignBase<T, false> {
 
 
 #endif //LINUXGAMESERVER_INTERNAL_STATUSOR_H
+

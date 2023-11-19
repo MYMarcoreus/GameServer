@@ -23,3 +23,4 @@ namespace yy::app {
 }
 
 #endif //____IGAMEBASE_H
+

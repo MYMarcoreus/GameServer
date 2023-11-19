@@ -19,3 +19,4 @@ using Ptr = std::shared_ptr<T>;
 }
 
 #endif //____GAMEDATA_H
+

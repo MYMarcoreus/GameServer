@@ -108,3 +108,4 @@ config::ConfigVar<config::LogXmlConfig>::ptr g_log_config
 
 
 }
+

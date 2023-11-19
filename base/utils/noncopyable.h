@@ -19,3 +19,4 @@ protected:
 }
 
 #endif //____NONCOPYABLE_H
+

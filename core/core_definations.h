@@ -74,3 +74,4 @@ using MessagePtr = std::shared_ptr<google::protobuf::Message>;
 
 
 #endif //LINUXGAMESERVER_CORE_DEFINATIONS_H
+

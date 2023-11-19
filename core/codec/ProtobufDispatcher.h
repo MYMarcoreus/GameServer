@@ -82,3 +82,4 @@ private:
 
 
 #endif //LINUXGAMESERVER_PROTOBUFDISPATCHER_H
+

@@ -56,3 +56,4 @@ using F_MessageCallback = std::function<void(const TcpConnectionPtr &, Buffer &)
 
 
 #endif //LINUXGAMESERVER_NET_DEFINATIONS_H
+

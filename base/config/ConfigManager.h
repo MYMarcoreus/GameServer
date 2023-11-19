@@ -666,3 +666,4 @@ private:
 #endif //____CONFIGMANAGER_H
 
 #pragma clang diagnostic pop
+

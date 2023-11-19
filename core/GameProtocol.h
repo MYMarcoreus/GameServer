@@ -41,3 +41,4 @@ namespace yy::core
 
 }
 #endif //____GAMEPROTOCOL_H
+

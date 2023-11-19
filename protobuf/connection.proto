@@ -53,3 +53,4 @@ message SecurityBody {
 message ResultBody {
     ResultCode result_code = 1;
 }
+

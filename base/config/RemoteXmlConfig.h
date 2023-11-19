@@ -75,3 +75,4 @@ extern ConfigVar<RemoteXmlConfig>::ptr g_remote_config;
 
 
 #endif //____REMOTEXMLCONFIG_H
+

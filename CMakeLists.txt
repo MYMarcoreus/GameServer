@@ -44,104 +44,121 @@ set(ProtocArgs # 不能带引号！
 )
 file(GLOB ProtocFiles ${ProtocDirname}/*.proto )
 
-message(${ProtocCmd} ${ProtocArgs} ${ProtocFiles})
+message(execute_process: ${ProtocCmd} ${ProtocArgs} ${ProtocFiles})
+
 execute_process(
     COMMAND ${ProtocCmd} ${ProtocArgs} ${ProtocFiles}
     WORKING_DIRECTORY ${ProtocDirname}
 )
 
-file(GLOB ProtocSrcs ${ProtocDirname}/*.cc )
+message("PROTOBUF_LIBRARIES = ${PROTOBUF_LIBRARIES}")
+
 
 
 include_directories(
     base/config
-    game
-    core
     base/public
     base/utils
     base/log
-    protobuf
     base/net
+    game
+    core
+    protobuf
 )
 
+#file(GLOB ProtocSrcs ${ProtocDirname}/*.cc )
+#
 
-set(COMMON_SOURCES
-        ${ProtocSrcs}
+#set(COMMON_SOURCES
+#        ${ProtocSrcs}
+#        base/public/md5/md5.cpp
+#        base/public/tinyxml/tinyxml2.cpp
+#        base/log/log.cpp
+#        base/config/ConfigManager.cpp
+#        base/config/AppXmlConfig.cpp
+#        base/config/LogXmlConfig.cpp
+#        base/config/RemoteXmlConfig.cpp
+#        base/utils/util_functions.cpp
+#        base/utils/BoundedQueue.hpp
+#        base/utils/ThreadPool.cpp
+#        base/utils/status/Status.cpp
+#        base/net/IPAddress.cpp
+#        base/net/Channel.cpp
+#        base/net/EpollPoller.cpp
+#        base/net/EventLoop.cpp
+#        base/net/Poller.cpp
+#        base/net/NewDefaultPoller.cpp
+#        base/net/Timestamp.cpp
+#        base/net/TimerManager.cpp
+#        base/net/Timer.cpp
+#        base/net/EventLoopThread.cpp
+#        base/net/Acceptor.cpp
+#        base/net/Socket.cpp
+#        base/net/TcpConnection.cpp
+#        base/net/Buffer.cpp
+#        base/net/TcpServer.cpp
+#        base/net/EventLoopThreadPool.cpp
+#        base/net/Connector.cpp
+#        base/net/TcpClient.cpp
+#        base/net/SocketApiWrapper.cpp
+#        base/net/SelectPoller.cpp
+#        base/net/FullDuplexPipe.cpp
+#        core/codec/ProtobufCodec.cpp
+#        core/codec/ProtobufDispatcher.cpp
+#        core/codec/MessageHeader.cpp
+#        core/GameServer.cpp
+#        core/UserBaseData.cpp
+#        game/GameManager.cpp
+#        game/GamePlayerManager.cpp
+#        game/GameTestManager.cpp
+#)
 
-        base/public/md5/md5.cpp
-        base/public/tinyxml/tinyxml2.cpp
+#file(GLOB_RECURSE COMMON_SOURCES
+#        base/*.cpp
+#        core/*.cpp
+#        game/*.cpp
+#        protobuf/*.cc
+#)
 
-        base/log/log.cpp
-        base/config/ConfigManager.cpp
-        base/config/AppXmlConfig.cpp
-        base/config/LogXmlConfig.cpp
-        base/config/RemoteXmlConfig.cpp
+set(COMMON_SOURCES)
+# 调用子目录下的cmake
+add_subdirectory(base)
+add_subdirectory(core)
+add_subdirectory(game)
+add_subdirectory(protobuf)
 
-        base/utils/util_functions.cpp
-        base/utils/BoundedQueue.hpp
-        base/utils/ThreadPool.cpp
-        base/utils/status/Status.cpp
+message(COMMON_SOURCES = ${COMMON_SOURCES})
 
-        base/net/IPAddress.cpp
-        base/net/Channel.cpp
-        base/net/EpollPoller.cpp
-        base/net/EventLoop.cpp
-        base/net/Poller.cpp
-        base/net/NewDefaultPoller.cpp
-        base/net/Timestamp.cpp
-        base/net/TimerManager.cpp
-        base/net/Timer.cpp
-        base/net/EventLoopThread.cpp
-        base/net/Acceptor.cpp
-        base/net/Socket.cpp
-        base/net/TcpConnection.cpp
-        base/net/Buffer.cpp
-        base/net/TcpServer.cpp
-        base/net/EventLoopThreadPool.cpp
-        base/net/Connector.cpp
-        base/net/TcpClient.cpp
-        base/net/SocketApiWrapper.cpp
-        base/net/SelectPoller.cpp
-        base/net/FullDuplexPipe.cpp
 
-        core/codec/ProtobufCodec.cpp
-        core/codec/ProtobufDispatcher.cpp
-        core/codec/MessageHeader.cpp
 
-        core/GameServer.cpp
-        core/UserBaseData.cpp
+#! 制作 libCommonLibrary.a 静态库
+add_library(CommonLibrary STATIC ${COMMON_SOURCES}) # STATIC替换为SHARED就为动态库，生成 libCommonLibrary.so
 
-        game/GameManager.cpp
-        game/GamePlayerManager.cpp
-        game/GameTestManager.cpp
-
-)
-
-add_library(CommonLibrary ${COMMON_SOURCES})
-
+#! 添加多个可执行文件，可在clion选择一个来构建/执行
 add_executable(codec_client test/test_codec_client.cpp)
 add_executable(codec_server test/test_codec_server.cpp)
 add_executable(main main.cpp)
 
-
+#! 添加系统动态库
 if(CMAKE_HOST_SYSTEM_NAME MATCHES Windows)
+    #! 有target前缀的就是链接动态库
     target_link_libraries( CommonLibrary
-            ${PROTOBUF_LIBRARIES}
-            ws2_32.lib
-            protobuf::libprotoc
-            protobuf::libprotobuf
-            protobuf::libprotobuf-lite
+            PUBLIC ${PROTOBUF_LIBRARIES}
+            PUBLIC ws2_32.lib
+            PUBLIC protobuf::libprotoc
+            PUBLIC protobuf::libprotobuf
+            PUBLIC protobuf::libprotobuf-lite
     )
 else()
     target_link_libraries( CommonLibrary
-            ${PROTOBUF_LIBRARIES}
-            protobuf
-            pthread
+            PUBLIC ${PROTOBUF_LIBRARIES}
+            PUBLIC protobuf
+            PUBLIC pthread
     )
 endif()
 
 
-#! -lprotobuf：必须在add_executable后面，因为是在可执行文件生成后，再将protobuf库链接的
+#! 在cmake中指定要链接的动态库的时候，应该将命令写到生成了可执行文件之后，因为是在可执行文件生成后，再将protobuf库链接的
 target_link_libraries(
         codec_client
         CommonLibrary

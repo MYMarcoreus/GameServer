@@ -16,7 +16,7 @@ namespace yy::net {
 class SelectPoller: public Poller {
 public:
     SelectPoller(EventLoop *loop);
-    ~SelectPoller();
+    ~SelectPoller() = default;
 
     ///@brief 执行epoll_wait，并将发生的事件channel填入`activeChannel`
     virtual void PollWait(ChannelList &activeChannel, Milliseconds timeout = Milliseconds::max()) override;

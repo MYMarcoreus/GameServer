@@ -2,11 +2,12 @@
 #include "log.h"
 #include "LogXmlConfig.h"
 #include "ConfigManager.h"
-#include <sstream>
+
+using namespace std::chrono_literals;
 
 int main()
 {
-    setbuf(stdout, nullptr);
+    // setvbuf(stdout, nullptr, );
     yy::app::GameManager::getInstance().RunApp();
 }
 

@@ -6,6 +6,8 @@
 #include "log.h"
 #include "status/Status.h"
 #include "AppXmlConfig.h"
+#include <google/protobuf/message_lite.h>
+#include <google/protobuf/message.h>
 
 namespace yy::net {
 

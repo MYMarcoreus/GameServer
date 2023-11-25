@@ -2,12 +2,15 @@
 #define LINUXGAMESERVER_SOCKET_DEFINATIONS_H
 
 
+#include "cross_platform_defines.h"
 
 
 #ifdef ____LINUX
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <sys/time.h> // gettimeofday
+#include <unistd.h>   // readlink
 #endif
 
 #ifdef ____WINDOWS

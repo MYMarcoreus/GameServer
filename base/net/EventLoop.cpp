@@ -29,14 +29,14 @@ public:
 
     ~WakeupManager();
 
-    int GetFD() { return wakeupEventFD_; }
+    // int GetFD() { return wakeupEventFD_; }
 
     void Write();
 
 private:
     void Read();
 
-    int wakeupEventFD_;
+    SocketApiWrapper::socket_t wakeupEventFD_;
     std::unique_ptr<Channel> wakeupChannel_;
 };
 
@@ -58,16 +58,30 @@ WakeupManager::~WakeupManager() {
 
 void WakeupManager::Read() {
     uint64_t msg = 1;
+#ifdef ____LINUX
     auto ret = ::read(wakeupEventFD_, &msg, sizeof msg);
+#endif
+
+#ifdef ____WINDOWS
+    auto ret = SocketApiWrapper::recv(wakeupEventFD_, &msg, sizeof msg, 0);
+#endif
+
     if(ret < 0) {
         YLOG_ERROR("EventLoop::WakeupManager::Read() ::read() error: {}", ::yy::util::StrError(errno).c_str())
     }
 }
 
+//! 向唤醒事件文件描述符进行写，以触发其poll事件
 void WakeupManager::Write() {
-    //! 向唤醒事件文件描述符进行写，以触发其epoll事件
     uint64_t msg = 1;
+#ifdef ____LINUX
     auto ret = ::write(wakeupEventFD_, &msg, sizeof msg);
+#endif
+
+#ifdef ____WINDOWS
+    auto ret = SocketApiWrapper::send(wakeupEventFD_, &msg, sizeof msg, 0);
+#endif
+
     if(ret < 0) {
         YLOG_ERROR("EventLoop::WakeupManager::Write ::write() error: {}", ::yy::util::StrError(errno).c_str())
     }
@@ -76,20 +90,18 @@ void WakeupManager::Write() {
 
 
 
-
-
-EventLoop::EventLoop(Milliseconds pollwaitTimeout) :
-        m_Poller(Poller::NewDefaultPoller(this)),     // many channel fd
-        m_TimerManager{new TimerManager(this)}, // timerfd
-        m_ThreadID(std::this_thread::get_id()),
-        m_IsLooping(false),
-        m_IsQuit(false),
-        m_IsCallingPenddingFunctors(false),
-        m_WakeupManager(std::make_unique<WakeupManager>(this)), // wakefd
-        m_PollwaitTimeout(pollwaitTimeout)
+EventLoop::EventLoop(Milliseconds defaultPollwaitTimeout)
+        : m_Poller(Poller::NewDefaultPoller(this))     // many channel fd
+        , m_TimerManager{TimerManager::NewDefaultTimerManager(this)} // timerfd
+        , m_ThreadID(std::this_thread::get_id())
+        , m_IsLooping(false)
+        , m_IsQuit(false)
+        , m_IsCallingPenddingFunctors(false)
+        , m_WakeupManager(std::make_unique<WakeupManager>(this)) // wakefd
+        , m_DefaultPollwaitTimeout(defaultPollwaitTimeout)
 {
     if(____EventLoopInThisThread) {
-        YLOG_FATAL("There is already a EventLoop Object in this thread<{}>!", ::yy::util::GetIntThreadID())
+        YLOG_FATAL("There is already a EventLoop Object in this thread<{}>!", ::yy::util::GetStrThreadID())
     } else {
         ____EventLoopInThisThread = this;
     }
@@ -121,7 +133,7 @@ bool EventLoop::HasChannel(Channel *channel) {
 void EventLoop::AssertInLoopingThread() {
     if(!IsInLoopingThread()) {
         YLOG_FATAL("EventLoop Created In thread<{}>, but now in {}",
-            ::yy::util::CastThreadIDToInt(m_ThreadID), ::yy::util::GetIntThreadID())
+            ::yy::util::CastThreadIDToStr(m_ThreadID), ::yy::util::GetStrThreadID())
     }
 }
 
@@ -130,14 +142,25 @@ void EventLoop::Loop() {
 
     m_IsLooping = true;
 
+    Milliseconds timeout{};
     while(!m_IsQuit)
     {
         m_ActiveChannels.clear();
 
         YLOG_TRACE("Before PollWait();")
 
-        // 等待事件发生，由Poller填充ActiveChannels
-        m_Poller->PollWait(m_ActiveChannels, m_PollwaitTimeout);
+        //! 在此处理所有已到期的定时器
+        timeout = GetPollwaitTimeout();
+
+#ifdef ____WINDOWS
+        if(timeout <= 0ms) {
+            m_TimerManager->HandleExpiredTimersInLoop();
+            continue;
+        }
+#endif
+
+        //! 等待timeout ms，由Poller填充ActiveChannels
+        m_Poller->PollWait(m_ActiveChannels, timeout);
 
         //todo 对发生的事件进行优先级排序
 
@@ -176,6 +199,7 @@ void EventLoop::QuitLoop() {
 
 void EventLoop::Wakeup() {
     m_WakeupManager->Write();
+    //FIXME
 }
 
 EventLoop *EventLoop::GetEventLoopOfThisThread() {
@@ -252,6 +276,19 @@ void EventLoop::CancelTimer(TimerID timerid) {
     m_TimerManager->CancelTimer(timerid);
 }
 
+Milliseconds EventLoop::GetPollwaitTimeout() {
+    auto expiretime = m_TimerManager->GetEarliestExpiredTimeInLoop();
+
+    Milliseconds timeout = m_DefaultPollwaitTimeout;
+    if(expiretime.IsValid()) {
+        Microseconds difftime = expiretime - Timestamp::Now();
+        auto a = Milliseconds{difftime.count()/1000};
+        auto b = m_DefaultPollwaitTimeout;
+        timeout = (a<b)?a:b;
+    }
+
+    return timeout;
+}
 
 
 }

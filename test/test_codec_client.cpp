@@ -6,6 +6,7 @@
 #include "codec/ProtobufCodec.h"
 #include "codec/ProtobufDispatcher.h"
 #include "query.pb.h"
+#include "RemoteXmlConfig.h"
 #include <stdio.h>
 
 using namespace yy;
@@ -110,7 +111,8 @@ int main()
 {
     config::ConfigManager::LoadConfigs();
     EventLoop loop{500ms};
-    IPAddressPtr serverAddr = std::make_shared<IPv4Address>("127.0.0.1", 16666);
+    auto serverNode = config::g_remote_config->GetValue().m_remote_nodes[0];
+    IPAddressPtr serverAddr = std::make_shared<IPv4Address>(serverNode.m_ip, serverNode.m_port);
     QueryClient echoClient{&loop, serverAddr};
     echoClient.Start();
     loop.Loop();

@@ -4,7 +4,7 @@
 
 namespace yy::net {
 
-Channel::Channel(EventLoop *owner_loop, int fd, const std::string &name)
+Channel::Channel(EventLoop *owner_loop, SocketApiWrapper::socket_t fd, const std::string &name)
     : m_FD(fd),
     m_OwnerLoop(owner_loop),
     m_State(State::eNew),

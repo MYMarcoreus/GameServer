@@ -6,6 +6,7 @@
 #include <cstdint>
 #include <functional>
 #include <memory>
+#include <string>
 
 
 namespace yy::net {
@@ -23,7 +24,7 @@ public:
     };
 
     ///@brief 传入channel的所有者以及channel对应的文件描述符（套接字）
-    Channel(EventLoop *owner_loop, int fd, const std::string & name);
+    Channel(EventLoop *owner_loop, SocketApiWrapper::socket_t fd, const std::string & name);
 
     ~Channel();
 

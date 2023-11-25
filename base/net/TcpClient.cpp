@@ -30,7 +30,7 @@ TcpClient::~TcpClient() {
     {
         std::lock_guard lg{m_ConnectionMutex};
         if(m_Connection)
-            isUnique = m_Connection.unique();
+            isUnique = m_Connection.use_count() == 1;
         conn = m_Connection;
     }
 

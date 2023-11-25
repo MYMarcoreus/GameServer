@@ -66,7 +66,7 @@ public:
     requires requires {
         requires std::is_base_of_v<google::protobuf::Message, T>;
     }
-    void RegisterMessageCallback(const CallbackT<T, ConnectionType>::ProtobufMessageTCallback &callback) {
+    void RegisterMessageCallback(const typename CallbackT<T, ConnectionType>::ProtobufMessageTCallback &callback) {
         m_CallbacksMap[T::descriptor()] = std::make_shared<CallbackT<T, ConnectionType>>(callback);
     }
 

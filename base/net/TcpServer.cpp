@@ -11,6 +11,7 @@
 
 namespace yy::net {
 
+#ifdef ____LINUX
 
 class SignalManager {
 public:
@@ -54,6 +55,7 @@ private:
 FullDuplexPipe SignalManager::pipe_{};
 
 
+#endif
 
 
 
@@ -61,13 +63,18 @@ FullDuplexPipe SignalManager::pipe_{};
 
 
 TcpServer::TcpServer(EventLoop *acceptorLoop, IPAddress::ptr listenAddr, bool reusePort) noexcept
-    : m_AcceptorLoop(acceptorLoop),
-      m_Acceptor( new Acceptor(m_AcceptorLoop, Socket::Type::TCP, listenAddr, reusePort) ),
-      m_IOThreadPool( new EventLoopThreadPool(acceptorLoop) ),
-      m_AppConfigVar{config::g_app_config},
-      m_SignalManager{std::make_unique<SignalManager>(acceptorLoop, [this](){ this->HandleSignal(); })}
+    : m_AcceptorLoop(acceptorLoop)
+    , m_Acceptor( new Acceptor(m_AcceptorLoop, Socket::Type::TCP, listenAddr, reusePort) )
+    , m_IOThreadPool( new EventLoopThreadPool(acceptorLoop) )
+    , m_AppConfigVar{config::g_app_config}
+#ifdef ____LINUX
+    , m_SignalManager{std::make_unique<SignalManager>(acceptorLoop, [this](){ this->HandleSignal(); })}
+#endif
 {
+#ifdef ____LINUX
     util::set_signal_ignore(SIGPIPE);
+#endif
+
 
     InitLog();
 }
@@ -161,6 +168,7 @@ void TcpServer::SetCloseSocketsCallback(F_CloseShutdownConnectionsCallback cb) {
 }
 
 void TcpServer::HandleSignal() {
+#ifdef ____LINUX
     auto sigs = SignalManager::ReadPipe();
 
     for(int i = 0 ; i < sigs.size() ; ++i) {
@@ -187,6 +195,7 @@ void TcpServer::HandleSignal() {
             }
         }
     }
+#endif
 }
 
 

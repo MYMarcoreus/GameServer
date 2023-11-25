@@ -56,8 +56,8 @@ void EventLoopThread::ThreadLoopFunction(std::promise<EventLoop *> & loopPromise
     m_Loop = nullptr;
 }
 
-uint64_t EventLoopThread::GetThreadID() const {
-    return CastThreadIDToInt(m_LoopThread.get_id());
+std::string EventLoopThread::GetThreadID() const {
+    return CastThreadIDToStr(m_LoopThread.get_id());
 }
 
 

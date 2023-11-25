@@ -9,6 +9,7 @@ using namespace std::chrono_literals;
 namespace yy::net {
 
 using Microseconds = std::chrono::microseconds ;
+using Milliseconds = std::chrono::milliseconds ;
 using Seconds = std::chrono::seconds;
 
 ///@brief 保存并管理始于epoch的毫秒数，是一个时间点
@@ -25,8 +26,6 @@ public:
     std::string ToFormattedString(const std::string &fmt = "%Y-%m-%d %H:%M:%S.", bool is_UTC = false);
 
     struct timespec ToTimespec();
-
-    struct timeval ToTimeval();
     ///End 转换函数
 
     //Region GETTER

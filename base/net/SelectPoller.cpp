@@ -1,6 +1,7 @@
 #include "SelectPoller.h"
 #include "Channel.h"
 #include "Timestamp.h"
+#include "log.h"
 #include <cassert>
 
 
@@ -46,9 +47,9 @@ SelectPoller::SelectPoller(EventLoop* loop) : Poller(loop)
     FD_ZERO(&select_readfds_);
     FD_ZERO(&select_writefds_);
     FD_ZERO(&select_expectfds_);
-    FD_ZERO(&write_fds_);
-    FD_ZERO(&read_fds_);
-    FD_ZERO(&expect_fds_);
+    FD_ZERO(&happended_writefds_);
+    FD_ZERO(&happended_readfds_);
+    FD_ZERO(&happended_expectfds_);
 }
 
 void SelectPoller::UpdateChannel(Channel* channel)
@@ -108,16 +109,16 @@ void SelectPoller::PollWait(Poller::ChannelList &activeChannels, Milliseconds ti
     tv.tv_sec = timeout_ms.count()/1000;
     tv.tv_usec = (timeout_ms.count() % 1000) * 1000;
 
-    read_fds_ = select_readfds_;
-    write_fds_ = select_writefds_;
-    expect_fds_ = select_expectfds_;
-    int maxFd = 0;
-    if (!fdSet_.empty())
-    {
-        maxFd = *(fdSet_.begin());
-    }
+    happended_readfds_ = select_readfds_;
+    happended_writefds_ = select_writefds_;
+    happended_expectfds_ = select_expectfds_;
 
-    int numActiveEvents = ::select(maxFd + 1, &read_fds_, &write_fds_, &expect_fds_, &tv);
+    int maxFd = fdSet_.empty() ? 0 : *(fdSet_.begin());
+
+    int numActiveEvents = ::select(maxFd + 1,
+                                   &happended_readfds_,
+                                   &happended_writefds_,
+                                   &happended_expectfds_, &tv);
 
     if (numActiveEvents > 0) {
         FillActiveChannel(activeChannels, numActiveEvents);
@@ -127,13 +128,9 @@ void SelectPoller::PollWait(Poller::ChannelList &activeChannels, Milliseconds ti
     }
     else
     {
-#ifdef ON_WINDOWS
+#ifdef ____WINDOWS
         int err = WSAGetLastError();
-			LOG_ERROR << "select system call error, info:"
-                << " errno:" << err
-                << strerror(err)
-                << " read fdcount:" << read_fds_.fd_count
-                << " write fdcount:" << write_fds_.fd_count;
+        YLOG_ERROR("Select failed<{}>", err)
 #endif
     }
 }
@@ -144,9 +141,9 @@ void SelectPoller::FillActiveChannel(ChannelList & activeChannels, int numEvents
     for (auto it = fdSet_.begin(); it != fdSet_.end() && numEvents > 0; it++)
     {
         socket_t fd = *it;
-        if (FD_ISSET(fd, &read_fds_  )) readyEvent |= PollerEvent::eReadEvent;
-        if (FD_ISSET(fd, &write_fds_ )) readyEvent |= PollerEvent::eWriteEvent;
-        if (FD_ISSET(fd, &expect_fds_)) readyEvent |= PollerEvent::eErrorEvent;
+        if (FD_ISSET(fd, &happended_readfds_  )) readyEvent |= PollerEvent::eReadEvent;
+        if (FD_ISSET(fd, &happended_writefds_ )) readyEvent |= PollerEvent::eWriteEvent;
+        if (FD_ISSET(fd, &happended_expectfds_)) readyEvent |= PollerEvent::eErrorEvent;
 
         if (readyEvent != PollerEvent::eNoneEvent)
         {

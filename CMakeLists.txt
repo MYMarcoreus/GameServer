@@ -4,20 +4,31 @@ project(GameServer)
 # -std=c++20
 set(CMAKE_CXX_STANDARD 20)
 
+
+
+
 # -DCMAKE_TOOLCHAIN_FILE=C:\Users\Lenovo\.vcpkg-clion\vcpkg\scripts\buildsystems\vcpkg.cmake
 
 # 判断平台
 if(CMAKE_HOST_SYSTEM_NAME MATCHES Windows)
-    message(">> Platform: Windows")
+    message(STATUS "Platform: Windows")
     add_definitions(-D____WINDOWS)
+    find_package(Protobuf CONFIG REQUIRED)
+
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /source-charset:utf-8")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /source-charset:utf-8")
+#    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /execution-charset:utf-8")
+#    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /execution-charset:utf-8")
 elseif(CMAKE_HOST_SYSTEM_NAME MATCHES Linux)
-    message(">> Platform: Linux")
+    message(STATUS "Platform: Linux")
     add_definitions(-D____LINUX)
+    #! 加载Protobuf包
+    find_package(Protobuf REQUIRED) #  CONFIG
 elseif(CMAKE_HOST_SYSTEM_NAME MATCHES Darwin)
-    message(">> Platform: Darwin(MacOS)")
+    message(STATUS "Platform: Darwin(MacOS)")
     add_definitions(-D____MACOS)
 else()
-    message(">> unknow.")
+    message(STATUS "unknown platform")
 endif()
 
 # 如果是以Debug模式构建的就定义一个名为____DEBUG的宏定义
@@ -26,10 +37,25 @@ if(CMAKE_BUILD_TYPE MATCHES Debug)
 endif()
 
 
+if(CMAKE_COMPILER_IS_GNUCXX)
+    message(STATUS "Using GCC compiler")
+    add_definitions(-D____GNUC)
+
+    add_compile_options(-j12)
+elseif(MSVC)
+    message(STATUS "Using MSVC compiler")
+    add_definitions(-D____MSVC)
+
+    add_compile_options(/MP)
+    add_compile_options("/Zc:__cplusplus")
+#    if(NOT DEFINED __cplusplus)
+#            add_definitions(-D__cplusplus=_MSVC_LANG)
+#    endif()
+
+endif()
 
 
-#! 加载Protobuf包
-find_package(Protobuf REQUIRED) #  CONFIG
+
 
 
 #! 自动执行终端命令生成C++代码文件
@@ -51,11 +77,33 @@ execute_process(
     WORKING_DIRECTORY ${ProtocDirname}
 )
 
-message("PROTOBUF_LIBRARIES = ${PROTOBUF_LIBRARIES}")
+message(STATUS "Protobuf_VERSION = ${Protobuf_VERSION}")
+message(STATUS "PROTOBUF_INCLUDE_DIRS = ${PROTOBUF_INCLUDE_DIRS}")
+message(STATUS "Protobuf_FOUND = ${Protobuf_FOUND}")
 
+message(STATUS "Protobuf_INCLUDE_DIR = ${Protobuf_INCLUDE_DIR}")
+message(STATUS "Protobuf_LIBRARY = ${Protobuf_LIBRARY}")
+message(STATUS "Protobuf_PROTOC_LIBRARY = ${Protobuf_PROTOC_LIBRARY}")
+message(STATUS "Protobuf_LIBRARY_DEBUG = ${Protobuf_LIBRARY_DEBUG}")
+message(STATUS "Protobuf_PROTOC_LIBRARY_DEBUG = ${Protobuf_PROTOC_LIBRARY_DEBUG}")
+message(STATUS "Protobuf_LITE_LIBRARY = ${Protobuf_LITE_LIBRARY}")
+message(STATUS "Protobuf_LITE_LIBRARY_DEBUG = ${Protobuf_LITE_LIBRARY_DEBUG}")
+
+
+message(STATUS "Protobuf_LIBRARIES = ${Protobuf_LIBRARIES}")
+message(STATUS "Protobuf_PROTOC_LIBRARIES = ${Protobuf_PROTOC_LIBRARIES}")
+message(STATUS "Protobuf_LITE_LIBRARIES = ${Protobuf_LITE_LIBRARIES}")
+
+
+link_directories(${PROTOBUF_LIBRARIES})
+#link_directories(C:/Users/Lenovo/.vcpkg-clion/vcpkg/installed/x64-windows/lib/libprotobuf.lib)
+#link_directories(C:/Users/Lenovo/.vcpkg-clion/vcpkg/installed/x64-windows/debug/lib/libprotobufd.lib)
+#find_library(PROTOBUF_LIB libprotobuf.lib PATHS C:/Users/Lenovo/.vcpkg-clion/vcpkg/installed/x64-windows/lib)
+#message("PROTOBUF_LIB = ${PROTOBUF_LIB}")
 
 
 include_directories(
+    base
     base/config
     base/public
     base/utils
@@ -64,6 +112,7 @@ include_directories(
     game
     core
     protobuf
+    ${Protobuf_INCLUDE_DIRS}
 )
 
 #file(GLOB ProtocSrcs ${ProtocDirname}/*.cc )
@@ -120,7 +169,10 @@ include_directories(
 #        protobuf/*.cc
 #)
 
-set(COMMON_SOURCES)
+set(COMMON_SOURCES
+        base/net/PriorityQueueTimerManager.cpp
+        base/net/NewDefaultTimerManager.cpp
+)
 # 调用子目录下的cmake
 add_subdirectory(base)
 add_subdirectory(core)
@@ -134,26 +186,30 @@ message(COMMON_SOURCES = ${COMMON_SOURCES})
 #! 制作 libCommonLibrary.a 静态库
 add_library(CommonLibrary STATIC ${COMMON_SOURCES}) # STATIC替换为SHARED就为动态库，生成 libCommonLibrary.so
 
+
 #! 添加多个可执行文件，可在clion选择一个来构建/执行
 add_executable(codec_client test/test_codec_client.cpp)
 add_executable(codec_server test/test_codec_server.cpp)
-add_executable(main main.cpp)
+add_executable(main  main.cpp)
+add_executable(test testtt.cpp)
+add_executable(echo_server test/test_echo.cpp)
 
 #! 添加系统动态库
 if(CMAKE_HOST_SYSTEM_NAME MATCHES Windows)
+    message("Linking Librarys in Windows!!")
     #! 有target前缀的就是链接动态库
     target_link_libraries( CommonLibrary
-            PUBLIC ${PROTOBUF_LIBRARIES}
-            PUBLIC ws2_32.lib
-            PUBLIC protobuf::libprotoc
-            PUBLIC protobuf::libprotobuf
-            PUBLIC protobuf::libprotobuf-lite
+            PRIVATE protobuf::libprotoc
+            protobuf::libprotobuf
+            protobuf::libprotobuf-lite
+            ws2_32.lib
     )
 else()
     target_link_libraries( CommonLibrary
             PUBLIC ${PROTOBUF_LIBRARIES}
             PUBLIC protobuf
             PUBLIC pthread
+            PUBLIC mysqlcppconn
     )
 endif()
 
@@ -169,8 +225,20 @@ target_link_libraries(
         CommonLibrary
 )
 
+
 target_link_libraries(
         main
+        CommonLibrary
+)
+
+
+target_link_libraries(
+        echo_server
+        CommonLibrary
+)
+
+target_link_libraries(
+        test
         CommonLibrary
 )
 

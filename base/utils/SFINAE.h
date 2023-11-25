@@ -1,3 +1,4 @@
+#pragma warning(disable:4068)
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "NotImplementedFunctions"
 #pragma ide diagnostic ignored "OCUnusedTemplateParameterInspection"

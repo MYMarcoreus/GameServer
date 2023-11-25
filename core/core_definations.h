@@ -3,6 +3,7 @@
 
 
 #include <memory>
+#include <string>
 
 
 namespace google::protobuf {

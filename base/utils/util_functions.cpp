@@ -1,16 +1,18 @@
 #include "util_functions.h"
+#include "SocketApiWrapper.h"
 
 #include <fcntl.h>
-#include <sys/time.h> // gettimeofday
+
 #include <thread>
 #include <chrono>
-#include <unistd.h>   // readlink
 #include <cassert>
 #include <algorithm>
 #include <cstring>
 #include <ratio>
-
-
+#include <sstream>
+#include <ctime>
+#include <stdexcept>
+#include <system_error>
 
 #ifdef ____LINUX
     #include <sys/socket.h>
@@ -33,13 +35,13 @@ std::string GetCWD()
 #ifdef ____LINUX
     auto ret = ::readlink("/proc/self/exe", base_name, sizeof(base_name));
     if (ret < 0) {
-        std::__throw_system_error(errno);
+        throw std::system_error(errno, std::system_category(), "::readlink Error");
     }
 #endif
 #ifdef ____WINDOWS
     auto ret = ::GetCurrentDirectory(MAX_PATH, base_name);
     if (ret != 0) {
-        std::__throw_system_error(errno);
+        throw std::system_error(errno, std::system_category(), "::GetCurrentDirectory occurred");
     }
 #endif
 
@@ -48,27 +50,33 @@ std::string GetCWD()
 }
 
 
-std::string get_current_fmt_time(const std::string &fmt, bool need_us)
+std::string get_current_fmt_time(const std::string & fmt, bool need_us)
 {
-    struct timeval now{};
-    ::gettimeofday(&now, nullptr); // 返回精确到微秒（10^{-6}s）的始于epoch的时间
+//     struct timeval now{};
+//     ::gettimeofday(&now, nullptr); // 返回精确到微秒（10^{-6}s）的始于epoch的时间
 
-    struct tm now_tm{};
+    auto now = std::chrono::system_clock::now();
+    auto now_us = std::chrono::time_point_cast<std::chrono::microseconds>(now);
+    auto now_raw = std::chrono::system_clock::to_time_t(now);
 
-    //线程安全的版本
+    std::tm now_tm{};
 #ifdef ____LINUX
-    ::gmtime_r(&now.tv_sec, &now_tm); // 将始于epoch的秒数转换为年月日时分秒
+    localtime_r(&now_raw, &now_tm);
+    // ::gmtime_r(&now.tv_sec, &now_tm); // 将始于epoch的秒数转换为年月日时分秒
 #endif
 #ifdef ____WINDOWS
-    ::gmtime_s(&now_tm, (time_t*)&now.tv_sec); // 将始于epoch的秒数转换为年月日时分秒
+    localtime_s(&now_tm, &now_raw);
+    // ::gmtime_s(&now_tm, (time_t*)&now.tv_sec); // 将始于epoch的秒数转换为年月日时分秒
 #endif
 
-    char buf[32]{0};
-    size_t nByte = ::strftime(buf, 24, fmt.c_str(), &now_tm);
+    char buf[128]{0};
+    auto nBytes = std::strftime(buf, sizeof(buf), fmt.c_str(), &now_tm);
 
     // 加上微秒
-    if (need_us)
-        ::snprintf(buf + nByte, 8, "%06ld", now.tv_usec);
+    if (need_us) {
+        auto us_part = std::chrono::duration_cast<std::chrono::microseconds>(now_us.time_since_epoch()) % std::chrono::microseconds::period::den;
+        std::snprintf(buf + nBytes, sizeof(buf) - nBytes, "%06lld", us_part.count());
+    }
 
     return buf;
 }
@@ -146,7 +154,7 @@ std::string StrError(int errnum)
     const char * str;
     char buf[100]{ };
 
-#if defined(_WIN32)
+#ifdef ____WINDOWS
     int rc = ::strerror_s(buf, 100, errnum);
     buf[100 - 1] = '\0';  // guarantee NUL termination
     if (rc == 0 && ::strncmp(buf, "Unknown error", 13) == 0)
@@ -184,15 +192,14 @@ bool StrCmp_IgnoreCase(const char * str1, const char * str2)
     return true;
 }
 
-std::thread::native_handle_type GetIntThreadID() {
-    //! 很好，因为std::thread::id类型只有一个数据成员且没有虚函数，可直接取地址获得内部的原生线程id成员
-    std::thread::id threadId = std::this_thread::get_id();
-    return *(std::thread::native_handle_type*)(&threadId);
-}
-
-std::thread::native_handle_type CastThreadIDToInt(std::thread::id threadId) {
-    return *(std::thread::native_handle_type*)(&threadId);
-}
+// std::thread::native_handle_type GetIntThreadID() {
+//     //! 很好，因为std::thread::id类型只有一个数据成员且没有虚函数，可直接取地址获得内部的原生线程id成员
+//     std::thread::id threadId = std::this_thread::get_id();
+//     return *(std::thread::native_handle_type*)(&threadId);
+// }
+// std::thread::native_handle_type CastThreadIDToInt(std::thread::id threadId) {
+//     return *(std::thread::native_handle_type*)(&threadId);
+// }
 
 std::string GetStrThreadID() {
     //! 线程安全，稍稍会慢一点点，占用空间也会多一点点，不过使用简单
@@ -220,7 +227,11 @@ size_t CastThreadIDToHash(std::thread::id threadId) {
 }
 
 std::string GetDemangleName(std::string_view mangled_name) {
+#ifdef ____GNUC
     return abi::__cxa_demangle(mangled_name.data(), nullptr, nullptr, nullptr);
+#else
+    return mangled_name.data();
+#endif
 }
 
 struct timespec DurationToTimespec(std::chrono::nanoseconds nanoDuration) {
@@ -251,8 +262,7 @@ SocketApiWrapper::socket_t CreatEventFD() {
 #endif
 
 #ifdef ____WINDOWS
-    // int sockfd = SocketApiWrapper::create_or_die();
-    // return sockfd;
+    return SocketApiWrapper::create_tcp_or_die(true);
 #endif
 }
 

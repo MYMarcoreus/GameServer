@@ -17,14 +17,15 @@ IPv4Address::IPv4Address(const std::string &ipv4_str): IPv4Address(ipv4_str, 0) 
 
 IPv4Address::IPv4Address(const std::string & ipv4_str, uint16_t port): m_address{}
 {
-    int ret = ::inet_pton(AF_INET, ipv4_str.c_str(), &m_address.sin_addr.s_addr);
+    int ret = ::inet_pton(AF_INET, ipv4_str.c_str(), &m_address.sin_addr);
     if (ret == 0) {
         YLOG_FATAL("inet_pton() error: invalid format of ipv4 address.")
         throw std::invalid_argument("invalid format of ipv4 address.");
     } else if (ret == -1 and errno == EAFNOSUPPORT) {
-        YLOG_FATAL("inet_pton() error, invalid address family: {}.", strerror(errno))
+        YLOG_FATAL("inet_pton() error, invalid address family")
         throw std::invalid_argument("invalid address family");
     }
+
     m_address.sin_port = ::htons(port);
     m_address.sin_family = AF_INET;
 }

@@ -5,14 +5,13 @@
 #include <chrono>
 #include <csignal>
 #include <atomic>
-#include <cxxabi.h>
 #include <thread>
 #include "socket_definations.h"
 
-
-#ifdef ____WINDOWS
-using sighandler_t = __p_sig_fn_t;
+#ifdef ____GNUC
+#include <cxxabi.h>
 #endif
+
 
 
 
@@ -32,7 +31,7 @@ extern std::string GetCWD();
 
 /// @brief 获取当前的格式化时间，默认格式为 2023-02-04 20:29:44.961172
 extern std::string get_current_fmt_time(
-        const std::string &fmt = "%Y-%m-%d %H:%M:%S.", bool need_us = true);
+        const std::string &fmt = "%Y-%m-%d %H:%M:%S", bool need_us = true);
 
 
 /// @brief 用于打点计时，注意使用默认类型则需要补上空模板参数：Ticker<>
@@ -57,7 +56,11 @@ public:
 
 template<class T>
 const char* TypeToName() {
+#ifdef ____GNUC
     static const char* s_name = abi::__cxa_demangle(typeid(T).name(), nullptr, nullptr, nullptr);
+#else
+    static const char* s_name = typeid(T).name();
+#endif
     return s_name;
 }
 

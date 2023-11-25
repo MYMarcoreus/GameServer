@@ -1,9 +1,15 @@
 #include "log.h"
 #include "util_functions.h"
-#include "cross_platform_defines.h"
-#include <unistd.h>
+#include "net/cross_platform_defines.h"
 #include <algorithm>
+
+#ifdef ____WINDOWS
+#include <io.h>
+#else
+#include <unistd.h>
 #include <sys/fcntl.h>
+#endif
+
 #include <utility>
 #include <cassert>
 #include <map>

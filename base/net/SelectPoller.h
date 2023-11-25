@@ -19,7 +19,7 @@ public:
     ~SelectPoller() = default;
 
     ///@brief 执行epoll_wait，并将发生的事件channel填入`activeChannel`
-    virtual void PollWait(ChannelList &activeChannel, Milliseconds timeout = Milliseconds::max()) override;
+    virtual void PollWait(ChannelList &activeChannel, Milliseconds timeout/* = std::chrono::milliseconds::max()*/) override;
 
     ///@brief 其实是一个状态机，让Channel的状态转移到下一个状态：对channel映射表和epoll监视列表进行增删覆盖操作
     virtual void UpdateChannel(Channel *) override;
@@ -37,9 +37,9 @@ private:
     fd_set select_writefds_;
     fd_set select_expectfds_;
 
-    fd_set write_fds_;
-    fd_set read_fds_;
-    fd_set expect_fds_;
+    fd_set happended_writefds_;
+    fd_set happended_readfds_;
+    fd_set happended_expectfds_;
 
     std::set<SocketApiWrapper::socket_t, std::greater<SocketApiWrapper::socket_t> > fdSet_;
 };

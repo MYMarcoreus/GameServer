@@ -20,7 +20,7 @@ public:
 
     EventLoop * CreateLoop();
 
-    uint64_t GetThreadID() const;
+    std::string GetThreadID() const;
 
 private:
     void ThreadLoopFunction(std::promise<EventLoop *> & loopPromise);

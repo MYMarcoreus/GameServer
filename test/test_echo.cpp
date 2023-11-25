@@ -29,8 +29,8 @@ public:
 
     void Start()
     {
-        workThreads_.Start(2); // 工作线程
-        server_.Start(2);      // IO线程
+        // workThreads_.Start(server_.GetAcceptorLoop(), 2); // 工作线程
+        server_.Start(0, 10000s);      // IO线程
     }
 
 private:
@@ -48,16 +48,21 @@ private:
 
         std::string message = recvBuf.RetrieveAllDataAsString();
 
-        workThreads_.PushTask([message, conn](){
-            //! 错误的！不要在另一线程中操作recvBuf
-            // std::string message = recvBuf.RetrieveAllDataAsString();
-            printf("消息为：%s\n", message.c_str());
+        // workThreads_.PushTask([message, conn](){
+        //     //! 错误的！不要在另一线程中操作recvBuf
+        //     // std::string message = recvBuf.RetrieveAllDataAsString();
+        //     printf("消息为：%s\n", message.c_str());
+        //     conn->Send(message);
+        // });
+
+        {
+            YLOG_INFO("消息为：{}\n", message);
             conn->Send(message);
-        });
+        }
     }
 
     TcpServer  server_;
-    ThreadPool workThreads_;
+    // ThreadPool workThreads_;
 };
 
 
@@ -68,7 +73,7 @@ private:
 int main()
 {
     config::ConfigManager::LoadConfigs();
-    EventLoop loop{true};
+    EventLoop loop{10000s};
     IPAddressPtr listenAddr = std::make_shared<IPv4Address>(config::g_app_config->GetValue().app_port());
     EchoServer server(&loop, listenAddr);
     server.Start();

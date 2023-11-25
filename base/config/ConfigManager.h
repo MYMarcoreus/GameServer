@@ -1,3 +1,4 @@
+#pragma warning(disable:4068)
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 #ifndef ____CONFIGMANAGER_H
@@ -648,12 +649,9 @@ private:
     }
 
     // 配置文件默认路径：通过可执行文件的相对路径寻找
-    static constexpr char kConfigPaths[4][128] = {
-            "./configs.xml",
-            "./config/configs.xml",
-            "../configs.xml",
-            "../config/configs.xml"
-    };
+    static const char kConfigPaths[4][128];
+
+
 };
 
 

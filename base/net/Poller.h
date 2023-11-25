@@ -22,7 +22,7 @@ public:
     ///@brief 执行epoll或poll，将发生的事件填充至activeChannel，可设置超时时间timeout
     /// 阻塞：Milliseconds::max() / std::chrono::milliseconds
     /// 非阻塞：0s
-    virtual void PollWait(ChannelList &activeChannel, std::chrono::milliseconds timeout) = 0;
+    virtual void PollWait(ChannelList &activeChannel, std::chrono::milliseconds timeout/* = std::chrono::milliseconds::max()*/) = 0;
 
     ///@brief 在m_ChannelMap中更新channel
     virtual void UpdateChannel(Channel * channel) = 0;

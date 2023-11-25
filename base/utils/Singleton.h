@@ -1,3 +1,4 @@
+#pragma warning(disable:4068)
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "modernize-use-equals-delete"
 #ifndef ____SINGLETON_H

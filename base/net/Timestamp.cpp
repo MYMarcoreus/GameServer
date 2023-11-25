@@ -1,6 +1,7 @@
 #include "Timestamp.h"
-#include <sys/time.h> // gettimeofday
 #include <ctime>
+
+#include "cross_platform_defines.h"
 
 
 namespace yy::net {
@@ -11,9 +12,9 @@ static_assert(sizeof(Timestamp) == sizeof(time_t),
 
 
 Timestamp Timestamp::Now() {
-    struct timeval now{};
-    gettimeofday(&now, nullptr);
-    return Timestamp{ Microseconds(now.tv_usec + now.tv_sec * k10_6.count())  };
+    auto now = std::chrono::system_clock::now();
+    auto now_us = std::chrono::time_point_cast<std::chrono::microseconds>(now);
+    return Timestamp{  now_us.time_since_epoch() };
 }
 
 Timestamp::Timestamp(Microseconds  microSecondSinceEpoch)
@@ -25,36 +26,33 @@ Timestamp::Timestamp(timespec spec)
 
 std::string Timestamp::ToString() {
     char buf[64]{0};
-    snprintf(buf, 63, "%ld.%ld", GetSecondPart().count(), GetMicroSecondPart().count());
+    snprintf(buf, 63, "%lld.%lld", GetSecondPart().count(), GetMicroSecondPart().count());
     return buf;
 }
 
 std::string Timestamp::ToFormattedString(const std::string &fmt, bool is_UTC) {
-    struct timeval tvTime{};
-    tvTime.tv_sec  = GetSecondPart().count();
-    tvTime.tv_usec = GetMicroSecondPart().count();
 
     // 将始于epoch的秒数转换为年月日时分
     struct tm now_tm{};
+    time_t sec = GetSecondPart().count();
+    time_t usec = GetMicroSecondPart().count();
 
 #ifdef ____LINUX
     if(is_UTC) {
         // 使用UTC时间，全球所有地方都相同的一个时间
-        gmtime_r(&tvTime.tv_sec, &now_tm);
+        gmtime_r(&sec, &now_tm);
     } else {
         // 使用当地时间，如东八区之类的时区时间
-        localtime_r(&tvTime.tv_sec, &now_tm);
+        localtime_r(&sec, &now_tm);
     }
 #endif
 
 #ifdef ____WINDOWS
     if(is_UTC) {
         // 使用UTC时间，全球所有地方都相同的一个时间
-        time_t sec = tvTime.tv_sec;
         gmtime_s(&now_tm, &sec);
     } else {
         // 使用当地时间，如东八区之类的时区时间
-        time_t sec = tvTime.tv_sec;
         localtime_s(&now_tm, &sec);
     }
 #endif
@@ -63,7 +61,7 @@ std::string Timestamp::ToFormattedString(const std::string &fmt, bool is_UTC) {
     size_t nByte = strftime(buf, 24, fmt.c_str(), &now_tm);
 
     // 加上微秒
-    snprintf(buf + nByte, 8, "%06ld", tvTime.tv_usec);
+    snprintf(buf + nByte, 8, "%06lld", usec);
 
     return buf;
 
@@ -82,13 +80,6 @@ struct timespec Timestamp::ToTimespec() {
 #endif
 }
 
-struct timeval Timestamp::ToTimeval() {
-    struct timeval tvTime{};
-    tvTime.tv_sec  = GetSecondPart().count();
-    tvTime.tv_usec = GetMicroSecondPart().count();
-
-    return tvTime;
-}
 
 
 }

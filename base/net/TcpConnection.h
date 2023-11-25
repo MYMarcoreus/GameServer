@@ -1,11 +1,12 @@
 #ifndef LINUXGAMESERVER_TCPCONNECTION_H
 #define LINUXGAMESERVER_TCPCONNECTION_H
 
-#include <memory>
 #include "net_definations.h"
 #include "IPAddress.h"
 #include "Buffer.h"
 #include "Timestamp.h"
+
+#include <memory>
 
 namespace yy::net {
 

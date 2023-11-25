@@ -11,7 +11,7 @@
 
 namespace yy::net {
 
-class TimerManager;
+class RBTreeTimerManager;
 class EventLoop;
 
 class ThreadPool {

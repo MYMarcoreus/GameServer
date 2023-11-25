@@ -4,6 +4,12 @@
 
 #pragma comment(lib, "ws2_32.lib")
 
+void set_reuseaddr(SOCKET sockfd, bool onoff)
+{
+    int opt_val = onoff;
+    ::setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, (const char *)&opt_val, sizeof(opt_val));
+}
+
 int main() {
     WSADATA wsaData;
     if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
@@ -17,6 +23,8 @@ int main() {
         WSACleanup();
         return 1;
     }
+
+    set_reuseaddr(listenSocket, true);
 
     sockaddr_in serverAddr{};
     serverAddr.sin_family = AF_INET;

@@ -119,8 +119,8 @@ bool MessageHeader::AppendIntoBuffer(net::Buffer &buf, uint8_t xorCode) {
 
 uint8_t MessageHeader::GenerateXorCode() {
     std::mt19937  eng{std::random_device{}() }; // 真随机数
-    static std::uniform_int_distribution<uint8_t> dis(1, 125); // [1, 125]
-    uint8_t gen_val = dis(eng);
+    static std::uniform_int_distribution<int> dis(1, 125); // [1, 125]
+    uint8_t gen_val = static_cast<uint8_t>(dis(eng));
 
     return gen_val;
 }

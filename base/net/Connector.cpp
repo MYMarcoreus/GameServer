@@ -5,6 +5,7 @@
 #include "ErrnoSaver.h"
 #include "status/Status.h"
 #include "SocketApiWrapper.h"
+#include <algorithm>
 
 namespace yy::net {
 
@@ -45,7 +46,7 @@ void Connector::StartInLoop() {
     //! 创建非阻塞套接字并开始非阻塞connect
     SocketApiWrapper::socket_t sockfd = SocketApiWrapper::create_or_die();
     int ret = SocketApiWrapper::connect(sockfd, m_ServerAddr);
-    YLOG_TRACE("In Connector::StartInLoop(), 开始连接服务器<{}:{}>", m_ServerAddr->GetIPStr().c_str(), m_ServerAddr->GetPort())
+    YLOG_INFO("In Connector::StartInLoop(), 开始连接服务器<{}:{}>", m_ServerAddr->GetIPStr().c_str(), m_ServerAddr->GetPort())
 
     int errnoSaver = ret==0 ? 0 : errno;
     switch (errnoSaver) {
@@ -172,7 +173,9 @@ void Connector::Retry(SocketApiWrapper::socket_t sockfd) {
                    sockfd, m_RetryDelay.count() / 1000.0, m_ServerAddr->GetIPStr().c_str(), m_ServerAddr->GetPort())
 
         m_NextRetryTimerID = m_Loop->RunAfter(m_RetryDelay, [this](){ this->StartInLoop(); });
-        m_RetryDelay = std::min(m_RetryDelay * 2, kMaxRetryDelay);
+
+
+        m_RetryDelay = (m_RetryDelay * 2 < kMaxRetryDelay) ? m_RetryDelay * 2 : kMaxRetryDelay;
     }
 }
 

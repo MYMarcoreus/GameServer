@@ -1,12 +1,15 @@
 #ifndef GAMESERVER_CROSS_PLATFORM_DEFINES_H
 #define GAMESERVER_CROSS_PLATFORM_DEFINES_H
 
-
+#define WIN32_LEAN_AND_MEAN
 
 #ifdef ____WINDOWS
 #include <sys/stat.h>
 #include <io.h>
 #include <Windows.h>
+typedef SSIZE_T ssize_t;
+using sighandler_t = void(*)(int);
+
 #else
 #include <sys/time.h>
 #include <unistd.h>
@@ -20,7 +23,7 @@
 
 
 #ifdef ____WINDOWS
-#define OPEN(file, mode)            _open(file, mode, S_IWRITE | S_IREAD)
+#define OPEN(file, mode)        _open(file, mode, S_IWRITE | S_IREAD)
 #define WRITE(fd, data, len)    _write(fd, data, len)
 #define FLUSH(fd)               _commit(fd)
 #define CLOSE(fd)               _close(fd)

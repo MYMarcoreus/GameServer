@@ -33,7 +33,7 @@ void ThreadPool::Start(net::EventLoop * timerloop, int threadNum) {
     for(std::thread & work_thread: m_Threads)
     {
         work_thread = std::thread{&ThreadPool::PopAndExecuteTask, this};
-        YLOG_INFO("启动线程池线程<{}>", CastThreadIDToInt(work_thread.get_id()))
+        YLOG_INFO("启动线程池线程<{}>", CastThreadIDToStr(work_thread.get_id()))
     }
 }
 

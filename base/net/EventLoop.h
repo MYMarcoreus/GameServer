@@ -27,7 +27,7 @@ public:
     using F_CloseSocketsCallback = std::function<void()>;
 
 public:
-    EventLoop(Milliseconds pollwaitTimeout);
+    EventLoop(Milliseconds defaultPollwaitTimeout);
     ~EventLoop();
 
     /*! 核心函数 */
@@ -81,6 +81,9 @@ private:
     ///@brief 在EventLoop::Loop()每一轮循环的最后执行代办函数列表
     void CallPenddingCallbacks();
 
+    //! epoll_wait只支持ms不支持us
+    Milliseconds GetPollwaitTimeout();
+
 
 private:
     //! 请注意成员的初始化顺序是按照这里声明的顺序（内存排布的顺序），
@@ -94,7 +97,7 @@ private:
     std::unique_ptr<TimerManager>  m_TimerManager;
     std::unique_ptr<WakeupManager> m_WakeupManager;   // 用于QuitLoop，唤醒正在Loop()阻塞的PollWait()函数
     ChanneList                     m_ActiveChannels;
-    Milliseconds                   m_PollwaitTimeout;
+    Milliseconds                   m_DefaultPollwaitTimeout;
 
     PendingCallbackList  m_PenddingFunctors;      // 在每一轮Loop最后调用的代办函数列表
     std::mutex           m_PenddingFunctorsMutex; // 保护代办函数列表

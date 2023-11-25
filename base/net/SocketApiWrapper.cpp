@@ -3,8 +3,9 @@
 #include "log.h"
 #include "status/Status.h"
 #include "ErrnoSaver.h"
-#include <unistd.h>
 #include <fcntl.h>
+
+
 
 #include "net_definations.h"
 
@@ -21,17 +22,25 @@ socket_t create_or_die(sa_family_t family, __socket_type type, bool isNonblock) 
 #endif
 
 #ifdef ____WINDOWS
-    WORD wsaword;
-    WSADATA wsadata;
-    wsaword = MAKEWORD(2,2);
-    uint64_t iError = ::WSAStartup(wsaword, &wsadata);
-    if (iError != NOERROR) {
-        return INVALID_SOCKET;
+    // WORD wsaword;
+    // WSADATA wsadata;
+    // wsaword = MAKEWORD(2,2);
+    // uint64_t iError = ::WSAStartup(wsaword, &wsadata);
+    // if (iError != NOERROR) {
+    //     return INVALID_SOCKET;
+    // }
+    // if ((2 != LOBYTE(wsadata.wVersion)) || (2 != LOBYTE(wsadata.wHighVersion))) {
+    //     ::WSACleanup();
+    //     return INVALID_SOCKET;
+    // }
+
+    WSADATA wsaData;
+    if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
+        std::cerr << "Failed to initialize Winsock." << std::endl;
+        return 1;
     }
-    if ((2 != LOBYTE(wsadata.wVersion)) || (2 != LOBYTE(wsadata.wHighVersion))) {
-        ::WSACleanup();
-        return INVALID_SOCKET;
-    }
+
+
     socket_t sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd == INVALID_SOCKET) {
         ::WSACleanup();
@@ -56,14 +65,25 @@ socket_t create_udp_or_die(bool isNonblock) {
 
 void listen_or_die(socket_t sockfd, int backlog) {
     int ret = ::listen(sockfd, backlog);
-    if (ret < 0) {
+#ifdef ____WINDOWS
+    if (ret == SOCKET_ERROR) {
+#endif
+#ifdef ____LINUX
+        if (ret < 0) {
+#endif
+        SocketApiWrapper::close(sockfd);
         YLOG_FATAL("In Socket::StartListen(), listen() error: {}", yy::util::StatusCode{errno}.ToString())
     }
 }
 
 void bind_or_die(socket_t sockfd, const std::shared_ptr<IPAddress> &localAddr) {
     int ret = ::bind(sockfd, localAddr->GetRawAddr(), localAddr->GetRawAddrLen());
-    if (ret < 0) {
+#ifdef ____WINDOWS
+    if (ret == SOCKET_ERROR) {
+#endif
+#ifdef ____LINUX
+        if (ret < 0) {
+#endif
         YLOG_FATAL("In Socket::Bind(), bind() error")
     }
 }
@@ -78,6 +98,7 @@ void close(socket_t sockfd) {
 #endif
 #ifdef ____WINDOWS
     auto ret = ::closesocket(sockfd);
+    WSACleanup();
 #endif
     if (ret < 0) {
         YLOG_ERROR("In Socket::Close(), close error: {}", yy::util::StatusCode(errno).ToString().c_str())
@@ -235,12 +256,18 @@ IPAddress::ptr GetPeerAddr(SocketApiWrapper::socket_t sockfd) {
 }
 
 ssize_t recv(socket_t sockfd, void *ptr, size_t nbytes, int flags) {
-    ssize_t ret = ::recv(sockfd, (char *)ptr, nbytes, flags | MSG_NOSIGNAL);
+#ifdef ____LINUX
+    flags |= MSG_NOSIGNAL
+#endif
+    auto ret = ::recv(sockfd, (char *)ptr, nbytes, flags);
     return ret;
 }
 
 ssize_t send(socket_t sockfd, const void *ptr, size_t nbytes, int flags) {
-    ssize_t ret = ::send(sockfd, (char *)ptr, nbytes, flags | MSG_NOSIGNAL);
+#ifdef ____LINUX
+    flags |= MSG_NOSIGNAL
+#endif
+    auto ret = ::send(sockfd, (char *)ptr, nbytes, flags);
     return ret;
 }
 

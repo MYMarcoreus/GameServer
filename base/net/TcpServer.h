@@ -63,7 +63,9 @@ private:
     EventLoop *                          m_AcceptorLoop;
     std::unique_ptr<Acceptor>            m_Acceptor;
     std::unique_ptr<EventLoopThreadPool> m_IOThreadPool;
+#ifdef ____LINUX
     std::unique_ptr<class SignalManager> m_SignalManager;
+#endif
 
     std::atomic<bool> m_IsStarted{false};
     uint64_t          m_NextConnID{0};

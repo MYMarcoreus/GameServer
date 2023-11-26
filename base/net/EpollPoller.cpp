@@ -95,7 +95,7 @@ void EpollPoller::PollWait(ChannelList &activeChannel, std::chrono::milliseconds
         //! 不处理EINTR，对于其它错误，并不会让程序终止
         if(savedErrno != EINTR)  {
             errno = savedErrno;
-            YLOG_ERROR("epoll_wait() error: {}", ::yy::util::StatusCode{savedErrno}.ToString().c_str())
+            YLOG_ERROR("epoll_wait() error: {}", yy::util::GetErrorInfo(savedErrno))
         }
     }
 }

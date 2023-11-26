@@ -53,8 +53,7 @@ void Acceptor::HandleAccept() {
 
     YLOG_DEBUG("In Acceptor::HandleAccept，套接字<{}>被Accept", connfd)
     if(m_NewConnectionCallback) {
-        // TcpServer定义
-        m_NewConnectionCallback(connfd, outPeerAddr);
+        m_NewConnectionCallback(connfd, outPeerAddr); // TcpServer定义
     } else {
         SocketApiWrapper::close(connfd);
     }

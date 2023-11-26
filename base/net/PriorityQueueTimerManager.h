@@ -29,7 +29,7 @@ class PriorityQueueTimerManager : public TimerManager
 {
 public:
     PriorityQueueTimerManager(EventLoop * loop);
-    ~PriorityQueueTimerManager();
+    virtual ~PriorityQueueTimerManager() override;
 
     // start a timer after `duration` milliseconds
     virtual TimerID AddTimer(F_TaskCallback cb, Timestamp expiredTime, Microseconds  interval = 0us) override;

@@ -61,13 +61,13 @@ void WakeupManager::Read() {
 #ifdef ____LINUX
     auto ret = ::read(wakeupEventFD_, &msg, sizeof msg);
 #endif
-
+    return; //FIXME
 #ifdef ____WINDOWS
     auto ret = SocketApiWrapper::recv(wakeupEventFD_, &msg, sizeof msg, 0);
 #endif
 
     if(ret < 0) {
-        YLOG_ERROR("EventLoop::WakeupManager::Read() ::read() error: {}", ::yy::util::StrError(errno).c_str())
+        YLOG_ERROR("EventLoop::WakeupManager::Read() ::read() error: {}", GetLastErrorInfo())
     }
 }
 
@@ -76,15 +76,20 @@ void WakeupManager::Write() {
     uint64_t msg = 1;
 #ifdef ____LINUX
     auto ret = ::write(wakeupEventFD_, &msg, sizeof msg);
+    if(ret < 0) {
+        YLOG_ERROR("EventLoop::WakeupManager::Write ::write() error: {}", GetLastErrorInfo())
+    }
 #endif
-
+    return; //FIXME
 #ifdef ____WINDOWS
     auto ret = SocketApiWrapper::send(wakeupEventFD_, &msg, sizeof msg, 0);
+    if(ret == SOCKET_ERROR) {
+        YLOG_ERROR("EventLoop::WakeupManager::Write ::write() error: {}", GetLastErrorInfo());
+    }
 #endif
 
-    if(ret < 0) {
-        YLOG_ERROR("EventLoop::WakeupManager::Write ::write() error: {}", ::yy::util::StrError(errno).c_str())
-    }
+
+
 }
 
 

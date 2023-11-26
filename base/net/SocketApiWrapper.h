@@ -37,6 +37,8 @@ ssize_t send(socket_t sockfd, const void *ptr, size_t nbytes, int flags);
 ssize_t sendto(socket_t sockfd, const void *ptr, size_t nbytes, int flags, std::shared_ptr<IPAddress> peerAddr);
 ssize_t recvfrom(socket_t sockfd, void *ptr, size_t nbytes, int flags, std::shared_ptr<IPAddress> peerAddr);
 
+ssize_t readv(socket_t sockfd, IOV_TYPE *iov, int iovcnt);
+
 
 
 extern std::shared_ptr<IPAddress> GetLocalAddr(SocketApiWrapper::socket_t sockfd);

@@ -17,7 +17,7 @@ socket_t create_or_die(sa_family_t family, __socket_type type, bool isNonblock) 
     int realType = isNonblock ? (int) type | SOCK_NONBLOCK | SOCK_CLOEXEC : (int) type;
     socket_t sockfd = ::socket(family, realType, 0);
     if (sockfd < 0) {
-        YLOG_FATAL("In Socket::Socket(), socket() error: {}", yy::util::StatusCode{errno}.ToString())
+        YLOG_FATAL("In Socket::Socket(), socket() error: {}", yy::util::GetLastErrorInfo());
     }
 #endif
 
@@ -44,7 +44,7 @@ socket_t create_or_die(sa_family_t family, __socket_type type, bool isNonblock) 
     socket_t sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd == INVALID_SOCKET) {
         ::WSACleanup();
-        YLOG_FATAL("In Socket::Socket(), socket() error: {}", yy::util::StatusCode{errno}.ToString())
+        YLOG_FATAL("In Socket::Socket(), socket() error: {}", yy::util::GetLastErrorInfo())
     }
 
     set_nonblocking(sockfd);
@@ -72,18 +72,19 @@ void listen_or_die(socket_t sockfd, int backlog) {
         if (ret < 0) {
 #endif
         SocketApiWrapper::close(sockfd);
-        YLOG_FATAL("In Socket::StartListen(), listen() error: {}", yy::util::StatusCode{errno}.ToString())
+        YLOG_FATAL("In Socket::StartListen(), listen() error: {}", yy::util::GetLastErrorInfo())
     }
 }
 
 void bind_or_die(socket_t sockfd, const std::shared_ptr<IPAddress> &localAddr) {
     int ret = ::bind(sockfd, localAddr->GetRawAddr(), localAddr->GetRawAddrLen());
 #ifdef ____WINDOWS
-    if (ret == SOCKET_ERROR) {
+    if (ret == SOCKET_ERROR)
 #endif
 #ifdef ____LINUX
-        if (ret < 0) {
+        if (ret < 0)
 #endif
+    {
         YLOG_FATAL("In Socket::Bind(), bind() error")
     }
 }
@@ -98,10 +99,9 @@ void close(socket_t sockfd) {
 #endif
 #ifdef ____WINDOWS
     auto ret = ::closesocket(sockfd);
-    WSACleanup();
 #endif
     if (ret < 0) {
-        YLOG_ERROR("In Socket::Close(), close error: {}", yy::util::StatusCode(errno).ToString().c_str())
+        YLOG_ERROR("In Socket::Close(), close error: {}", yy::util::GetLastErrorInfo())
     } else {
         YLOG_DEBUG("套接字<{}>已Close！", sockfd)
     }
@@ -163,11 +163,11 @@ accept(socket_t sockfd, std::shared_ptr<IPAddress> &outPeerAddr, bool isNewSockN
             case ENOMEM:
             case ENOTSOCK:
             case EOPNOTSUPP: {
-                YLOG_FATAL("In Socket::Accept(), accpet4() unexcepted error: {}", yy::util::StatusCode{errnoSaver}.ToString())
+                YLOG_FATAL("In Socket::Accept(), accpet() unexcepted error: {}", yy::util::GetErrorInfo(errnoSaver))
                 break;
             }
             default: {
-                YLOG_FATAL("In Socket::Accept(), accpet4() unknown error: {}", yy::util::StatusCode{errnoSaver}.ToString())
+                YLOG_FATAL("In Socket::Accept(), accpet() unknown error: {}", yy::util::GetErrorInfo(errnoSaver))
                 break;
             }
         }
@@ -182,7 +182,7 @@ void shutdown(socket_t sockfd, int how) {
         if (errno == ENOTCONN) {
             return;
         } else {
-            YLOG_ERROR("In Socket::Shutdown(), shutdown() error: {}", yy::util::StatusCode{errno}.ToString())
+            YLOG_ERROR("In Socket::Shutdown(), shutdown() error: {}", yy::util::GetLastErrorInfo())
         }
     }
 }
@@ -278,6 +278,26 @@ ssize_t sendto(socket_t sockfd, const void *ptr, size_t nbytes, int flags, std::
 ssize_t recvfrom(socket_t sockfd, void *ptr, size_t nbytes, int flags, std::shared_ptr<IPAddress> peerAddr) {
     auto addrLen = peerAddr->GetRawAddrLen();
     return ::recvfrom(sockfd, (char *)ptr, nbytes, flags, peerAddr->GetRawAddr(), &addrLen);
+}
+
+ssize_t readv(socket_t sockfd, IOV_TYPE * iov, int iovcnt) {
+#ifdef ____MSVC
+    DWORD bytesRead;
+    DWORD flags = 0;
+    if (WSARecv(sockfd, iov, iovcnt, &bytesRead, &flags, NULL, NULL))
+    {
+        if (GetLastError() == WSAECONNABORTED)
+            //close
+            return  0;
+        else
+            //error
+            return -1;
+    }
+    else
+        return bytesRead;
+#else
+    return ::readv(sockfd, iov, iovcnt);
+#endif
 }
 
 

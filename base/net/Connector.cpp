@@ -48,7 +48,12 @@ void Connector::StartInLoop() {
     int ret = SocketApiWrapper::connect(sockfd, m_ServerAddr);
     YLOG_INFO("In Connector::StartInLoop(), 开始连接服务器<{}:{}>", m_ServerAddr->GetIPStr().c_str(), m_ServerAddr->GetPort())
 
-    int errnoSaver = ret==0 ? 0 : errno;
+#ifdef ____WINDOWS
+    auto errnoSaver = ret==0 ? 0 : GetLastError();
+#endif
+#ifdef ____LINUX
+    auto errnoSaver = ret==0 ? 0 : errno;
+#endif
     switch (errnoSaver) {
         //! 非阻塞connect立即返回，于是用Channel监听写/错误事件以等待连接完成
         case 0:
@@ -82,12 +87,12 @@ void Connector::StartInLoop() {
         case EFAULT:
         case ENOTSOCK:
             SocketApiWrapper::close(sockfd);
-            YLOG_FATAL("connect error in Connector::StartInLoop: {}", yy::util::StatusCode{errnoSaver}.ToString().c_str());
+            YLOG_FATAL("connect error in Connector::StartInLoop: {}", util::GetErrorInfo(errnoSaver));
             break;
 
         default:
             SocketApiWrapper::close(sockfd);
-            YLOG_FATAL("Unexpected error in Connector::StartInLoop: {}", yy::util::StatusCode{errnoSaver}.ToString().c_str());
+            YLOG_FATAL("Unexpected error in Connector::StartInLoop: {}", util::GetErrorInfo(errnoSaver));
             // connectErrorCallback_();
             break;
     }
@@ -123,7 +128,7 @@ void Connector::HandleWrite() {
 
     //! socket可写时，并非一定是套接字连接完成，也可能是发生了错误
     if(err) {
-        YLOG_ERROR("In Connector::HandleWrite(), Socket Error: {}", util::StatusCode{err}.ToString().c_str())
+        YLOG_ERROR("In Connector::HandleWrite(), Socket Error: {}", yy::util::GetErrorInfo(err))
         Retry(sockfd);
     }
     //! 发生了自连接的情况：即客户端随机分配的端口号与服务端发生了重复
@@ -150,7 +155,7 @@ void Connector::HandleError() {
 
     SocketApiWrapper::socket_t sockfd = RemoveAndResetChannel();
     int err = SocketApiWrapper::get_socket_error(sockfd);
-    YLOG_ERROR("In Connector::HandleError(), Socket Error: {}", util::StatusCode{err}.ToString().c_str())
+    YLOG_ERROR("In Connector::HandleError(), Socket Error: {}", yy::util::GetErrorInfo(err))
     Retry(sockfd);
 }
 

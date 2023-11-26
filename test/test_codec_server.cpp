@@ -55,7 +55,7 @@ public:
         answer.set_answerer("Server");
         answer.add_solution(now.ToString());
         answer.add_solution("Win!");
-        YLOG_INFO("即将向<%d: {}>发送Answer：\n{}", conn->GetSocketFD(), conn->GetName().c_str(), answer.DebugString().c_str())
+        YLOG_INFO("即将向<{}:{}>发送Answer：\n{}", conn->GetSocketFD(), conn->GetName().c_str(), answer.DebugString().c_str())
         codec_.Send(conn, answer);
     }
 
@@ -67,7 +67,12 @@ private:
 
     void OnQuery(const TcpConnectionPtr& conn, const QueryPtr& message)
     {
-        YLOG_INFO("OnQuery<%d>: {}\n {}\n", conn->GetSocketFD(), message->GetTypeName().c_str(), message->DebugString().c_str());
+        string ques{};
+        for (int i = 0; i < message->question_size(); ++i) {
+            ques += message->question(i).c_str();
+        }
+
+        YLOG_INFO("收到用户的Query<{}>: \nid:{} \nquestioner: {} \nquestion: {}", conn->GetSocketFD(), message->id(), message->questioner(), ques);
 
         SendAnswer(conn, message);
     }
@@ -79,7 +84,7 @@ private:
             solu += message->solution(i).c_str();
         }
 
-        YLOG_INFO("OnAnswer: {}, {}, {}, {}, {}", message->GetTypeName().c_str(),
+        YLOG_INFO("OnAnswer: \n{}, \n{}, \n{}, \n{}, \n{}", message->GetTypeName().c_str(),
                   message->id(), message->questioner().c_str(), message->answerer().c_str(), solu.c_str())
     }
 

@@ -3,6 +3,7 @@
 #pragma ide diagnostic ignored "UnreachableCode"
 
 #include "Status.h"
+#include "util_functions.h"
 #include <iostream>
 #include <sstream>
 namespace yy::util {
@@ -13,12 +14,7 @@ namespace yy::util {
 std::string StatusCode::ToString() const
 {
     if(isErrno()) {
-#if defined(_WIN32)
-        return StrError(code_);
-#else
-        auto p = strerrorname_np(code_);
-        return std::string( p ? p : "" ) + "(" + StrError(code_) + ")";
-#endif
+        return  util::GetErrorInfo(code_);
     }
 
     switch(code_) {

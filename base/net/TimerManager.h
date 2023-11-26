@@ -10,7 +10,7 @@ namespace net {
 class TimerManager {
 public:
     TimerManager(EventLoop * loop): m_loop{loop}, m_TimerCounter{0} {}
-    ~TimerManager() {};
+    virtual ~TimerManager() = default;
 
     ///@brief 在定时器列表中新建一个定时器
     virtual TimerID AddTimer(F_TaskCallback cb, Timestamp expiredTime, Microseconds  interval = 0us) = 0;
@@ -18,12 +18,10 @@ public:
     ///@brief 按照定时器id来取消定时器
     virtual void CancelTimer(TimerID timerid) = 0;
 
-
     ///@brief 计时器到时的回调函数
     virtual int HandleExpiredTimersInLoop() = 0;
 
     virtual Timestamp GetEarliestExpiredTimeInLoop() = 0;
-
 
     static TimerManager* NewDefaultTimerManager(EventLoop * loop);
 

@@ -20,7 +20,7 @@ public:
     virtual ~Poller();
 
     ///@brief 执行epoll或poll，将发生的事件填充至activeChannel，可设置超时时间timeout
-    /// 阻塞：Milliseconds::max() / std::chrono::milliseconds
+    /// 阻塞：Milliseconds::max() / std::chrono::milliseconds::max()
     /// 非阻塞：0s
     virtual void PollWait(ChannelList &activeChannel, std::chrono::milliseconds timeout/* = std::chrono::milliseconds::max()*/) = 0;
 

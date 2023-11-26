@@ -29,7 +29,7 @@ class EventLoop;
 class RBTreeTimerManager: public TimerManager {
 public:
     RBTreeTimerManager(EventLoop * owner_loop);
-    ~RBTreeTimerManager();
+    virtual ~RBTreeTimerManager() override;
 
     ///@brief 在定时器列表中新建一个定时器
     virtual TimerID AddTimer(F_TaskCallback cb, Timestamp expiredTime, Microseconds  interval = 0us) override;

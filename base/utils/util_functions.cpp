@@ -266,5 +266,40 @@ SocketApiWrapper::socket_t CreatEventFD() {
 #endif
 }
 
+std::string GetLastErrorInfo() {
+
+#ifdef  ____WINDOWS
+    return GetErrorInfo(GetLastError());
+#endif
+
+#ifdef ____LINUX
+    return GetErrorInfo(errno);
+#endif
+
+
+}
+
+std::string GetErrorInfo(uint64_t error) {
+#ifdef  ____WINDOWS
+    LPVOID errorMsg;
+    FormatMessage(
+            FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
+            nullptr,
+            (DWORD)error,
+            0, // Default language
+            reinterpret_cast<LPSTR>(&errorMsg),
+            0,
+            nullptr
+    );
+
+    return (char *)errorMsg;
+#endif
+
+#ifdef ____LINUX
+    auto p = strerrorname_np(code_);
+    return std::string( p ? p : "" ) + "(" + StrError((int)error) + ")";
+#endif
+}
+
 
 }

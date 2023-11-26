@@ -87,6 +87,7 @@ private:
 
     void HandleRead();     // 将套接字的数据接收到RecvBuf中
     bool HandleRead_ET();  // 将套接字的数据接收到RecvBuf中
+    bool HandleRead_LT();  // 将套接字的数据接收到RecvBuf中
     void HandleWrite();    // 将SendBuf中的数据全部发送出去
     void HandleClose();    // 关闭套接字
     void HandleError();    // 处理错误

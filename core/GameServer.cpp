@@ -36,7 +36,7 @@ GameServer::~GameServer() {
 void GameServer::Start() {
     m_server.Start(config::g_app_config->GetValue().io_thread_num(), 500ms);
 
-    m_accpetorLoop->RunEvery(1s, [](){ YLOG_INFO("测试！！！"); });
+    // m_accpetorLoop->RunEvery(1s, [](){ YLOG_INFO("测试！！！"); });
 }
 
 void GameServer::Stop() {
@@ -122,7 +122,6 @@ void GameServer::SendXorCode(const TcpConnectionPtr &conn) {
 
 void GameServer::OnHeart(const TcpConnectionPtr & conn, const HeartPtr & message) {
     assert(conn != nullptr);
-
 
     // 只需发一个只有消息头的包
     yy::protocol::core::HeartBody heartBody;

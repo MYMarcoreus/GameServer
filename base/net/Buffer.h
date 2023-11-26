@@ -23,10 +23,17 @@ public:
     size_t GetTail()   const { return m_Tail; }
 
     ///@brief 已填充的字节数
-    size_t GetDataSize() const { return m_Tail - m_Head; }
+    size_t GetDataSize() const {
+        assert(m_Tail >= m_Head);
+        return m_Tail - m_Head;
+    }
 
     ///@brief 未填充的字节数
-    size_t GetFreeSize() const { return GetMaxsize() - GetTail(); }
+    size_t GetFreeSize() const {
+        auto rst = GetMaxsize() - GetTail();
+        assert(rst >= 0);
+        return rst;
+    }
 
     ///@brief
     size_t GetMaxsize() const { return m_Maxsize; }

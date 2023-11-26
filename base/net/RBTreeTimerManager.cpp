@@ -104,11 +104,11 @@ void __TimerfdManager::ResetTimerfd(Timestamp expireTime)
     int ret = ::timerfd_settime(m_LinuxTimerFD, 0, &newValue, &oldValue);
     if(ret < 0) {
         if(errno == EINVAL) {
-            YLOG_ERROR("::timerfd_settime() error, {}, {}, {}", util::StatusCode{errno}.ToString().c_str(),
+            YLOG_ERROR("::timerfd_settime() error, {}, {}, {}", yy::util::GetLastErrorInfo(),
                        interval.count() / 10e6, TimespecToDuration(newValue.it_value).count());
         }
         else {
-            YLOG_ERROR("::timerfd_settime() error, {}", util::StatusCode{errno}.ToString().c_str())
+            YLOG_ERROR("::timerfd_settime() error, {}", yy::util::GetLastErrorInfo());
         }
     }
 

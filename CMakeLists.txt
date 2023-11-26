@@ -31,27 +31,26 @@ else()
     message(STATUS "unknown platform")
 endif()
 
+
 # 如果是以Debug模式构建的就定义一个名为____DEBUG的宏定义
 if(CMAKE_BUILD_TYPE MATCHES Debug)
     add_definitions(-D____DEBUG)
 endif()
 
 
-if(CMAKE_COMPILER_IS_GNUCXX)
+
+message(STATUS "CMAKE_CXX_COMPILER_ID = ${CMAKE_CXX_COMPILER_ID}")
+
+if(CMAKE_CXX_COMPILER_ID MATCHES GNU)
     message(STATUS "Using GCC compiler")
     add_definitions(-D____GNUC)
 
-    add_compile_options(-j12)
-elseif(MSVC)
+elseif(CMAKE_CXX_COMPILER_ID MATCHES MSVC)
     message(STATUS "Using MSVC compiler")
     add_definitions(-D____MSVC)
 
     add_compile_options(/MP)
     add_compile_options("/Zc:__cplusplus")
-#    if(NOT DEFINED __cplusplus)
-#            add_definitions(-D__cplusplus=_MSVC_LANG)
-#    endif()
-
 endif()
 
 
@@ -96,10 +95,6 @@ message(STATUS "Protobuf_LITE_LIBRARIES = ${Protobuf_LITE_LIBRARIES}")
 
 
 link_directories(${PROTOBUF_LIBRARIES})
-#link_directories(C:/Users/Lenovo/.vcpkg-clion/vcpkg/installed/x64-windows/lib/libprotobuf.lib)
-#link_directories(C:/Users/Lenovo/.vcpkg-clion/vcpkg/installed/x64-windows/debug/lib/libprotobufd.lib)
-#find_library(PROTOBUF_LIB libprotobuf.lib PATHS C:/Users/Lenovo/.vcpkg-clion/vcpkg/installed/x64-windows/lib)
-#message("PROTOBUF_LIB = ${PROTOBUF_LIB}")
 
 
 include_directories(
@@ -179,7 +174,7 @@ add_subdirectory(core)
 add_subdirectory(game)
 add_subdirectory(protobuf)
 
-message(COMMON_SOURCES = ${COMMON_SOURCES})
+#message(COMMON_SOURCES = ${COMMON_SOURCES})
 
 
 

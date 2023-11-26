@@ -2,8 +2,6 @@ cmake_minimum_required(VERSION 3.22)
 project(GameServer)
 set(CMAKE_CXX_STANDARD 20)
 
-message("in base!")
-
 set(LocalSrc
         public/md5/md5.cpp
         public/tinyxml/tinyxml2.cpp

@@ -75,7 +75,7 @@ std::string get_current_fmt_time(const std::string & fmt, bool need_us)
     // 加上微秒
     if (need_us) {
         auto us_part = std::chrono::duration_cast<std::chrono::microseconds>(now_us.time_since_epoch()) % std::chrono::microseconds::period::den;
-        std::snprintf(buf + nBytes, sizeof(buf) - nBytes, "%06lld", us_part.count());
+        std::snprintf(buf + nBytes, sizeof(buf) - nBytes, "%06lld", (long long)(us_part.count())  );
     }
 
     return buf;
@@ -296,7 +296,7 @@ std::string GetErrorInfo(uint64_t error) {
 #endif
 
 #ifdef ____LINUX
-    auto p = strerrorname_np(code_);
+    auto p = strerrorname_np(error);
     return std::string( p ? p : "" ) + "(" + StrError((int)error) + ")";
 #endif
 }

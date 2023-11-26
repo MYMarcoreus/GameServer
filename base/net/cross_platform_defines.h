@@ -20,8 +20,9 @@
     #define IOV_LEN_FIELD len
     #define IOV_LEN_TYPE unsigned long
 #endif
-#ifdef ____GNUC
 
+#ifdef ____GNUC
+    #include <sys/uio.h>
     #define IOV_TYPE struct iovec
     #define IOV_PTR_FIELD iov_base
     #define IOV_LEN_FIELD iov_len

@@ -257,7 +257,7 @@ IPAddress::ptr GetPeerAddr(SocketApiWrapper::socket_t sockfd) {
 
 ssize_t recv(socket_t sockfd, void *ptr, size_t nbytes, int flags) {
 #ifdef ____LINUX
-    flags |= MSG_NOSIGNAL
+    flags |= MSG_NOSIGNAL;
 #endif
     auto ret = ::recv(sockfd, (char *)ptr, nbytes, flags);
     return ret;
@@ -265,7 +265,7 @@ ssize_t recv(socket_t sockfd, void *ptr, size_t nbytes, int flags) {
 
 ssize_t send(socket_t sockfd, const void *ptr, size_t nbytes, int flags) {
 #ifdef ____LINUX
-    flags |= MSG_NOSIGNAL
+    flags |= MSG_NOSIGNAL;
 #endif
     auto ret = ::send(sockfd, (char *)ptr, nbytes, flags);
     return ret;

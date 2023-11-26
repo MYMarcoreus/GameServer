@@ -26,7 +26,7 @@ Timestamp::Timestamp(timespec spec)
 
 std::string Timestamp::ToString() {
     char buf[64]{0};
-    snprintf(buf, 63, "%lld.%lld", GetSecondPart().count(), GetMicroSecondPart().count());
+    snprintf(buf, 63, "%lld.%lld", (long long)GetSecondPart().count(), (long long)GetMicroSecondPart().count());
     return buf;
 }
 
@@ -61,7 +61,7 @@ std::string Timestamp::ToFormattedString(const std::string &fmt, bool is_UTC) {
     size_t nByte = strftime(buf, 24, fmt.c_str(), &now_tm);
 
     // 加上微秒
-    snprintf(buf + nByte, 8, "%06lld", usec);
+    snprintf(buf + nByte, 8, "%06lld", (long long)usec);
 
     return buf;
 

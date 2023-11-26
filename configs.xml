@@ -2,7 +2,7 @@
 <root> this is root
     <app
         appID            = "2000"
-        appPort          = "16666"
+        appPort          = "13333"
         appMaxPlayer     = "30"
         appMaxConnection = "2000"
         appXorCode       = "130"
@@ -34,14 +34,14 @@
         <remote_node
             userID   = "4001"
             ip   = "127.0.0.1"
-            port = "13550"
+            port = "13333"
             type = "Center"
         />
 
         <remote_node
             userID   = "4002"
             ip   = "127.0.0.1"
-            port = "13550"
+            port = "13333"
             type = "Gate"
         />
     </remote>

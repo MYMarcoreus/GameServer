@@ -1,23 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" serverName="远程主机" remoteFilesAllowedToDisappearOnAutoupload="false">
+  <component name="PublishConfigData" remoteFilesAllowedToDisappearOnAutoupload="false">
     <serverData>
-      <paths name="远程主机">
+      <paths name="Matebook">
         <serverdata>
           <mappings>
-            <mapping deploy="GameServer" local="$PROJECT_DIR$" />
+            <mapping local="$PROJECT_DIR$" web="/" />
           </mappings>
-          <excludedPaths>
-            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-release-msvc" />
-            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug-mingw" />
-            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug-linux" />
-            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-release-linux" />
-            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug-linuxx" />
-            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug" />
-            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug-linux" />
-            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-release-linux" />
-            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug-msvc" />
-          </excludedPaths>
+        </serverdata>
+      </paths>
+      <paths name="远程主机 (c79aadbf-b730-466c-9273-612260cec7f0)">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$" web="/" />
+          </mappings>
         </serverdata>
       </paths>
     </serverData>

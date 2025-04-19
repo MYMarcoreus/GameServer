@@ -42,8 +42,8 @@
 {                                                                                             \
     if (GET_LOGGER(____loggername)->getLevel() <= ____level)                                   \
     {                                                                                           \
-    std::string ____logMessage = std::format(____format, ##__VA_ARGS__);                         \
-    GET_LOGGER(____loggername)->Log(MAKE_LOG_MESSAGE(____level, ____logMessage));                 \
+        std::string ____logMessage = std::format(____format, ##__VA_ARGS__);                     \
+        GET_LOGGER(____loggername)->Log(MAKE_LOG_MESSAGE(____level, ____logMessage));             \
     }                                                                                              \
 }
 
@@ -172,14 +172,16 @@ public:
 
     ///@param format_pattern 自定义日志格式
     explicit LogFormatter(std::string format_pattern)
-    : m_format_pattern(std::move(format_pattern)) { init(); }
+        : m_format_pattern(std::move(format_pattern)) { init(); }
 
     [[nodiscard]] auto GetFormatPattern() const { return m_format_pattern; }
 
+    /// @brief 配置文件中的日志格式能够指定时间项的格式
     void SetTimeFormat(const std::string&  timeFmtPattern = "%Y-%m-%d %H:%M:%S.",  bool need_us = true);
 
     std::string format(const LogMessage::ptr& msg)
     {
+        // 遍历每一项，将其转换为最终被输出的字符串
         std::stringstream ss;
         for(const auto & item: m_format_items) {
             item->format(ss, msg);
@@ -213,6 +215,7 @@ public:
 
     [[nodiscard]]auto GetFormatter() const { return m_formatter; }
 
+    /// @brief 读取配置文件时，配置文件中能够指定单个Appender时间项的格式
     void SetTimeFormat(const std::string&  timeFmtPattern = "%Y-%m-%d %H:%M:%S.",  bool need_us = true) {
         m_formatter->SetTimeFormat(timeFmtPattern, need_us);
     }

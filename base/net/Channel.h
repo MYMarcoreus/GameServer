@@ -34,13 +34,12 @@ public:
 
     /*! GETTER !*/
     SocketApiWrapper::socket_t GetFD() { return m_FD; }
-    Channel::State    GetState() { return m_State; }
-    EventLoop *       GetOwnerLoop() { return m_OwnerLoop; }
-    PollerEvent       GetInterestedEvent(){ return m_InterestedEvent; }
-    PollerEvent       GetHappenedEvent(){ return m_HappenedEvent; }
-    std::string       GetName() const { return m_Name; }
+    Channel::State             GetState() { return m_State; }
+    EventLoop *                GetOwnerLoop() { return m_OwnerLoop; }
+    PollerEvent                GetInterestedEvent(){ return m_InterestedEvent; }
+    PollerEvent                GetHappenedEvent(){ return m_HappenedEvent; }
+    std::string                GetName() const { return m_Name; }
 
-    void SetHappendedEvent(PollerEvent event) { m_HappenedEvent = event;  }
 
     bool IsEnableReading  () { return m_InterestedEvent.HasEvent(PollerEvent::eReadEvent) ; };
     bool IsEnableWriting  () { return m_InterestedEvent.HasEvent(PollerEvent::eWriteEvent); };
@@ -59,11 +58,12 @@ public:
     void SetCloseCallback(F_EventCallback cb) { m_CloseCallback = std::move(cb); }
     void SetErrorCallback(F_EventCallback cb) { m_ErrorCallback = std::move(cb); }
 
+    void SetState(Channel::State newState) { m_State = newState; }
+    void SetHappendedEvent(PollerEvent event) { m_HappenedEvent = event;  }
+
     /// @brief TcpConnection会有对应的一个Channel成员，m_tie用于绑定TcpConnection对象，
     ///        监控TcpConnection的生命周期，防止TcpConnection生命周期到时引用到失效对象。
     void Tie(const std::shared_ptr<void> &obj);
-
-    void SetState(Channel::State newState) { m_State = newState; }
 
     ///@brief 通知EventLoop让Poller将channel从底层数据结构删除
     void RemoveFromLoop();

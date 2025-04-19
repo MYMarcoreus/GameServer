@@ -23,6 +23,7 @@
 #include <utility>
 #include <filesystem>
 #include <functional>
+#include <cassert>
 
 using namespace tinyxml2;
 
@@ -586,11 +587,11 @@ private:
     traverse_nodes(const std::string & prefix, XMLElement * elem, // NOLINT(misc-no-recursion)
                    std::vector<std::pair<std::string, void *>> & all_nodes)
     {
-        // 添加当前结点：root.log.logger
-        std::string elem_name = prefix.empty() ? elem->Value() : (prefix + "." + elem->Value());
+        // 添加当前结点：root.log.logger（对于节点其Value等于Name）
+        std::string elem_name = prefix.empty() ? elem->Name() : (prefix + "." + elem->Name());
         all_nodes.emplace_back(elem_name, elem);
 
-        // 添加当前结点的属性：root.log.logger[m_TypeName]，是叶子节点
+        // 添加当前结点的属性：root.log.logger[m_TypeName]，是叶子节点（对于属性则分为Name: Value的形式）
         for(auto attr = elem->FirstAttribute(); attr ; attr = attr->Next())
         {
             std::string attr_name = elem_name + "[" + attr->Name() + "]";
@@ -613,6 +614,7 @@ private:
 
             if(name.back() == ']') {
                 auto attr = (const XMLAttribute *)(i.second);
+                assert(attr != nullptr);
                 auto tabs = std::string(nTab+1, '\t');
                 std::cout << tabs << name << ": " << attr->Value() << std::endl;
             } else {

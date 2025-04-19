@@ -1,8 +1,6 @@
 #include "Timestamp.h"
 #include <ctime>
 
-#include "cross_platform_defines.h"
-
 
 namespace yy::net {
 

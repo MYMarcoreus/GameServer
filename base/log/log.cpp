@@ -277,7 +277,7 @@ void FileLogAppender::WriteLog(const LogMessage::ptr& msg)
 // TICK_START()
 #if USE_CPP_STREAM
     std::lock_guard lg{m_mutex};
-    m_ofs << m_formatter->format(msg);
+    m_ofs <<  m_formatter->format(msg);
     m_ofs.flush(); // 必须的，否则多线程写的情况下，在线程切换时会让日志混杂
 #else
     // 保证写日志的原子性，使得日志按照生成的时间输出到文件
@@ -431,7 +431,7 @@ Logger::ptr LoggerManager::getLogger(const std::string& name)
 void LoggerManager::ReadConfigs()
 {
     if(!config::ConfigManager::GetIsLoaded()) {
-        std::cout << "日志配置项未加载，请先加载日志配置项！" << std::endl;
+        std::cerr << "日志配置项未加载，请先加载日志配置项！" << std::endl;
         std::terminate();
     }
 
@@ -450,11 +450,18 @@ void LoggerManager::ReadConfigs()
             auto & log_format = appender.m_format;
 
             LogAppender::ptr logAppender = nullptr;
-            if (log_type == config::LogXmlConfig::Logger::Appender::Type::FILE) {
-                logAppender = std::make_shared<FileLogAppender>(log_path, log_format);
-            } else if (log_type == config::LogXmlConfig::Logger::Appender::Type::STDOUT) {
-                logAppender = std::make_shared<StdoutLogApeender>(log_format);
+            switch (log_type) {
+                case config::LogXmlConfig::Logger::Appender::Type::STDOUT:
+                    logAppender = std::make_shared<FileLogAppender>(log_path, log_format);
+                    break;
+                case config::LogXmlConfig::Logger::Appender::Type::FILE:
+                    logAppender = std::make_shared<StdoutLogApeender>(log_format);
+                    break;
+                default:
+                    std::cerr << "预料之外的Appender类型！" << std::endl;
+                    std::terminate();
             }
+            assert(logAppender != nullptr);
             logAppender->SetTimeFormat(appender.m_time_format, appender.m_time_use_us);
             m_loggers[logger.m_name]->addAppender(logAppender );
         }
@@ -511,6 +518,8 @@ void LoggerManager::AsyncLogFlushThread()
 
         // 在异步线程中进行同步写
         if(m_isRunning and p.first != nullptr) {
+            assert(p.second != nullptr);
+
             p.first->WriteLog(p.second);
 
             //FIXME: 收到FATAL日志时到底该不该结束程序呢？

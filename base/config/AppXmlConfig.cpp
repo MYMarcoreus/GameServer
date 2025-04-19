@@ -31,7 +31,7 @@ void AppXmlConfig::load(const XMLElement *xml_app)
     ioThreadNum      = XmlAttributeTo<uint32_t>(xml_app->FindAttribute("ioThreadNum"));
 
     memcpy(securityCode, XmlAttributeTo<std::string>(xml_app->FindAttribute("securityCode")).c_str(), 20);
-    memcpy(checkCode, XmlAttributeTo<std::string>(xml_app->FindAttribute("checkCode")).c_str(), 3);
+    memcpy(checkCode   , XmlAttributeTo<std::string>(xml_app->FindAttribute("checkCode")).c_str(), 3);
 }
 
 

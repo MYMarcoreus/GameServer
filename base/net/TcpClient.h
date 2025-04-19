@@ -1,6 +1,7 @@
 #ifndef LINUXGAMESERVER_TCPCLIENT_H
 #define LINUXGAMESERVER_TCPCLIENT_H
 
+#include <mutex>
 #include "socket_definations.h"
 #include "net_definations.h"
 

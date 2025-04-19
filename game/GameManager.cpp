@@ -74,14 +74,20 @@ void GameManager::RunApp()
 
 void GameManager::Init()
 {
+    //! ①、读取服务器配置文件
     yy::config::ConfigManager::LoadConfigs();
+
+    //! ②、初始化
     m_loop = new net::EventLoop(500ms);
+
+    //! ③、初始化监听的端口和IP地址(IP地址未给出，则使用INADDR_ANY绑定所有IP地址)
     yy::net::IPAddressPtr listenAddr = std::make_shared<net::IPv4Address>(config::g_app_config->GetValue().app_port());
+
+    //! ④、初始化服务器对象（②和③）
     m_server = new core::GameServer(m_loop, listenAddr);
     m_server->SetNotifier_Security(std::bind(&GameManager::AppNotifier_Secutiry, this, _1));
     m_server->SetNotifier_DisConnect(std::bind(&GameManager::AppNotifier_Disconnect, this, _1));
     m_server->SetNotifier_Command(std::bind(&GameManager::AppNotifier_Command, this, _1, _2));
-
 
     m_player = &GamePlayerManager::getInstance();
     m_player->Init();

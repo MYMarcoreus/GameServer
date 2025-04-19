@@ -5,8 +5,6 @@ project(GameServer)
 set(CMAKE_CXX_STANDARD 20)
 
 
-
-
 # -DCMAKE_TOOLCHAIN_FILE=C:\Users\Lenovo\.vcpkg-clion\vcpkg\scripts\buildsystems\vcpkg.cmake
 
 # 判断平台
@@ -17,8 +15,8 @@ if(CMAKE_HOST_SYSTEM_NAME MATCHES Windows)
 
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /source-charset:utf-8")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /source-charset:utf-8")
-#    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /execution-charset:utf-8")
-#    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /execution-charset:utf-8")
+    #    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /execution-charset:utf-8")
+    #    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /execution-charset:utf-8")
 elseif(CMAKE_HOST_SYSTEM_NAME MATCHES Linux)
     message(STATUS "Platform: Linux")
     add_definitions(-D____LINUX)
@@ -61,19 +59,19 @@ endif()
 set(ProtocDirname ${CMAKE_SOURCE_DIR}/protobuf)
 
 # 不带引号时，ProtocArgs后面的参数是数组，如果带引号则会变成带;的字符串
-set(ProtocCmd protoc)
+set(ProtocCmd ${Protobuf_PROTOC_EXECUTABLE})
 set(ProtocArgs # 不能带引号！
-    --proto_path=${ProtocDirname}
-    --cpp_out=${ProtocDirname}
-    --experimental_allow_proto3_optional
+        --proto_path=${ProtocDirname}
+        --cpp_out=${ProtocDirname}
+        --experimental_allow_proto3_optional
 )
 file(GLOB ProtocFiles ${ProtocDirname}/*.proto )
 
 message(execute_process: ${ProtocCmd} ${ProtocArgs} ${ProtocFiles})
 
 execute_process(
-    COMMAND ${ProtocCmd} ${ProtocArgs} ${ProtocFiles}
-    WORKING_DIRECTORY ${ProtocDirname}
+        COMMAND ${ProtocCmd} ${ProtocArgs} ${ProtocFiles}
+        WORKING_DIRECTORY ${ProtocDirname}
 )
 
 message(STATUS "Protobuf_VERSION = ${Protobuf_VERSION}")
@@ -98,16 +96,16 @@ link_directories(${PROTOBUF_LIBRARIES})
 
 
 include_directories(
-    base
-    base/config
-    base/public
-    base/utils
-    base/log
-    base/net
-    game
-    core
-    protobuf
-    ${Protobuf_INCLUDE_DIRS}
+        base
+        base/config
+        base/public
+        base/utils
+        base/log
+        base/net
+        game
+        core
+        protobuf
+        ${Protobuf_INCLUDE_DIRS}
 )
 
 #file(GLOB ProtocSrcs ${ProtocDirname}/*.cc )
@@ -202,9 +200,12 @@ if(CMAKE_HOST_SYSTEM_NAME MATCHES Windows)
 else()
     target_link_libraries( CommonLibrary
             PUBLIC ${PROTOBUF_LIBRARIES}
-            PUBLIC protobuf
             PUBLIC pthread
-            PUBLIC mysqlcppconn
+            #            PUBLIC protobuf
+            #            PUBLIC mysqlcppconn
+            protobuf::libprotoc
+            protobuf::libprotobuf
+            protobuf::libprotobuf-lite
     )
 endif()
 

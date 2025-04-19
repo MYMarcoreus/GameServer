@@ -5,10 +5,13 @@
 #define WIN32_LEAN_AND_MEAN
 #endif
 
+#include <fcntl.h>
+#include <ctime>
+#include <cstdio>
+#include <cstdlib>
+#include <fstream>
 
-
-
-#ifdef ____MSVC
+#ifdef ____WINDOWS
     #include <windows.h>
     #include <winsock2.h>
     #include <ws2tcpip.h>
@@ -21,20 +24,18 @@
     #define IOV_LEN_TYPE unsigned long
 #endif
 
-#ifdef ____GNUC
+#ifdef ____LINUX
     #include <sys/uio.h>
     #define IOV_TYPE struct iovec
     #define IOV_PTR_FIELD iov_base
     #define IOV_LEN_FIELD iov_len
     #define IOV_LEN_TYPE size_t
-
-
 #endif
 
 
 
 
-
+//! 类型定义
 #ifdef ____WINDOWS
     #include <sys/stat.h>
     #include <io.h>
@@ -46,13 +47,9 @@
     #include <unistd.h>
 #endif
 
-#include <fcntl.h>
-#include <ctime>
-#include <cstdio>
-#include <cstdlib>
-#include <fstream>
 
 
+//! 文件操作函数
 #ifdef ____WINDOWS
     #define OPEN(file, mode)        _open(file, mode, S_IWRITE | S_IREAD)
     #define WRITE(fd, data, len)    _write(fd, data, len)
@@ -60,7 +57,6 @@
     #define CLOSE(fd)               _close(fd)
     #define SLEEP(s)                Sleep(1000 * s)
 #endif // ____WINDOWS
-
 
 #ifdef ____LINUX
     #define OPEN(file, mode)        open(file, mode, S_IRUSR | S_IWUSR | S_IRGRP)

@@ -22,7 +22,7 @@ public:
             catch (const std::exception & e) {
                 filepath = ("./" + util::get_current_fmt_time("%Y-%m-%d_serverlog_", false)
                         + xml_appender->Parent()->ToElement()->Attribute("m_TypeName") + ".log");
-                std::cerr <<e.what() << "，使用默认值" << filepath << std::endl;
+                std::cerr << e.what() << "，使用默认日志文件路径" << filepath << std::endl;
             }
         }
         // 读取元素的属性format、time_format、time_use_us

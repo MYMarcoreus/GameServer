@@ -132,8 +132,6 @@ accept(socket_t sockfd, std::shared_ptr<IPAddress> &outPeerAddr, bool isNewSockN
 #endif
 
 #ifdef ____WINDOWS
-
-
     int connfd = ::accept(sockfd, outPeerAddr->GetRawAddr(), &addrLen);
     if (connfd >= 0)
     {
@@ -281,7 +279,7 @@ ssize_t recvfrom(socket_t sockfd, void *ptr, size_t nbytes, int flags, std::shar
 }
 
 ssize_t readv(socket_t sockfd, IOV_TYPE * iov, int iovcnt) {
-#ifdef ____MSVC
+#ifdef ____WINDOWS
     DWORD bytesRead;
     DWORD flags = 0;
     if (WSARecv(sockfd, iov, iovcnt, &bytesRead, &flags, NULL, NULL))

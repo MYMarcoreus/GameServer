@@ -48,6 +48,7 @@ class IPv4Address final : public IPAddress
 public:
     using ptr = std::shared_ptr<IPv4Address>;
 
+    //! 构造函数
     IPv4Address();
 
     explicit IPv4Address(const sockaddr_in *addr) : m_address{*addr} {}

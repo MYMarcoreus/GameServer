@@ -96,13 +96,15 @@ void WakeupManager::Write() {
 
 
 EventLoop::EventLoop(Milliseconds defaultPollwaitTimeout)
-        : m_Poller(Poller::NewDefaultPoller(this))     // many channel fd
-        , m_TimerManager{TimerManager::NewDefaultTimerManager(this)} // timerfd
+        // 跨平台I/O多路复用（Linux使用epoll，Windows使用select）
+        : m_Poller(Poller::NewDefaultPoller(this)) //* many channel fd
+        //
+        , m_TimerManager{TimerManager::NewDefaultTimerManager(this)} //* timerfd
         , m_ThreadID(std::this_thread::get_id())
         , m_IsLooping(false)
         , m_IsQuit(false)
         , m_IsCallingPenddingFunctors(false)
-        , m_WakeupManager(std::make_unique<WakeupManager>(this)) // wakefd
+        , m_WakeupManager(std::make_unique<WakeupManager>(this)) //* wakefd
         , m_DefaultPollwaitTimeout(defaultPollwaitTimeout)
 {
     if(____EventLoopInThisThread) {

@@ -6,6 +6,7 @@
 #include "ConfigManager.h"
 #include "ThreadSafeQueue.hpp"
 #include "LogXmlConfig.h"
+#include "ILogAppender.h"
 
 #include <unordered_map>
 #include <utility>
@@ -162,10 +163,10 @@ class LogFormatter
 {
 public:
     using ptr = std::shared_ptr<LogFormatter>;
-    class FormatItem
+    class IFormatItem
     {
     public:
-        using ptr = std::shared_ptr<FormatItem>;
+        using ptr = std::shared_ptr<IFormatItem>;
 
         virtual void format(std::ostream & out, const LogMessage::ptr& msg) = 0;
     };
@@ -193,70 +194,7 @@ private:
 
 private:
     std::string                  m_format_pattern; // 支持自定义日志格式
-    std::vector<FormatItem::ptr> m_format_items;   // 解析pattern后，格式化后的日志格式项
-};
-
-
-
-
-/// @brief 日志添加器(基类)：用于写一条日志，至于写到哪，这由子类的实现决定
-class LogAppender
-{
-public:
-    using ptr = std::shared_ptr<LogAppender>;
-
-public:
-    explicit LogAppender(const std::string& format_pattern): m_formatter(std::make_shared<LogFormatter>(format_pattern)) {}
-
-    virtual ~LogAppender() = default;
-
-    /// @brief 写一条日志
-    virtual void WriteLog(const LogMessage::ptr& msg) = 0;
-
-    [[nodiscard]]auto GetFormatter() const { return m_formatter; }
-
-    /// @brief 读取配置文件时，配置文件中能够指定单个Appender时间项的格式
-    void SetTimeFormat(const std::string&  timeFmtPattern = "%Y-%m-%d %H:%M:%S.",  bool need_us = true) {
-        m_formatter->SetTimeFormat(timeFmtPattern, need_us);
-    }
-protected:
-
-    mutable std::mutex m_mutex;     // 多个logger输出时进行互斥(测试表明：似乎不用上锁也行)
-    LogFormatter::ptr  m_formatter;
-};
-
-/// @brief 日志输出至标准输出
-class StdoutLogApeender : public LogAppender
-{
-public:
-    StdoutLogApeender() = delete;
-    explicit StdoutLogApeender(const std::string& format_pattern): LogAppender(format_pattern) {}
-
-    ~StdoutLogApeender() override = default;
-
-    /// @brief 将日志信息msg写到标准输出
-    void WriteLog(const LogMessage::ptr& msg) override;
-};
-
-/// @brief 日志输出至文件
-class FileLogAppender : public LogAppender
-{
-public:
-    explicit FileLogAppender(const std::string& logfilepath, const std::string& format_pattern);
-
-    ~FileLogAppender() override;
-
-    /// @brief 将日志信息msg写到文件
-    void WriteLog(const LogMessage::ptr& msg) override;
-
-private:
-    std::string m_logfilepath; // 完整的文件路径
-#if USE_CPP_STREAM
-    std::ofstream m_ofs;  // 文件流
-#else
-    int m_filefd{};
-    // FILE * m_filep;
-#endif
+    std::vector<IFormatItem::ptr> m_format_items;   // 解析pattern后，格式化后的日志格式项
 };
 
 
@@ -280,10 +218,10 @@ public:
     void Log(const LogMessage::ptr& msg);
 
     /// @brief 向日志器添加一个日志添加器
-    void addAppender(const LogAppender::ptr& appender);
+    void addAppender(const std::shared_ptr<ILogAppender>& appender);
 
     /// @brief 从日志器删除一个日志添加器
-    void delAppender(const LogAppender::ptr& appender);
+    void delAppender(const std::shared_ptr<ILogAppender>& appender);
 
     void clearAppenders();
 
@@ -300,7 +238,7 @@ private:
 private:
     std::string                   m_name;      // 日志器名称
     LogLevel                      m_level;     // 日志器级别
-    std::vector<LogAppender::ptr> m_appenders; // 日志添加器
+    std::vector<std::shared_ptr<ILogAppender>> m_appenders; // 日志添加器
     mutable std::mutex            m_mutex;     // 管理appenders的互斥锁
 
     /* 异步 */
@@ -357,7 +295,7 @@ private:
     std::mutex m_mutex;
 
     /* 所有日志器共用一个阻塞队列，并用m_isRun控制异步写日志线程的运行 */
-    yy::util::ThreadSafeQueue<std::pair<LogAppender::ptr, LogMessage::ptr>> m_blockqueue;
+    yy::util::ThreadSafeQueue<std::pair<std::shared_ptr<ILogAppender>, LogMessage::ptr>> m_blockqueue;
     // 某线程因遇到错误结束程序，为使得detach的线程也能够关闭，故使用原子变量isRun进行同步
     std::atomic<bool> m_isRunning;
     std::thread       m_async_thread;

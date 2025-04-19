@@ -1,6 +1,9 @@
 #include "log.h"
 #include "util_functions.h"
 #include "net/cross_platform_defines.h"
+#include "FileLogAppender.h"
+#include "StdoutLogApeender.h"
+#include "ILogAppender.h"
 #include <algorithm>
 
 #ifdef ____WINDOWS
@@ -55,7 +58,7 @@ LogLevel LogLevel::FromString(const std::string &level_str)
 
 /******************************* Formatter *******************************/
 ///@brief 格式化字符串中的普通字符
-class PlainFormatItem : public LogFormatter::FormatItem
+class PlainFormatItem : public LogFormatter::IFormatItem
 {
 public:
     explicit PlainFormatItem(std::string  str) : m_str(std::move(str)) {}
@@ -67,7 +70,7 @@ private:
 };
 
 ///@brief 格式化字符串中的%l：日志级别
-class LevelFormatItem : public LogFormatter::FormatItem
+class LevelFormatItem : public LogFormatter::IFormatItem
 {
 public:
     void format(std::ostream& out, const LogMessage::ptr & msg) override
@@ -75,7 +78,7 @@ public:
 };
 
 ///@brief 格式化字符串中的%i：线程id
-class ThreadIDFormatItem : public LogFormatter::FormatItem
+class ThreadIDFormatItem : public LogFormatter::IFormatItem
 {
 public:
     void format(std::ostream& out, const LogMessage::ptr & msg) override
@@ -83,7 +86,7 @@ public:
 };
 
 ///@brief 格式化字符串中的%c：日志内容
-class ContentFormatItem : public LogFormatter::FormatItem
+class ContentFormatItem : public LogFormatter::IFormatItem
 {
 public:
     void format(std::ostream& out, const LogMessage::ptr & msg) override
@@ -91,7 +94,7 @@ public:
 };
 
 ///@brief 格式化字符串中的%t：日志时间，以产生日志的时间为准
-class TimeFormatItem : public LogFormatter::FormatItem
+class TimeFormatItem : public LogFormatter::IFormatItem
 {
 public:
     ///@param timeFmtPattern 自定义时间格式
@@ -108,7 +111,7 @@ private:
 };
 
 ///@brief 格式化字符串中的%f：产生日志的代码文件
-class FilepathFormatItem : public LogFormatter::FormatItem
+class FilepathFormatItem : public LogFormatter::IFormatItem
 {
 public:
     void format(std::ostream& out, const LogMessage::ptr & msg) override
@@ -116,7 +119,7 @@ public:
 };
 
 ///@brief 格式化字符串中的%L：产生日志的代码所在行数
-class FilelineFormatItem : public LogFormatter::FormatItem
+class FilelineFormatItem : public LogFormatter::IFormatItem
 {
 public:
     void format(std::ostream& out, const LogMessage::ptr & msg) override
@@ -124,7 +127,7 @@ public:
 };
 
 ///@brief 格式化字符串中的%n：换行符
-class NewlineFormatItem : public LogFormatter::FormatItem
+class NewlineFormatItem : public LogFormatter::IFormatItem
 {
 public:
     void format(std::ostream& out, const LogMessage::ptr & ) override
@@ -132,7 +135,7 @@ public:
 };
 
 ///@brief 格式化字符串中的%T：输出Tab
-class TabFormatItem : public LogFormatter::FormatItem
+class TabFormatItem : public LogFormatter::IFormatItem
 {
 public:
     void format(std::ostream& out, const LogMessage::ptr & ) override
@@ -140,7 +143,7 @@ public:
 };
 
 ///@brief 格式化字符串中的%p：输出百分号%
-class PercentSignFormatItem : public LogFormatter::FormatItem
+class PercentSignFormatItem : public LogFormatter::IFormatItem
 {
 public:
     void format(std::ostream& out, const LogMessage::ptr & ) override
@@ -148,7 +151,7 @@ public:
 };
 
 
-thread_local static std::map<char, LogFormatter::FormatItem::ptr> g_format_item_map
+thread_local static std::map<char, LogFormatter::IFormatItem::ptr> g_format_item_map
 {
         {'l', std::make_shared<LevelFormatItem>()      }, // 日志级别
         {'i', std::make_shared<ThreadIDFormatItem>()   }, // 线程id
@@ -220,77 +223,7 @@ void LogFormatter::SetTimeFormat(const std::string& timeFmtPattern, bool need_us
 
 
 
-/******************************* StdoutLogApeender *******************************/
-void StdoutLogApeender::WriteLog(const LogMessage::ptr& msg)
-{
-    std::lock_guard lg{m_mutex};
-    std::cout << m_formatter->format(msg);
-    std::cout.flush();
-}
-
-
-
 /******************************* FileLogAppender *******************************/
-//! 保留了多个线程写同一文件时会输出三次"---start---"和"---finish--"的“bug”，从而让你知道有多个线程在写同一文件
-FileLogAppender::FileLogAppender(const std::string& logfilepath, const std::string& format_pattern) //NOLINT
-    : m_logfilepath{logfilepath}, LogAppender(format_pattern)
-{
-#if USE_CPP_STREAM
-    if (m_ofs.is_open())
-        m_ofs.close();
-    m_ofs.open(m_logfilepath, std::ios::out | std::ios::app);
-    m_ofs << "---------------start---------------\n";
-#else
-    m_filefd = ::open(m_logfilepath.c_str(), O_CREAT | O_APPEND | O_WRONLY, 0644);
-    assert(m_filefd != -1);
-
-    auto start_info = "---------------start---------------\n";
-    auto ret  = ::write(m_filefd, start_info, strlen(start_info) );
-#endif
-    printf("open file: %s!!!\n", m_logfilepath.c_str());
-}
-
-FileLogAppender::~FileLogAppender()
-{
-#if USE_CPP_STREAM
-    if(m_ofs.is_open()) {
-        m_ofs << "---------------finish---------------\n";
-        m_ofs.flush();
-        m_ofs.close();
-    }
-#else
-    if(util::isOpenedFD(m_filefd)) {
-        auto start_info = "---------------finish---------------\n";
-        auto ret = ::write(m_filefd, start_info, strlen(start_info) );
-
-        FLUSH(m_filefd);
-        ::close(m_filefd);
-        // assert( ::fclose(m_filep) != EOF);
-    }
-#endif
-}
-
-// FIXME：并没有做到多个logger写同一个文件时的互斥
-void FileLogAppender::WriteLog(const LogMessage::ptr& msg)
-{
-    assert(msg != nullptr);
-// TICK_START()
-#if USE_CPP_STREAM
-    std::lock_guard lg{m_mutex};
-    m_ofs <<  m_formatter->format(msg);
-    m_ofs.flush(); // 必须的，否则多线程写的情况下，在线程切换时会让日志混杂
-#else
-    // 保证写日志的原子性，使得日志按照生成的时间输出到文件
-    std::lock_guard lg{m_mutex};
-    const std::string & msg_str = m_formatter->format(msg);
-
-    // 使用O_APPEND模式打开的文件的write()是原子操作：保证这一条信息写到内核缓冲队列中
-    auto ret = ::write(m_filefd, msg_str.c_str(), msg_str.size());
-    assert(ret != -1);
-    // assert(::fsync(m_filefd) != -1); //! bug所在，使得写入的数量减少了!!!
-#endif
-// TICK_END_CALCAVG()
-}
 
 // std::string FileLogAppender::format(const LogMessage::ptr& msg)
 // {
@@ -327,7 +260,7 @@ Logger::Logger(const std::string& name, LogLevel level, bool isAsync) //NOLINT
 { }
 
 
-void Logger::addAppender(const LogAppender::ptr& appender)
+void Logger::addAppender(const ILogAppender::ptr& appender)
 {
     assert(appender != nullptr);
 
@@ -335,7 +268,7 @@ void Logger::addAppender(const LogAppender::ptr& appender)
     m_appenders.push_back(appender);
 }
 
-void Logger::delAppender(const LogAppender::ptr& appender)
+void Logger::delAppender(const ILogAppender::ptr& appender)
 {
     assert(appender != nullptr);
 
@@ -449,18 +382,19 @@ void LoggerManager::ReadConfigs()
             auto & log_path = appender.m_filepath;
             auto & log_format = appender.m_format;
 
-            LogAppender::ptr logAppender = nullptr;
+            ILogAppender::ptr logAppender = nullptr;
             switch (log_type) {
-                case config::LogXmlConfig::Logger::Appender::Type::STDOUT:
+                case config::LogXmlConfig::Logger::Appender::Type::FILE:
                     logAppender = std::make_shared<FileLogAppender>(log_path, log_format);
                     break;
-                case config::LogXmlConfig::Logger::Appender::Type::FILE:
+                case config::LogXmlConfig::Logger::Appender::Type::STDOUT:
                     logAppender = std::make_shared<StdoutLogApeender>(log_format);
                     break;
                 default:
                     std::cerr << "预料之外的Appender类型！" << std::endl;
                     std::terminate();
             }
+
             assert(logAppender != nullptr);
             logAppender->SetTimeFormat(appender.m_time_format, appender.m_time_use_us);
             m_loggers[logger.m_name]->addAppender(logAppender );
@@ -573,7 +507,7 @@ struct LogListener
                         logger->setLevel(LogLevel::FromString(new_logger_var.m_level));
                         logger->clearAppenders();
                         for (const auto &appender_var: new_logger_var.m_appenders) {
-                            LogAppender::ptr appender;
+                            ILogAppender::ptr appender;
                             switch (appender_var.m_type) {
                                 case config::LogXmlConfig::Logger::Appender::Type::FILE:
                                     appender.reset(new FileLogAppender{appender_var.m_filepath, appender_var.m_format});

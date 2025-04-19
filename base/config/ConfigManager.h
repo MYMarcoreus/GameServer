@@ -29,21 +29,9 @@ using namespace tinyxml2;
 
 namespace yy::config {
 
-
-
-
-
-
-
-
-/// @brief 将结点xml_node中属性名为attr_str的属性值转换为类型T
-/// @tparam T 要转换为的类型
-// std::string
+///@brief 节点属性转换为C++的类型变量
 template<typename T>
-requires requires {
-    requires std::is_same_v<std::decay_t<T>, char *> || std::is_same_v<T, std::string>;
-}
-static T XmlAttributeTo(const XMLAttribute * xml_attr)
+T XmlAttributeTo(const XMLAttribute* xml_attr)
 {
     if (!xml_attr) {
         std::stringstream ss;
@@ -51,107 +39,62 @@ static T XmlAttributeTo(const XMLAttribute * xml_attr)
         throw std::invalid_argument(ss.str());
     }
 
-    const char *attr_val = xml_attr->Value();
-    return attr_val ? attr_val : "";
-}
-
-///@brief int
-template<typename T>
-requires requires {
-    // 带符号整数
-    requires std::is_signed_v<T>;     // 带符号
-    requires std::is_integral_v<T>;   // 整数
-}
-static T XmlAttributeTo(const XMLAttribute * xml_attr)
-{
-    if (!xml_attr) {
-        std::stringstream ss;
-        ss << "xml_attr为空，该属性可能不存在！";
-        throw std::invalid_argument(ss.str());
+    //! 字符串属性
+    if constexpr (std::is_same_v<std::decay_t<T>, char*> || std::is_same_v<T, std::string>) {
+        const char* attr_val = xml_attr->Value();
+        return attr_val ? attr_val : "";
     }
-
-    int attr_val;
-    int ret = xml_attr->QueryIntValue(&attr_val);
-    if (ret == XML_WRONG_ATTRIBUTE_TYPE) {
-        std::cerr << "属性[" << xml_attr->Name() << "]属性不为整型！\n";
-        throw std::bad_cast();
+    //! 布尔属性
+    else
+    if constexpr (std::is_same_v<T, bool>) {
+        bool attr_val;
+        int ret = xml_attr->QueryBoolValue(&attr_val);
+        if (ret == XML_WRONG_ATTRIBUTE_TYPE) {
+            std::cerr << "属性[" << xml_attr->Name() << "]属性不为布尔类型！\n";
+            throw std::bad_cast();
+        }
+        return attr_val;
     }
-
-    return static_cast<T>(attr_val);
+    //! 浮点数属性
+    else
+    if constexpr (std::is_floating_point_v<T>) {
+        double attr_val;
+        int ret = xml_attr->QueryDoubleValue(&attr_val);
+        if (ret == XML_WRONG_ATTRIBUTE_TYPE) {
+            std::cerr << "属性[" << xml_attr->Name() << "]属性不为浮点类型！\n";
+            throw std::bad_cast();
+        }
+        return static_cast<T>(attr_val);
+    }
+    //! 整数属性
+    else
+    if constexpr (std::is_integral_v<T>){
+        //! 无符号整数
+        if constexpr (std::is_unsigned_v<T>) {
+            unsigned int attr_val;
+            int ret = xml_attr->QueryUnsignedValue(&attr_val);
+            if (ret == XML_WRONG_ATTRIBUTE_TYPE) {
+                std::cerr << "属性[" << xml_attr->Name() << "]属性不为无符号整型！\n";
+                throw std::bad_cast();
+            }
+            return static_cast<T>(attr_val);
+        }
+        //! 带符号整数
+        else
+        if constexpr (std::is_signed_v<T>) {
+            int attr_val;
+            int ret = xml_attr->QueryIntValue(&attr_val);
+            if (ret == XML_WRONG_ATTRIBUTE_TYPE) {
+                std::cerr << "属性[" << xml_attr->Name() << "]属性不为整型！\n";
+                throw std::bad_cast();
+            }
+            return static_cast<T>(attr_val);
+        }
+    } else {
+        static_assert(sizeof(T) == 0, "XmlAttributeTo 不支持该类型");
+    }
 }
 
-//! uint
-template<typename T>
-requires requires {
-    // 无符号整数
-    requires std::is_unsigned_v<T>;              // 无符号(包括bool)
-    requires std::is_integral_v<T>;              // 整数
-    requires !std::is_same_v<T, bool>;           // 非布尔
-}
-static T XmlAttributeTo(const XMLAttribute * xml_attr)
-{
-    if (!xml_attr) {
-        std::stringstream ss;
-        ss << "xml_attr为空，该属性可能不存在！";
-        throw std::invalid_argument(ss.str());
-    }
-
-    unsigned int attr_val;
-    int ret = xml_attr->QueryUnsignedValue(&attr_val);
-    if (ret == XML_WRONG_ATTRIBUTE_TYPE) {
-        std::cerr << "属性[" << xml_attr->Name() << "]属性不为整型！\n";
-        throw std::bad_cast();
-    }
-
-    return static_cast<T>(attr_val);
-}
-
-// double
-template<typename T>
-requires requires {
-    // 浮点数
-    requires std::is_floating_point_v<T>;
-}
-static T XmlAttributeTo(const XMLAttribute * xml_attr)
-{
-    if (!xml_attr) {
-        std::stringstream ss;
-        ss << "xml_attr为空，该属性可能不存在！";
-        throw std::invalid_argument(ss.str());
-    }
-
-    double attr_val;
-    int ret = xml_attr->QueryDoubleValue(&attr_val);
-    if (ret == XML_WRONG_ATTRIBUTE_TYPE) {
-        std::cerr << "属性[" << xml_attr->Name() << "]属性不为浮点类型！\n";
-        throw std::bad_cast();
-    }
-
-    return static_cast<T>(attr_val);
-}
-
-///@brief bool
-template<typename T>
-requires requires {
-    requires std::is_same_v<T, bool>;
-}
-static T XmlAttributeTo(const XMLAttribute * xml_attr)
-{
-    if (!xml_attr) {
-        std::stringstream ss;
-        ss << "xml_attr为空，该属性可能不存在！";
-        throw std::invalid_argument(ss.str());
-    }
-
-    bool attr_val;
-    int ret = xml_attr->QueryBoolValue(&attr_val);
-    if (ret == XML_WRONG_ATTRIBUTE_TYPE) {
-        std::cerr << "属性[" << xml_attr->Name() << "]属性不为浮点类型！\n";
-        throw std::bad_cast();
-    }
-
-    return static_cast<T>(attr_val);
-}
 
 
 
@@ -323,7 +266,7 @@ public:
     /**
      * @brief 获取当前参数的值
      */
-    T &
+    const T &
     GetValue() {
         util::ReadLockGuard lock(m_mutex);
         return m_val;
@@ -616,7 +559,9 @@ private:
                 auto attr = (const XMLAttribute *)(i.second);
                 assert(attr != nullptr);
                 auto tabs = std::string(nTab+1, '\t');
-                std::cout << tabs << name << ": " << attr->Value() << std::endl;
+                if(attr != nullptr) {
+                    std::cout << tabs << name << ": " << attr->Value() << std::endl;
+                }
             } else {
                 auto elem = (const XMLElement *)(i.second);
                 auto tabs = std::string(nTab, '\t');
@@ -652,8 +597,6 @@ private:
 
     // 配置文件默认路径：通过可执行文件的相对路径寻找
     static const char kConfigPaths[4][128];
-
-
 };
 
 

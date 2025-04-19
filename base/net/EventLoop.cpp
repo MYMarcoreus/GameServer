@@ -156,30 +156,31 @@ void EventLoop::Loop() {
 
         YLOG_TRACE("Before PollWait();")
 
-        //! 在此处理所有已到期的定时器
+        //! 距离下一个定时器超时的时长（没有定时器就是距离默认超时时间的时长）
         timeout = GetPollwaitTimeout();
 
+        //! Windows没有类似Linux的定时器，直接在这里处理已超时的定时器
 #ifdef ____WINDOWS
         if(timeout <= 0ms) {
             m_TimerManager->HandleExpiredTimersInLoop();
             continue;
         }
 #endif
+        //! Linux则有内置定时器，RBTreeTimerManager内已将其作为Channel加入m_Poller的监听范围中，在PollWait内处理超时的定时器
 
         //! 等待timeout ms，由Poller填充ActiveChannels
         m_Poller->PollWait(m_ActiveChannels, timeout);
 
         //todo 对发生的事件进行优先级排序
-
         YLOG_TRACE("\nAfter PollWait(), 发生了{}个事件", m_ActiveChannels.size())
 
-        // 处理发生了事件的channel
+        //! 处理发生了事件的channel
         for(Channel * activeChannel: m_ActiveChannels) {
             activeChannel->HandleHappenedEvent();
         }
         YLOG_TRACE("Before CallPenddingCallbacks();")
 
-        // 运行代办函数
+        //! 运行代办函数
         CallPenddingCallbacks();
 
         YLOG_TRACE("After CallPenddingCallbacks();")

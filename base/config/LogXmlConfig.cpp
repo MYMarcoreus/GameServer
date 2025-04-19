@@ -3,9 +3,6 @@
 namespace yy::config
 {
 
-
-
-
 template<>
 class XmlElementTo<LogXmlConfig::Logger::Appender>
 {
@@ -34,6 +31,7 @@ public:
     }
 };
 
+//! ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
 template<>
 class XmlElementTo<LogXmlConfig::Logger>
 {
@@ -44,11 +42,20 @@ public:
                 XmlAttributeTo<std::string>(xml_logger->FindAttribute("m_TypeName")),
                 XmlAttributeTo<std::string>(xml_logger->FindAttribute("level")),
                 XmlAttributeTo<bool>(xml_logger->FindAttribute("is_async")),
+
                 XmlElementTo<decltype(LogXmlConfig::Logger::m_appenders)>{}(xml_logger)
         };
     }
 };
 
+//! ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
+void LogXmlConfig::load(const XMLElement *xml_log)
+{
+    m_loggers = XmlElementTo<decltype(m_loggers)>{}(xml_log);
+}
+
+//! ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
+//! 調用來源：parse_all_nodes
 template<>
 class XmlElementTo<LogXmlConfig>
  {
@@ -60,15 +67,6 @@ class XmlElementTo<LogXmlConfig>
          return logXmlConfig;
      }
  };
-
-
-
-void LogXmlConfig::load(const XMLElement *xml_log)
-{
-    m_loggers = XmlElementTo<decltype(m_loggers)>{}(xml_log);
-}
-
-
 
 
 

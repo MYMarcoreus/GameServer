@@ -20,8 +20,36 @@ public:
     }
 };
 
+//! ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
+void RemoteXmlConfig::load(const XMLElement *xml_remote)
+{
+    appXorCode      = XmlAttributeTo<uint8_t>(xml_remote->FindAttribute("appXorCode"));
+    appVersion      = XmlAttributeTo<int32_t>(xml_remote->FindAttribute("appVersion"));
+    recvBytesOne    = XmlAttributeTo<int32_t>(xml_remote->FindAttribute("recvBytesOne")) * 1024;
+    recvBytesMax    = XmlAttributeTo<int32_t>(xml_remote->FindAttribute("recvBytesMax")) * 1024;
+    sendBytesOne    = XmlAttributeTo<int32_t>(xml_remote->FindAttribute("sendBytesOne")) * 1024;
+    sendBytesMax    = XmlAttributeTo<int32_t>(xml_remote->FindAttribute("sendBytesMax")) * 1024;
+    maxHeartTime    = XmlAttributeTo<int32_t>(xml_remote->FindAttribute("maxHeartTime"));
+    autoConnectTime = XmlAttributeTo<int32_t>(xml_remote->FindAttribute("autoConnectTime"));
+    memcpy(securityCode, XmlAttributeTo<std::string>(xml_remote->FindAttribute( "securityCode")).c_str(), 20);
+    memcpy(checkCode, XmlAttributeTo<std::string>(xml_remote->FindAttribute( "checkCode")).c_str(), 3);
 
+    m_remote_nodes = XmlElementTo<decltype(m_remote_nodes)>{}(xml_remote);
+}
 
+//! ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
+//! 調用來源：parse_all_nodes
+ template<>
+ class XmlElementTo<RemoteXmlConfig>
+ {
+ public:
+     RemoteXmlConfig operator()(const XMLElement *xml_remote)
+     {
+         RemoteXmlConfig remoteXmlConfig;
+         remoteXmlConfig.load(xml_remote);
+         return remoteXmlConfig;
+     }
+ };
 
 std::string RemoteXmlConfig::RemoteNode::TypeToString() const
 {
@@ -51,34 +79,10 @@ RemoteXmlConfig::RemoteType RemoteXmlConfig::RemoteNode::StringToType(const std:
     return UNKNOWN;
 }
 
- template<>
- class XmlElementTo<RemoteXmlConfig>
- {
- public:
-     RemoteXmlConfig operator()(const XMLElement *xml_remote)
-     {
-         RemoteXmlConfig remoteXmlConfig;
-         remoteXmlConfig.load(xml_remote);
-         return remoteXmlConfig;
-     }
- };
 
 
-void RemoteXmlConfig::load(const XMLElement *xml_remote)
-{
-    appXorCode      = XmlAttributeTo<uint8_t>(xml_remote->FindAttribute("appXorCode"));
-    appVersion      = XmlAttributeTo<int32_t>(xml_remote->FindAttribute("appVersion"));
-    recvBytesOne    = XmlAttributeTo<int32_t>(xml_remote->FindAttribute("recvBytesOne")) * 1024;
-    recvBytesMax    = XmlAttributeTo<int32_t>(xml_remote->FindAttribute("recvBytesMax")) * 1024;
-    sendBytesOne    = XmlAttributeTo<int32_t>(xml_remote->FindAttribute("sendBytesOne")) * 1024;
-    sendBytesMax    = XmlAttributeTo<int32_t>(xml_remote->FindAttribute("sendBytesMax")) * 1024;
-    maxHeartTime    = XmlAttributeTo<int32_t>(xml_remote->FindAttribute("maxHeartTime"));
-    autoConnectTime = XmlAttributeTo<int32_t>(xml_remote->FindAttribute("autoConnectTime"));
-    memcpy(securityCode, XmlAttributeTo<std::string>(xml_remote->FindAttribute( "securityCode")).c_str(), 20);
-    memcpy(checkCode, XmlAttributeTo<std::string>(xml_remote->FindAttribute( "checkCode")).c_str(), 3);
 
-    m_remote_nodes = XmlElementTo<decltype(m_remote_nodes)>{}(xml_remote);
-}
+
 
 
 ConfigVar<RemoteXmlConfig>::ptr g_remote_config

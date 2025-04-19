@@ -165,6 +165,15 @@ include_directories(
 set(COMMON_SOURCES
         base/net/PriorityQueueTimerManager.cpp
         base/net/NewDefaultTimerManager.cpp
+        base/log/StdoutLogApeender.h
+        base/log/FileLogAppender.h
+        base/log/StdoutLogApeender.cpp
+        base/log/StdoutLogApeender.h
+        base/log/FileLogAppender.cpp
+        base/log/FileLogAppender.h
+        base/utils/FactoryX.h
+        base/utils/ClassRegister.h
+        base/log/ILogAppender.h
 )
 # 调用子目录下的cmake
 add_subdirectory(base)

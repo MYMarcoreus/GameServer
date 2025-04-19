@@ -72,7 +72,7 @@ private:
     void ResetAndFreeExpiredTimers(std::vector<TimerPtr> & expiredTimers );
 
 private:
-    EventLoop *                m_OwnerLoop;
+    EventLoop *  m_OwnerLoop;
 
 #ifdef ____LINUX
     std::unique_ptr<detail::__TimerfdManager>   m_TimerfdManager;

@@ -3,16 +3,6 @@
 namespace yy::config
 {
 
-template<>
-class XmlElementTo<AppXmlConfig> {
-public:
-    AppXmlConfig operator()(const XMLElement * xml_app) {
-        AppXmlConfig appXmlConfig;
-        appXmlConfig.load(xml_app);
-        return appXmlConfig;
-    }
-};
-
 void AppXmlConfig::load(const XMLElement *xml_app)
 {
     appID            = XmlAttributeTo<uint32_t>(xml_app->FindAttribute("appID"));
@@ -34,6 +24,17 @@ void AppXmlConfig::load(const XMLElement *xml_app)
     memcpy(checkCode   , XmlAttributeTo<std::string>(xml_app->FindAttribute("checkCode")).c_str(), 3);
 }
 
+//! ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
+//! 調用來源：parse_all_nodes
+template<>
+class XmlElementTo<AppXmlConfig> {
+public:
+    AppXmlConfig operator()(const XMLElement * xml_app) {
+        AppXmlConfig appXmlConfig;
+        appXmlConfig.load(xml_app);
+        return appXmlConfig;
+    }
+};
 
 ConfigVar<AppXmlConfig>::ptr g_app_config
         = ConfigManager::LookUpOrAdd<AppXmlConfig>("root.app", {});

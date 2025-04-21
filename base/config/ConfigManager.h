@@ -29,6 +29,13 @@ using namespace tinyxml2;
 
 namespace yy::config {
 
+/*
+! 类型驱动的 XML 配置反序列化框架
+! ①：类型特化：XmlElementTo<T> 模板类，为不同的目标类型提供不同的 XML 解析逻辑，解耦解析逻辑与数据结构。
+! ②：统一转换接口：operator()(const XMLElement)*
+*/
+
+
 ///@brief 节点属性转换为C++的类型变量
 template<typename T>
 T XmlAttributeTo(const XMLAttribute* xml_attr)
@@ -98,8 +105,8 @@ T XmlAttributeTo(const XMLAttribute* xml_attr)
 
 
 
-
-template<typename T>
+//! 主模板声明（用于特化）：将XML序列化保存到数据结构T中
+template<class T>
 class XmlElementTo
 {
 public:
@@ -107,10 +114,11 @@ public:
 };
 
 ///@brief 一个结点下面有多个子节点T，这些结点可以重复
-template<typename T>
+template<class T>
 class XmlElementTo<std::vector<T>>
 {
 public:
+    //! 可以再重载一个
     std::vector<T> operator()(const XMLElement *xml_parent)
     {
         std::vector<T> children;
@@ -122,7 +130,7 @@ public:
 };
 
 ///@brief 一个结点下面有多个子节点T，这些结点不能重复
-template<typename T>
+template<class T>
 class XmlElementTo<std::set<T>>
 {
 public:
@@ -438,25 +446,25 @@ public:
 
     ///@brief 读取配置文件，若已读取，则再次读取
     static void
-    LoadConfigs()
+    LoadXmlConfigs()
     {
         tinyxml2::XMLDocument  xml_doc;
         XMLElement * root_elem = read_root(xml_doc);
 
-        std::vector<std::pair<std::string, void *>> all_nodes;
+        std::vector<std::pair<std::string, void *>> all_xml_nodes;
 
-        // 将XML文件解析为 m_TypeName: TiXmlBase*
-        traverse_nodes("", root_elem, all_nodes);
+        // 将XML文件解析为 typeName: TiXmlBase*
+        traverse_xml_nodes("", root_elem, all_xml_nodes);
 
-        print_all_nodes(all_nodes);
+        print_all_xml_nodes(all_xml_nodes);
 
         // 将XML文件解析为 m_TypeName: 内部存储类
-        parse_all_nodes(all_nodes);
+        parse_all_xml_nodes(all_xml_nodes);
 
-        for(auto && it: GetConfigVarMap())
-        {
-            std::cout << it.first << ":: " << it.second->GetTypeName() << std::endl;
-        }
+        // for(auto && it: GetConfigVarMap())
+        // {
+        //     std::cout << it.first << ":: " << it.second->GetTypeName() << std::endl;
+        // }
 
         SetIsLoaded(true);
         std::cout << "所有配置读取完毕！\n";
@@ -527,7 +535,7 @@ private:
 
     /// @brief 将XML结点扁平化：将XML文件解析为 m_TypeName: TiXmlBase* 的形式
     static void
-    traverse_nodes(const std::string & prefix, XMLElement * elem, // NOLINT(misc-no-recursion)
+    traverse_xml_nodes(const std::string & prefix, XMLElement * elem, // NOLINT(misc-no-recursion)
                    std::vector<std::pair<std::string, void *>> & all_nodes)
     {
         // 添加当前结点：root.log.logger（对于节点其Value等于Name）
@@ -543,12 +551,12 @@ private:
 
         // 遍历子节点
         for (auto child_elem = elem->FirstChildElement(); child_elem; child_elem = child_elem->NextSiblingElement()) {
-            traverse_nodes(elem_name, child_elem, all_nodes);
+            traverse_xml_nodes(elem_name, child_elem, all_nodes);
         }
     }
 
     static void
-    print_all_nodes(std::vector<std::pair<std::string, void *>> & all_nodes)
+    print_all_xml_nodes(std::vector<std::pair<std::string, void *>> & all_nodes)
     {
         for(const auto& i: all_nodes)
         {
@@ -572,7 +580,7 @@ private:
 
     /// @brief 将XML文件解析为 {m_TypeName: 内部存储类} 的形式
     static void
-    parse_all_nodes(std::vector<std::pair<std::string, void *>> & all_nodes)
+    parse_all_xml_nodes(std::vector<std::pair<std::string, void *>> & all_nodes)
     {
         for(const auto& i: all_nodes)
         {
@@ -585,10 +593,10 @@ private:
             if(var) {
                 // 属性
                 if(name.back() == ']') {
-                    var->FromXmlAttribute((const XMLAttribute *) xml_base);
+                    var->FromXmlAttribute((const XMLAttribute *)xml_base);
                     std::cout << "属性已读取完毕：" << name << "，类型为：" << var->GetTypeName() << std::endl;
                 } else {
-                    var->FromXmlElement((const XMLElement *) xml_base);
+                    var->FromXmlElement((const XMLElement *)xml_base);
                     std::cout << "结点已读取完毕：" << name << "，类型为：" << var->GetTypeName() << std::endl;
                 }
             }

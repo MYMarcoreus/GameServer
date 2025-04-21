@@ -7,9 +7,11 @@
 
 namespace yy::config {
 
-/// @brief 加载「服务器端」的服务器xml配置文件
-class AppXmlConfig
+//! @brief 「存储」「服务器端」的服务器xml配置文件
+struct AppXmlConfig
 {
+    //!  「解析」「服务器端」的服务器xml配置文件
+    friend class XmlElementTo<AppXmlConfig>;
 public:
     /// @brief 服务器端口号
     [[nodiscard]] uint16_t app_port() const { return appPort; }
@@ -57,10 +59,6 @@ public:
 
     /// @brief IO线程个数
     [[nodiscard]] uint32_t io_thread_num() const { return ioThreadNum; };
-
-
-    ///! @brief 读取root元素下名为app的配置项
-    void load(const XMLElement *xml_app) ;
 
 private:
     uint16_t appPort{};          // 服务器端口号

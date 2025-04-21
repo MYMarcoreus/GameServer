@@ -38,7 +38,7 @@ void RemoteXmlConfig::load(const XMLElement *xml_remote)
 }
 
 //! ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
-//! 調用來源：parse_all_nodes
+//! 調用來源：parse_all_xml_nodes
  template<>
  class XmlElementTo<RemoteXmlConfig>
  {

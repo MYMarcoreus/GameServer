@@ -109,7 +109,7 @@ private:
 
 int main()
 {
-    config::ConfigManager::LoadConfigs();
+    config::ConfigManager::LoadXmlConfigs();
     EventLoop loop{500ms};
     auto serverNode = config::g_remote_config->GetValue().m_remote_nodes[0];
     IPAddressPtr serverAddr = std::make_shared<IPv4Address>(serverNode.m_ip, serverNode.m_port);

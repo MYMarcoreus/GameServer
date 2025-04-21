@@ -74,10 +74,6 @@ struct LogXmlConfig
 
     /* data */
     std::vector<Logger> m_loggers;
-
-    /* funtion */
-    /// @brief 读取root元素下名为log的配置项
-    void load(const XMLElement *xml_log);
 };
 
 

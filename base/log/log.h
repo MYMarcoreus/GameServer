@@ -66,7 +66,7 @@
 
 
 
-//! 日志系统需要在配置系统加载后才能开始：应先调用config::ConfigManager::LoadConfigs()后才使用日志系统
+//! 日志系统需要在配置系统加载后才能开始：应先调用config::ConfigManager::LoadXmlConfigs()后才使用日志系统
 namespace yy::Ylog {
 
 class LogLevel

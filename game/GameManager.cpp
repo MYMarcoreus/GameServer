@@ -75,7 +75,7 @@ void GameManager::RunApp()
 void GameManager::Init()
 {
     //! ①、读取服务器配置文件
-    yy::config::ConfigManager::LoadConfigs();
+    yy::config::ConfigManager::LoadXmlConfigs();
 
     //! ②、初始化
     m_loop = new net::EventLoop(500ms);

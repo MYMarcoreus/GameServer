@@ -64,7 +64,7 @@
                 is_async = "true" >
             <appender
                     type = "stdout"
-                    format="[%t][%l][%i][%f:%L] %c%n"
+                    format="[%t][%l] %c%n"
                     time_format="%Y-%m-%d %H:%M:%S."
                     time_use_us="true" >
                 description

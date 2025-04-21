@@ -27,7 +27,13 @@ public:
         auto time_format   = XmlAttributeTo<std::string>(xml_appender->FindAttribute("time_format"));
         auto time_use_us     = XmlAttributeTo<bool>(xml_appender->FindAttribute("time_use_us"));
 
-        return {type, filepath, format, time_format, time_use_us};
+        return {
+            type,
+            filepath,
+            format,
+            time_format,
+            time_use_us
+        };
     }
 };
 
@@ -49,22 +55,16 @@ public:
 };
 
 //! ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
-void LogXmlConfig::load(const XMLElement *xml_log)
-{
-    m_loggers = XmlElementTo<decltype(m_loggers)>{}(xml_log);
-}
-
-//! ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
-//! 調用來源：parse_all_nodes
+//! 調用來源：parse_all_xml_nodes
 template<>
 class XmlElementTo<LogXmlConfig>
  {
  public:
      LogXmlConfig operator()(const XMLElement *xml_log)
      {
-         LogXmlConfig logXmlConfig;
-         logXmlConfig.load(xml_log);
-         return logXmlConfig;
+        return {
+            .m_loggers = XmlElementTo<decltype(LogXmlConfig::m_loggers)>{}(xml_log)
+        };
      }
  };
 

@@ -107,7 +107,7 @@ private:
 
 int main()
 {
-    config::ConfigManager::LoadConfigs();
+    config::ConfigManager::LoadXmlConfigs();
     EventLoop loop{500ms};
     IPAddressPtr listenAddr = std::make_shared<IPv4Address>(config::g_app_config->GetValue().app_port());
     QueryServer server(&loop, listenAddr);

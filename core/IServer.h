@@ -21,7 +21,7 @@ class IServer: util::noncopyable
 public:
     using ptr = std::shared_ptr<IServer>;
     using F_Notifier = std::function<void(const yy::net::TcpConnectionPtr &)>;
-    using F_NotifierCommand = std::function<void(const UserBaseDataPtr &, const MessagePtr &)>;
+    using F_NotifierCommand = std::function<void(const UserConnectionPtr &, const MessagePtr &)>;
 public:
     IServer() = default;
  
@@ -33,9 +33,9 @@ public:
     /// @brief 结束服务器
     virtual void Stop() = 0;
 
-    virtual UserBaseDataPtr FindUser(const std::string & conn_name) = 0;
+    virtual UserConnectionPtr FindUser(const std::string & conn_name) = 0;
     virtual void            DelUser(const std::string & conn_name) = 0;
-    virtual void            AddUser (const std::string & conn_name, const UserBaseDataPtr &) = 0;
+    virtual void            AddUser (const std::string & conn_name, const UserConnectionPtr &) = 0;
 
     virtual bool IsRunning() const = 0;
 

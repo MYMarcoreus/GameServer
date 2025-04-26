@@ -3,7 +3,7 @@
 #include "log.h"
 #include "connection.pb.h"
 #include "md5/md5.h"
-#include "UserBaseData.h"
+#include "UserConnection.h"
 #include "EventLoop.h"
 
 #include <google/protobuf/message.h>
@@ -47,6 +47,7 @@ void GameServer::Stop() {
 void GameServer::OnUnknownMessage(const TcpConnectionPtr & conn, const MessagePtr &message) {
     YLOG_TRACE("游戏消息：{}，交由业务层", message->GetDescriptor()->full_name());
 
+    // 执行业务层回调，分发消息
     m_notifier_command(FindUser(conn->GetName()), message);
 }
 
@@ -54,17 +55,17 @@ void GameServer::OnConnectionEstablished(const TcpConnectionPtr  & conn) {
     YLOG_INFO("███████████████████连接成功<{}:{}, {}>！",
               conn->GetPeerAddr()->GetIPStr().c_str(), conn->GetPeerAddr()->GetPort(), conn->GetSocketFD());
 
-    auto userdata = std::make_shared<UserBaseData>(conn, m_codec);
+    auto userdata = std::make_shared<UserConnection>(conn, m_codec);
     AddUser(conn->GetName(), userdata);
     AddCheckTimer(conn, userdata);
     SendXorCode(conn);
 }
 
-void GameServer::AddCheckTimer(const TcpConnectionPtr & conn, const UserBaseDataPtr & userdata) {
+void GameServer::AddCheckTimer(const TcpConnectionPtr & conn, const UserConnectionPtr & userdata) {
     /* ***** 需要是弱引用，不能因为这个回调函数延长TcpConnection的生命周期 ***** */
     //! ①检查是否在指定时间内完成安全连接的认证，若未认证，则关闭连接
     conn->GetLoop()->RunAfter(Seconds{GetAppConfig().time_security_max()},
-    [weak_userdata = std::weak_ptr<UserBaseData>{userdata}]()
+    [weak_userdata = std::weak_ptr<UserConnection>{userdata}]()
     {
         if(auto userdata = weak_userdata.lock()) {
             if (userdata->IsConnected() and !userdata->IsSecure()) {
@@ -76,7 +77,7 @@ void GameServer::AddCheckTimer(const TcpConnectionPtr & conn, const UserBaseData
 
     //! ②检查是否收到心跳包，如未收到，则shutdown连接
     conn->GetLoop()->RunAfter(Seconds{GetAppConfig().time_heart_max()},
-    [this, weak_userdata = std::weak_ptr<UserBaseData>{userdata}]()
+    [this, weak_userdata = std::weak_ptr<UserConnection>{userdata}]()
     {
         if(auto userdata = weak_userdata.lock()) {
             this->CheckHeart(userdata);
@@ -84,7 +85,7 @@ void GameServer::AddCheckTimer(const TcpConnectionPtr & conn, const UserBaseData
     });
 }
 
-void GameServer::CheckHeart(const UserBaseDataPtr & userdata) {
+void GameServer::CheckHeart(const UserConnectionPtr & userdata) {
     const auto & conn = userdata->GetConnection();
     if(!conn->IsConnected() or Timestamp::Now() - conn->GetHeartTime() > Seconds{g_app_config->GetValue().time_heart_max()}) {
         YLOG_WARN("<{}>主线程Update_CheckDisconnetion: 用户心跳包超时，关闭用户连接！", conn->GetSocketFD());
@@ -93,7 +94,7 @@ void GameServer::CheckHeart(const UserBaseDataPtr & userdata) {
     } else {
         //! 需要是弱引用，不能因为这个回调函数延长TcpConnection的生命周期
         conn->GetLoop()->RunAfter(Seconds{GetAppConfig().time_heart_max()},
-        [this, weak_userdata = std::weak_ptr<UserBaseData>{userdata}]
+        [this, weak_userdata = std::weak_ptr<UserConnection>{userdata}]
         {
           if(auto userdata = weak_userdata.lock()) {
               this->CheckHeart(userdata);
@@ -202,7 +203,7 @@ void GameServer::AfterShutdownConnection(const TcpConnectionPtr & conn) {
 
 
 
-UserBaseDataPtr GameServer::FindUser(const std::string & conn_name) {
+UserConnectionPtr GameServer::FindUser(const std::string & conn_name) {
     std::lock_guard lg{m_users_mutex};
 
     auto it = m_users.find(conn_name);
@@ -215,7 +216,7 @@ void GameServer::DelUser(const std::string & conn_name) {
     m_users.erase(conn_name);
 }
 
-void GameServer::AddUser(const std::string & conn_name, const UserBaseDataPtr & userdata) {
+void GameServer::AddUser(const std::string & conn_name, const UserConnectionPtr & userdata) {
     std::lock_guard lg{m_users_mutex};
 
     m_users[conn_name] = userdata;

@@ -67,7 +67,7 @@ void LinuxServer::Stop()
 
 //! send_buf的生产者：根据指令cmd，将指定类型「序列化」为send_buf中的字节流，并且添上首部
 void LinuxServer::BuildPackage(
-        const UserBaseData::ptr& userdata, E_PackageCommand cmd,
+        const UserConnection::ptr& userdata, E_PackageCommand cmd,
         const google::protobuf::Message * body)
 {
     assert(userdata != nullptr);
@@ -117,7 +117,7 @@ void LinuxServer::BuildPackage(
 
 //! recv_buf的消费者：将recv_buf中的字节流「结构化」为指定类型
 // 消息头已被解析完毕，数据已在recv_buf中
-void LinuxServer::ParsePackage(const UserBaseData::ptr& userdata, google::protobuf::Message * data)
+void LinuxServer::ParsePackage(const UserConnection::ptr& userdata, google::protobuf::Message * data)
 {
     assert(userdata != nullptr);
     return_if(data == nullptr);
@@ -190,7 +190,7 @@ void LinuxServer::Update()
 
 }
 
-UserBaseData::ptr LinuxServer::FindUserBySockfd(int sockfd)
+UserConnection::ptr LinuxServer::FindUserBySockfd(int sockfd)
 {
     if(sockfd < 0)
         return nullptr;

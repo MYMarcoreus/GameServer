@@ -67,8 +67,8 @@ private:
     std::unique_ptr<class SignalManager> m_SignalManager;
 #endif
 
-    std::atomic<bool> m_IsStarted{false};
-    uint64_t          m_NextConnID{0};
+    std::atomic<bool>   m_IsStarted{false};
+    uint64_t            m_NextConnID{0};
     std::atomic<size_t> m_NumConnect{0};  //当前连接数
 
 

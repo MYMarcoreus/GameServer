@@ -16,7 +16,7 @@ namespace yy::app {
 
 void GameManager::AppNotifier_Secutiry(const yy::net::TcpConnectionPtr& conn) {
     auto userdata = m_server->FindUser(conn->GetName());
-    userdata->SetState(core::UserBaseData::E_UserBaseState::eSecure);
+    userdata->SetState(core::UserConnection::E_UserBaseState::eSecure);
 }
 
 void GameManager::AppNotifier_Disconnect(const yy::net::TcpConnectionPtr& conn) {
@@ -39,14 +39,14 @@ void GameManager::AppNotifier_Disconnect(const yy::net::TcpConnectionPtr& conn) 
     }
 }
 
-void GameManager::AppNotifier_Command(const core::UserBaseDataPtr & userdata, const core::MessagePtr & message)
+void GameManager::AppNotifier_Command(const core::UserConnectionPtr & userdata, const core::MessagePtr & message)
 {
     m_wordThreads.PushTask([this, userdata, message](){
         m_dispatcher.OnProtobufMessage(userdata, message);
     });
 }
 
-void GameManager::UnkonwnCommand(const core::UserBaseDataPtr & userdata, const core::MessagePtr & message)
+void GameManager::UnkonwnCommand(const core::UserConnectionPtr & userdata, const core::MessagePtr & message)
 {
     YLOG_DEBUG("未知的消息类型：{}", message->GetDescriptor()->full_name())
     userdata->Shutdown();

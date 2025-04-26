@@ -10,7 +10,7 @@ namespace yy::net {
 using namespace yy::util;
 
 Acceptor::Acceptor(EventLoop *loop, Socket::Type socketType, const IPAddressPtr listenAddr, bool reusePort)
-        : m_Loop(loop),
+        : m_AcceptorLoop(loop),
           m_IsListening(false),
           m_AcceptSocket(socketType, (Socket::Family)listenAddr->GetFamily(), true), //! 非阻塞监听套接字
           m_AcceptChannel(loop, m_AcceptSocket.GetFD(), "Acceptor Channel"),
@@ -31,11 +31,11 @@ Acceptor::~Acceptor() {
 
 
 void Acceptor::StartListen() {
-    m_Loop->RunCallbackInLoop([this](){ this->StartListenInLoop(); });
+    m_AcceptorLoop->RunCallbackInLoop([this](){ this->StartListenInLoop(); });
 }
 
 void Acceptor::HandleAccept() {
-    m_Loop->AssertInLoopingThread();
+    m_AcceptorLoop->AssertInLoopingThread();
 
     IPAddressPtr outPeerAddr = nullptr;
     switch (m_AcceptSocket.GetFamily()) {
@@ -60,7 +60,7 @@ void Acceptor::HandleAccept() {
 }
 
 void Acceptor::StartListenInLoop() {
-    m_Loop->AssertInLoopingThread();
+    m_AcceptorLoop->AssertInLoopingThread();
 
     m_IsListening = true;
     m_AcceptChannel.SetReadCallback([this](){ this->HandleAccept(); });
@@ -72,7 +72,7 @@ void Acceptor::StartListenInLoop() {
 }
 
 void Acceptor::StopListen() {
-    m_Loop->QuitLoop();
+    m_AcceptorLoop->QuitLoop();
     m_IsListening = false;
 }
 

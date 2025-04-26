@@ -86,7 +86,7 @@ void LinuxServer::EnlargeHashContainer()
     for(int i = 0 ; i < m_app_configvar->GetValue().app_connection_max() ; ++i)
     {
         // m_online_users自身就是一个对象池，里面既有已连接的对象，也有未连接的对象，但至少不是空指针
-        m_online_users.push_back(std::make_shared<UserBaseData>());
+        m_online_users.push_back(std::make_shared<UserConnection>());
     }
 #endif
 }
@@ -230,7 +230,7 @@ void LinuxServer::Event_AcceptOne()
     // 因为套接字文件描述符可以标记一个以连接用户，所以userdata一定是空闲用户对象
     Socket sock = m_listenSocket.Accept(); // LT模式进行accept
 
-    UserBaseData::ptr userdata = getFreeUser(sock);
+    UserConnection::ptr userdata = getFreeUser(sock);
     userdata->Init(sock);
 
     // 启动ET模式，并自动设置非阻塞
@@ -278,7 +278,7 @@ void LinuxServer::Thread_Receiver(LinuxServer * self)
     YLOG_TRACE("Receiver Thread Finish!")
 }
 
-void LinuxServer::Event_ReceiveOne(const UserBaseData::ptr& userdata) // NOLINT
+void LinuxServer::Event_ReceiveOne(const UserConnection::ptr& userdata) // NOLINT
 {
     return_if(UNLIKELY(userdata == nullptr));
 
@@ -351,7 +351,7 @@ void LinuxServer::Event_ReceiveOne(const UserBaseData::ptr& userdata) // NOLINT
 
 
 // 调用Update_CheckDisconnetion()时，user不会处于Free状态
-void LinuxServer::Update_CheckDisconnetion(const UserBaseData::ptr& userdata) // NOLINT
+void LinuxServer::Update_CheckDisconnetion(const UserConnection::ptr& userdata) // NOLINT
 {
     assert(userdata != nullptr);
     return_if(UNLIKELY(!userdata->isConnected()));
@@ -393,7 +393,7 @@ void LinuxServer::Update_CheckDisconnetion(const UserBaseData::ptr& userdata) //
 
 //! recv_buf的消费者：在Update中调用，解析包，并上交至业务层执行
 /* 数据已被接受到buff中，消费缓冲区的数据(消费者)，解析消息头，根据消息头中的指令cmd字段选择解析消息体的函数执行 */
-void LinuxServer::Update_ReadPackage(const UserBaseData::ptr& userdata) // NOLINT
+void LinuxServer::Update_ReadPackage(const UserConnection::ptr& userdata) // NOLINT
 {
     assert(userdata != nullptr);
     return_if(UNLIKELY(!userdata->isGood())); //? 是否要继续处理被shutdown的用户的接收缓冲区？
@@ -441,7 +441,7 @@ void LinuxServer::Update_ReadPackage(const UserBaseData::ptr& userdata) // NOLIN
     recvBuf.set_isCompleted(false);
 }
 
-std::optional<PackageHead> LinuxServer::ProcessHead(const UserBaseData::ptr& userdata) // NOLINT
+std::optional<PackageHead> LinuxServer::ProcessHead(const UserConnection::ptr& userdata) // NOLINT
 {
     UserBuffer& recvBuf = userdata->recv_buf;
 
@@ -475,7 +475,7 @@ std::optional<PackageHead> LinuxServer::ProcessHead(const UserBaseData::ptr& use
     return pkg_head;
 }
 
-void LinuxServer::ProcessCommand(const UserBaseData::ptr& userdata, const PackageHead& pkg_head) // NOLINT
+void LinuxServer::ProcessCommand(const UserConnection::ptr& userdata, const PackageHead& pkg_head) // NOLINT
 {
     assert(userdata != nullptr);
     // return_if(UNLIKELY(!userdata->isConnected())); // 不能返回，因为数据已读入用户缓冲，shutdown情况下需要处理这些数据
@@ -501,7 +501,7 @@ void LinuxServer::ProcessCommand(const UserBaseData::ptr& userdata, const Packag
     }
 }
 
-void LinuxServer::OnHeart(const UserBaseData::ptr& userdata)
+void LinuxServer::OnHeart(const UserConnection::ptr& userdata)
 {
     assert(userdata != nullptr);
 
@@ -509,7 +509,7 @@ void LinuxServer::OnHeart(const UserBaseData::ptr& userdata)
     BuildPackage(userdata, E_PackageCommand::eHeart, nullptr);
 }
 
-void LinuxServer::OnSecurity(const UserBaseData::ptr& userdata) // NOLINT
+void LinuxServer::OnSecurity(const UserConnection::ptr& userdata) // NOLINT
 {
     assert(userdata != nullptr);
 
@@ -560,7 +560,7 @@ void LinuxServer::OnSecurity(const UserBaseData::ptr& userdata) // NOLINT
 }
 
 //! send_buf的消费者：在Update中调用，发送用户数据
-void LinuxServer::Update_SendPackage(const UserBaseData::ptr& userdata) // NOLINT
+void LinuxServer::Update_SendPackage(const UserConnection::ptr& userdata) // NOLINT
 {
     assert(userdata != nullptr);
     // *return：用户连接会在Receiver线程Reset，不能保证userdata内容的有效性，这时便需要返回
@@ -593,7 +593,7 @@ LinuxServer::~LinuxServer()
     Stop();
 }
 
-void LinuxServer::ShutdownConnection(const UserBaseData::ptr& userdata) { // NOLINT
+void LinuxServer::ShutdownConnection(const UserConnection::ptr& userdata) { // NOLINT
     assert(userdata != nullptr);
     return_if(!userdata->isGood());
 
@@ -606,7 +606,7 @@ void LinuxServer::ShutdownConnection(const UserBaseData::ptr& userdata) { // NOL
     userdata->sock.Shutdown();
 }
 
-void LinuxServer::CloseConnection(const UserBaseData::ptr& userdata) { // NOLINT
+void LinuxServer::CloseConnection(const UserConnection::ptr& userdata) { // NOLINT
     assert(userdata != nullptr);
     return_if(!userdata->isConnected());
 
@@ -622,7 +622,7 @@ void LinuxServer::CloseConnection(const UserBaseData::ptr& userdata) { // NOLINT
 
 }
 
-void LinuxServer::setUserFree(const UserBaseData::ptr& userdata)
+void LinuxServer::setUserFree(const UserConnection::ptr& userdata)
 {
 #if USE_USER_POOL
     m_online_user_manager.delUser(userdata->sock);
@@ -631,7 +631,7 @@ void LinuxServer::setUserFree(const UserBaseData::ptr& userdata)
 #endif
 }
 
-UserBaseData::ptr LinuxServer::getFreeUser(Socket sock)
+UserConnection::ptr LinuxServer::getFreeUser(Socket sock)
 {
 #if USE_USER_POOL //todo
     m_online_user_manager.addUser(sock);

@@ -20,7 +20,7 @@ void EventLoopThreadPool::Start(int threadNum, Milliseconds pollwaitTimeout, F_T
     for (int i = 0; i < threadNum; ++i) {
         auto t = new EventLoopThread(cb, pollwaitTimeout);
         m_Threads.emplace_back(std::unique_ptr<EventLoopThread>(t));
-        m_Loops.emplace_back(t->CreateLoop());
+        m_ioLoops.emplace_back(t->CreateLoop());
         // m_Loops.back()->SetCloseSocketsCallback(CloseShutdownCallbacks);
         YLOG_INFO("启动io线程<{}>！", t->GetThreadID())
     }
@@ -35,9 +35,9 @@ EventLoop *EventLoopThreadPool::GetNextLoop() {
     m_BaseLoop->AssertInLoopingThread();
 
     EventLoop * loop = nullptr;
-    if(!m_Loops.empty()) {
-        loop = m_Loops[m_NextLoop++];
-        if(m_NextLoop >= m_Loops.size()) {
+    if(!m_ioLoops.empty()) {
+        loop = m_ioLoops[m_NextLoop++];
+        if(m_NextLoop >= m_ioLoops.size()) {
             m_NextLoop = 0;
         }
     } else {

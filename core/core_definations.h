@@ -21,8 +21,8 @@ class Socket;
 namespace yy::core {
 
 
-class UserBaseData;
-using UserBaseDataPtr = std::shared_ptr<UserBaseData>;
+class UserConnection;
+using UserConnectionPtr = std::shared_ptr<UserConnection>;
 
 
 enum class MessageParseErrorCode {

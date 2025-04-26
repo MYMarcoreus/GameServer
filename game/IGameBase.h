@@ -1,7 +1,7 @@
 #ifndef ____IGAMEBASE_H
 #define ____IGAMEBASE_H
 
-#include "UserBaseData.h"
+#include "UserConnection.h"
 
 namespace yy::app {
 

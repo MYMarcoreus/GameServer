@@ -117,7 +117,7 @@ Ptr<yy::protocol::app::PlayerBaseData> GamePlayerManager::FindPlayerByUID(UID_t 
     }
 }
 
-void GamePlayerManager::Broadcast(const UserBaseDataPtr &from, const google::protobuf::Message &data) {
+void GamePlayerManager::Broadcast(const UserConnectionPtr &from, const google::protobuf::Message &data) {
     decltype(m_online_players) players;
     {
         std::lock_guard lg{m_online_players_mutex};
@@ -137,21 +137,21 @@ void GamePlayerManager::Broadcast(const UserBaseDataPtr &from, const google::pro
     }
 }
 
-void GamePlayerManager::Broadcast(const UserBaseDataPtr& from, const MessagePtr &data)
+void GamePlayerManager::Broadcast(const UserConnectionPtr& from, const MessagePtr &data)
 {
     if(data) {
         Broadcast(from, *data);
     }
 }
 
-void GamePlayerManager::LeaveAndSave(UserBaseDataPtr leave_user) {
+void GamePlayerManager::LeaveAndSave(UserConnectionPtr leave_user) {
     // 给其他玩家客户端发送离线通告
     yy::protocol::app::PlayerLeave playerLeave;
     playerLeave.set_leaver_uid(leave_user->GetUID());
     Broadcast(leave_user, playerLeave);
     YLOG_INFO("玩家<{}>离开", playerLeave.leaver_uid())
 
-    leave_user->SetState(core::UserBaseData::E_UserBaseState::eSavingData);
+    leave_user->SetState(core::UserConnection::E_UserBaseState::eSavingData);
 
     auto playerdata = FindPlayerByUID(leave_user->GetUID());
     // 重置数据，从在线玩家列表中删除，回收至对象池
@@ -165,7 +165,7 @@ void GamePlayerManager::LeaveAndSave(UserBaseDataPtr leave_user) {
 
     YLOG_INFO("玩家<{}>离开并保存数据！", leave_user->GetUID());
 
-    leave_user->SetState(core::UserBaseData::E_UserBaseState::eFree);
+    leave_user->SetState(core::UserConnection::E_UserBaseState::eFree);
     m_server->DelUser(leave_user->GetConnName());
 }
 
@@ -180,7 +180,7 @@ void GamePlayerManager::LeaveAndSave(UserBaseDataPtr leave_user) {
 
 
 
-void GamePlayerManager::OnLogin(const UserBaseDataPtr& userdata, const Ptr<protocol::app::LoginRequest> &) //NOLINT
+void GamePlayerManager::OnLogin(const UserConnectionPtr& userdata, const Ptr<protocol::app::LoginRequest> &) //NOLINT
 {
     if(userdata->IsLoggedIn()) {
         return;
@@ -258,7 +258,7 @@ void GamePlayerManager::OnLogin(const UserBaseDataPtr& userdata, const Ptr<proto
     // 转换状态
     // 返回给登录用户自己的信息和其他人的信息
     userdata->Send(loginResponse);
-    userdata->SetState(core::UserBaseData::E_UserBaseState::eLoggedIn);
+    userdata->SetState(core::UserConnection::E_UserBaseState::eLoggedIn);
 
     // 返回登录用户的信息给其他用户
     OtherPlayerDataResponse otherPlayerDataResponse;
@@ -271,14 +271,14 @@ void GamePlayerManager::OnLogin(const UserBaseDataPtr& userdata, const Ptr<proto
     YLOG_INFO("玩家<{}:{}>登录", selfdata->conn_name(), selfdata->uid())
 }
 
-void GamePlayerManager::OnLeave(const UserBaseDataPtr& userdata_self, const Ptr<protocol::app::PlayerLeave> & leave) //NOLINT
+void GamePlayerManager::OnLeave(const UserConnectionPtr& userdata_self, const Ptr<protocol::app::PlayerLeave> & leave) //NOLINT
 {
     if(userdata_self == nullptr) return;
     LeaveAndSave(userdata_self);
 }
 
 /// 当userdata_self收到其他人的移动的数据时，便会申请获取id为id_other的用户的玩家数据
-void GamePlayerManager::OnOtherPlayerDataRequest(const UserBaseDataPtr& userdata_self, const Ptr<protocol::app::OtherPlayerDataRequest> & request) //NOLINT
+void GamePlayerManager::OnOtherPlayerDataRequest(const UserConnectionPtr& userdata_self, const Ptr<protocol::app::OtherPlayerDataRequest> & request) //NOLINT
 {
     auto player_other = FindPlayerByUID(request->requested_uid());
     if(player_other == nullptr) {
@@ -292,7 +292,7 @@ void GamePlayerManager::OnOtherPlayerDataRequest(const UserBaseDataPtr& userdata
     userdata_self->Send(response);
 }
 
-void GamePlayerManager::OnSelfMovement(const UserBaseDataPtr& userdata_self, const Ptr<protocol::app::SelfMovement> & selfmove)
+void GamePlayerManager::OnSelfMovement(const UserConnectionPtr& userdata_self, const Ptr<protocol::app::SelfMovement> & selfmove)
 {
     auto playerdata_self = FindPlayerByUID(selfmove->uid());
     if(playerdata_self == nullptr) {
@@ -311,7 +311,7 @@ void GamePlayerManager::OnSelfMovement(const UserBaseDataPtr& userdata_self, con
     Broadcast(userdata_self, othermove);
 }
 
-void GamePlayerManager::OnSelfJumpAndGravity(const UserBaseDataPtr& userdata_self, const Ptr<protocol::app::SelfJumpAndGravity> & selfJumpAndGravity) //NOLINT
+void GamePlayerManager::OnSelfJumpAndGravity(const UserConnectionPtr& userdata_self, const Ptr<protocol::app::SelfJumpAndGravity> & selfJumpAndGravity) //NOLINT
 {
     auto playerdata_self = FindPlayerByUID(selfJumpAndGravity->uid());
     if(playerdata_self == nullptr) {

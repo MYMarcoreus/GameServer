@@ -15,21 +15,22 @@ class ProtobufCodec;
 
 
 /// @brief 用户连接数据
-class UserBaseData
+class UserConnection
 {
 public:
-    using ptr = std::shared_ptr<UserBaseData>;
+    using ptr = std::shared_ptr<UserConnection>;
 
     enum class E_UserBaseState {
         eFree         = 0,
         eConnected    = 4,
         eSecure       = 5,
+        //todo 这两个状态实际上是业务层的，应该再业务层创建一个类来包含UserConnection
         eLoggedIn     = 6,
-        eSavingData     = 7,
+        eSavingData   = 7,
     };
 
 public:
-    UserBaseData(net::TcpConnectionPtr conn, ProtobufCodec & m_codec);
+    UserConnection(net::TcpConnectionPtr conn, ProtobufCodec & m_codec);
 
     void Shutdown() { m_conn->Shutdown(); }
 

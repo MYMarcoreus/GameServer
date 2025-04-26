@@ -21,7 +21,7 @@ using namespace yy::config;
 TcpConnection::TcpConnection(std::string name, EventLoop *loop, SocketApiWrapper::socket_t sockfd,
                              IPAddress::ptr localAddr, IPAddress::ptr peerAddr)
     : m_Name(name),
-      m_Loop(loop),
+      m_ioLoop(loop),
       m_Channel(std::make_unique<Channel>(loop, sockfd, name)),
       m_Socket (std::make_unique<Socket>(sockfd, Socket::Type::TCP, Socket::Family::IPv4)),
       m_LocalAddr(localAddr),
@@ -75,16 +75,16 @@ void TcpConnection::Send(const std::shared_ptr<google::protobuf::Message> &messa
 }
 
 void TcpConnection::Send(const std::string_view & message) {
-    if(m_Loop->IsInLoopingThread()) {
-        m_Loop->RunCallbackInLoop([conn = shared_from_this(), message](){ conn->SendInLoop(message); });
+    if(m_ioLoop->IsInLoopingThread()) {
+        m_ioLoop->RunCallbackInLoop([conn = shared_from_this(), message](){ conn->SendInLoop(message); });
     } else {
         //! 需要将数据拷贝到IO线程中（否则线程不安全），这里SendInLoop使用const引用延长临时对象生命周期
-        m_Loop->RunCallbackInLoop([conn = shared_from_this(), msg = std::string(message)](){ conn->SendInLoop(msg); });
+        m_ioLoop->RunCallbackInLoop([conn = shared_from_this(), msg = std::string(message)](){ conn->SendInLoop(msg); });
     }
 }
 
 void TcpConnection::SendInLoop(const std::string_view & buf) { //! const引用延长临时对象生命周期
-    m_Loop->AssertInLoopingThread();
+    m_ioLoop->AssertInLoopingThread();
 
     ssize_t nByteSend = 0;
     ssize_t nByteRemained = buf.size();
@@ -98,7 +98,7 @@ void TcpConnection::SendInLoop(const std::string_view & buf) { //! const引用�
             nByteRemained = buf.size() - nByteSend;
             if(nByteRemained == 0 and m_ConnectionWriteCompleteCallback) {
                 // 捕获shared_from_this()以延长生命周期
-                m_Loop->EnqueueCallbackInLoop([this, self = shared_from_this()](){this->m_ConnectionWriteCompleteCallback(self);});
+                m_ioLoop->EnqueueCallbackInLoop([this, self = shared_from_this()](){this->m_ConnectionWriteCompleteCallback(self);});
             }
         } else {
             nByteSend = 0;
@@ -123,10 +123,10 @@ void TcpConnection::Shutdown() {
     if(not CanShutdown())
         return;
 
-    m_Loop->RunCallbackInLoop([self = shared_from_this()](){ self->ShutdownInLoop();});
+    m_ioLoop->RunCallbackInLoop([self = shared_from_this()](){ self->ShutdownInLoop();});
 }
 void TcpConnection::ShutdownInLoop() {
-    m_Loop->AssertInLoopingThread();
+    m_ioLoop->AssertInLoopingThread();
 
     YLOG_TRACE("TcpConnection::ShutdownInLoop(): CanShutdown()=={}", CanShutdown())
 
@@ -161,7 +161,7 @@ void TcpConnection::ShutdownInLoop() {
 
 
 void TcpConnection::ConnectionEstablished() {
-    m_Loop->AssertInLoopingThread();
+    m_ioLoop->AssertInLoopingThread();
     assert(IsConnecting());
     YLOG_TRACE("====================In TcpConnection::ConnectionEstablished：TCP连接完成！====================")
 
@@ -177,7 +177,7 @@ void TcpConnection::ConnectionEstablished() {
 }
 
 void TcpConnection::ConnectionDestroyed() {
-    m_Loop->AssertInLoopingThread();
+    m_ioLoop->AssertInLoopingThread();
 
     YLOG_DEBUG("In TcpConnection::ConnectionDestroyed(): ")
 
@@ -195,7 +195,7 @@ void TcpConnection::ConnectionDestroyed() {
 
 
 void TcpConnection::HandleRead() {
-    m_Loop->AssertInLoopingThread();
+    m_ioLoop->AssertInLoopingThread();
 
     YLOG_TRACE("正在读取来自连接<{}>的数据！", m_Socket->GetFD())
 
@@ -221,7 +221,7 @@ void TcpConnection::HandleRead() {
 }
 
 void TcpConnection::HandleWrite() {
-    m_Loop->AssertInLoopingThread();
+    m_ioLoop->AssertInLoopingThread();
 
     if(!m_Channel->IsEnableWriting()) {
         YLOG_TRACE("未监听写事件，跳过")
@@ -246,7 +246,7 @@ void TcpConnection::HandleWrite() {
 
             //! 执行写回调
             if (m_ConnectionWriteCompleteCallback) {
-                m_Loop->EnqueueCallbackInLoop([this, self = shared_from_this()](){this->m_ConnectionWriteCompleteCallback(self);});
+                m_ioLoop->EnqueueCallbackInLoop([this, self = shared_from_this()](){this->m_ConnectionWriteCompleteCallback(self);});
             }
         }
     }
@@ -266,7 +266,7 @@ void TcpConnection::HandleWrite() {
 }
 
 void TcpConnection::HandleClose() {
-    m_Loop->AssertInLoopingThread();
+    m_ioLoop->AssertInLoopingThread();
 
     //! 用户要关闭连接时，并不直接Close，而是先Shundown，等到一定时间之后再统一Close
     switch (m_ConnectionState)
@@ -281,12 +281,12 @@ void TcpConnection::HandleClose() {
 }
 
 void TcpConnection::HandleError() {
-    m_Loop->AssertInLoopingThread();
+    m_ioLoop->AssertInLoopingThread();
 
 }
 
 bool TcpConnection::HandleRead_ET() {
-    m_Loop->AssertInLoopingThread();
+    m_ioLoop->AssertInLoopingThread();
 
     bool isReadOk = false;
 

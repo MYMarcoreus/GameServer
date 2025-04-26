@@ -56,7 +56,7 @@ public:
 
     /*! GETTER !*/
     const std::string &    GetName()          const { return m_Name; }
-    EventLoop *            GetLoop()          const { return m_Loop; }
+    EventLoop *            GetLoop()          const { return m_ioLoop; }
     const IPAddress::ptr & GetLocalAddr()     const { return m_LocalAddr; }
     const IPAddress::ptr & GetPeerAddr()      const { return m_PeerAddr; }
     const Buffer &         GetSendBuf()       const { return m_SendBuf; }
@@ -99,7 +99,7 @@ private:
 
 private:
     std::string                    m_Name;
-    EventLoop *                    m_Loop;
+    EventLoop *                    m_ioLoop;
     std::unique_ptr<Socket>        m_Socket;
     std::unique_ptr<Channel>       m_Channel;
     uint8_t                        m_XorCode;

@@ -68,6 +68,7 @@ private:
     static MessagePtr CreateMessage(const std::string & typeName);
 
 private:
+    //! 通过由上层IServer子类设置为`ProtobufDispatcher<TcpConnectionPtr>::OnProtobufMessage`
     F_ProtobufMessageDispatchCallback   m_ProtobufMessageDispatchCallback;
     F_ProtobufErrorMessageCallback      m_ProtobufErrorMessageCallback;
 };

@@ -1,9 +1,9 @@
-#include "UserBaseData.h"
+#include "UserConnection.h"
 #include "UserBuffer.h"
 #include "player.pb.h"
 
 using yy::core::UserBuffer;
-using yy::core::UserBaseData;
+using yy::core::UserConnection;
 
 // void Event_ReceiveOne(UserBuffer buffer)
 // {
@@ -13,7 +13,7 @@ using yy::core::UserBaseData;
 //     buffer.set_isCompleted(true); // Receiver线程标记数据接收完成，Handler可处理
 // }
 //
-// void Update_ReadPackage(UserBaseData userdata)
+// void Update_ReadPackage(UserConnection userdata)
 // {
 //     auto & recvBuf = userdata.recv_buf;
 //     auto & sendBuf = userdata.send_buf;

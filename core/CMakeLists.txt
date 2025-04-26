@@ -8,7 +8,7 @@ set(LocalSrc
         codec/ProtobufDispatcher.cpp
         codec/MessageHeader.cpp
         GameServer.cpp
-        UserBaseData.cpp
+        UserConnection.cpp
 )
 
 #! 给本地相对路径添加前缀，变为绝对路径

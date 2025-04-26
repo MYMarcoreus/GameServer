@@ -149,7 +149,7 @@ include_directories(
 #        core/codec/ProtobufDispatcher.cpp
 #        core/codec/MessageHeader.cpp
 #        core/GameServer.cpp
-#        core/UserBaseData.cpp
+#        core/UserConnection.cpp
 #        game/GameManager.cpp
 #        game/GamePlayerManager.cpp
 #        game/GameTestManager.cpp

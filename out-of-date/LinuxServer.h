@@ -2,7 +2,7 @@
 #define ____LINUX_SERVER_H
 
 #include "IServer.h"
-#include "UserBaseData.h"
+#include "UserConnection.h"
 #include "Socket.h"
 #include "ConfigManager.h"
 #include "ThreadSafeQueue.hpp"
@@ -35,14 +35,14 @@ public:
 
     /// @brief 根据指令cmd，将指定类型「序列化」为send_buf中的字节流，并且添上首部
     void BuildPackage(
-            const UserBaseData::ptr& userdata, E_PackageCommand cmd,
+            const UserConnection::ptr& userdata, E_PackageCommand cmd,
             const google::protobuf::Message * body) override; //! send_buf的生产者
 
     /// @brief recv_buf已被Thread_Receiver填充，将recv_buf中的字节流「结构化」为指定类型
     // (在Update_ReadPackage()->ProcessCommand()中调用，不改变head或tail)
-    void ParsePackage(const UserBaseData::ptr& userdata, google::protobuf::Message * data) override;
+    void ParsePackage(const UserConnection::ptr& userdata, google::protobuf::Message * data) override;
 
-    UserBaseData::ptr FindUserBySockfd(int sockfd) override;
+    UserConnection::ptr FindUserBySockfd(int sockfd) override;
 
     /*** GETTER & SETTER ***/
     [[nodiscard]] size_t getConnnectionCount()       const override { return m_numConnect; }  // 连接数
@@ -54,8 +54,8 @@ public:
     void SetNotifier_DisConnect(F_Notifier f) override { m_notifierDisconnect = f; }
     void setNotifier_Command   (F_Notifier f) override { m_notifierCommand = f; }
 
-    UserBaseData::ptr getFreeUser(yy::net::Socket & sock) override;
-    void setUserFree(const UserBaseData::ptr& userdata) override;
+    UserConnection::ptr getFreeUser(yy::net::Socket & sock) override;
+    void setUserFree(const UserConnection::ptr& userdata) override;
 
     config::ConfigVar<config::AppXmlConfig>::ptr GetAppConfig() override { return m_app_configvar; }
 
@@ -87,32 +87,32 @@ private:
     void Event_AcceptOne();
 
     static void Thread_Receiver(LinuxServer* self); //! recv_buf的生产者
-    void Event_ReceiveOne(const UserBaseData::ptr& userdata);
+    void Event_ReceiveOne(const UserConnection::ptr& userdata);
 
 
 /* Update */
     /// @brief 在Update中调用，解析包
-    void Update_ReadPackage(const UserBaseData::ptr& userdata); //! recv_buf的消费者
-    std::optional<PackageHead> ProcessHead(const UserBaseData::ptr& userdata);
-    void ProcessCommand(const UserBaseData::ptr& userdata, const PackageHead& pkg_head);
-    void OnHeart(const UserBaseData::ptr& userdata);
-    void OnSecurity(const UserBaseData::ptr& userdata);
+    void Update_ReadPackage(const UserConnection::ptr& userdata); //! recv_buf的消费者
+    std::optional<PackageHead> ProcessHead(const UserConnection::ptr& userdata);
+    void ProcessCommand(const UserConnection::ptr& userdata, const PackageHead& pkg_head);
+    void OnHeart(const UserConnection::ptr& userdata);
+    void OnSecurity(const UserConnection::ptr& userdata);
 
     /// @brief 在Update中调用，发送用户数据
-    void Update_SendPackage(const UserBaseData::ptr& userdata); //! send_buf的消费者
+    void Update_SendPackage(const UserConnection::ptr& userdata); //! send_buf的消费者
 
 
 /* 连接管理 */
     /// @brief 关闭用户连接，但是不回收文件描述符，仍保留系统分配的套接字的资源(如缓存)，适合用户掉线可能马上再连接的情况
-    void ShutdownConnection(const UserBaseData::ptr& userdata);
+    void ShutdownConnection(const UserConnection::ptr& userdata);
     /// @brief 在Update中调用，
     ///     ①检查正在连接的用户是否在指定时间内通过安全验证
     ///     ②检查是否收到心跳包
     /// 若以上两点有一点未完成，则关闭连接
-    void Update_CheckDisconnetion(const UserBaseData::ptr& userdata);
+    void Update_CheckDisconnetion(const UserConnection::ptr& userdata);
     /// @brief 关闭用户连接，而且回收文件描述符，释放用户套接字的资源，适合用户连接确认已经关闭的情况
     /// Shutdown之后，等待在Update_CheckDisconnetion()中调用CloseConnection()以回收套接字文件描述符
-    void CloseConnection(const UserBaseData::ptr& userdata);
+    void CloseConnection(const UserConnection::ptr& userdata);
 
 
 private:
@@ -124,7 +124,7 @@ private:
     OnlineUserManager m_online_user_manager;
 #else
     // 不使用对象池时：用套接字文件描述符(int)来做索引
-    std::vector<UserBaseData::ptr> m_online_users;
+    std::vector<UserConnection::ptr> m_online_users;
 #endif
 
     std::atomic<size_t> m_numConnect;  //当前连接数

@@ -28,7 +28,7 @@ public:
     void RunApp();
 
     template<typename T>
-    void RegisterMessageCallback( core::CallbackT<T, core::UserBaseDataPtr>::ProtobufMessageTCallback callback) {
+    void RegisterMessageCallback( core::CallbackT<core::UserConnectionPtr, T>::ProtobufMessageTCallback callback) {
         m_dispatcher.RegisterMessageCallback<T>(callback);
     }
 
@@ -43,9 +43,9 @@ private:
 
     void AppNotifier_Secutiry(const yy::net::TcpConnectionPtr& conn) ;
     void AppNotifier_Disconnect(const yy::net::TcpConnectionPtr& conn) ;
-    void AppNotifier_Command(const core::UserBaseDataPtr &, const core::MessagePtr &);
+    void AppNotifier_Command(const core::UserConnectionPtr &, const core::MessagePtr &);
 
-    void UnkonwnCommand(const core::UserBaseDataPtr &, const core::MessagePtr &);
+    void UnkonwnCommand(const core::UserConnectionPtr &, const core::MessagePtr &);
 
 
 
@@ -53,7 +53,7 @@ private:
     IServer   * m_server;
     GamePlayerManager * m_player;
     GameTestManager   * m_test;
-    core::ProtobufDispatcher<core::UserBaseDataPtr> m_dispatcher;
+    core::ProtobufDispatcher<core::UserConnectionPtr> m_dispatcher; // 处理下层(core层)分发传来的无法处理的消息
     yy::net::EventLoop * m_loop;
 
     yy::net::ThreadPool m_wordThreads;

@@ -30,7 +30,7 @@ EventLoop *EventLoopThread::CreateLoop() {
                 }
             );
             //! 等待Loop线程初始化m_Loop
-            loopPromise.get_future().wait(); // wait
+            loopPromise.get_future().wait(); //* wait
         }
     );
 
@@ -47,7 +47,7 @@ void EventLoopThread::ThreadLoopFunction(std::promise<EventLoop *> & loopPromise
     }
     //! 初始化m_Loop并通知其它线程
     m_Loop = &eventLoop;
-    loopPromise.set_value(&eventLoop); // notify
+    loopPromise.set_value(&eventLoop); //* notify
 
     //! 执行Loop
     m_Loop->Loop();

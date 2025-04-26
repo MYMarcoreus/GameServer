@@ -1,4 +1,4 @@
-#include "UserBaseData.h"
+#include "UserConnection.h"
 #include "ConfigManager.h"
 #include "AppXmlConfig.h"
 #include "log.h"
@@ -8,7 +8,7 @@
 namespace yy::core {
 
 
-UserBaseData::UserBaseData(net::TcpConnectionPtr conn, ProtobufCodec & m_codec)
+UserConnection::UserConnection(net::TcpConnectionPtr conn, ProtobufCodec & m_codec)
         : m_conn{conn},
           m_state{E_UserBaseState::eConnected},
           m_uid{0},
@@ -17,31 +17,31 @@ UserBaseData::UserBaseData(net::TcpConnectionPtr conn, ProtobufCodec & m_codec)
 
 }
 
-void UserBaseData::Send(const MessagePtr &message) {
+void UserConnection::Send(const MessagePtr &message) {
     if(message) {
         m_codec.Send(m_conn, *message);
     }
 }
 
-void UserBaseData::Send(const google::protobuf::Message &message) {
+void UserConnection::Send(const google::protobuf::Message &message) {
     m_codec.Send(m_conn, message);
 }
 
 
 
-net::TimerID UserBaseData::RunAt(net::Timestamp time, net::F_TaskCallback cb) {
+net::TimerID UserConnection::RunAt(net::Timestamp time, net::F_TaskCallback cb) {
     return m_conn->GetLoop()->RunAt(time, std::move(cb));
 }
 
-net::TimerID UserBaseData::RunAfter(net::Microseconds delay, net::F_TaskCallback cb) {
+net::TimerID UserConnection::RunAfter(net::Microseconds delay, net::F_TaskCallback cb) {
     return m_conn->GetLoop()->RunAfter(delay, std::move(cb));
 }
 
-net::TimerID UserBaseData::RunEvery(net::Microseconds interval, net::F_TaskCallback cb) {
+net::TimerID UserConnection::RunEvery(net::Microseconds interval, net::F_TaskCallback cb) {
     return m_conn->GetLoop()->RunEvery(interval, std::move(cb));
 }
 
-void UserBaseData::CancelTimer(net::TimerID timerid) {
+void UserConnection::CancelTimer(net::TimerID timerid) {
     m_conn->GetLoop()->CancelTimer(timerid);
 }
 

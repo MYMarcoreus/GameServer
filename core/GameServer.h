@@ -35,9 +35,9 @@ public:
     virtual void Stop() override;
 
     /* * 根据用户连接名称来寻找用户基础数据 * */
-    virtual UserBaseDataPtr FindUser(const std::string & conn_name) override;
+    virtual UserConnectionPtr FindUser(const std::string & conn_name) override;
     virtual void            DelUser (const std::string & conn_name) override;
-    virtual void            AddUser (const std::string & conn_name, const UserBaseDataPtr & userdata) override;
+    virtual void            AddUser (const std::string & conn_name, const UserConnectionPtr & userdata) override;
 
     virtual bool IsRunning() const override { return m_server.IsRunning(); }
     virtual const config::AppXmlConfig & GetAppConfig() override { return m_app_configvar->GetValue(); }
@@ -62,8 +62,8 @@ private:
     void OnUnknownMessage(const net::TcpConnectionPtr & userdata, const MessagePtr& message);
 
     void OnConnectionEstablished(const net::TcpConnectionPtr & userdata);
-    void AddCheckTimer(const net::TcpConnectionPtr & conn, const UserBaseDataPtr & userdata);
-    void CheckHeart(const UserBaseDataPtr & conn);
+    void AddCheckTimer(const net::TcpConnectionPtr & conn, const UserConnectionPtr & userdata);
+    void CheckHeart(const UserConnectionPtr & conn);
     void SendXorCode(const yy::net::TcpConnectionPtr &conn);
 
     void OnHeart(const net::TcpConnectionPtr & conn, const HeartPtr & message);
@@ -75,7 +75,7 @@ private:
     yy::net::TcpServer          m_server;
     ProtobufCodec               m_codec;
     std::atomic<size_t>         m_num_security; //安全连接数
-    ProtobufDispatcher<yy::net::TcpConnectionPtr>          m_dispatcher;
+    ProtobufDispatcher<yy::net::TcpConnectionPtr>          m_dispatcher; // 处理下层(net层)分发传来的无法处理的消息
     yy::config::ConfigVar<yy::config::AppXmlConfig>::ptr   m_app_configvar; // 用于获取配置项
 
     /* 这几个回调函数由业务层实现，然后通过对应的set方法传入设置 */
@@ -84,7 +84,7 @@ private:
     F_NotifierCommand m_notifier_command;
 
     std::mutex                                        m_users_mutex;
-    std::unordered_map<std::string , UserBaseDataPtr> m_users;
+    std::unordered_map<std::string , UserConnectionPtr> m_users;
     std::vector<std::string> m_closeUsers;
 };
 

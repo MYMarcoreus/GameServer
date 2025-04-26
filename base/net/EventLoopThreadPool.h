@@ -23,14 +23,13 @@ public:
     ///todo ：可以用更复杂的调度法
     EventLoop * GetNextLoop();
 private:
-    /*
-     * ThreadNum:
-     *      0  ：所有的IO都在BaseLoop中执行
-     *      1  ：所有的IO都在另一线程中执行
-     *      N  ：以轮转法将新连接分配给线程池中的N个线程
-     * */
-    EventLoop *                                   m_BaseLoop;
-    std::vector<EventLoop*>                       m_Loops;
+    /* * ThreadNum:
+       *      0  ：所有的IO都在BaseLoop中执行
+       *      1  ：所有的IO都在另一线程中执行
+       *      N  ：以轮转法将新连接分配给线程池中的N个线程
+       * */
+    EventLoop *                                   m_BaseLoop; //! 实际为AcceptorLoop
+    std::vector<EventLoop *>                      m_ioLoops;
     std::vector<std::unique_ptr<EventLoopThread>> m_Threads;
 
     int m_NextLoop;

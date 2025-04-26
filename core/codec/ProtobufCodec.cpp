@@ -86,7 +86,7 @@ void ProtobufCodec::Send(const TcpConnectionPtr &conn, const google::protobuf::M
     //! 设置消息头
     MessageHeader header{message};
 
-    /* 不用关系buffer空间不足，因为我们已经分配好了足够的空间 */
+    /* 不用关心buffer空间不足，因为我们已经分配好了足够的空间 */
     //! 填充消息头
     Buffer buffer{header.GetFullLength()+4};
     header.AppendIntoBuffer(buffer, conn->GetXorCode());

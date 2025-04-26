@@ -10,7 +10,7 @@
 #include "core_definations.h"
 #include <unordered_map>
 
-using yy::core::UserBaseDataPtr;
+using yy::core::UserConnectionPtr;
 
 namespace yy::app {
 
@@ -21,32 +21,32 @@ public:
     void Init() ;
 
     // void StartListenAndIOLoop() override;
-    void LeaveAndSave(UserBaseDataPtr leave_user);
+    void LeaveAndSave(UserConnectionPtr leave_user);
 
 private:
     GamePlayerManager();
     ~GamePlayerManager() override;
 
     /// @brief 玩家发来登录请求，验证，然后将储存的游戏数据发送回玩家
-    void OnLogin(const UserBaseDataPtr& userdata, const Ptr<protocol::app::LoginRequest> & request);
+    void OnLogin(const UserConnectionPtr& userdata, const Ptr<protocol::app::LoginRequest> & request);
 
     /// @brief 玩家退出
-    void OnLeave(const UserBaseDataPtr& userdata_self, const Ptr<protocol::app::PlayerLeave> & leave);
+    void OnLeave(const UserConnectionPtr& userdata_self, const Ptr<protocol::app::PlayerLeave> & leave);
 
     /// @brief 玩家移动
-    void OnSelfMovement (const UserBaseDataPtr& userdata_self, const Ptr<protocol::app::SelfMovement> &selfmove);
+    void OnSelfMovement (const UserConnectionPtr& userdata_self, const Ptr<protocol::app::SelfMovement> &selfmove);
 
     /// @brief　玩家申请获取另一玩家的数据
-    void OnOtherPlayerDataRequest(const UserBaseDataPtr& userdata_self, const Ptr<protocol::app::OtherPlayerDataRequest> &request);
+    void OnOtherPlayerDataRequest(const UserConnectionPtr& userdata_self, const Ptr<protocol::app::OtherPlayerDataRequest> &request);
 
     /// @brief 玩家跳跃
-    void OnSelfJumpAndGravity(const UserBaseDataPtr& userdata_self, const Ptr<protocol::app::SelfJumpAndGravity> &selfJumpAndGravity);
+    void OnSelfJumpAndGravity(const UserConnectionPtr& userdata_self, const Ptr<protocol::app::SelfJumpAndGravity> &selfJumpAndGravity);
 
     Ptr<yy::protocol::app::PlayerBaseData> FindPlayerByUID(UID_t onlineid);
 
     /// @brief 玩家`from`给其他玩家客户端转发数据`data`
-    void Broadcast(const UserBaseDataPtr& from, const google::protobuf::Message & data);
-    void Broadcast(const UserBaseDataPtr& from, const core::MessagePtr & data);
+    void Broadcast(const UserConnectionPtr& from, const google::protobuf::Message & data);
+    void Broadcast(const UserConnectionPtr& from, const core::MessagePtr & data);
 
 private:
     yy::core::IServer *                                                 m_server;

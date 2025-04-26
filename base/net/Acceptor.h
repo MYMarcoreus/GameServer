@@ -37,7 +37,7 @@ private:
     void StartListenInLoop();
 
 private:
-    EventLoop *             m_Loop;
+    EventLoop *             m_AcceptorLoop;
     Socket                  m_AcceptSocket;
     Channel                 m_AcceptChannel;
     NewConnectionCallback   m_NewConnectionCallback;

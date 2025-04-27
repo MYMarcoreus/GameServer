@@ -46,8 +46,9 @@ TcpConnection::TcpConnection(std::string name, EventLoop *loop, SocketApiWrapper
 
 
 TcpConnection::~TcpConnection() {
-    m_Channel->DisableAllEvent();
-    m_Channel->RemoveFromLoop();
+    //! FIXED 注意： ~TcpConnection() 并不确定执行的线程，因此不能在析构时执行可能带有AssertInLoopingThread()的函数
+    // m_Channel->DisableAllEvent();
+    // m_Channel->RemoveFromLoop();
 
     YLOG_DEBUG("连接<{}: {}>已被析构！", this->GetSocketFD(), m_Name.c_str())
 }
@@ -84,7 +85,7 @@ void TcpConnection::Send(const std::string_view & message) {
 }
 
 void TcpConnection::SendInLoop(const std::string_view & buf) { //! const引用延长临时对象生命周期
-    m_ioLoop->AssertInLoopingThread();
+    m_ioLoop->AssertInLoopingThread(__FILE__, __LINE__);
 
     ssize_t nByteSend = 0;
     ssize_t nByteRemained = buf.size();
@@ -126,7 +127,7 @@ void TcpConnection::Shutdown() {
     m_ioLoop->RunCallbackInLoop([self = shared_from_this()](){ self->ShutdownInLoop();});
 }
 void TcpConnection::ShutdownInLoop() {
-    m_ioLoop->AssertInLoopingThread();
+    m_ioLoop->AssertInLoopingThread(__FILE__, __LINE__);
 
     YLOG_TRACE("TcpConnection::ShutdownInLoop(): CanShutdown()=={}", CanShutdown())
 
@@ -148,7 +149,8 @@ void TcpConnection::ShutdownInLoop() {
     SetState(eDisconnected);
     //m_Socket->Close(); //FIXME 不关闭，让析构函数调用Socket的析构函数来close；
 
-    if(m_ConnectionCloseCallback) { // m_ConnectionCloseCallback == RemoveConnection
+    // TcpConnection::m_ConnectionCloseCallback(TcpConnection::ioLoop) == TcpServer::RemoveConnection --> m_AcceptorLoop->RunCallbackInLoop
+    if(m_ConnectionCloseCallback) {
         m_ConnectionCloseCallback(shared_from_this());
     }
 
@@ -161,7 +163,7 @@ void TcpConnection::ShutdownInLoop() {
 
 
 void TcpConnection::ConnectionEstablished() {
-    m_ioLoop->AssertInLoopingThread();
+    m_ioLoop->AssertInLoopingThread(__FILE__, __LINE__);
     assert(IsConnecting());
     YLOG_TRACE("====================In TcpConnection::ConnectionEstablished：TCP连接完成！====================")
 
@@ -177,9 +179,9 @@ void TcpConnection::ConnectionEstablished() {
 }
 
 void TcpConnection::ConnectionDestroyed() {
-    m_ioLoop->AssertInLoopingThread();
+    m_ioLoop->AssertInLoopingThread(__FILE__, __LINE__);
 
-    YLOG_DEBUG("In TcpConnection::ConnectionDestroyed(): ")
+    YLOG_DEBUG("In TcpConnection::ConnectionDestroyed(), {}, {}", ::yy::util::CastThreadIDToStr(m_ioLoop->GetThreadID()), ::yy::util::GetStrThreadID())
 
     //! 设置状态和Channel
     m_Channel->DisableAllEvent();
@@ -195,7 +197,7 @@ void TcpConnection::ConnectionDestroyed() {
 
 
 void TcpConnection::HandleRead() {
-    m_ioLoop->AssertInLoopingThread();
+    m_ioLoop->AssertInLoopingThread(__FILE__, __LINE__);
 
     YLOG_TRACE("正在读取来自连接<{}>的数据！", m_Socket->GetFD())
 
@@ -221,7 +223,7 @@ void TcpConnection::HandleRead() {
 }
 
 void TcpConnection::HandleWrite() {
-    m_ioLoop->AssertInLoopingThread();
+    m_ioLoop->AssertInLoopingThread(__FILE__, __LINE__);
 
     if(!m_Channel->IsEnableWriting()) {
         YLOG_TRACE("未监听写事件，跳过")
@@ -266,7 +268,7 @@ void TcpConnection::HandleWrite() {
 }
 
 void TcpConnection::HandleClose() {
-    m_ioLoop->AssertInLoopingThread();
+    m_ioLoop->AssertInLoopingThread(__FILE__, __LINE__);
 
     //! 用户要关闭连接时，并不直接Close，而是先Shundown，等到一定时间之后再统一Close
     switch (m_ConnectionState)
@@ -281,12 +283,12 @@ void TcpConnection::HandleClose() {
 }
 
 void TcpConnection::HandleError() {
-    m_ioLoop->AssertInLoopingThread();
+    m_ioLoop->AssertInLoopingThread(__FILE__, __LINE__);
 
 }
 
 bool TcpConnection::HandleRead_ET() {
-    m_ioLoop->AssertInLoopingThread();
+    m_ioLoop->AssertInLoopingThread(__FILE__, __LINE__);
 
     bool isReadOk = false;
 

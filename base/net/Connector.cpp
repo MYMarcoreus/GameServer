@@ -38,7 +38,7 @@ void Connector::Restart() {
 }
 
 void Connector::StartInLoop() {
-    m_Loop->AssertInLoopingThread();
+    m_Loop->AssertInLoopingThread(__FILE__, __LINE__);
 
     if(!m_IsStarted) {
         return;

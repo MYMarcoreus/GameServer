@@ -251,20 +251,7 @@ std::chrono::nanoseconds TimespecToDuration(struct timespec spec) {
     return  t;
 }
 
-SocketApiWrapper::socket_t CreatEventFD() {
-#ifdef ____LINUX
-    //! 相比使用管道，::eventfd更加高效
-    int evtfd = ::eventfd(0, EFD_NONBLOCK | EFD_CLOEXEC);
-    if (evtfd < 0) {
-        throw std::system_error(errno, std::system_category(), "eventfd");
-    }
-    return evtfd;
-#endif
 
-#ifdef ____WINDOWS
-    return SocketApiWrapper::create_tcp_or_die(true);
-#endif
-}
 
 std::string GetLastErrorInfo() {
 

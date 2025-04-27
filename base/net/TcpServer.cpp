@@ -80,7 +80,7 @@ TcpServer::TcpServer(EventLoop *acceptorLoop, IPAddress::ptr listenAddr, bool re
 }
 
 TcpServer::~TcpServer() {
-    m_AcceptorLoop->AssertInLoopingThread();
+    m_AcceptorLoop->AssertInLoopingThread(__FILE__, __LINE__);
 
     for(auto & p: m_ConnectionMap) {
         auto conn = p.second;
@@ -106,7 +106,7 @@ void TcpServer::Stop() {
 
 
 void TcpServer::HandleNewConnection(SocketApiWrapper::socket_t sockfd, IPAddressPtr peerAddr) {
-    m_AcceptorLoop->AssertInLoopingThread();
+    m_AcceptorLoop->AssertInLoopingThread(__FILE__, __LINE__);
 
     EventLoop * ioLoop = m_IOThreadPool->GetNextLoop();
     IPAddressPtr localAddr = SocketApiWrapper::GetLocalAddr(sockfd);
@@ -138,17 +138,25 @@ void TcpServer::HandleNewConnection(SocketApiWrapper::socket_t sockfd, IPAddress
 }
 
 void TcpServer::RemoveConnection(const TcpConnectionPtr &conn) {
+    // YLOG_TRACE("TcpServer::RemoveConnection Before, {}, {}", ::yy::util::CastThreadIDToStr(m_AcceptorLoop->GetThreadID()), ::yy::util::GetStrThreadID())
+    //! 该函数在 TcpConnection::ioLoop中执行
     m_AcceptorLoop->RunCallbackInLoop( [this, conn](){ this->RemoveConnectionInLoop(conn); });
+    // YLOG_TRACE("TcpServer::RemoveConnection After, {}, {}", ::yy::util::CastThreadIDToStr(m_AcceptorLoop->GetThreadID()), ::yy::util::GetStrThreadID())
 }
 
 void TcpServer::RemoveConnectionInLoop(TcpConnectionPtr conn) {
-    m_AcceptorLoop->AssertInLoopingThread();
+    // YLOG_TRACE("Before TcpServer::RemoveConnectionInLoop Erased, {}, {}", ::yy::util::CastThreadIDToStr(m_AcceptorLoop->GetThreadID()), ::yy::util::GetStrThreadID())
+    m_AcceptorLoop->AssertInLoopingThread(__FILE__, __LINE__);
 
     m_ConnectionMap.erase(conn->GetName());
     m_NumConnect--;
 
+    // YLOG_TRACE("TcpServer::RemoveConnectionInLoop Erased, {}, {}", ::yy::util::CastThreadIDToStr(m_AcceptorLoop->GetThreadID()), ::yy::util::GetStrThreadID())
     conn->GetLoop()->EnqueueCallbackInLoop([conn](){ conn->ConnectionDestroyed(); });
+    // YLOG_TRACE("TcpServer::RemoveConnectionInLoop After conn->GetLoop()->EnqueueCallbackInLoop, {}, {}", ::yy::util::CastThreadIDToStr(m_AcceptorLoop->GetThreadID()), ::yy::util::GetStrThreadID())
 }
+
+
 
 
 

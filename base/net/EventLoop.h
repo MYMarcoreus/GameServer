@@ -63,10 +63,12 @@ public:
     //End 定时器相关函数
 
     ///@brief 保证一定是EventLoop的创建者在执行
-    void AssertInLoopingThread();
+    void AssertInLoopingThread(const std::string & filepath = __FILE__, int fileline = __LINE__);
 
     ///@brief 判断是否运行在EventLoop所在线程
     bool IsInLoopingThread() { return std::this_thread::get_id() == m_ThreadID; }
+
+    std::thread::id GetThreadID() { return m_ThreadID; }
 
     ///@brief 获取当前线程的EventLoop
     static EventLoop * GetEventLoopOfThisThread();

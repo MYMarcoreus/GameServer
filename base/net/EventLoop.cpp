@@ -2,12 +2,12 @@
 #include "Poller.h"
 #include "Channel.h"
 #include "log.h"
-#include "util_functions.h"
 #include "TimerManager.h"
 #include "SocketApiWrapper.h"
 
 #ifdef ____WINDOWS
 #include "socket_definations.h"
+#include "IPAddress.h"
 #endif
 
 namespace yy::net {
@@ -21,6 +21,47 @@ thread_local EventLoop *____EventLoopInThisThread = nullptr;
 
 
 
+struct WakeupFD {
+    WakeupFD() {
+    #ifdef ____LINUX
+        //! 相比使用管道，::eventfd更加高效
+        int evtfd = ::eventfd(0, EFD_NONBLOCK | EFD_CLOEXEC);
+        if (evtfd < 0) {
+            throw std::system_error(errno, std::system_category(), "eventfd");
+        }
+        this->read_fd = evtfd;
+        this->write_fd = evtfd;
+    #endif
+
+    #ifdef ____WINDOWS
+        auto listen_fd =  SocketApiWrapper::create_tcp_or_die(false);
+        IPAddressPtr listen_addr = std::make_shared<IPv4Address>("127.0.0.1");
+        SocketApiWrapper::bind_or_die(listen_fd, listen_addr);
+        SocketApiWrapper::listen_or_die(listen_fd, 1);
+
+        auto local_addr = SocketApiWrapper::GetLocalAddr(listen_fd);
+        this->write_fd = SocketApiWrapper::create_tcp_or_die(true);
+        SocketApiWrapper::connect(write_fd, local_addr);
+        this->read_fd = SocketApiWrapper::accept(listen_fd, nullptr, true);
+        YLOG_DEBUG("WakeupFD::listen_fd<{}>已Close！", listen_fd)
+        SocketApiWrapper::close(listen_fd);
+    #endif
+    }
+
+    ~WakeupFD() {
+        if (read_fd == write_fd) {
+            SocketApiWrapper::close(read_fd);
+        } else {
+            SocketApiWrapper::close(read_fd);
+            SocketApiWrapper::close(write_fd);
+        }
+    }
+
+    SocketApiWrapper::socket_t read_fd;
+    SocketApiWrapper::socket_t write_fd;
+};
+
+
 
 class WakeupManager
 {
@@ -29,21 +70,19 @@ public:
 
     ~WakeupManager();
 
-    // int GetFD() { return wakeupEventFD_; }
-
     void Write();
 
 private:
     void Read();
 
-    SocketApiWrapper::socket_t wakeupEventFD_;
+    WakeupFD wakeupEventFD_;
     std::unique_ptr<Channel> wakeupChannel_;
 };
 
 
 WakeupManager::WakeupManager(EventLoop *loop)
-        : wakeupEventFD_(CreatEventFD()),
-          wakeupChannel_(std::make_unique<Channel>(loop, wakeupEventFD_, "Wakeup Eventfd Channel"))
+        : wakeupEventFD_{},
+          wakeupChannel_(std::make_unique<Channel>(loop, wakeupEventFD_.read_fd, "Wakeup Eventfd Channel"))
 {
     wakeupChannel_->SetReadCallback([this](){ this->Read(); });
     wakeupChannel_->EnableReading();
@@ -52,18 +91,16 @@ WakeupManager::WakeupManager(EventLoop *loop)
 WakeupManager::~WakeupManager() {
     this->wakeupChannel_->DisableAllEvent();
     this->wakeupChannel_->RemoveFromLoop();
-
-    SocketApiWrapper::close(wakeupEventFD_);
 }
 
 void WakeupManager::Read() {
     uint64_t msg = 1;
 #ifdef ____LINUX
-    auto ret = ::read(wakeupEventFD_, &msg, sizeof msg);
+    auto ret = ::read(wakeupEventFD_.read_fd, &msg, sizeof msg);
 #endif
-    return; //FIXME
+
 #ifdef ____WINDOWS
-    auto ret = SocketApiWrapper::recv(wakeupEventFD_, &msg, sizeof msg, 0);
+    auto ret = SocketApiWrapper::recv(wakeupEventFD_.read_fd, &msg, sizeof msg, 0);
 #endif
 
     if(ret < 0) {
@@ -75,21 +112,18 @@ void WakeupManager::Read() {
 void WakeupManager::Write() {
     uint64_t msg = 1;
 #ifdef ____LINUX
-    auto ret = ::write(wakeupEventFD_, &msg, sizeof msg);
+    auto ret = ::write(wakeupEventFD_.write_fd, &msg, sizeof msg);
     if(ret < 0) {
         YLOG_ERROR("EventLoop::WakeupManager::Write ::write() error: {}", GetLastErrorInfo())
     }
 #endif
-    return; //FIXME
+
 #ifdef ____WINDOWS
-    auto ret = SocketApiWrapper::send(wakeupEventFD_, &msg, sizeof msg, 0);
+    auto ret = SocketApiWrapper::send(wakeupEventFD_.write_fd, &msg, sizeof msg, 0);
     if(ret == SOCKET_ERROR) {
         YLOG_ERROR("EventLoop::WakeupManager::Write ::write() error: {}", GetLastErrorInfo());
     }
 #endif
-
-
-
 }
 
 
@@ -115,7 +149,7 @@ EventLoop::EventLoop(Milliseconds defaultPollwaitTimeout)
 }
 
 EventLoop::~EventLoop() {
-    AssertInLoopingThread();
+    AssertInLoopingThread(__FILE__, __LINE__);
 
     while(m_IsLooping) {
         QuitLoop();
@@ -123,12 +157,12 @@ EventLoop::~EventLoop() {
 }
 
 void EventLoop::UpdateChannel(Channel * channel) {
-    AssertInLoopingThread();
+    AssertInLoopingThread(); //FIXME
     m_Poller->UpdateChannel(channel);
 }
 
 void EventLoop::RemoveChannel(Channel *channel) {
-    AssertInLoopingThread();
+    AssertInLoopingThread(__FILE__, __LINE__);
     m_Poller->RemoveChannel(channel);
 }
 
@@ -137,15 +171,15 @@ bool EventLoop::HasChannel(Channel *channel) {
 }
 
 
-void EventLoop::AssertInLoopingThread() {
+void EventLoop::AssertInLoopingThread(const std::string & filepath, int fileline) {
     if(!IsInLoopingThread()) {
-        YLOG_FATAL("EventLoop Created In thread<{}>, but now in {}",
+        YLOG_FATAL("[{}:{}]::EventLoop Created In thread<{}>, but now in {}", filepath, fileline,
             ::yy::util::CastThreadIDToStr(m_ThreadID), ::yy::util::GetStrThreadID())
     }
 }
 
 void EventLoop::Loop() {
-    AssertInLoopingThread();
+    AssertInLoopingThread(__FILE__, __LINE__);
 
     m_IsLooping = true;
 
@@ -237,10 +271,11 @@ void EventLoop::EnqueueCallbackInLoop(F_PendingCallback cb) {
        *        ②②：如果正在执行CallPenddingFunctors()：那么在CallPenddingFunctors()执行完后，线程会阻塞在PollWait()而造成死锁，
        *        因此需要Wakeup来唤醒线程来执行下一次的CallPenddingFunctors()
      * */
+    YLOG_TRACE("已将函数<{}>加入代办函数列表", GetDemangleName(cb.target_type().name()).c_str())
+
     if(!IsInLoopingThread() or m_IsCallingPenddingFunctors) {
         Wakeup();
     }
-    YLOG_TRACE("已将函数<{}>加入代办函数列表", GetDemangleName(cb.target_type().name()).c_str())
 }
 
 void EventLoop::CallPenddingCallbacks() {
@@ -256,14 +291,11 @@ void EventLoop::CallPenddingCallbacks() {
         m_PenddingFunctors.swap(callingFunctors);
     }
 
-    // YLOG_TRACE("即将执行代办函数！")
-
     for (const F_PendingCallback& functor: callingFunctors) {
+        YLOG_TRACE("开始执行代办函数<{}>！", GetDemangleName(functor.target_type().name()).c_str())
         functor();
-        YLOG_TRACE("执行代办函数<{}>！", GetDemangleName(functor.target_type().name()).c_str())
+        YLOG_TRACE("执行完毕代办函数<{}>", GetDemangleName(functor.target_type().name()).c_str())
     }
-
-    // YLOG_TRACE("代办函数执行完毕！")
 
     m_IsCallingPenddingFunctors = false;
 }

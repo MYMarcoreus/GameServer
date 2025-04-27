@@ -45,9 +45,11 @@ socket_t create_or_die(sa_family_t family, __socket_type type, bool isNonblock) 
     if (sockfd == INVALID_SOCKET) {
         ::WSACleanup();
         YLOG_FATAL("In Socket::Socket(), socket() error: {}", yy::util::GetLastErrorInfo())
+    } else {
+        if(isNonblock) {
+            set_nonblocking(sockfd);
+        }
     }
-
-    set_nonblocking(sockfd);
 #endif
 
     return sockfd;
@@ -121,23 +123,33 @@ void set_nonblocking(socket_t sockfd) {
 
 
 SocketApiWrapper::socket_t
-accept(socket_t sockfd, std::shared_ptr<IPAddress> &outPeerAddr, bool isNewSockNonBlock) {
+accept(socket_t sockfd, std::shared_ptr<IPAddress> outPeerAddr, bool isNewSockNonBlock) {
+    int connfd;
 
-    auto addrLen = outPeerAddr->GetRawAddrLen();
-
+    //FIXME 非阻塞Accept应该不断loop
 #ifdef ____LINUX
     int flags = isNewSockNonBlock ? SOCK_CLOEXEC | SOCK_NONBLOCK : 0;
-    //! 使用accept4直接设置接受的套接字为非阻塞套接字
-    int connfd = ::accept4(sockfd, outPeerAddr->GetRawAddr(), &addrLen, flags);
+    if (outPeerAddr) {
+        auto addrLen = outPeerAddr->GetRawAddrLen();
+        connfd = ::accept4(sockfd, outPeerAddr->GetRawAddr(), &addrLen, flags);
+    } else {
+        connfd = ::accept4(sockfd, nullptr, nullptr, flags);
+    }
 #endif
 
 #ifdef ____WINDOWS
-    int connfd = ::accept(sockfd, outPeerAddr->GetRawAddr(), &addrLen);
-    if (connfd >= 0)
-    {
-        set_nonblocking(sockfd);
+    if (outPeerAddr) {
+        auto addrLen = outPeerAddr->GetRawAddrLen();
+        connfd = ::accept(sockfd, outPeerAddr->GetRawAddr(), &addrLen);
+    } else {
+        connfd = ::accept(sockfd, nullptr, nullptr);
+    }
+
+    if (connfd >= 0 and isNewSockNonBlock) {
+        set_nonblocking(connfd);
     }
 #endif
+
     if (connfd < 0) {
         yy::util::ErrnoSaver errnoSaver;
         //! 因为accept需要被调用无数次，为保证程序的正常运行，所以需要区分暂时错误和致命错误

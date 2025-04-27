@@ -164,7 +164,7 @@ RBTreeTimerManager::~RBTreeTimerManager() {
 }
 
 Timestamp RBTreeTimerManager::GetEarliestExpiredTimeInLoop() {
-    m_OwnerLoop->AssertInLoopingThread();
+    m_OwnerLoop->AssertInLoopingThread(__FILE__, __LINE__);
     if(m_TimerList.empty()) {
         return Timestamp{};
     }
@@ -179,7 +179,7 @@ TimerID RBTreeTimerManager::AddTimer(F_TaskCallback cb, Timestamp expiredTime, M
 }
 
 void RBTreeTimerManager::AddTimerInLoop(TimerPtr timer) {
-    m_OwnerLoop->AssertInLoopingThread();
+    m_OwnerLoop->AssertInLoopingThread(__FILE__, __LINE__);
 
     auto isEarliestExpiredTimerChanged = InsertTimer(timer);
 
@@ -253,7 +253,7 @@ void RBTreeTimerManager::CancelTimerInLoop(TimerID timerid) {
   ! 不会有未处理的已cancel timer
   ! */
 int RBTreeTimerManager::HandleExpiredTimersInLoop() {
-    m_OwnerLoop->AssertInLoopingThread();
+    m_OwnerLoop->AssertInLoopingThread(__FILE__, __LINE__);
     YLOG_TRACE("定时器到期，处理定时器！")
 
     //! 获取到期的timer，将这些timer从定时器列表中删除

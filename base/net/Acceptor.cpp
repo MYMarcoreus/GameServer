@@ -35,7 +35,7 @@ void Acceptor::StartListen() {
 }
 
 void Acceptor::HandleAccept() {
-    m_AcceptorLoop->AssertInLoopingThread();
+    m_AcceptorLoop->AssertInLoopingThread(__FILE__, __LINE__);
 
     IPAddressPtr outPeerAddr = nullptr;
     switch (m_AcceptSocket.GetFamily()) {
@@ -60,7 +60,7 @@ void Acceptor::HandleAccept() {
 }
 
 void Acceptor::StartListenInLoop() {
-    m_AcceptorLoop->AssertInLoopingThread();
+    m_AcceptorLoop->AssertInLoopingThread(__FILE__, __LINE__);
 
     m_IsListening = true;
     m_AcceptChannel.SetReadCallback([this](){ this->HandleAccept(); });

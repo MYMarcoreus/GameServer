@@ -36,7 +36,7 @@ void PriorityQueueTimerManager::CancelTimer(TimerID timer_id)
 
 int PriorityQueueTimerManager::HandleExpiredTimersInLoop()
 {
-    m_loop->AssertInLoopingThread();
+    m_loop->AssertInLoopingThread(__FILE__, __LINE__);
 
     if (m_timers.empty()) {
         return 0;
@@ -72,20 +72,20 @@ int PriorityQueueTimerManager::HandleExpiredTimersInLoop()
 }
 
 Timestamp PriorityQueueTimerManager::GetEarliestExpiredTimeInLoop() {
-    m_loop->AssertInLoopingThread();
+    m_loop->AssertInLoopingThread(__FILE__, __LINE__);
 
     return m_timers.empty() ? Timestamp{} : m_timers.top()->GetExpireTime();
 }
 
 void PriorityQueueTimerManager::AddTimerInLoop(Timer * node) {
-    m_loop->AssertInLoopingThread();
+    m_loop->AssertInLoopingThread(__FILE__, __LINE__);
 
     m_timersref[node->GetID()] = node;
     m_timers.push(node);
 }
 
 void PriorityQueueTimerManager::CancelTimerInLoop(TimerID timer_id) {
-    m_loop->AssertInLoopingThread();
+    m_loop->AssertInLoopingThread(__FILE__, __LINE__);
 
     auto iter = m_timersref.find(timer_id);
     if (iter != m_timersref.end()) {

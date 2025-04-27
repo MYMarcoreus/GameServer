@@ -51,7 +51,7 @@ public:
     void DisableReading()  { m_InterestedEvent.DelEvent(PollerEvent::eReadEvent ); UpdateFromLoop(); };
     void  EnableWriting()  { /*printf("套接字<%d>添加写事件\n", m_FD) ;*/ m_InterestedEvent.AddEvent(PollerEvent::eWriteEvent); UpdateFromLoop(); };
     void DisableWriting()  { m_InterestedEvent.DelEvent(PollerEvent::eWriteEvent); UpdateFromLoop(); };
-    void DisableAllEvent() { m_InterestedEvent.ClrEvent(); UpdateFromLoop(); };
+    void DisableAllEvent();;
     // Set Callbacks
     void SetReadCallback (F_EventCallback cb) { m_ReadCallback  = std::move(cb); }
     void SetWriteCallback(F_EventCallback cb) { m_WriteCallback = std::move(cb); }

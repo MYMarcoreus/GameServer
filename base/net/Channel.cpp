@@ -44,8 +44,7 @@ void Channel::HandleHappenedEvent() {
             HandleEventWithTie();
         }
     }
-    else
-    {
+    else {
         HandleEventWithTie();
     }
 }
@@ -78,8 +77,11 @@ void Channel::HandleEventWithTie() {
     }
 }
 
-
-
+void Channel::DisableAllEvent() {
+    YLOG_TRACE("Channel::DisableAllEvent(), {}, {}", ::yy::util::CastThreadIDToStr(m_OwnerLoop->GetThreadID()), ::yy::util::GetStrThreadID())
+    m_InterestedEvent.ClrEvent();
+    UpdateFromLoop();
+}
 
 
 } // yy::net

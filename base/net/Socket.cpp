@@ -45,15 +45,38 @@ void Socket::Listen(int backlog) {
     SocketApiWrapper::listen_or_die(m_socketfd, backlog);
 }
 
-SocketApiWrapper::socket_t Socket::Accept(IPAddress::ptr &outPeerAddr, bool isNewSockNonBlock) {
+SocketApiWrapper::socket_t Socket::Accept(IPAddressPtr & outPeerAddr, bool isNewSockNonBlock) {
+    switch (this->GetFamily()) {
+        case Socket::Family::IPv4:
+            outPeerAddr = std::make_shared<IPv4Address>();
+            break;
+        case Socket::Family::IPv6:
+            outPeerAddr = std::make_shared<IPv6Address>();
+            break;
+        default:
+            throw std::invalid_argument("wrong socket family of accept socket");
+    }
     return SocketApiWrapper::accept(m_socketfd, outPeerAddr, isNewSockNonBlock);
 }
 
-void Socket::Bind(const IPAddress::ptr &localAddr) {
+std::unordered_map<SocketApiWrapper::socket_t, IPAddressPtr>
+Socket::AcceptAll(bool isNewSockNonBlock) {
+    switch (this->GetFamily()) {
+        case Socket::Family::IPv4:
+            return SocketApiWrapper::acceptAll<IPv4Address>(m_socketfd, isNewSockNonBlock);
+        case Socket::Family::IPv6:
+            return SocketApiWrapper::acceptAll<IPv6Address>(m_socketfd, isNewSockNonBlock);
+        default:
+            throw std::invalid_argument("wrong socket family of accept socket");
+    }
+}
+
+
+void Socket::Bind(const IPAddressPtr &localAddr) {
     SocketApiWrapper::bind_or_die(m_socketfd, localAddr);
 }
 
-void Socket::Connect(const IPAddress::ptr &peerAddr) {
+void Socket::Connect(const IPAddressPtr &peerAddr) {
     SocketApiWrapper::connect(m_socketfd, peerAddr);
 }
 
@@ -131,9 +154,6 @@ ssize_t Socket::Recvfrom(void *ptr, size_t nbytes, int flags, IPAddress::ptr pee
 void Socket::SetNonblocking() {
     SocketApiWrapper::set_nonblocking(m_socketfd);
 }
-
-
-
 
 
 

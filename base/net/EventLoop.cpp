@@ -157,7 +157,7 @@ EventLoop::~EventLoop() {
 }
 
 void EventLoop::UpdateChannel(Channel * channel) {
-    AssertInLoopingThread(); //FIXME
+    AssertInLoopingThread();
     m_Poller->UpdateChannel(channel);
 }
 

@@ -79,7 +79,9 @@ public:
     void Listen(int backlog = SOMAXCONN);
 
     ///@brief 接受连接，并返回连接套接字；若出现致命错误，则终止程序，否则跳过
-    SocketApiWrapper::socket_t Accept(IPAddress::ptr &outPeerAddr, bool isNewSockNonBlock);
+    SocketApiWrapper::socket_t Accept(IPAddressPtr &outPeerAddr, bool isNewSockNonBlock);
+
+    std::unordered_map<SocketApiWrapper::socket_t, IPAddressPtr> AcceptAll(bool isNewSockNonBlock);
 
     ///@brief 绑定本地套接字，出错则终止程序
     void Bind(const IPAddressPtr &localAddr);

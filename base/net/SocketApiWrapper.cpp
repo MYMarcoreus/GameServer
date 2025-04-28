@@ -117,7 +117,7 @@ void set_nonblocking(socket_t sockfd) {
 
 #ifdef ____WINDOWS
     unsigned long ul = 1;
-    ioctlsocket(sockfd, FIONBIO, (unsigned long *)&ul);
+    ioctlsocket(sockfd, FIONBIO, (unsigned long *) &ul);
 #endif
 }
 
@@ -185,6 +185,7 @@ accept(socket_t sockfd, std::shared_ptr<IPAddress> outPeerAddr, bool isNewSockNo
     return connfd;
 }
 
+
 void shutdown(socket_t sockfd, int how) {
     int ret = ::shutdown(sockfd, how);
     if (ret < 0) {
@@ -201,7 +202,7 @@ int get_socket_error(socket_t sockfd) {
     int optval;
     socklen_t optlen = static_cast<socklen_t>(sizeof optval);
 
-    if (::getsockopt(sockfd, SOL_SOCKET, SO_ERROR, (char*)&optval, &optlen) < 0) {
+    if (::getsockopt(sockfd, SOL_SOCKET, SO_ERROR, (char *) &optval, &optlen) < 0) {
         return errno;
     } else {
         return optval;
@@ -216,29 +217,22 @@ bool is_self_connect(socket_t sockfd) {
 }
 
 
-
-
-
-
-
-
-
 IPAddress::ptr GetLocalAddr(SocketApiWrapper::socket_t sockfd) {
     struct sockaddr_storage localAddr;
     socklen_t addrLen = sizeof localAddr;
 
-    auto ret = ::getsockname(sockfd, (struct sockaddr*)(&localAddr), &addrLen);
-    if(ret < 0) {
+    auto ret = ::getsockname(sockfd, (struct sockaddr *) (&localAddr), &addrLen);
+    if (ret < 0) {
         YLOG_ERROR("In IPAddress::GetLocalAddr, ::getsockname() error: {}",
                    yy::util::StatusCode(errno).ToString().c_str());
         return nullptr;
     }
 
     IPAddress::ptr addr{};
-    if(localAddr.ss_family == AF_INET) {
-        addr = std::make_shared<yy::net::IPv4Address>((struct sockaddr_in *)&localAddr);
+    if (localAddr.ss_family == AF_INET) {
+        addr = std::make_shared<yy::net::IPv4Address>((struct sockaddr_in *) &localAddr);
     } else {
-        addr = std::make_shared<yy::net::IPv6Address>((struct sockaddr_in6 *)&localAddr);
+        addr = std::make_shared<yy::net::IPv6Address>((struct sockaddr_in6 *) &localAddr);
     }
 
     return addr;
@@ -248,18 +242,18 @@ IPAddress::ptr GetPeerAddr(SocketApiWrapper::socket_t sockfd) {
     struct sockaddr_storage peerAddr;
     socklen_t addrLen = sizeof peerAddr;
 
-    auto ret = ::getpeername(sockfd, (struct sockaddr*)(&peerAddr), &addrLen);
-    if(ret < 0) {
+    auto ret = ::getpeername(sockfd, (struct sockaddr *) (&peerAddr), &addrLen);
+    if (ret < 0) {
         YLOG_ERROR("In IPAddress::GetPeerAddr, ::getpeername() error: {}",
                    yy::util::StatusCode(errno).ToString().c_str());
         return nullptr;
     }
 
     IPAddress::ptr addr{};
-    if(peerAddr.ss_family == AF_INET) {
-        addr = std::make_shared<yy::net::IPv4Address>((struct sockaddr_in *)&peerAddr);
+    if (peerAddr.ss_family == AF_INET) {
+        addr = std::make_shared<yy::net::IPv4Address>((struct sockaddr_in *) &peerAddr);
     } else {
-        addr = std::make_shared<yy::net::IPv6Address>((struct sockaddr_in6 *)&peerAddr);
+        addr = std::make_shared<yy::net::IPv6Address>((struct sockaddr_in6 *) &peerAddr);
     }
 
     return addr;
@@ -269,7 +263,7 @@ ssize_t recv(socket_t sockfd, void *ptr, size_t nbytes, int flags) {
 #ifdef ____LINUX
     flags |= MSG_NOSIGNAL;
 #endif
-    auto ret = ::recv(sockfd, (char *)ptr, nbytes, flags);
+    auto ret = ::recv(sockfd, (char *) ptr, nbytes, flags);
     return ret;
 }
 
@@ -277,38 +271,38 @@ ssize_t send(socket_t sockfd, const void *ptr, size_t nbytes, int flags) {
 #ifdef ____LINUX
     flags |= MSG_NOSIGNAL;
 #endif
-    auto ret = ::send(sockfd, (char *)ptr, nbytes, flags);
+    auto ret = ::send(sockfd, (char *) ptr, nbytes, flags);
     return ret;
 }
 
 ssize_t sendto(socket_t sockfd, const void *ptr, size_t nbytes, int flags, std::shared_ptr<IPAddress> peerAddr) {
-    return ::sendto(sockfd, (char *)ptr, nbytes, flags, peerAddr->GetRawAddr(), peerAddr->GetRawAddrLen());
+    return ::sendto(sockfd, (char *) ptr, nbytes, flags, peerAddr->GetRawAddr(), peerAddr->GetRawAddrLen());
 }
 
 ssize_t recvfrom(socket_t sockfd, void *ptr, size_t nbytes, int flags, std::shared_ptr<IPAddress> peerAddr) {
     auto addrLen = peerAddr->GetRawAddrLen();
-    return ::recvfrom(sockfd, (char *)ptr, nbytes, flags, peerAddr->GetRawAddr(), &addrLen);
+    return ::recvfrom(sockfd, (char *) ptr, nbytes, flags, peerAddr->GetRawAddr(), &addrLen);
 }
 
-ssize_t readv(socket_t sockfd, IOV_TYPE * iov, int iovcnt) {
+ssize_t readv(socket_t sockfd, IOV_TYPE *iov, int iovcnt) {
 #ifdef ____WINDOWS
     DWORD bytesRead;
     DWORD flags = 0;
-    if (WSARecv(sockfd, iov, iovcnt, &bytesRead, &flags, NULL, NULL))
-    {
+    if (WSARecv(sockfd, iov, iovcnt, &bytesRead, &flags, NULL, NULL)) {
         if (GetLastError() == WSAECONNABORTED)
             //close
-            return  0;
+            return 0;
         else
             //error
             return -1;
-    }
-    else
+    } else
         return bytesRead;
 #else
     return ::readv(sockfd, iov, iovcnt);
 #endif
 }
+
+
 
 
 }

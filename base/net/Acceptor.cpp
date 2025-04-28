@@ -38,17 +38,6 @@ void Acceptor::HandleAccept() {
     m_AcceptorLoop->AssertInLoopingThread(__FILE__, __LINE__);
 
     IPAddressPtr outPeerAddr = nullptr;
-    switch (m_AcceptSocket.GetFamily()) {
-        case Socket::Family::IPv4:
-            outPeerAddr = std::make_shared<IPv4Address>();
-            break;
-        case Socket::Family::IPv6:
-            outPeerAddr = std::make_shared<IPv6Address>();
-            break;
-        default:
-            throw std::invalid_argument("wrong socket family of accept socket");
-    }
-
     SocketApiWrapper::socket_t connfd = m_AcceptSocket.Accept(outPeerAddr, true); //! 非阻塞连接套接字
 
     YLOG_DEBUG("In Acceptor::HandleAccept，套接字<{}>被Accept", connfd)
@@ -59,11 +48,31 @@ void Acceptor::HandleAccept() {
     }
 }
 
+void Acceptor::HandleAcceptAll() {
+    m_AcceptorLoop->AssertInLoopingThread(__FILE__, __LINE__);
+
+    auto allConnfd = m_AcceptSocket.AcceptAll(true); //! 非阻塞连接套接字
+
+    for (auto & conn: allConnfd) {
+        auto & conn_fd = conn.first;
+        auto & coon_addr = conn.second;
+
+        YLOG_DEBUG("In Acceptor::HandleAccept，套接字<{}>被Accept", conn_fd)
+        if(m_NewConnectionCallback) {
+            m_NewConnectionCallback(conn_fd, coon_addr); // TcpServer定义
+        } else {
+            SocketApiWrapper::close(conn_fd);
+        }
+    }
+
+}
+
 void Acceptor::StartListenInLoop() {
     m_AcceptorLoop->AssertInLoopingThread(__FILE__, __LINE__);
 
     m_IsListening = true;
-    m_AcceptChannel.SetReadCallback([this](){ this->HandleAccept(); });
+    // m_AcceptChannel.SetReadCallback([this](){ this->HandleAccept(); });
+    m_AcceptChannel.SetReadCallback([this](){ this->HandleAcceptAll(); });
     m_AcceptChannel.EnableReading();
     m_AcceptSocket.Listen();
     YLOG_INFO("线程<{}>开始监听，监听地址为：<{}:{}>，监听套接字为{}", GetStrThreadID(),

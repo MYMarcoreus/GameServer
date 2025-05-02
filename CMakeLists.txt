@@ -174,6 +174,7 @@ set(COMMON_SOURCES
         base/utils/FactoryX.h
         base/utils/ClassRegister.h
         base/log/ILogAppender.h
+        base/net/socket_definations.cpp
 )
 # 调用子目录下的cmake
 add_subdirectory(base)

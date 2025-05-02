@@ -187,8 +187,7 @@ void Connector::Retry(SocketApiWrapper::socket_t sockfd) {
 int Connector::RemoveAndResetChannel() {
     YLOG_TRACE("In Connector::RemoveAndResetChannel()")
     //! 取消监听连接Channel的事件，并释放之，但是sockfd仍处于开启的状态，因此需要返回sockfd并根据其具体情况关闭之或传递到上层
-    m_Channel->DisableAllEvent();
-    m_Channel->RemoveFromLoop();
+    m_Channel->ResetAndRemoveFromPoller();
     SocketApiWrapper::socket_t sockfd = m_Channel->GetFD();
 
     //! 在HandleWrite和HandleError中调用RemoveAndResetChannel时，
@@ -199,8 +198,7 @@ int Connector::RemoveAndResetChannel() {
 
 Connector::~Connector() {
     if(m_Channel) {
-        m_Channel->DisableAllEvent();
-        m_Channel->RemoveFromLoop();
+        m_Channel->ResetAndRemoveFromPoller();
     }
 
 }

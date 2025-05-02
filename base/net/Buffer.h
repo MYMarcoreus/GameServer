@@ -117,7 +117,7 @@ public:
     ///@brief 将缓冲区的数据写入protobuf对象，调用者须知道protobuf对象的实际长度 ———— 从recvBuf读取数据到protobuf消息中
     bool RetrieveDataIntoProtobuf(const std::shared_ptr<google::protobuf::Message> & outMsg, size_t len);
 
-    ssize_t RetrieveDataIntoSocket(SocketApiWrapper::socket_t sockfd);
+    SocketApiWrapper::SocketResult RetrieveDataIntoSocket(SocketApiWrapper::socket_t sockfd);
 
     ///@brief 读取len长度的数据到string中并返回
     std::string RetrieveDataAsString(int len);

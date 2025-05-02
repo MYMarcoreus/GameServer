@@ -4,12 +4,25 @@
 #include "status/Status.h"
 #include "ErrnoSaver.h"
 #include <fcntl.h>
+#include "util_functions.h"
 
 
 
 #include "net_definations.h"
 
-namespace SocketApiWrapper {
+
+namespace yy::SocketApiWrapper {
+
+int64_t get_socket_error() {
+#ifdef ____WINDOWS
+    return GetLastError();
+#elif defined(____LINUX)
+    return errno;
+#else
+    #error Platform not supported
+#endif
+}
+
 
 
 socket_t create_or_die(sa_family_t family, __socket_type type, bool isNonblock) {
@@ -19,40 +32,27 @@ socket_t create_or_die(sa_family_t family, __socket_type type, bool isNonblock) 
     if (sockfd < 0) {
         YLOG_FATAL("In Socket::Socket(), socket() error: {}", yy::util::GetLastErrorInfo());
     }
-#endif
-
-#ifdef ____WINDOWS
-    // WORD wsaword;
-    // WSADATA wsadata;
-    // wsaword = MAKEWORD(2,2);
-    // uint64_t iError = ::WSAStartup(wsaword, &wsadata);
-    // if (iError != NOERROR) {
-    //     return INVALID_SOCKET;
-    // }
-    // if ((2 != LOBYTE(wsadata.wVersion)) || (2 != LOBYTE(wsadata.wHighVersion))) {
-    //     ::WSACleanup();
-    //     return INVALID_SOCKET;
-    // }
-
-    WSADATA wsaData;
-    if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
-        std::cerr << "Failed to initialize Winsock." << std::endl;
-        return 1;
-    }
-
-
-    socket_t sockfd = socket(AF_INET, SOCK_STREAM, 0);
-    if (sockfd == INVALID_SOCKET) {
-        ::WSACleanup();
-        YLOG_FATAL("In Socket::Socket(), socket() error: {}", yy::util::GetLastErrorInfo())
-    } else {
-        if(isNonblock) {
-            set_nonblocking(sockfd);
-        }
-    }
-#endif
-
     return sockfd;
+#elif defined(____WINDOWS)
+    static std::once_flag wsa_init_flag;
+    std::call_once(wsa_init_flag, [] {
+        WSADATA wsaData;
+        if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
+            YLOG_FATAL("WSAStartup failed");
+        }
+    });
+
+    socket_t sockfd = socket(family, type, 0);
+    if (sockfd == INVALID_SOCKET) {
+        YLOG_FATAL("In Socket::Socket(), socket() error: {}", yy::util::GetLastErrorInfo());
+    } else if (isNonblock) {
+        set_nonblocking(sockfd);
+    }
+    return sockfd;
+#else
+    #error Platform not supported
+#endif
+
 }
 
 socket_t create_tcp_or_die(bool isNonblock) {
@@ -60,7 +60,7 @@ socket_t create_tcp_or_die(bool isNonblock) {
 }
 
 socket_t create_udp_or_die(bool isNonblock) {
-    return create_or_die(AF_INET6, SOCK_DGRAM, isNonblock);
+    return create_or_die(AF_INET, SOCK_DGRAM, isNonblock);
 }
 
 
@@ -203,7 +203,7 @@ int get_socket_error(socket_t sockfd) {
     socklen_t optlen = static_cast<socklen_t>(sizeof optval);
 
     if (::getsockopt(sockfd, SOL_SOCKET, SO_ERROR, (char *) &optval, &optlen) < 0) {
-        return errno;
+        return get_socket_error();
     } else {
         return optval;
     }
@@ -259,46 +259,49 @@ IPAddress::ptr GetPeerAddr(SocketApiWrapper::socket_t sockfd) {
     return addr;
 }
 
-ssize_t recv(socket_t sockfd, void *ptr, size_t nbytes, int flags) {
+
+SocketResult recv(socket_t sockfd, void *ptr, size_t nbytes, int flags) {
 #ifdef ____LINUX
     flags |= MSG_NOSIGNAL;
 #endif
     auto ret = ::recv(sockfd, (char *) ptr, nbytes, flags);
-    return ret;
+    return {ret, get_socket_error()};
 }
 
-ssize_t send(socket_t sockfd, const void *ptr, size_t nbytes, int flags) {
+SocketApiWrapper::SocketResult send(socket_t sockfd, const void *ptr, size_t nbytes, int flags) {
 #ifdef ____LINUX
     flags |= MSG_NOSIGNAL;
 #endif
     auto ret = ::send(sockfd, (char *) ptr, nbytes, flags);
-    return ret;
+    return {ret, get_socket_error()};
 }
 
-ssize_t sendto(socket_t sockfd, const void *ptr, size_t nbytes, int flags, std::shared_ptr<IPAddress> peerAddr) {
-    return ::sendto(sockfd, (char *) ptr, nbytes, flags, peerAddr->GetRawAddr(), peerAddr->GetRawAddrLen());
+SocketApiWrapper::SocketResult sendto(socket_t sockfd, const void *ptr, size_t nbytes, int flags, std::shared_ptr<IPAddress> peerAddr) {
+    auto ret = ::sendto(sockfd, (char *) ptr, nbytes, flags, peerAddr->GetRawAddr(), peerAddr->GetRawAddrLen());
+    return {ret, get_socket_error()};
 }
 
-ssize_t recvfrom(socket_t sockfd, void *ptr, size_t nbytes, int flags, std::shared_ptr<IPAddress> peerAddr) {
+SocketApiWrapper::SocketResult recvfrom(socket_t sockfd, void *ptr, size_t nbytes, int flags, std::shared_ptr<IPAddress> peerAddr) {
     auto addrLen = peerAddr->GetRawAddrLen();
-    return ::recvfrom(sockfd, (char *) ptr, nbytes, flags, peerAddr->GetRawAddr(), &addrLen);
+    auto ret = ::recvfrom(sockfd, (char *) ptr, nbytes, flags, peerAddr->GetRawAddr(), &addrLen);
+    return {ret, get_socket_error()};
 }
 
-ssize_t readv(socket_t sockfd, IOV_TYPE *iov, int iovcnt) {
+SocketApiWrapper::SocketResult readv(socket_t sockfd, IOV_TYPE *iov, int iovcnt) {
 #ifdef ____WINDOWS
     DWORD bytesRead;
     DWORD flags = 0;
-    if (WSARecv(sockfd, iov, iovcnt, &bytesRead, &flags, NULL, NULL)) {
-        if (GetLastError() == WSAECONNABORTED)
-            //close
-            return 0;
-        else
-            //error
-            return -1;
-    } else
-        return bytesRead;
+    auto ret = WSARecv(sockfd, iov, iovcnt, &bytesRead, &flags, NULL, NULL);
+    if (ret == SOCKET_ERROR) {
+        return {-1, get_socket_error()};
+    } else {
+        return { static_cast<ssize_t>(bytesRead), 0 };
+    }
+#elif defined(____LINUX)
+    auto ret = ::readv(sockfd, iov, iovcnt);
+    return {ret, get_socket_error()};
 #else
-    return ::readv(sockfd, iov, iovcnt);
+    #error Platform not supported
 #endif
 }
 

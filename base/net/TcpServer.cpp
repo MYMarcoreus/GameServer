@@ -85,7 +85,7 @@ TcpServer::~TcpServer() {
     for(auto & p: m_ConnectionMap) {
         auto conn = p.second;
         conn->GetLoop()->RunCallbackInLoop([conn](){ conn->ConnectionDestroyed(); } );
-        p.second.reset();
+        conn.reset();
     }
 
     m_IsStarted = false;
@@ -123,12 +123,14 @@ void TcpServer::HandleNewConnection(SocketApiWrapper::socket_t sockfd, IPAddress
     );
     m_ConnectionMap[name] = conn;
 
+    //! 传递上层的回调
     conn->SetConnectionEstablishedCallback(m_ConnectionEstablishedCallback);
     // conn->SetConnectionDestroyedCallback(m_ConnectionDestroyedCallback);
     conn->SetMessageCallback(m_MessageCallback);
     conn->SetConnectionWriteCompleteCallback(m_ConnectionWriteCompleteCallback);
     conn->SetConnectionCloseCallback(std::bind(&TcpServer::RemoveConnection, this, _1));
     conn->SetConnectionShutdownCallback(m_ConnectionShutdownCallback);
+    //!
     conn->GetLoop()->RunCallbackInLoop([conn](){ conn->ConnectionEstablished(); });
 
     YLOG_INFO("In TcpServer::HandleNewConnection<{}:{}>，PeerAddr<{},{}>", conn->GetSocketFD(), conn->GetName().c_str(),

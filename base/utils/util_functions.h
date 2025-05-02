@@ -112,7 +112,7 @@ extern struct timespec DurationToTimespec(std::chrono::nanoseconds nanoDuration)
 extern std::chrono::nanoseconds TimespecToDuration(struct timespec spec);
 
 extern std::string GetLastErrorInfo();
-extern std::string GetErrorInfo(uint64_t error);
+extern std::string GetErrorInfo(int64_t err);
 
 }
 

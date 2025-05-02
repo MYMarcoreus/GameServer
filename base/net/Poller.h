@@ -4,6 +4,7 @@
 #include <map>
 #include <vector>
 #include <chrono>
+#include "socket_definations.h"
 
 
 namespace yy::net {
@@ -42,7 +43,7 @@ public:
 
 protected:
     EventLoop *                 m_OwnerLoop;
-    std::map<int, Channel *>    m_ChannelMap; //  get_fd->Channel*
+    std::map<SocketApiWrapper::socket_t, Channel *>    m_ChannelMap; //  get_fd->Channel*
 };
 
 } // yy::net

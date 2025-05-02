@@ -8,8 +8,8 @@ classDiagram
 	
     class GameManager {
     	<<Singleton>>
-        - **EventLoop** * m_loop = new *EventLoop*(500ms)
-        - **IServer**   * m_server = new *GameServer*(m_loop, listenAddr)
+        - **EventLoop** * m_accpetorLoop = new *EventLoop*(500ms)
+        - **IServer**   * m_server = new *GameServer*(m_accpetorLoop, listenAddr)
         
         - **GamePlayerManager** * m_player
         - **GameTestManager**   * m_test

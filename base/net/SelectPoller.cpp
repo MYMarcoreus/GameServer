@@ -2,6 +2,7 @@
 #include "Channel.h"
 #include "Timestamp.h"
 #include "log.h"
+#include "util_functions.h"
 #include <cassert>
 
 
@@ -11,8 +12,7 @@ namespace yy::net {
 using SocketApiWrapper::socket_t;
 
 
-namespace ____detail{
-
+// 可以使用，但是如果定义不暴露给外部的话，需要用指针当成员，这样更麻烦了。
 class FdSet
 {
 private:
@@ -35,7 +35,7 @@ public:
     fd_set & get_fdset() { return fdset_; }
 };
 
-}
+
 
 
 
@@ -54,24 +54,30 @@ SelectPoller::SelectPoller(EventLoop* loop) : Poller(loop)
 
 void SelectPoller::UpdateChannel(Channel* channel)
 {
-    if (polledChannelsMap_.find(channel->GetFD()) == polledChannelsMap_.end())
-    {
-        polledChannelsMap_.insert(std::pair<socket_t, Channel*>(channel->GetFD(), channel));
-        fdSet_.insert(channel->GetFD());
+    // Channel的，Channel调用EventLoop调用本函数(Poller::UpdateChannel)以更改Channel对应的系统套接字
+    socket_t fd = channel->GetFD();
+
+    // 更改自定义数据结构
+    if (!m_ChannelMap.contains(fd)) {
+        m_ChannelMap.emplace(fd, channel);
+        fdSet_.insert(fd);
     }
+
+    // 更改系统底层数据结构
     Update(channel);
 }
+
 
 void SelectPoller::RemoveChannel(Channel* channel)
 {
     assert(channel);
     socket_t fd = channel->GetFD();
-    assert(polledChannelsMap_.find(fd) != polledChannelsMap_.end());
+    assert(m_ChannelMap.find(fd) != m_ChannelMap.end());
     assert(fdSet_.find(fd) != fdSet_.end());
     FD_CLR(fd, &select_readfds_);
     FD_CLR(fd, &select_writefds_);
     FD_CLR(fd, &select_expectfds_);
-    polledChannelsMap_.erase(fd);
+    m_ChannelMap.erase(fd);
     fdSet_.erase(fd);
 }
 
@@ -123,38 +129,38 @@ void SelectPoller::PollWait(Poller::ChannelList &activeChannels, Milliseconds ti
     if (numActiveEvents > 0) {
         FillActiveChannel(activeChannels, numActiveEvents);
     }
-    else if (!numActiveEvents) {
-        //
+    else if (numActiveEvents == 0) {
+        // nothing to do
     }
-    else
-    {
-#ifdef ____WINDOWS
-        int err = WSAGetLastError();
-        YLOG_ERROR("Select failed<{}>", err)
-#endif
+    else {
+        YLOG_ERROR("Select failed<{}>", util::GetLastErrorInfo())
     }
 }
 
-void SelectPoller::FillActiveChannel(ChannelList & activeChannels, int numEvents)
+void SelectPoller::FillActiveChannel(ChannelList& activeChannels, int numEvents)
 {
-    int readyEvent = 0;
-    for (auto it = fdSet_.begin(); it != fdSet_.end() && numEvents > 0; it++)
-    {
-        socket_t fd = *it;
-        if (FD_ISSET(fd, &happended_readfds_  )) readyEvent |= PollerEvent::eReadEvent;
-        if (FD_ISSET(fd, &happended_writefds_ )) readyEvent |= PollerEvent::eWriteEvent;
-        if (FD_ISSET(fd, &happended_expectfds_)) readyEvent |= PollerEvent::eErrorEvent;
+    if (numEvents <= 0)
+        return;
 
-        if (readyEvent != PollerEvent::eNoneEvent)
-        {
-            numEvents--;
-            Channel* channel = polledChannelsMap_.find(fd)->second;
-            assert(channel);
-            channel->SetHappendedEvent(readyEvent);
-            activeChannels.push_back(channel);
+    for (socket_t fd : fdSet_) {
+
+        PollerEvent readyEvent = 0;
+        if (FD_ISSET(fd, &happended_readfds_))   readyEvent.AddEvent(PollerEvent::eReadEvent);
+        if (FD_ISSET(fd, &happended_writefds_))  readyEvent.AddEvent(PollerEvent::eWriteEvent);
+        if (FD_ISSET(fd, &happended_expectfds_)) readyEvent.AddEvent(PollerEvent::eErrorEvent);
+
+        if (!readyEvent.HasNoneEvent()) {
+            if (auto it = m_ChannelMap.find(fd); it != m_ChannelMap.end()) {
+                Channel* channel = it->second;
+                assert(channel);
+                channel->SetHappendedEvent(readyEvent);
+                activeChannels.push_back(channel);
+                --numEvents;
+            }
         }
     }
 }
+
 
 
 

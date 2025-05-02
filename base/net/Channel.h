@@ -47,11 +47,10 @@ public:
 
     /*! SETTER !*/
     // Set Interested Events
-    void  EnableReading()  { /*printf("套接字<%d>添加读事件\n", m_FD) ;*/ m_InterestedEvent.AddEvent(PollerEvent::eReadEvent ); UpdateFromLoop(); };
-    void DisableReading()  { m_InterestedEvent.DelEvent(PollerEvent::eReadEvent ); UpdateFromLoop(); };
-    void  EnableWriting()  { /*printf("套接字<%d>添加写事件\n", m_FD) ;*/ m_InterestedEvent.AddEvent(PollerEvent::eWriteEvent); UpdateFromLoop(); };
-    void DisableWriting()  { m_InterestedEvent.DelEvent(PollerEvent::eWriteEvent); UpdateFromLoop(); };
-    void DisableAllEvent();;
+    void  EnableReading()  { m_InterestedEvent.AddEvent(PollerEvent::eReadEvent ); UpdateFromPoller(); };
+    void DisableReading()  { m_InterestedEvent.DelEvent(PollerEvent::eReadEvent ); UpdateFromPoller(); };
+    void  EnableWriting()  { m_InterestedEvent.AddEvent(PollerEvent::eWriteEvent); UpdateFromPoller(); };
+    void DisableWriting()  { m_InterestedEvent.DelEvent(PollerEvent::eWriteEvent); UpdateFromPoller(); };
     // Set Callbacks
     void SetReadCallback (F_EventCallback cb) { m_ReadCallback  = std::move(cb); }
     void SetWriteCallback(F_EventCallback cb) { m_WriteCallback = std::move(cb); }
@@ -65,14 +64,14 @@ public:
     ///        监控TcpConnection的生命周期，防止TcpConnection生命周期到时引用到失效对象。
     void Tie(const std::shared_ptr<void> &obj);
 
-    ///@brief 通知EventLoop让Poller将channel从底层数据结构删除
-    void RemoveFromLoop();
+    /// @brief 清空感兴趣的事件，通知EventLoop让Poller将channel从底层数据结构删除
+    void ResetAndRemoveFromPoller();
 private:
 
     void HandleEventWithTie();
 
     ///@brief 在Channel的事件改变后，通知EventLoop让Poller更新Poller实际对应的底层数据结构
-    void UpdateFromLoop();
+    void UpdateFromPoller();
 
 
 private:

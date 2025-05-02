@@ -92,15 +92,17 @@ public:
 
 /* TCP的I / O函数 */
     //! NOTE：本函数不处理返回值，需要调用者自行处理（如判断是否为ET模式）
-    ssize_t Recv(void *ptr, size_t nbytes, int flags = 0);
+    SocketApiWrapper::SocketResult Recv(void *ptr, size_t nbytes, int flags = 0);
 
-    ssize_t Send(const void *ptr, size_t nbytes, int flags = 0);
+    SocketApiWrapper::SocketResult Send(const void *ptr, size_t nbytes, int flags = 0);
+
+    SocketApiWrapper::SocketResult Readv(IOV_TYPE *iov, int iovcnt);
 
 /* UDP的I / O函数 */
     //! NOTE：本函数不处理返回值，需要调用者自行处理（如判断是否为ET模式）
-    ssize_t Recvfrom(void *ptr, size_t nbytes, int flags, IPAddressPtr peerAddr);
+    SocketApiWrapper::SocketResult Recvfrom(void *ptr, size_t nbytes, int flags, IPAddress::ptr peerAddr);
 
-    ssize_t Sendto(const void *ptr, size_t nbytes, int flags, IPAddressPtr peerAddr);
+    SocketApiWrapper::SocketResult Sendto(const void *ptr, size_t nbytes, int flags, IPAddress::ptr peerAddr);
 
 
     ///@brief 关闭套接字读写端

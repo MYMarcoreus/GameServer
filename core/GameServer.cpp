@@ -13,9 +13,9 @@ using namespace yy::config;
 
 namespace yy::core {
 
-GameServer::GameServer(EventLoop *loop, IPAddressPtr listenAddr)
-        : m_accpetorLoop{loop},
-          m_server(loop, listenAddr, true),
+GameServer::GameServer(EventLoop *accpetorLoop, IPAddressPtr listenAddr)
+        : m_accpetorLoop{accpetorLoop},
+          m_server(accpetorLoop, listenAddr, true),
           m_dispatcher( std::bind(&GameServer::OnUnknownMessage, this, _1, _2) ),
           m_codec(std::bind(&decltype(m_dispatcher)::OnProtobufMessage, &m_dispatcher, _1, _2)),
           m_app_configvar(g_app_config)
@@ -23,8 +23,8 @@ GameServer::GameServer(EventLoop *loop, IPAddressPtr listenAddr)
     m_dispatcher.RegisterMessageCallback<yy::protocol::core::HeartBody>(std::bind(&GameServer::OnHeart, this, _1, _2));
     m_dispatcher.RegisterMessageCallback<yy::protocol::core::SecurityBody>(std::bind(&GameServer::OnSecurity, this, _1, _2));
 
-    m_server.SetMessageCallback( std::bind(&ProtobufCodec::OnData, &m_codec, _1, _2));
-    m_server.SetConnectionEstablishedCallback( std::bind(&GameServer::OnConnectionEstablished, this, _1));
+    m_server.SetMessageCallback( std::bind_front(&ProtobufCodec::OnData, &m_codec));
+    m_server.SetConnectionEstablishedCallback( std::bind_front(&GameServer::OnConnectionEstablished, this));
     m_server.SetConnectionShutdownCallback([this](const TcpConnectionPtr & conn) { this->AfterShutdownConnection(conn); });
     // m_server.SetCloseSocketsCallback([this]() { this->CheckDisconnections(); });
 }

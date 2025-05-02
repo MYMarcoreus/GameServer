@@ -32,7 +32,7 @@ public:
     bool IsListening() { return m_IsListening; };
 private:
     ///@brief 接受新连接，并执行m_NewConnectionCallback
-    void HandleAccept();
+    [[deprecated]] void HandleAccept();
     void HandleAcceptAll();
 
     void StartListenInLoop();

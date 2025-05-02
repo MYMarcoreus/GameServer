@@ -25,7 +25,7 @@ class GameServer final: public IServer{
     using SecurityPtr = std::shared_ptr<yy::protocol::core::SecurityBody> ;
 
 public:
-    GameServer(yy::net::EventLoop* loop, yy::net::IPAddressPtr listenAddr);
+    GameServer(yy::net::EventLoop* accpetorLoop, yy::net::IPAddressPtr listenAddr);
     ~GameServer() override;
 
     /// @brief Start Listen & IOLoop
@@ -83,7 +83,7 @@ private:
     F_Notifier        m_notifier_disconnect;  // 用户连接断开后，执行业务层回调函数
     F_NotifierCommand m_notifier_command;
 
-    std::mutex                                        m_users_mutex;
+    std::mutex                                          m_users_mutex;
     std::unordered_map<std::string , UserConnectionPtr> m_users;
     std::vector<std::string> m_closeUsers;
 };

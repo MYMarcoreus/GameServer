@@ -9,6 +9,8 @@
 #include <memory>
 #include <unordered_map>
 #include <type_traits>
+#include <cstdint>  // for int64_t
+
 
 
 namespace yy::net {
@@ -16,10 +18,11 @@ class IPAddress;
 }
 
 
-namespace SocketApiWrapper
+namespace yy::SocketApiWrapper
 {
 
 using yy::net::IPAddress;
+
 
 socket_t create_or_die(sa_family_t family = AF_INET, __socket_type type = SOCK_STREAM, bool isNonblock = true);
 
@@ -36,16 +39,27 @@ void     close(socket_t sockfd);
 void     shutdown (socket_t sockfd, int how);
 void     set_nonblocking(socket_t sockfd);
 int      get_socket_error(socket_t sockfd);
+int64_t  get_socket_error();
+template<typename T>
+T  has_socket_error(T ret) {
+#ifdef ____WINDOWS
+    return ret == SOCKET_ERROR;
+#elif defined(____LINUX)
+    return ret < 0;
+#else
+    #error Platform not supported
+#endif
+}
 bool     is_self_connect(socket_t sockfd);
 
 
 
-ssize_t recv(socket_t sockfd, void *ptr, size_t nbytes, int flags);
-ssize_t send(socket_t sockfd, const void *ptr, size_t nbytes, int flags);
-ssize_t sendto(socket_t sockfd, const void *ptr, size_t nbytes, int flags, std::shared_ptr<IPAddress> peerAddr);
-ssize_t recvfrom(socket_t sockfd, void *ptr, size_t nbytes, int flags, std::shared_ptr<IPAddress> peerAddr);
+SocketResult recv(socket_t sockfd, void *ptr, size_t nbytes, int flags);
+SocketApiWrapper::SocketResult send(socket_t sockfd, const void *ptr, size_t nbytes, int flags);
+SocketApiWrapper::SocketResult sendto(socket_t sockfd, const void *ptr, size_t nbytes, int flags, std::shared_ptr<IPAddress> peerAddr);
+SocketApiWrapper::SocketResult recvfrom(socket_t sockfd, void *ptr, size_t nbytes, int flags, std::shared_ptr<IPAddress> peerAddr);
 
-ssize_t readv(socket_t sockfd, IOV_TYPE *iov, int iovcnt);
+SocketApiWrapper::SocketResult readv(socket_t sockfd, IOV_TYPE *iov, int iovcnt);
 
 
 
@@ -58,29 +72,6 @@ template<class IPADDR> requires requires {
 std::unordered_map<socket_t, std::shared_ptr<IPAddress>> acceptAll(socket_t sockfd, bool isNewSockNonBlock)
 {
     std::unordered_map<socket_t, std::shared_ptr<IPAddress>> Connfd2Addrs;
-#ifdef ____LINUX
-    while (true) {
-        IPAddress::ptr outPeerAddr = std::make_shared<IPADDR>();
-        auto addrLen = outPeerAddr->GetRawAddrLen();
-        int flags = isNewSockNonBlock ? SOCK_CLOEXEC | SOCK_NONBLOCK : 0;
-        socket_t connfd = ::accept4(sockfd, outPeerAddr->GetRawAddr(), &addrLen, flags);
-
-        if (connfd >= 0) {
-            Connfd2Addrs[connfd] = outPeerAddr;
-        } else {
-            yy::util::ErrnoSaver errnoSaver;
-            int err = errnoSaver();
-            if (err == EAGAIN || err == EWOULDBLOCK) {
-                break;
-            } else if (err == EINTR) {
-                continue;
-            } else {
-                YLOG_FATAL("In Socket::acceptAll(), accept() error: {}", yy::util::GetErrorInfo(err));
-                break;
-            }
-        }
-    }
-#endif
 
 #ifdef ____WINDOWS
     while (true) {
@@ -104,6 +95,30 @@ std::unordered_map<socket_t, std::shared_ptr<IPAddress>> acceptAll(socket_t sock
             }
         }
     }
+#elif defined(____LINUX)
+    while (true) {
+        IPAddress::ptr outPeerAddr = std::make_shared<IPADDR>();
+        auto addrLen = outPeerAddr->GetRawAddrLen();
+        int flags = isNewSockNonBlock ? SOCK_CLOEXEC | SOCK_NONBLOCK : 0;
+        socket_t connfd = ::accept4(sockfd, outPeerAddr->GetRawAddr(), &addrLen, flags);
+
+        if (connfd >= 0) {
+            Connfd2Addrs[connfd] = outPeerAddr;
+        } else {
+            yy::util::ErrnoSaver errnoSaver;
+            int err = errnoSaver();
+            if (err == EAGAIN || err == EWOULDBLOCK) {
+                break;
+            } else if (err == EINTR) {
+                continue;
+            } else {
+                YLOG_FATAL("In Socket::acceptAll(), accept() error: {}", yy::util::GetErrorInfo(err));
+                break;
+            }
+        }
+    }
+#else
+    #error Platform not supported
 #endif
 
     return std::move(Connfd2Addrs);

@@ -262,17 +262,17 @@ std::string GetLastErrorInfo() {
 #ifdef ____LINUX
     return GetErrorInfo(errno);
 #endif
-
-
 }
 
-std::string GetErrorInfo(uint64_t error) {
+
+
+std::string GetErrorInfo(int64_t err) {
 #ifdef  ____WINDOWS
     LPVOID errorMsg;
     FormatMessage(
             FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
             nullptr,
-            (DWORD)error,
+            (DWORD)err,
             0, // Default language
             reinterpret_cast<LPSTR>(&errorMsg),
             0,
@@ -283,8 +283,8 @@ std::string GetErrorInfo(uint64_t error) {
 #endif
 
 #ifdef ____LINUX
-    auto p = strerrorname_np(error);
-    return std::string( p ? p : "" ) + "(" + StrError((int)error) + ")";
+    auto p = strerrorname_np(err);
+    return std::string( p ? p : "" ) + "(" + StrError((int)err) + ")";
 #endif
 }
 

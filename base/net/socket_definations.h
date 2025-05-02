@@ -5,35 +5,57 @@
 #include "cross_platform_defines.h"
 
 
-#ifdef ____LINUX
+
+
+#ifdef ____WINDOWS
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#include <cassert>
+using sa_family_t = int;
+using __socket_type = int;
+#elif defined(____LINUX)
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <sys/time.h> // gettimeofday
 #include <unistd.h>   // readlink
-#endif
-
-#ifdef ____WINDOWS
-#include <winsock2.h>
-#include <ws2tcpip.h>
-
-using sa_family_t = int;
-using __socket_type = int;
-
+#else
+    #error Platform not supported
 #endif
 
 
-
-
-namespace SocketApiWrapper {
+namespace yy::SocketApiWrapper {
 
 #ifdef ____WINDOWS
 using socket_t = SOCKET;
+#elif defined(____LINUX)
+using socket_t = int;
+#else
+    #error Platform not supported
 #endif
 
-#ifdef ____LINUX
-using socket_t = int;
-#endif
+
+struct SocketResult {
+public:
+    SocketResult(int64_t rst = 0, int64_t err = 0) : result(rst), errorCode(err) { }
+    [[nodiscard]] int64_t & Result() {
+        assert(HasNoError());
+        return result;
+    }
+    [[nodiscard]] int64_t ErrorCode() const { return errorCode; }
+
+    bool HasError() const;
+    bool HasNoError() const { return not HasError(); };
+
+    std::string GetErrorInfo() const;
+
+
+private:
+    int64_t result;   // 成功返回的字节数，现在是 int64_t
+    int64_t errorCode;    // 出错时保存 errno 或 WSAGetLastError
+};
+
+
 
 }
 

@@ -32,15 +32,14 @@ private:
     void Update(Channel* channel);
 
 private:
-    std::map<SocketApiWrapper::socket_t, Channel*> polledChannelsMap_;
     fd_set select_readfds_;
     fd_set select_writefds_;
     fd_set select_expectfds_;
-
     fd_set happended_writefds_;
     fd_set happended_readfds_;
     fd_set happended_expectfds_;
 
+    // 用于获取最大的套接字描述符，以规定select的遍历范围
     std::set<SocketApiWrapper::socket_t, std::greater<SocketApiWrapper::socket_t> > fdSet_;
 };
 

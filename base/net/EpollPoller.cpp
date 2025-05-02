@@ -76,7 +76,8 @@ EpollPoller::~EpollPoller() {
 
 void EpollPoller::PollWait(ChannelList &activeChannel, std::chrono::milliseconds timeout) {
     int numEvents = epoll_wait(m_EpollFD, &*m_EpollEventList.begin(),
-                               (int) m_EpollEventList.size(), timeout == std::chrono::milliseconds::max() ? -1 : timeout.count());
+                               (int) m_EpollEventList.size(),
+                               timeout == std::chrono::milliseconds::max() ? -1 : timeout.count());
     ::yy::util::ErrnoSaver savedErrno;
     if(numEvents > 0) {
         YLOG_TRACE("epoll_wait() return {} events, m_EpollEventList.size = {}", numEvents, m_EpollEventList.size())
@@ -106,7 +107,7 @@ void EpollPoller::UpdateChannel(Channel * channel) {
     switch (channel->GetState()) {
         case Channel::State::eNew:
         case Channel::State::eDeleted: {
-            //! 加入channel映射表（注意kDeleted状态的channel仍在映射表中，只是不在epoll监视列表中）
+            //! 加入channel映射表（注意eDeleted状态的channel仍在映射表中，只是不在epoll监视列表中）
             if(channel->GetState() == Channel::State::eNew) {
                 m_ChannelMap[channel->GetFD()] = channel;
             }

@@ -16,23 +16,20 @@
     #include <winsock2.h>
     #include <ws2tcpip.h>
     #include <basetsd.h>
-
     #define NUM_WRITE_IOVEC 16
     #define IOV_TYPE WSABUF
     #define IOV_PTR_FIELD buf
     #define IOV_LEN_FIELD len
     #define IOV_LEN_TYPE unsigned long
-#endif
-
-#ifdef ____LINUX
+#elif defined(____LINUX)
     #include <sys/uio.h>
     #define IOV_TYPE struct iovec
     #define IOV_PTR_FIELD iov_base
     #define IOV_LEN_FIELD iov_len
     #define IOV_LEN_TYPE size_t
+#else
+    #error Platform not supported
 #endif
-
-
 
 
 //! 类型定义
@@ -42,9 +39,11 @@
     #include <windows.h>
     typedef SSIZE_T ssize_t;
     using sighandler_t = void(*)(int);
-#else
+#elif defined(____LINUX)
     #include <sys/time.h>
     #include <unistd.h>
+#else
+    #error Platform not supported
 #endif
 
 
@@ -56,15 +55,15 @@
     #define FLUSH(fd)               _commit(fd)
     #define CLOSE(fd)               _close(fd)
     #define SLEEP(s)                Sleep(1000 * s)
-#endif // ____WINDOWS
-
-#ifdef ____LINUX
+#elif defined(____LINUX)
     #define OPEN(file, mode)        open(file, mode, S_IRUSR | S_IWUSR | S_IRGRP)
     #define WRITE(fd, data, len)    write(fd, data, len);
     #define FLUSH(fd)               fsync(fd)
     #define CLOSE(fd)               close(fd)
     #define SLEEP(s)                sleep(s)
-#endif // ____LINUX
+#else
+    #error Platform not supported
+#endif
 
 #endif //GAMESERVER_CROSS_PLATFORM_DEFINES_H
 

@@ -54,7 +54,7 @@ private:
     GamePlayerManager * m_player;
     GameTestManager   * m_test;
     core::ProtobufDispatcher<core::UserConnectionPtr> m_dispatcher; // 处理下层(core层)分发传来的无法处理的消息
-    yy::net::EventLoop * m_loop;
+    yy::net::EventLoop * m_accpetorLoop;
 
     yy::net::ThreadPool m_wordThreads;
 };

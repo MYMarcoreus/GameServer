@@ -130,23 +130,23 @@ void Socket::Close() {
 }
 
 
-ssize_t Socket::Recv(void *ptr, size_t nbytes, int flags)
+SocketApiWrapper::SocketResult Socket::Recv(void *ptr, size_t nbytes, int flags)
 {
     return SocketApiWrapper::recv(m_socketfd, (char *)ptr, nbytes, flags);
 }
 
-ssize_t Socket::Send(const void *ptr, size_t nbytes, int flags)
+SocketApiWrapper::SocketResult Socket::Send(const void *ptr, size_t nbytes, int flags)
 {
     return SocketApiWrapper::send(m_socketfd, (char *)ptr, nbytes, flags);
 }
 
-ssize_t Socket::Sendto(const void *ptr, size_t nbytes, int flags, IPAddress::ptr peerAddr)
+SocketApiWrapper::SocketResult Socket::Sendto(const void *ptr, size_t nbytes, int flags, IPAddress::ptr peerAddr)
 {
     return SocketApiWrapper::sendto(m_socketfd, (char *)ptr, nbytes, flags, peerAddr);
 }
 
 
-ssize_t Socket::Recvfrom(void *ptr, size_t nbytes, int flags, IPAddress::ptr peerAddr)
+SocketApiWrapper::SocketResult Socket::Recvfrom(void *ptr, size_t nbytes, int flags, IPAddress::ptr peerAddr)
 {
     return SocketApiWrapper::recvfrom(m_socketfd, (char *)ptr, nbytes, flags, peerAddr);
 }
@@ -155,6 +155,9 @@ void Socket::SetNonblocking() {
     SocketApiWrapper::set_nonblocking(m_socketfd);
 }
 
+SocketApiWrapper::SocketResult Socket::Readv(WSABUF *iov, int iovcnt) {
+    return SocketApiWrapper::readv(m_socketfd, iov, iovcnt);
+}
 
 
 } // yy::net

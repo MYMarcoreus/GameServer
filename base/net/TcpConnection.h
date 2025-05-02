@@ -97,6 +97,8 @@ private:
 
     bool CanShutdown() { return !IsShutdown() and IsConnected(); }
 
+    bool CanIO() { return IsConnected(); }
+
 private:
     std::string                    m_Name;
     EventLoop *                    m_ioLoop;

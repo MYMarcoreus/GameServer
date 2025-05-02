@@ -139,7 +139,7 @@ void GamePlayerManager::Broadcast(const UserConnectionPtr &from, const google::p
 
 void GamePlayerManager::Broadcast(const UserConnectionPtr& from, const MessagePtr &data)
 {
-    if(data) {
+    if(from and data) {
         Broadcast(from, *data);
     }
 }

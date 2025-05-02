@@ -29,36 +29,36 @@ struct WakeupFD {
         if (evtfd < 0) {
             throw std::system_error(errno, std::system_category(), "eventfd");
         }
-        this->read_fd = evtfd;
-        this->write_fd = evtfd;
+        this->wait_fd = evtfd;
+        this->notify_fd = evtfd;
+    #elif defined(____WINDOWS)
+        InitWakeUpWithUCP();
+    #else
+        #error Platform not supported
     #endif
+    }
 
-    #ifdef ____WINDOWS
-        auto listen_fd =  SocketApiWrapper::create_tcp_or_die(false);
-        IPAddressPtr listen_addr = std::make_shared<IPv4Address>("127.0.0.1");
-        SocketApiWrapper::bind_or_die(listen_fd, listen_addr);
-        SocketApiWrapper::listen_or_die(listen_fd, 1);
+    void InitWakeUpWithUCP() {
+        this->wait_fd =  SocketApiWrapper::create_tcp_or_die(false);
+        auto loopback_addr = std::make_shared<IPv4Address>("127.0.0.1");
+        SocketApiWrapper::bind_or_die(this->wait_fd, loopback_addr);
+        this->wait_addr = SocketApiWrapper::GetLocalAddr(this->wait_fd);
 
-        auto local_addr = SocketApiWrapper::GetLocalAddr(listen_fd);
-        this->write_fd = SocketApiWrapper::create_tcp_or_die(true);
-        SocketApiWrapper::connect(write_fd, local_addr);
-        this->read_fd = SocketApiWrapper::accept(listen_fd, nullptr, true);
-        YLOG_DEBUG("WakeupFD::listen_fd<{}>已Close！", listen_fd)
-        SocketApiWrapper::close(listen_fd);
-    #endif
+        this->notify_fd = SocketApiWrapper::create_udp_or_die(true);
     }
 
     ~WakeupFD() {
-        if (read_fd == write_fd) {
-            SocketApiWrapper::close(read_fd);
+        if (this->wait_fd == this->notify_fd) {
+            SocketApiWrapper::close(this->wait_fd);
         } else {
-            SocketApiWrapper::close(read_fd);
-            SocketApiWrapper::close(write_fd);
+            SocketApiWrapper::close(this->wait_fd);
+            SocketApiWrapper::close(this->notify_fd);
         }
     }
 
-    SocketApiWrapper::socket_t read_fd;
-    SocketApiWrapper::socket_t write_fd;
+    SocketApiWrapper::socket_t wait_fd;
+    SocketApiWrapper::socket_t notify_fd;
+    IPAddressPtr wait_addr;
 };
 
 
@@ -70,59 +70,77 @@ public:
 
     ~WakeupManager();
 
-    void Write();
+
+    void NotifyIfNeed() {
+        if(isNeedWakeup) {
+            Notify();
+        }
+    }
+
+    void SetNeedWake(bool val) { isNeedWakeup = val; }
 
 private:
-    void Read();
+    void OnNotify();
+    void Notify();
 
     WakeupFD wakeupEventFD_;
     std::unique_ptr<Channel> wakeupChannel_;
+    std::atomic<bool> isNeedWakeup;
 };
 
 
 WakeupManager::WakeupManager(EventLoop *loop)
         : wakeupEventFD_{},
-          wakeupChannel_(std::make_unique<Channel>(loop, wakeupEventFD_.read_fd, "Wakeup Eventfd Channel"))
+          wakeupChannel_(std::make_unique<Channel>(loop, wakeupEventFD_.wait_fd, "Wakeup Eventfd Channel")),
+          isNeedWakeup{false}
 {
-    wakeupChannel_->SetReadCallback([this](){ this->Read(); });
+    wakeupChannel_->SetReadCallback([this](){ this->OnNotify(); });
     wakeupChannel_->EnableReading();
 }
 
 WakeupManager::~WakeupManager() {
-    this->wakeupChannel_->DisableAllEvent();
-    this->wakeupChannel_->RemoveFromLoop();
+    this->wakeupChannel_->ResetAndRemoveFromPoller();
 }
 
-void WakeupManager::Read() {
+void WakeupManager::OnNotify() {
+    isNeedWakeup = false;
+
     uint64_t msg = 1;
 #ifdef ____LINUX
     auto ret = ::read(wakeupEventFD_.read_fd, &msg, sizeof msg);
-#endif
-
-#ifdef ____WINDOWS
-    auto ret = SocketApiWrapper::recv(wakeupEventFD_.read_fd, &msg, sizeof msg, 0);
-#endif
-
     if(ret < 0) {
         YLOG_ERROR("EventLoop::WakeupManager::Read() ::read() error: {}", GetLastErrorInfo())
     }
+#elif defined(____WINDOWS)
+    // auto rst = SocketApiWrapper::recv(wakeupEventFD_.wait_fd, &msg, sizeof msg, 0);
+    auto rst = SocketApiWrapper::recvfrom(
+        wakeupEventFD_.wait_fd, &msg, sizeof msg, 0, nullptr);
+    if(rst.HasError()) {
+        YLOG_ERROR("EventLoop::WakeupManager::OnNotify() ::read() error: {}", GetLastErrorInfo())
+    }
+#else
+    #error Platform not supported
+#endif
 }
 
 //! 向唤醒事件文件描述符进行写，以触发其poll事件
-void WakeupManager::Write() {
+void WakeupManager::Notify() {
     uint64_t msg = 1;
 #ifdef ____LINUX
     auto ret = ::write(wakeupEventFD_.write_fd, &msg, sizeof msg);
     if(ret < 0) {
         YLOG_ERROR("EventLoop::WakeupManager::Write ::write() error: {}", GetLastErrorInfo())
     }
-#endif
+#elif defined(____WINDOWS)
+    // auto rst = SocketApiWrapper::send(wakeupEventFD_.notify_fd, &msg, sizeof msg, 0);
+    auto rst = SocketApiWrapper::sendto(
+        wakeupEventFD_.notify_fd, &msg, sizeof msg, 0, wakeupEventFD_.wait_addr);
 
-#ifdef ____WINDOWS
-    auto ret = SocketApiWrapper::send(wakeupEventFD_.write_fd, &msg, sizeof msg, 0);
-    if(ret == SOCKET_ERROR) {
-        YLOG_ERROR("EventLoop::WakeupManager::Write ::write() error: {}", GetLastErrorInfo());
+    if(rst.HasError()) {
+        YLOG_ERROR("EventLoop::WakeupManager::Notify ::write() error: {}", GetLastErrorInfo());
     }
+#else
+    #error Platform not supported
 #endif
 }
 
@@ -194,13 +212,15 @@ void EventLoop::Loop() {
         timeout = GetPollwaitTimeout();
 
         //! Windows没有类似Linux的定时器，直接在这里处理已超时的定时器
+        //! Linux则有内置定时器，RBTreeTimerManager内已将其作为Channel加入m_Poller的监听范围中，在PollWait内处理超时的定时器
 #ifdef ____WINDOWS
         if(timeout <= 0ms) {
             m_TimerManager->HandleExpiredTimersInLoop();
             continue;
         }
 #endif
-        //! Linux则有内置定时器，RBTreeTimerManager内已将其作为Channel加入m_Poller的监听范围中，在PollWait内处理超时的定时器
+
+        m_WakeupManager->NotifyIfNeed();
 
         //! 等待timeout ms，由Poller填充ActiveChannels
         m_Poller->PollWait(m_ActiveChannels, timeout);
@@ -235,14 +255,10 @@ void EventLoop::QuitLoop() {
     /* 若在当前线程执行QuitLoop()，则不用Wakeup()，因为当前线程只有可能在`active_event->HandleHappenedEvent();`处执行各种函数，
     执行完后会到下一轮循环然后检查m_IsQuit然后退出循环 */
     if(!IsInLoopingThread()){
-        Wakeup();
+        m_WakeupManager->SetNeedWake(true);
     }
 }
 
-void EventLoop::Wakeup() {
-    m_WakeupManager->Write();
-    //FIXME
-}
 
 EventLoop *EventLoop::GetEventLoopOfThisThread() {
     return ____EventLoopInThisThread;
@@ -274,7 +290,7 @@ void EventLoop::EnqueueCallbackInLoop(F_PendingCallback cb) {
     YLOG_TRACE("已将函数<{}>加入代办函数列表", GetDemangleName(cb.target_type().name()).c_str())
 
     if(!IsInLoopingThread() or m_IsCallingPenddingFunctors) {
-        Wakeup();
+        m_WakeupManager->SetNeedWake(true);
     }
 }
 

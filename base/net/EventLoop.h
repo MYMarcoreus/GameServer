@@ -77,8 +77,8 @@ public:
 
     void SetCloseSocketsCallback(F_CloseSocketsCallback cb) { m_CloseSocketsCallback = cb; }
 
-    ///@brief 唤醒正在阻塞在PollWait的EventLoop线程
-    void Wakeup();
+    ///@brief 唤醒正在阻塞在PollWait的EventLoop线程，以处理代办函数
+    // void Wakeup();
 private:
 
     ///@brief 在EventLoop::Loop()每一轮循环的最后执行代办函数列表

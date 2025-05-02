@@ -22,15 +22,22 @@ Channel::~Channel() {
         //     RemoveFromLoop();
     // });
     //! 需要在channel的定义者处编写：
-    //!  m_Channel->DisableAllEvent();
-    //!  m_Channel->DisableAllEvent();
+    //!  m_Channel->ResetAndRemoveFromPoller();
+    //!  m_Channel->ResetAndRemoveFromPoller();
 }
 
 
 // 因为Channel不能include"Poller"，所以需要先调用EventLoop的update，再让它调用Poller的update，来修改Poll的底层数据结构
-void Channel::UpdateFromLoop() { m_OwnerLoop->UpdateChannel(this); m_IsAddedToLoop = true ; }
+void Channel::UpdateFromPoller() { m_OwnerLoop->UpdateChannel(this); m_IsAddedToLoop = true ; }
 
-void Channel::RemoveFromLoop() { m_OwnerLoop->RemoveChannel(this); m_IsAddedToLoop = false; }
+void Channel::ResetAndRemoveFromPoller() {
+    YLOG_TRACE("Channel::ResetAndRemoveFromPoller(), {}, {}", ::yy::util::CastThreadIDToStr(m_OwnerLoop->GetThreadID()), ::yy::util::GetStrThreadID())
+    // 重置感兴趣的事件
+    m_InterestedEvent.ClrEvent();
+    // 将其从Poller底层数据结构删除
+    m_OwnerLoop->RemoveChannel(this);
+    m_IsAddedToLoop = false;
+}
 
 void Channel::Tie(const std::shared_ptr<void> &obj) {
     m_Tie = obj;
@@ -77,11 +84,7 @@ void Channel::HandleEventWithTie() {
     }
 }
 
-void Channel::DisableAllEvent() {
-    YLOG_TRACE("Channel::DisableAllEvent(), {}, {}", ::yy::util::CastThreadIDToStr(m_OwnerLoop->GetThreadID()), ::yy::util::GetStrThreadID())
-    m_InterestedEvent.ClrEvent();
-    UpdateFromLoop();
-}
+
 
 
 } // yy::net

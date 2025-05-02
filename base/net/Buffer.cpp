@@ -60,18 +60,18 @@ bool Buffer::RetrieveDataIntoProtobuf(const std::shared_ptr<google::protobuf::Me
     return true;
 }
 
-ssize_t Buffer::RetrieveDataIntoSocket(SocketApiWrapper::socket_t sockfd) {
+SocketApiWrapper::SocketResult Buffer::RetrieveDataIntoSocket(SocketApiWrapper::socket_t sockfd) {
     // *return：没有可以发送的数据
     if(GetDataSize() <= 0)
         return 0;
 
-    ssize_t nBytesSend = SocketApiWrapper::send(sockfd, GetDataBegin(), GetDataSize(), 0);
+    auto rst = SocketApiWrapper::send(sockfd, GetDataBegin(), GetDataSize(), 0);
 
-    if(nBytesSend > 0) {
-        MoveHeadAndTryReset(nBytesSend);
+    if(rst.HasNoError()) {
+        MoveHeadAndTryReset(rst.Result());
     }
 
-    return nBytesSend;
+    return rst;
 }
 
 std::string Buffer::RetrieveDataAsString(int len) {

@@ -25,13 +25,47 @@ Acceptor::Acceptor(EventLoop *loop, Socket::Type socketType, const IPAddressPtr 
 
 Acceptor::~Acceptor() {
     // 调用Channel和Socket的析构函数
-    m_AcceptChannel.DisableAllEvent();
-    m_AcceptChannel.RemoveFromLoop();
+    m_AcceptChannel.ResetAndRemoveFromPoller();
 }
 
 
 void Acceptor::StartListen() {
     m_AcceptorLoop->RunCallbackInLoop([this](){ this->StartListenInLoop(); });
+}
+
+void Acceptor::StartListenInLoop() {
+    m_AcceptorLoop->AssertInLoopingThread(__FILE__, __LINE__);
+
+    m_IsListening = true;
+    m_AcceptChannel.SetReadCallback([this](){ this->HandleAcceptAll(); });
+    m_AcceptChannel.EnableReading();
+    m_AcceptSocket.Listen();
+    YLOG_INFO("线程<{}>开始监听，监听地址为：<{}:{}>，监听套接字为{}", GetStrThreadID(),
+              m_ListenAddr->GetIPStr().c_str(), m_ListenAddr->GetPort(), m_AcceptSocket.GetFD());
+}
+
+void Acceptor::HandleAcceptAll() {
+    m_AcceptorLoop->AssertInLoopingThread(__FILE__, __LINE__);
+
+    auto allConnfd = m_AcceptSocket.AcceptAll(true); //! 非阻塞连接套接字
+
+    for (auto & conn: allConnfd) {
+        auto & conn_fd = conn.first;
+        auto & coon_addr = conn.second;
+
+        YLOG_DEBUG("In Acceptor::HandleAccept，套接字<{}>被Accept", conn_fd)
+        if(m_NewConnectionCallback) {
+            m_NewConnectionCallback(conn_fd, coon_addr); // TcpServer::HandleNewConnection
+        } else {
+            SocketApiWrapper::close(conn_fd);
+        }
+    }
+
+}
+
+void Acceptor::StopListen() {
+    m_AcceptorLoop->QuitLoop();
+    m_IsListening = false;
 }
 
 void Acceptor::HandleAccept() {
@@ -46,43 +80,6 @@ void Acceptor::HandleAccept() {
     } else {
         SocketApiWrapper::close(connfd);
     }
-}
-
-void Acceptor::HandleAcceptAll() {
-    m_AcceptorLoop->AssertInLoopingThread(__FILE__, __LINE__);
-
-    auto allConnfd = m_AcceptSocket.AcceptAll(true); //! 非阻塞连接套接字
-
-    for (auto & conn: allConnfd) {
-        auto & conn_fd = conn.first;
-        auto & coon_addr = conn.second;
-
-        YLOG_DEBUG("In Acceptor::HandleAccept，套接字<{}>被Accept", conn_fd)
-        if(m_NewConnectionCallback) {
-            m_NewConnectionCallback(conn_fd, coon_addr); // TcpServer定义
-        } else {
-            SocketApiWrapper::close(conn_fd);
-        }
-    }
-
-}
-
-void Acceptor::StartListenInLoop() {
-    m_AcceptorLoop->AssertInLoopingThread(__FILE__, __LINE__);
-
-    m_IsListening = true;
-    // m_AcceptChannel.SetReadCallback([this](){ this->HandleAccept(); });
-    m_AcceptChannel.SetReadCallback([this](){ this->HandleAcceptAll(); });
-    m_AcceptChannel.EnableReading();
-    m_AcceptSocket.Listen();
-    YLOG_INFO("线程<{}>开始监听，监听地址为：<{}:{}>，监听套接字为{}", GetStrThreadID(),
-              m_ListenAddr->GetIPStr().c_str(), m_ListenAddr->GetPort(), m_AcceptSocket.GetFD());
-
-}
-
-void Acceptor::StopListen() {
-    m_AcceptorLoop->QuitLoop();
-    m_IsListening = false;
 }
 
 

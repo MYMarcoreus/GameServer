@@ -155,7 +155,7 @@ void Socket::SetNonblocking() {
     SocketApiWrapper::set_nonblocking(m_socketfd);
 }
 
-SocketApiWrapper::SocketResult Socket::Readv(WSABUF *iov, int iovcnt) {
+SocketApiWrapper::SocketResult Socket::Readv(IOV_TYPE *iov, int iovcnt) {
     return SocketApiWrapper::readv(m_socketfd, iov, iovcnt);
 }
 

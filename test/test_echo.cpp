@@ -46,7 +46,7 @@ private:
         YLOG_INFO("▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲处理用户<%d: %s>的消息<%zu>",
                   conn->GetSocketFD(), conn->GetName().c_str(), recvBuf.GetDataSize())
 
-        std::string message = recvBuf.RetrieveAllDataAsString();
+        std::string message = recvBuf.PopAllDataAsString();
 
         // workThreads_.PushTask([message, conn](){
         //     //! 错误的！不要在另一线程中操作recvBuf

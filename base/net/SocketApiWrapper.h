@@ -39,7 +39,7 @@ void     close(socket_t sockfd);
 void     shutdown (socket_t sockfd, int how);
 void     set_nonblocking(socket_t sockfd);
 int      get_socket_error(socket_t sockfd);
-int64_t  get_socket_error();
+int64_t  get_last_socket_error();
 template<typename T>
 T  has_socket_error(T ret) {
 #ifdef ____WINDOWS
@@ -73,53 +73,38 @@ std::unordered_map<socket_t, std::shared_ptr<IPAddress>> acceptAll(socket_t sock
 {
     std::unordered_map<socket_t, std::shared_ptr<IPAddress>> Connfd2Addrs;
 
+    while (true)
+    {
+        IPAddress::ptr outPeerAddr = std::make_shared<IPADDR>();
+        auto addrLen = outPeerAddr->GetRawAddrLen();
 #ifdef ____WINDOWS
-    while (true) {
-        IPAddress::ptr outPeerAddr = std::make_shared<IPADDR>();
-        auto addrLen = outPeerAddr->GetRawAddrLen();
         socket_t connfd = ::accept(sockfd, outPeerAddr->GetRawAddr(), &addrLen);
-        if (connfd != INVALID_SOCKET) {
-            if (isNewSockNonBlock) {
-                set_nonblocking(connfd);
-            }
-            Connfd2Addrs[connfd] = outPeerAddr;
-        } else {
-            int err = WSAGetLastError();
-            if (err == WSAEWOULDBLOCK) {
-                break;
-            } else if (err == WSAEINTR) {
-                continue;
-            } else {
-                YLOG_FATAL("In Socket::acceptAll(), accept() error: {}", yy::util::GetErrorInfo(err));
-                break;
-            }
-        }
-    }
 #elif defined(____LINUX)
-    while (true) {
-        IPAddress::ptr outPeerAddr = std::make_shared<IPADDR>();
-        auto addrLen = outPeerAddr->GetRawAddrLen();
         int flags = isNewSockNonBlock ? SOCK_CLOEXEC | SOCK_NONBLOCK : 0;
         socket_t connfd = ::accept4(sockfd, outPeerAddr->GetRawAddr(), &addrLen, flags);
-
-        if (connfd >= 0) {
-            Connfd2Addrs[connfd] = outPeerAddr;
-        } else {
-            yy::util::ErrnoSaver errnoSaver;
-            int err = errnoSaver();
-            if (err == EAGAIN || err == EWOULDBLOCK) {
-                break;
-            } else if (err == EINTR) {
-                continue;
-            } else {
-                YLOG_FATAL("In Socket::acceptAll(), accept() error: {}", yy::util::GetErrorInfo(err));
-                break;
-            }
-        }
-    }
 #else
     #error Platform not supported
 #endif
+
+        SocketResult rst(connfd, get_last_socket_error());
+
+        if (rst.HasError()) {
+            auto err = rst.ErrorCode();
+            if (err == SocketError::eAgain) {
+                break;
+            } else if (err == SocketError::eInterrupted) {
+                continue;
+            } else {
+                YLOG_FATAL("In Socket::acceptAll(), accept() error: {}", rst.GetErrorInfo());
+                break;
+            }
+        } else {
+#ifdef ____WINDOWS
+            if (isNewSockNonBlock) set_nonblocking(connfd);
+#endif
+            Connfd2Addrs[connfd] = outPeerAddr;
+        }
+    }
 
     return std::move(Connfd2Addrs);
 }

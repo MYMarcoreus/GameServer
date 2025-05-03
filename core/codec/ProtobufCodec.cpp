@@ -31,7 +31,7 @@ MessagePtr ProtobufCodec::Parse(const TcpConnectionPtr &conn, Buffer &buf, Messa
         //! 解析消息体
         message = CreateMessage(header.GetTypeName());
         if(message) {
-            bool isOk = buf.RetrieveDataIntoProtobuf(message, header.CalcBodyLen());
+            bool isOk = buf.PopDataToProtobuf(message, header.CalcBodyLen());
             //! 解析消息体失败！
             if(!isOk) {
                 outErrCode = MessageParseErrorCode::eParseError;

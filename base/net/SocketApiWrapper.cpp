@@ -13,7 +13,7 @@
 
 namespace yy::SocketApiWrapper {
 
-int64_t get_socket_error() {
+int64_t get_last_socket_error() {
 #ifdef ____WINDOWS
     return GetLastError();
 #elif defined(____LINUX)
@@ -150,7 +150,7 @@ accept(socket_t sockfd, std::shared_ptr<IPAddress> outPeerAddr, bool isNewSockNo
     }
 #endif
 
-    if (connfd < 0) {
+    if (has_socket_error(connfd)) {
         yy::util::ErrnoSaver errnoSaver;
         //! 因为accept需要被调用无数次，为保证程序的正常运行，所以需要区分暂时错误和致命错误
         switch (errnoSaver) {
@@ -203,7 +203,7 @@ int get_socket_error(socket_t sockfd) {
     socklen_t optlen = static_cast<socklen_t>(sizeof optval);
 
     if (::getsockopt(sockfd, SOL_SOCKET, SO_ERROR, (char *) &optval, &optlen) < 0) {
-        return get_socket_error();
+        return get_last_socket_error();
     } else {
         return optval;
     }
@@ -265,7 +265,7 @@ SocketResult recv(socket_t sockfd, void *ptr, size_t nbytes, int flags) {
     flags |= MSG_NOSIGNAL;
 #endif
     auto ret = ::recv(sockfd, (char *) ptr, nbytes, flags);
-    return {ret, get_socket_error()};
+    return {ret, get_last_socket_error()};
 }
 
 SocketApiWrapper::SocketResult send(socket_t sockfd, const void *ptr, size_t nbytes, int flags) {
@@ -273,18 +273,18 @@ SocketApiWrapper::SocketResult send(socket_t sockfd, const void *ptr, size_t nby
     flags |= MSG_NOSIGNAL;
 #endif
     auto ret = ::send(sockfd, (char *) ptr, nbytes, flags);
-    return {ret, get_socket_error()};
+    return {ret, get_last_socket_error()};
 }
 
 SocketApiWrapper::SocketResult sendto(socket_t sockfd, const void *ptr, size_t nbytes, int flags, std::shared_ptr<IPAddress> peerAddr) {
     auto ret = ::sendto(sockfd, (char *) ptr, nbytes, flags, peerAddr->GetRawAddr(), peerAddr->GetRawAddrLen());
-    return {ret, get_socket_error()};
+    return {ret, get_last_socket_error()};
 }
 
 SocketApiWrapper::SocketResult recvfrom(socket_t sockfd, void *ptr, size_t nbytes, int flags, std::shared_ptr<IPAddress> peerAddr) {
     auto addrLen = peerAddr->GetRawAddrLen();
     auto ret = ::recvfrom(sockfd, (char *) ptr, nbytes, flags, peerAddr->GetRawAddr(), &addrLen);
-    return {ret, get_socket_error()};
+    return {ret, get_last_socket_error()};
 }
 
 SocketApiWrapper::SocketResult readv(socket_t sockfd, IOV_TYPE *iov, int iovcnt) {
@@ -293,7 +293,7 @@ SocketApiWrapper::SocketResult readv(socket_t sockfd, IOV_TYPE *iov, int iovcnt)
     DWORD flags = 0;
     auto ret = WSARecv(sockfd, iov, iovcnt, &bytesRead, &flags, NULL, NULL);
     if (ret == SOCKET_ERROR) {
-        return {-1, get_socket_error()};
+        return {-1, get_last_socket_error()};
     } else {
         return { static_cast<ssize_t>(bytesRead), 0 };
     }

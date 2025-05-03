@@ -24,7 +24,18 @@ using __socket_type = int;
 #endif
 
 
+
 namespace yy::SocketApiWrapper {
+
+//! 网络错误
+enum class SocketError {
+    eAgain,
+    eInterrupted,
+    eConnectionReset,   // ECONNRESET: Connection reset by peer
+    eNotConnected,
+    eConnectionAborted,
+    eUnknown,
+};
 
 #ifdef ____WINDOWS
 using socket_t = SOCKET;
@@ -42,12 +53,37 @@ public:
         assert(HasNoError());
         return result;
     }
-    [[nodiscard]] int64_t ErrorCode() const { return errorCode; }
+    [[nodiscard]] SocketError ErrorCode() const {
+    #ifdef ____WINDOWS
+        switch (errorCode) {
+            case WSAEWOULDBLOCK:    return SocketError::eAgain;
+            case WSAEINTR:          return SocketError::eInterrupted;
+            case WSAENOTCONN:       return SocketError::eNotConnected;
+            case WSAECONNRESET:     return SocketError::eConnectionReset;
+            case WSAECONNABORTED:   return SocketError::eConnectionAborted;
+            default:                return SocketError::eUnknown;
+        }
+    #elif defined(____LINUX)
+        switch (errCode) {
+            case EAGAIN:
+            case EWOULDBLOCK:       return SocketError::eAgain;
+            case EINTR:             return SocketError::eInterrupted;
+            case ENOTCONN:          return SocketError::eNotConnected;
+            case EPIPE:
+            case ECONNRESET:        return SocketError::eConnectionReset;
+            case ECONNABORTED:      return SocketError::eConnectionAborted;
+            default:                return SocketError::eUnknown;
+        }
+    #endif
+    }
+
 
     bool HasError() const;
     bool HasNoError() const { return not HasError(); };
 
     std::string GetErrorInfo() const;
+
+
 
 
 private:

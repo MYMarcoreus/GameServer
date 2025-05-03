@@ -459,7 +459,7 @@ sequenceDiagram
     participant EventLoop
     participant Channel
     participant TcpConnection
-    participant Socket
+    participant Buffer
 
     participant TcpServer
     participant ProtobufCodec
@@ -480,8 +480,8 @@ sequenceDiagram
 		opt 读事件发生(执行m_ReadCallback回调)
 			Channel ->> TcpConnection: HandleRead()
                 alt  HandleRead_LT
-                    TcpConnection ->> Socket : Readv()
-                    Socket -->> TcpConnection: 
+                    TcpConnection ->> Buffer : AppendAllDataFromSocket()
+                    Buffer -->> TcpConnection: 
                     
                     note over TcpConnection, TcpServer : 执行回调→
                     TcpConnection ->> +TcpServer: m_MessageCallback <br> 执行回调
@@ -527,9 +527,10 @@ sequenceDiagram
                     TcpServer -->> -TcpConnection: 
                     
                  else HandleRead_ET
-                    TcpConnection ->> Socket : Recv()
+                    TcpConnection ->> Buffer : AppendAllDataFromSocket()
+                    Buffer -->> TcpConnection: 
                 end
-			TcpConnection ->> Channel:  
+			TcpConnection -->> Channel:  
 		end 
 		
 		opt 写事件发生(执行m_WriteCallback回调)
@@ -560,8 +561,8 @@ sequenceDiagram
     participant Channel
     participant Socket
     participant TcpConnection
-
-
+    participant AnyBody
+    participant Buffer
     participant TcpServer
 
     participant GameServer
@@ -579,8 +580,16 @@ sequenceDiagram
                 ProtobufCodec -) +TcpConnection: Send() in ioLoop
                 note over ProtobufCodec, TcpConnection: CallPenddingCallbacks的异步函数
                     alt 输出缓冲为空
-                        TcpConnection ->> Socket: Send() 直接发送
-                        Socket -->> TcpConnection: 
+                            TcpConnection ->> Socket: Send() 
+                            Socket -->> TcpConnection: 
+                    	alt  Send()发送了所有数据
+                    		TcpConnection ->> AnyBody: 执行上层的写回调（项目中未设置）
+                    		AnyBody -->> TcpConnection: 
+                        else Send()不能发送所有数据
+                            TcpConnection ->>  Channel: EnableWriting()，注册写事件，<br>等待写事件发生在EventLoop中执行HandleWrite()
+                            Channel -->> TcpConnection: 
+                        end
+                        
                         TcpConnection --) ProtobufCodec: 
                     else 输出缓冲不为空
                     	TcpConnection --) -ProtobufCodec: 

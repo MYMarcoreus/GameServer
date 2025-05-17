@@ -5,7 +5,7 @@
 #include <cstdint>
 #include <cstddef>
 #include <random>
-#include "ProtobufCodec.h"
+#include "ProtobufTcpCodec.h"
 #include "SFINAE.h"
 
 namespace yy::net {
@@ -36,24 +36,12 @@ public:
         m_CheckCode[0] = ((char*)value)[0];
         m_CheckCode[1] = ((char*)value)[1];
     }
-    void SetFullLength    (uint32_t     value) { m_FullLength = value; }
-    void SetTypeNameLength(uint16_t     value) { m_TypeNameLength = value; }
-    void SetTypeName(std::string typeName) { m_TypeName = typeName; }
-
-    ///@brief 设置首部结构的所有字段
-    void SetAllFieldsFromMessage(const google::protobuf::Message &message);
-
-    std::string XorCheckCode(uint8_t xorCode);
-    uint32_t    XorFullLength(uint8_t xorCode);
-    uint16_t    XorNameLength(uint8_t xorCode);;
-    std::string XorTypeName(uint8_t xorCode);;
 
     /// @brief 从Buffer中读入未解密的数据，并解密
-    MessageParseErrorCode RetrieveFromBuffer(net::Buffer &buf, uint8_t xorCode);
+    MessageParseErrorCode ParseFromBuffer(net::Buffer &buf, uint8_t xorCode);
 
     /// @brief 将*this中的数据加密并序列化后写入Buffer中
     bool AppendIntoBuffer(net::Buffer &buf, uint8_t xorCode);
-
 
 
     std::string GetCheckCode() const { return m_CheckCode; }
@@ -66,18 +54,26 @@ public:
     ///@brief 消息类型名
     std::string GetTypeName() const { return m_TypeName; };
 
-
-
     ///@brief 消息头长度
     size_t CalcHeaderLen() const { return kMinHeaderLen + m_TypeNameLength; }
 
     ///@brief 消息体长度
     size_t CalcBodyLen() const { return m_FullLength - CalcHeaderLen(); }
 
-
-
     // 随机产生一个异或码
     static uint8_t GenerateXorCode();
+
+private:
+    ///@brief 设置首部结构的所有字段
+    void SetAllFieldsFromMessage(const google::protobuf::Message &message);
+    void SetFullLength    (uint32_t     value) { m_FullLength = value; }
+    void SetTypeNameLength(uint16_t     value) { m_TypeNameLength = value; }
+    void SetTypeName(std::string typeName) { m_TypeName = typeName; }
+
+    std::string XorCheckCode(uint8_t xorCode);
+    uint32_t    XorFullLength(uint8_t xorCode);
+    uint16_t    XorNameLength(uint8_t xorCode);
+    std::string XorTypeName(uint8_t xorCode);
 
 private:
     char        m_CheckCode[2];   // 2B: 用于验证该包是否是我们规定的游戏协议包

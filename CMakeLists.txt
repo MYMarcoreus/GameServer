@@ -5,7 +5,10 @@ project(GameServer)
 set(CMAKE_CXX_STANDARD 20)
 
 
-# -DCMAKE_TOOLCHAIN_FILE=C:\Users\Lenovo\.vcpkg-clion\vcpkg\scripts\buildsystems\vcpkg.cmake
+find_package(Lua REQUIRED)
+message(STATUS "LUA_INCLUDE_DIR: ${LUA_INCLUDE_DIR}")
+message(STATUS "LUA_LIBRARIES: ${LUA_LIBRARIES}")
+message(STATUS "LUA_EXECUTABLE: ${LUA_EXECUTABLE}")
 
 # 判断平台
 if(CMAKE_HOST_SYSTEM_NAME MATCHES Windows)
@@ -175,6 +178,12 @@ set(COMMON_SOURCES
         base/utils/ClassRegister.h
         base/log/ILogAppender.h
         base/net/socket_definations.cpp
+        base/net/UdpTransport.cpp
+        base/net/UdpServer.cpp
+        core/codec/ProtobufUdpCodec.cpp
+        core/codec/ProtobufUdpCodec.h
+        base/net/UdpSession.cpp
+        base/net/UdpSession.h
 )
 # 调用子目录下的cmake
 add_subdirectory(base)

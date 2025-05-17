@@ -1,4 +1,4 @@
-#include "ProtobufCodec.h"
+#include "ProtobufTcpCodec.h"
 #include "Buffer.h"
 #include "TcpConnection.h"
 #include "AppXmlConfig.h"
@@ -13,17 +13,18 @@ using ::yy::net::TcpConnectionPtr;
 
 
 
-ProtobufCodec::ProtobufCodec(ProtobufCodec::F_ProtobufMessageDispatchCallback msgCb, ProtobufCodec::F_ProtobufErrorMessageCallback errCb)
+ProtobufTcpCodec::ProtobufTcpCodec(ProtobufTcpCodec::F_ProtobufMessageDispatchCallback  msgCb,
+                                   ProtobufTcpCodec::F_ProtobufErrorMessageCallback     errCb)
     : m_ProtobufMessageDispatchCallback{msgCb},
       m_ProtobufErrorMessageCallback{errCb}
 { }
 
 
-MessagePtr ProtobufCodec::Parse(const TcpConnectionPtr &conn, Buffer &buf, MessageParseErrorCode & outErrCode) {
+MessagePtr ProtobufTcpCodec::Parse(const TcpConnectionPtr &conn, Buffer &buf, MessageParseErrorCode & outErrCode) {
     MessageHeader header;
 
     //! 解析消息头
-    outErrCode = header.RetrieveFromBuffer(buf, conn->GetXorCode());
+    outErrCode = header.ParseFromBuffer(buf, conn->GetXorCode());
 
     MessagePtr message{};
     //! 解析消息头成功
@@ -51,7 +52,7 @@ MessagePtr ProtobufCodec::Parse(const TcpConnectionPtr &conn, Buffer &buf, Messa
 
 
 
-void ProtobufCodec::OnData(const TcpConnectionPtr &conn, Buffer &buf) {
+void ProtobufTcpCodec::OnData(const TcpConnectionPtr &conn, Buffer &buf) {
     // 不断解析接收缓冲中的字节流，直到遇到不完整的信息或解析完毕
     while(buf.GetDataSize() >= MessageHeader::kMinHeaderLen)
     {
@@ -64,10 +65,9 @@ void ProtobufCodec::OnData(const TcpConnectionPtr &conn, Buffer &buf) {
             //! 消息未接收完全
             case MessageParseErrorCode::eNotReceiveFullHeader:
             case MessageParseErrorCode::eNotReceiveFullLength:
-                isDone = true;
-                break;
+                continue;
+            //! 分发消息，交给其对应的处理函数处理
             case MessageParseErrorCode::eNoError:
-                //! 分发消息，交给其对应的处理函数处理
                 if(message)
                     m_ProtobufMessageDispatchCallback(conn, message);
                 break;
@@ -82,7 +82,7 @@ void ProtobufCodec::OnData(const TcpConnectionPtr &conn, Buffer &buf) {
     }
 }
 
-void ProtobufCodec::Send(const TcpConnectionPtr &conn, const google::protobuf::Message & message) {
+void ProtobufTcpCodec::SendTCP(const TcpConnectionPtr &conn, const google::protobuf::Message & message) {
     //! 设置消息头
     MessageHeader header{message};
 
@@ -100,18 +100,18 @@ void ProtobufCodec::Send(const TcpConnectionPtr &conn, const google::protobuf::M
     YLOG_TRACE("发送消息体<{}>", header.CalcBodyLen());
 
     //! 发送
-    conn->Send(buffer);
+    conn->SendTCP(buffer);
 }
 
 
 
-void ProtobufCodec::DefaultErrorCallback(const TcpConnectionPtr &conn, Buffer &buf, MessageParseErrorCode) {
+void ProtobufTcpCodec::DefaultErrorCallback(const TcpConnectionPtr &conn, Buffer &buf, MessageParseErrorCode) {
     if(conn and conn->IsConnected()) {
         conn->Shutdown();
     }
 }
 
-MessagePtr ProtobufCodec::CreateMessage(const std::string &typeName) {
+MessagePtr ProtobufTcpCodec::CreateMessage(const std::string &typeName) {
     using google::protobuf::Message;
     using google::protobuf::Descriptor;
     using google::protobuf::DescriptorPool;

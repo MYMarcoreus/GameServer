@@ -3,7 +3,7 @@
 #include "EventLoop.h"
 #include "IPAddress.h"
 #include "log.h"
-#include "codec/ProtobufCodec.h"
+#include "codec/ProtobufTcpCodec.h"
 #include "codec/ProtobufDispatcher.h"
 #include "query.pb.h"
 #include "RemoteXmlConfig.h"
@@ -34,7 +34,7 @@ public:
     {
         dispatcher_.RegisterMessageCallback<Empty>(std::bind(&QueryClient::OnEmpty, this, _1, _2));
         dispatcher_.RegisterMessageCallback<Answer>(std::bind(&QueryClient::OnAnswer, this, _1, _2));
-        client_.SetMessageCallback(std::bind(&ProtobufCodec::OnData, &codec_, _1, _2));
+        client_.SetMessageCallback(std::bind(&ProtobufTcpCodec::OnData, &codec_, _1, _2));
         client_.SetConnectionEstablishedCallback(std::bind(&QueryClient::ConnectionEstablished, this, _1));
         client_.SetConnectionWriteCompleteCallback(std::bind(&QueryClient::ConnectionWriteComplete, this, _1));
         client_.SetCanAutoRetry(CanRetry);
@@ -47,7 +47,7 @@ public:
 
     void Send(std::string message)
     {
-        client_.GetConnection()->Send(message);
+        client_.GetConnection()->SendTCP(message);
     }
 
 private:
@@ -72,7 +72,7 @@ private:
         // Empty empty;
         google::protobuf::Message* messageToSend = &query;
         YLOG_INFO("即将向<{}: {}>发送Query：\n{}", conn->GetSocketFD(), conn->GetName().c_str(), query.DebugString().c_str())
-        codec_.Send(conn, *messageToSend);
+        codec_.SendTCP(conn, *messageToSend);
     }
 
     void OnUnknownMessage(TcpConnectionPtr conn, const MessagePtr& message)
@@ -99,7 +99,7 @@ private:
 
     EventLoop *         loop_;
     TcpClient           client_;
-    ProtobufCodec       codec_;
+    ProtobufTcpCodec       codec_;
     ProtobufDispatcher<TcpConnectionPtr>  dispatcher_;
 };
 

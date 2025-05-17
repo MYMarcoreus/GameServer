@@ -22,14 +22,14 @@ public:
     virtual void PollWait(ChannelList &activeChannel, Milliseconds timeout/* = std::chrono::milliseconds::max()*/) override;
 
     ///@brief 其实是一个状态机，让Channel的状态转移到下一个状态：对channel映射表和epoll监视列表进行增删覆盖操作
-    virtual void UpdateChannel(Channel *) override;
+    virtual void UpdateChannel(IOChannel *) override;
 
     ///@brief 其实是一个状态机，让Channel的状态转移到下一个状态：彻底删除channel
-    virtual void RemoveChannel(Channel *) override;
+    virtual void RemoveChannel(IOChannel *) override;
 private:
     void FillActiveChannel(ChannelList & activeChannel, int numEvents);
 
-    void Update(Channel* channel);
+    void Update(IOChannel* channel);
 
 private:
     fd_set select_readfds_;

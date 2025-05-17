@@ -15,7 +15,7 @@ set(LocalSrc
         utils/ThreadPool.cpp
         utils/status/Status.cpp
         net/IPAddress.cpp
-        net/Channel.cpp
+        net/IOChannel.cpp
         net/EpollPoller.cpp
         net/EventLoop.cpp
         net/Poller.cpp

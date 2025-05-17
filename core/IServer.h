@@ -20,7 +20,7 @@ class IServer: util::noncopyable
 {
 public:
     using ptr = std::shared_ptr<IServer>;
-    using F_Notifier = std::function<void(const yy::net::TcpConnectionPtr &)>;
+    using F_Notifier = std::function<void(const UserConnectionPtr &)>;
     using F_NotifierCommand = std::function<void(const UserConnectionPtr &, const MessagePtr &)>;
 public:
     IServer() = default;

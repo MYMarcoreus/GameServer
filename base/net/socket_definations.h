@@ -34,6 +34,8 @@ enum class SocketError {
     eConnectionReset,   // ECONNRESET: Connection reset by peer
     eNotConnected,
     eConnectionAborted,
+    eConnectionRefused,
+    eMsgSize,
     eUnknown,
 };
 
@@ -61,6 +63,8 @@ public:
             case WSAENOTCONN:       return SocketError::eNotConnected;
             case WSAECONNRESET:     return SocketError::eConnectionReset;
             case WSAECONNABORTED:   return SocketError::eConnectionAborted;
+            case WSAECONNREFUSED:   return SocketError::eConnectionRefused;
+            case WSAEMSGSIZE:       return SocketError::eMsgSize;
             default:                return SocketError::eUnknown;
         }
     #elif defined(____LINUX)
@@ -72,6 +76,8 @@ public:
             case EPIPE:
             case ECONNRESET:        return SocketError::eConnectionReset;
             case ECONNABORTED:      return SocketError::eConnectionAborted;
+            case ECONNREFUSED:      return SocketError::eConnectionRefused;
+            case EMSGSIZE:          return SocketError::eMsgSize;
             default:                return SocketError::eUnknown;
         }
     #endif

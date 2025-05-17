@@ -6,7 +6,7 @@
 #include "log.h"
 #include "ThreadPool.h"
 #include "query.pb.h"
-#include "codec/ProtobufCodec.h"
+#include "codec/ProtobufTcpCodec.h"
 #include "codec/ProtobufDispatcher.h"
 
 #include <string>
@@ -37,7 +37,7 @@ public:
         dispatcher_.RegisterMessageCallback<Query>(std::bind(&QueryServer::OnQuery, this, _1, _2));
         dispatcher_.RegisterMessageCallback<Answer>(std::bind(&QueryServer::OnAnswer, this, _1, _2));
         server_.SetConnectionEstablishedCallback( std::bind(&QueryServer::OnConnectionEstablished, this, _1));
-        server_.SetMessageCallback( std::bind(&ProtobufCodec::OnData, &codec_, _1, _2));
+        server_.SetMessageCallback( std::bind(&ProtobufTcpCodec::OnData, &codec_, _1, _2));
     }
 
     void Start()
@@ -56,7 +56,7 @@ public:
         answer.add_solution(now.ToString());
         answer.add_solution("Win!");
         YLOG_INFO("即将向<{}:{}>发送Answer：\n{}", conn->GetSocketFD(), conn->GetName().c_str(), answer.DebugString().c_str())
-        codec_.Send(conn, answer);
+        codec_.SendTCP(conn, answer);
     }
 
 private:
@@ -96,7 +96,7 @@ private:
 
     EventLoop *         loop_;
     TcpServer           server_;
-    ProtobufCodec       codec_;
+    ProtobufTcpCodec       codec_;
     ProtobufDispatcher<TcpConnectionPtr>  dispatcher_;
 };
 
@@ -109,7 +109,7 @@ int main()
 {
     config::ConfigManager::LoadXmlConfigs();
     EventLoop loop{500ms};
-    IPAddressPtr listenAddr = std::make_shared<IPv4Address>(config::g_app_config->GetValue().app_port());
+    IPAddressPtr listenAddr = std::make_shared<IPv4Address>(config::g_app_config->GetValue().app_tcp_port());
     QueryServer server(&loop, listenAddr);
     server.Start();
     loop.Loop();

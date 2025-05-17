@@ -466,7 +466,6 @@ class PlayerMove final :
   enum : int {
     kPositionFieldNumber = 2,
     kRotationFieldNumber = 3,
-    kMoveTargetFieldNumber = 4,
     kAniSpeedFieldNumber = 5,
     kAniMotionSpeedFieldNumber = 6,
   };
@@ -498,20 +497,6 @@ class PlayerMove final :
   std::string* _internal_mutable_rotation();
   public:
 
-  // bytes move_target = 4;
-  void clear_move_target();
-  const std::string& move_target() const;
-  template <typename ArgT0 = const std::string&, typename... ArgT>
-  void set_move_target(ArgT0&& arg0, ArgT... args);
-  std::string* mutable_move_target();
-  PROTOBUF_NODISCARD std::string* release_move_target();
-  void set_allocated_move_target(std::string* move_target);
-  private:
-  const std::string& _internal_move_target() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_move_target(const std::string& value);
-  std::string* _internal_mutable_move_target();
-  public:
-
   // float ani_speed = 5;
   void clear_ani_speed();
   float ani_speed() const;
@@ -540,7 +525,6 @@ class PlayerMove final :
   struct Impl_ {
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr position_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr rotation_;
-    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr move_target_;
     float ani_speed_;
     float ani_motion_speed_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
@@ -2658,56 +2642,6 @@ inline void PlayerMove::_internal_set_ani_motion_speed(float value) {
 inline void PlayerMove::set_ani_motion_speed(float value) {
   _internal_set_ani_motion_speed(value);
   // @@protoc_insertion_point(field_set:yy.protocol.app.PlayerMove.ani_motion_speed)
-}
-
-// bytes move_target = 4;
-inline void PlayerMove::clear_move_target() {
-  _impl_.move_target_.ClearToEmpty();
-}
-inline const std::string& PlayerMove::move_target() const {
-  // @@protoc_insertion_point(field_get:yy.protocol.app.PlayerMove.move_target)
-  return _internal_move_target();
-}
-template <typename ArgT0, typename... ArgT>
-inline PROTOBUF_ALWAYS_INLINE
-void PlayerMove::set_move_target(ArgT0&& arg0, ArgT... args) {
- 
- _impl_.move_target_.SetBytes(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:yy.protocol.app.PlayerMove.move_target)
-}
-inline std::string* PlayerMove::mutable_move_target() {
-  std::string* _s = _internal_mutable_move_target();
-  // @@protoc_insertion_point(field_mutable:yy.protocol.app.PlayerMove.move_target)
-  return _s;
-}
-inline const std::string& PlayerMove::_internal_move_target() const {
-  return _impl_.move_target_.Get();
-}
-inline void PlayerMove::_internal_set_move_target(const std::string& value) {
-  
-  _impl_.move_target_.Set(value, GetArenaForAllocation());
-}
-inline std::string* PlayerMove::_internal_mutable_move_target() {
-  
-  return _impl_.move_target_.Mutable(GetArenaForAllocation());
-}
-inline std::string* PlayerMove::release_move_target() {
-  // @@protoc_insertion_point(field_release:yy.protocol.app.PlayerMove.move_target)
-  return _impl_.move_target_.Release();
-}
-inline void PlayerMove::set_allocated_move_target(std::string* move_target) {
-  if (move_target != nullptr) {
-    
-  } else {
-    
-  }
-  _impl_.move_target_.SetAllocated(move_target, GetArenaForAllocation());
-#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (_impl_.move_target_.IsDefault()) {
-    _impl_.move_target_.Set("", GetArenaForAllocation());
-  }
-#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:yy.protocol.app.PlayerMove.move_target)
 }
 
 // -------------------------------------------------------------------

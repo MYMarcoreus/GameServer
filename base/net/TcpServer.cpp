@@ -74,9 +74,6 @@ TcpServer::TcpServer(EventLoop *acceptorLoop, IPAddress::ptr listenAddr, bool re
 #ifdef ____LINUX
     util::set_signal_ignore(SIGPIPE);
 #endif
-
-
-    InitLog();
 }
 
 TcpServer::~TcpServer() {
@@ -84,16 +81,16 @@ TcpServer::~TcpServer() {
 
     for(auto & p: m_ConnectionMap) {
         auto conn = p.second;
-        conn->GetLoop()->RunCallbackInLoop([conn](){ conn->ConnectionDestroyed(); } );
+        conn->GetIOLoop()->RunCallbackInLoop([conn](){ conn->ConnectionDestroyed(); } );
         conn.reset();
     }
 
     m_IsStarted = false;
 }
 
-void TcpServer::Start(int threadNum, Milliseconds ioWaitTimeout,F_ThreadInitCallback cb) {
+void TcpServer::Start(int ioThreadNum, Milliseconds ioWaitTimeout, F_ThreadInitCallback cb) {
     if(!m_IsStarted.exchange(true)) {
-        m_IOThreadPool->Start(threadNum, ioWaitTimeout, cb);
+        m_IOThreadPool->Start(ioThreadNum, ioWaitTimeout, cb);
         m_Acceptor->SetNewConnectionCallback(std::bind(&TcpServer::HandleNewConnection, this, _1, _2));
         m_Acceptor->StartListen();
     }
@@ -125,53 +122,38 @@ void TcpServer::HandleNewConnection(SocketApiWrapper::socket_t sockfd, IPAddress
 
     //! 传递上层的回调
     conn->SetConnectionEstablishedCallback(m_ConnectionEstablishedCallback);
-    // conn->SetConnectionDestroyedCallback(m_ConnectionDestroyedCallback);
+    conn->SetConnectionDestroyedCallback(m_ConnectionDestroyedCallback);
     conn->SetMessageCallback(m_MessageCallback);
     conn->SetConnectionWriteCompleteCallback(m_ConnectionWriteCompleteCallback);
     conn->SetConnectionCloseCallback(std::bind(&TcpServer::RemoveConnection, this, _1));
     conn->SetConnectionShutdownCallback(m_ConnectionShutdownCallback);
+
     //!
-    conn->GetLoop()->RunCallbackInLoop([conn](){ conn->ConnectionEstablished(); });
+    conn->GetIOLoop()->RunCallbackInLoop([conn](){ conn->ConnectionEstablished(); });
 
     YLOG_INFO("In TcpServer::HandleNewConnection<{}:{}>，PeerAddr<{},{}>", conn->GetSocketFD(), conn->GetName().c_str(),
-              conn->GetPeerAddr()->GetIPStr().c_str(), conn->GetPeerAddr()->GetPort());
+              conn->GetPeerAddr()->GetIPStr().c_str(), conn->GetPeerAddr()->GetPortStr().c_str());
 
     m_NumConnect++;
 }
 
 void TcpServer::RemoveConnection(const TcpConnectionPtr &conn) {
-    // YLOG_TRACE("TcpServer::RemoveConnection Before, {}, {}", ::yy::util::CastThreadIDToStr(m_AcceptorLoop->GetThreadID()), ::yy::util::GetStrThreadID())
     //! 该函数在 TcpConnection::ioLoop中执行
     m_AcceptorLoop->RunCallbackInLoop( [this, conn](){ this->RemoveConnectionInLoop(conn); });
-    // YLOG_TRACE("TcpServer::RemoveConnection After, {}, {}", ::yy::util::CastThreadIDToStr(m_AcceptorLoop->GetThreadID()), ::yy::util::GetStrThreadID())
 }
 
 void TcpServer::RemoveConnectionInLoop(TcpConnectionPtr conn) {
-    // YLOG_TRACE("Before TcpServer::RemoveConnectionInLoop Erased, {}, {}", ::yy::util::CastThreadIDToStr(m_AcceptorLoop->GetThreadID()), ::yy::util::GetStrThreadID())
     m_AcceptorLoop->AssertInLoopingThread(__FILE__, __LINE__);
 
     m_ConnectionMap.erase(conn->GetName());
     m_NumConnect--;
 
-    // YLOG_TRACE("TcpServer::RemoveConnectionInLoop Erased, {}, {}", ::yy::util::CastThreadIDToStr(m_AcceptorLoop->GetThreadID()), ::yy::util::GetStrThreadID())
-    conn->GetLoop()->EnqueueCallbackInLoop([conn](){ conn->ConnectionDestroyed(); });
-    // YLOG_TRACE("TcpServer::RemoveConnectionInLoop After conn->GetLoop()->EnqueueCallbackInLoop, {}, {}", ::yy::util::CastThreadIDToStr(m_AcceptorLoop->GetThreadID()), ::yy::util::GetStrThreadID())
+    conn->GetIOLoop()->EnqueueCallbackInLoop([conn](){ conn->ConnectionDestroyed(); });
 }
 
 
 
 
-
-void TcpServer::InitLog() {
-    yy::Ylog::LoggerManager::getInstance().ReadConfigs();
-// #ifdef ____DEBUG
-//     yy::Ylog::LoggerManager::getInstance().getLogger()->setLevel(yy::Ylog::LogLevel::eTRACE);
-// #else
-//     yy::Ylog::LoggerManager::getInstance().getLogger()->setLevel(yy::Ylog::LogLevel::eINFO);
-// #endif
-//     yy::Ylog::LogAppender::ptr appender{new yy::Ylog::StdoutLogApeender{"[%t][%l]%c%n"}};
-//     yy::Ylog::LoggerManager::getInstance().getLogger()->addAppender(appender);
-}
 
 void TcpServer::SetCloseSocketsCallback(F_CloseShutdownConnectionsCallback cb) {
     m_AcceptorLoop->SetCloseSocketsCallback(cb);

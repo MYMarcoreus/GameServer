@@ -19,8 +19,7 @@ message PlayerMove
     bytes       rotation = 3;
     float       ani_speed = 5;
     float       ani_motion_speed = 6;
-
-    bytes       move_target = 4;
+//    bytes       move_target = 4;
 }
 message PlayerJumpAndGravity
 {

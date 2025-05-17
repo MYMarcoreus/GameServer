@@ -4,7 +4,9 @@
 #include "IServer.h"
 #include "Singleton.h"
 #include "TcpServer.h"
-#include "codec/ProtobufCodec.h"
+#include "UdpServer.h"
+#include "codec/ProtobufTcpCodec.h"
+#include "codec/ProtobufUdpCodec.h"
 #include "codec/ProtobufDispatcher.h"
 #include "net_definations.h"
 #include "ThreadPool.h"
@@ -39,13 +41,13 @@ public:
     virtual void            DelUser (const std::string & conn_name) override;
     virtual void            AddUser (const std::string & conn_name, const UserConnectionPtr & userdata) override;
 
-    virtual bool IsRunning() const override { return m_server.IsRunning(); }
-    virtual const config::AppXmlConfig & GetAppConfig() override { return m_app_configvar->GetValue(); }
+    virtual bool IsRunning() const override { return m_tcpServer.IsRunning(); }
+    virtual const config::AppXmlConfig & GetAppConfig() override { return m_appConfigvar->GetValue(); }
 
     /* * 由业务层定义并传入 * */
-    virtual void SetNotifier_Security  (F_Notifier cb) override {  m_notifier_security   = cb; }
-    virtual void SetNotifier_DisConnect(F_Notifier cb) override {  m_notifier_disconnect = cb; }
-    virtual void SetNotifier_Command(F_NotifierCommand cb) override { m_notifier_command = cb; }
+    virtual void SetNotifier_Security  (F_Notifier cb) override { m_NotifierSecurity   = cb; }
+    virtual void SetNotifier_DisConnect(F_Notifier cb) override { m_NotifierDisconnect = cb; }
+    virtual void SetNotifier_Command(F_NotifierCommand cb) override { m_NotifierCommand = cb; }
 
     /* * 在Acceptor中运行定时器（其实可以新建一个定时器线程） * */
     virtual net::TimerID RunAt(net::Timestamp time, net::F_TaskCallback cb) override;
@@ -59,7 +61,8 @@ public:
     // }
 
 private:
-    void OnUnknownMessage(const net::TcpConnectionPtr & userdata, const MessagePtr& message);
+    void OnUnknownTcpMessage(const net::TcpConnectionPtr &conn, const MessagePtr& message);
+    void OnUnknownUdpMessage(const net::UdpSessionPtr &conn, const MessagePtr& message);
 
     void OnConnectionEstablished(const net::TcpConnectionPtr & userdata);
     void AddCheckTimer(const net::TcpConnectionPtr & conn, const UserConnectionPtr & userdata);
@@ -71,19 +74,24 @@ private:
 
     void AfterShutdownConnection(const yy::net::TcpConnectionPtr &conn);
 private:
-    yy::net::EventLoop *        m_accpetorLoop;
-    yy::net::TcpServer          m_server;
-    ProtobufCodec               m_codec;
-    std::atomic<size_t>         m_num_security; //安全连接数
-    ProtobufDispatcher<yy::net::TcpConnectionPtr>          m_dispatcher; // 处理下层(net层)分发传来的无法处理的消息
-    yy::config::ConfigVar<yy::config::AppXmlConfig>::ptr   m_app_configvar; // 用于获取配置项
+    yy::net::EventLoop *                                    m_accpetorLoop;
 
+    yy::net::TcpServer                                      m_tcpServer;
+    ProtobufDispatcher<yy::net::TcpConnectionPtr>           m_tcpDispatcher; // 处理下层(net层)分发传来的无法处理的消息
+    ProtobufTcpCodec                                        m_tcpCodec;
+
+    yy::net::UdpServer                                      m_udpServer;
+    ProtobufDispatcher<yy::net::UdpSessionPtr>              m_udpDispatcher; // 处理下层(net层)分发传来的无法处理的消息
+    ProtobufUdpCodec                                        m_udpCodec;
+
+    yy::config::ConfigVar<yy::config::AppXmlConfig>::ptr    m_appConfigvar; // 用于获取配置项
+    std::atomic<size_t>                                     m_numSecurity; //安全连接数
     /* 这几个回调函数由业务层实现，然后通过对应的set方法传入设置 */
-    F_Notifier        m_notifier_security;    // 用户安全验证通过后，执行业务层回调函数
-    F_Notifier        m_notifier_disconnect;  // 用户连接断开后，执行业务层回调函数
-    F_NotifierCommand m_notifier_command;
+    F_Notifier        m_NotifierSecurity;    // 用户安全验证通过后，执行业务层回调函数
+    F_Notifier        m_NotifierDisconnect;  // 用户连接断开后，执行业务层回调函数
+    F_NotifierCommand m_NotifierCommand;
 
-    std::mutex                                          m_users_mutex;
+    std::mutex                                          m_usersMutex;
     std::unordered_map<std::string , UserConnectionPtr> m_users;
     std::vector<std::string> m_closeUsers;
 };

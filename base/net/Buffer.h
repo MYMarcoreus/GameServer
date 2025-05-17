@@ -7,8 +7,10 @@
 #include <atomic>
 #include <google/protobuf/message.h>
 
+
 namespace yy::net {
 
+// 每一个TcpConnection对应一个recvbuf和sendbuf，而每一个TcpConnection仅仅会被一个ioloop线程操作io，因此Buffer在此场景下线程安全
 class Buffer: util::copyable {
 public:
     explicit Buffer(size_t _maxsize);
@@ -55,18 +57,7 @@ public:
         requires std::is_standard_layout_v<T>;
         requires std::is_trivial_v<T>;
     }
-    T PeekPodStruct(int start_index)
-    {
-        assert(GetDataSize() >= sizeof(T));
-        return *(T*)(m_Buf.data()+m_Head+start_index);
-    }
-
-    template<class T>
-    requires requires {
-        requires std::is_standard_layout_v<T>;
-        requires std::is_trivial_v<T>;
-    }
-    bool PeekPodStruct(int start_index, T &dest)
+    bool PeekCopyPodStruct(int start_index, T &dest)
     {
         if(GetDataSize() < sizeof(T))
             return false;
@@ -74,7 +65,7 @@ public:
         return true;
     }
 
-    bool PeekCBuffer(int start_index, void *dest, int len);
+    bool PeekCopyCBuffer(int start_index, void *dest, int len);
 
     const char * Peek(int start = 0) const { return GetBufBegin() + m_Head + start; }
 
@@ -100,9 +91,9 @@ public:
 
     /*! Buffer不实现来自套接字Socket的recv任务，因为对于recv任务，存在ET和LT的区别，因此原样recv的错误，让其所有者TcpConnection实现 !*/
     // ET
-    bool AppendDataFromSocket(std::unique_ptr<Socket> & sock, size_t nBytesRecvOnce, SocketApiWrapper::SocketResult & rst);
+    bool RecvFromSocket(std::unique_ptr<Socket> &sock, size_t nBytesRecvOnce, SocketApiWrapper::SocketResult &rst, std::shared_ptr<IPAddress> peerAddr);
     // LT
-    bool AppendAllDataFromSocket(std::unique_ptr<Socket> & sock, SocketApiWrapper::SocketResult & rst);
+    bool RecvAllFromSocket(std::unique_ptr<Socket> & sock, SocketApiWrapper::SocketResult & rst, std::shared_ptr<IPAddress> peerAddr);
 
 
     //! 取出数据（消费数据）
@@ -122,7 +113,7 @@ public:
     ///@brief 将缓冲区的数据写入protobuf对象，调用者须知道protobuf对象的实际长度 ———— 从recvBuf读取数据到protobuf消息中
     bool PopDataToProtobuf(const std::shared_ptr<google::protobuf::Message> & outMsg, size_t len);
 
-    SocketApiWrapper::SocketResult PopDataToSocket(SocketApiWrapper::socket_t sockfd);
+    SocketApiWrapper::SocketResult SendToSocket(std::unique_ptr<Socket> & sock, std::shared_ptr<IPAddress> peerAddr);
 
     ///@brief 读取len长度的数据到string中并返回
     std::string PopDataAsString(int len);
@@ -133,17 +124,22 @@ public:
     void MoveHead(size_t offset) { m_Head += offset; }
 
 private:
-    char *       GetBufBegin ()       { return &*m_Buf.begin(); }
-    const char * GetBufBegin () const { return &*m_Buf.begin(); }
+    // 整体缓冲区：可读写
+    char*       GetBufBegin()       { return m_Buf.data(); }
+    const char* GetBufBegin() const { return m_Buf.data(); }
 
-    char * GetFreeBegin() { return GetBufBegin() + m_Tail; }
-    char * GetDataBegin() { return GetBufBegin() + m_Head; }
-    char * GetDataEnd() { return GetFreeBegin(); }
+    // 数据区：只读
+    const char* GetDataBegin() const { return GetBufBegin() + m_Head; }
+    const char* GetDataEnd()   const { return GetBufBegin() + m_Tail; }  // 与 GetFreeBegin 一致
+
+    // 空闲区：只写
+    char* GetFreeBegin() { return GetBufBegin() + m_Tail; }
+
 
     bool HaveEnoughData(int len) { return GetDataSize() >= len; }
 
     bool TryMakeEnoughSpace(int needLen);
-    bool TryMakeEnoughFreeSpaceByShifting(int needLen);
+    bool Compact(int needLen);
 
 
     void MoveHeadAndTryReset(size_t offset);
@@ -166,8 +162,8 @@ private:
 
 private:
 /// +-------------------+------------------+------------------+
-/// | prependable bytes |       数据区      |       空闲区      |
-/// |                   |     (GetDataSize)   |     (GetFreeSize)   |
+/// | prependable bytes |       数据区      |       空闲区       |
+/// |                   |  (GetDataSize)   |  (GetFreeSize)   |
 /// +-------------------+------------------+------------------+
 /// |                   |                  |                  |
 /// 0      <=        m_Head      <=     m_Tail    <=       GetMaxsize

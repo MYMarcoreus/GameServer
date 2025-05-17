@@ -44,18 +44,26 @@ bool Buffer::AppendDataFromProtobuf(const google::protobuf::Message &src_msg) {
 #pragma clang diagnostic pop
 
 
-bool Buffer::AppendDataFromSocket(std::unique_ptr<Socket> &sock, size_t nBytesRecvOnce, SocketApiWrapper::SocketResult &rst) {
-    TryMakeEnoughFreeSpaceByShifting(GetMaxsize());
+bool Buffer::RecvFromSocket(std::unique_ptr<Socket> &sock, size_t nBytesRecvOnce, SocketApiWrapper::SocketResult &rst, std::shared_ptr<IPAddress> peerAddr) {
+    Compact(GetMaxsize());
 
-    rst = sock->Recv(GetFreeBegin(), nBytesRecvOnce);
+    switch (sock->GetType()) {
+
+        case Socket::Type::TCP:
+            rst = sock->Recv(GetFreeBegin(), nBytesRecvOnce);
+            break;
+        case Socket::Type::UDP:
+            rst = sock->Recvfrom(GetFreeBegin(), nBytesRecvOnce, 0, peerAddr);
+            break;
+    }
     if (rst.HasNoError()) {
         MoveTail(rst.Result());
     }
     return true;
 }
 
-bool Buffer::AppendAllDataFromSocket(std::unique_ptr<Socket> &sock, SocketApiWrapper::SocketResult & rst) {
-    TryMakeEnoughFreeSpaceByShifting(GetMaxsize());
+bool Buffer::RecvAllFromSocket(std::unique_ptr<Socket> &sock, SocketApiWrapper::SocketResult & rst, std::shared_ptr<IPAddress> peerAddr) {
+    Compact(GetMaxsize());
     const uint32_t writable =  static_cast<uint32_t>(GetFreeSize());
 
     // 应该的写法：执行系统调用 ioctl(fd, FIONREAD, out datasize) 来获取可读字节数，以此来精确分配缓冲区空间(需要malloc动态分配)并选择是否需要创建第二缓冲区。
@@ -72,7 +80,15 @@ bool Buffer::AppendAllDataFromSocket(std::unique_ptr<Socket> &sock, SocketApiWra
 
     bool isOk = true;
 
-    rst = sock->Readv(vec, iovcnt);
+    switch (sock->GetType()) {
+        case Socket::Type::TCP:
+            rst = sock->Readv(vec, iovcnt);
+            break;
+        case Socket::Type::UDP:
+            rst = sock->Readmsg(vec, iovcnt, peerAddr);
+            break;
+    }
+
     if (rst.HasNoError())
     {
         const ssize_t n = rst.Result();
@@ -102,29 +118,25 @@ bool Buffer::AppendAllDataFromSocket(std::unique_ptr<Socket> &sock, SocketApiWra
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "ConstantFunctionResult"
 bool Buffer::TryMakeEnoughSpace(int needLen) {
-
     // 空闲空间不足，尝试释放空间
-    if(not TryMakeEnoughFreeSpaceByShifting(needLen)) {
+    if(not Compact(needLen)) {
         // 若释放空间后仍无法放入数据，则需要扩容buf
         //todo 扩容是否存在上限？若无上限，则是否考虑缩容？
-        m_Buf.resize(needLen);
+        m_Buf.resize(GetDataSize() + needLen);
     }
 
     return true; //! 无上限扩容
 }
 #pragma clang diagnostic pop
 
-bool Buffer::TryMakeEnoughFreeSpaceByShifting(int needLen) {
-    // 空闲空间不足
-    if(GetFreeSize() < needLen) {
-        int dataSize = GetDataSize();
-        // 将数据区移到缓冲区最前，回收DataBegin()前的空间（如果数据区已在最前，则不移动）
-        if(dataSize > 0 and m_Head != 0) {
-            std::copy(GetDataBegin(), GetDataEnd(), GetBufBegin());
-        }
-        m_Head = 0;
-        m_Tail = m_Head + dataSize;
+bool Buffer::Compact(int needLen) {
+    int dataSize = GetDataSize();
+    // 将数据区移到缓冲区最前，回收DataBegin()前的空间（如果数据区已在最前，则不移动）
+    if(dataSize > 0 and m_Head != 0) {
+        std::copy(GetDataBegin(), GetDataEnd(), GetBufBegin());
     }
+    m_Head = 0;
+    m_Tail = m_Head + dataSize;
 
     //todo 如果扩容不存在上限，那么是否需要缩容呢？例如：如果needLen小于回收操作后空闲空间的大小的一半、或者过一段时间(若干接受数据包之后)之后进行缩容
 
@@ -156,12 +168,21 @@ bool Buffer::PopDataToProtobuf(const std::shared_ptr<google::protobuf::Message> 
     return true;
 }
 
-SocketApiWrapper::SocketResult Buffer::PopDataToSocket(SocketApiWrapper::socket_t sockfd) {
+SocketApiWrapper::SocketResult Buffer::SendToSocket(std::unique_ptr<Socket> &sock, std::shared_ptr<IPAddress> peerAddr) {
     // *return：没有可以发送的数据
     if(GetDataSize() <= 0)
         return 0;
 
-    auto rst = SocketApiWrapper::send(sockfd, GetDataBegin(), GetDataSize(), 0);
+    SocketApiWrapper::SocketResult rst;
+    switch (sock->GetType()) {
+        case Socket::Type::TCP:
+            rst = sock->Send(GetDataBegin(), GetDataSize(), 0);
+            break;
+        case Socket::Type::UDP:
+            rst = sock->Sendto(GetDataBegin(), GetDataSize(), 0, peerAddr);
+            break;
+    }
+
 
     if(rst.HasNoError()) {
         MoveHeadAndTryReset(rst.Result());
@@ -195,7 +216,7 @@ void Buffer::MoveHeadAndTryReset(size_t offset) {
 
 
 
-bool Buffer::PeekCBuffer(int start_index, void *dest, int len) {
+bool Buffer::PeekCopyCBuffer(int start_index, void *dest, int len) {
     if(GetDataSize() < len)
         return false;
     memcpy(dest, GetDataBegin()+start_index, len);

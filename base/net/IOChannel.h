@@ -13,7 +13,7 @@ namespace yy::net {
 
 class EventLoop;
 
-class Channel {
+class IOChannel {
 public:
     using F_EventCallback = std::function<void()>;
 
@@ -24,9 +24,9 @@ public:
     };
 
     ///@brief 传入channel的所有者以及channel对应的文件描述符（套接字）
-    Channel(EventLoop *owner_loop, SocketApiWrapper::socket_t fd, const std::string & name);
+    IOChannel(EventLoop *owner_loop, SocketApiWrapper::socket_t fd, const std::string & name);
 
-    ~Channel();
+    ~IOChannel();
 
     ///@brief 核心函数，根据发生的事件来调用对应的回调函数
     void HandleHappenedEvent();
@@ -34,7 +34,7 @@ public:
 
     /*! GETTER !*/
     SocketApiWrapper::socket_t GetFD() { return m_FD; }
-    Channel::State             GetState() { return m_State; }
+    IOChannel::State             GetState() { return m_State; }
     EventLoop *                GetOwnerLoop() { return m_OwnerLoop; }
     PollerEvent                GetInterestedEvent(){ return m_InterestedEvent; }
     PollerEvent                GetHappenedEvent(){ return m_HappenedEvent; }
@@ -57,7 +57,7 @@ public:
     void SetCloseCallback(F_EventCallback cb) { m_CloseCallback = std::move(cb); }
     void SetErrorCallback(F_EventCallback cb) { m_ErrorCallback = std::move(cb); }
 
-    void SetState(Channel::State newState) { m_State = newState; }
+    void SetState(IOChannel::State newState) { m_State = newState; }
     void SetHappendedEvent(PollerEvent event) { m_HappenedEvent = event;  }
 
     /// @brief TcpConnection会有对应的一个Channel成员，m_tie用于绑定TcpConnection对象，
@@ -76,7 +76,7 @@ private:
 
 private:
     EventLoop *         m_OwnerLoop; // Channel的间接所有者（Channel的直接所有者是Poller）
-    Channel::State      m_State;     // Channel在底层数据结构的状态（未加入，已加入，被删除）
+    IOChannel::State      m_State;     // Channel在底层数据结构的状态（未加入，已加入，被删除）
     /*! 一个Channel只能负责一个文件描述符fd的的IO事件分发（但它并不拥有并管理这个fd的生命周期），它会将该fd上的不同IO事件分发至不同的回调函数 */
     SocketApiWrapper::socket_t   m_FD;        // Channel对应的文件描述符（套接字）
     std::string         m_Name;

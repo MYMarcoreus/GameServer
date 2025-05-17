@@ -14,7 +14,10 @@ struct AppXmlConfig
     friend class XmlElementTo<AppXmlConfig>;
 public:
     /// @brief 服务器端口号
-    [[nodiscard]] uint16_t app_port() const { return appPort; }
+    [[nodiscard]] uint16_t app_tcp_port() const { return appTcpPort; }
+
+    /// @brief 服务器端口号
+    [[nodiscard]] uint16_t app_udp_port() const { return appUdpPort; }
 
     /// @brief 服务器ID：可用于判断服务器类型
     [[nodiscard]] uint32_t app_id() const { return appID; }
@@ -52,16 +55,23 @@ public:
     [[nodiscard]] int32_t time_security_max() const { return maxSecurityTime; }
 
     /// @brief md5码加密
-    [[nodiscard]] const char *security_code() const { return securityCode; }
+    [[nodiscard]] const char * security_code() const { return securityCode; }
 
     /// @brief 用来判断数据包是否是我们的游戏协议包的校验码
-    [[nodiscard]] const char *check_code() const { return checkCode; }
+    [[nodiscard]] const char * check_code() const { return checkCode; }
 
-    /// @brief IO线程个数
-    [[nodiscard]] uint32_t io_thread_num() const { return ioThreadNum; };
+    /// @brief TcpIO线程个数
+    [[nodiscard]] uint32_t tcp_io_thread_num() const { return tcpIOThreadNum; };
+
+    /// @brief UdpIO线程个数
+    [[nodiscard]] uint32_t udp_io_thread_num() const { return udpIOThreadNum; };
+
+    /// @brief 工作线程个数
+    [[nodiscard]] uint32_t work_thread_num() const { return workThreadNum; };
 
 private:
-    uint16_t appPort{};          // 服务器端口号
+    uint16_t appTcpPort{};       // 服务器端口号
+    uint16_t appUdpPort{};       // 服务器Udp接收端口号
     uint32_t appID{};            // 服务器ID：可用于判断服务器类型
     int32_t  appMaxPlayer{};     // 最大玩家数量
     int32_t  appMaxConnection{}; // 最大客户端连接数量
@@ -80,7 +90,9 @@ private:
     char securityCode[20]{};  // md5码加密
     char checkCode[3]{};      // 游戏协议校验码
 
-    uint32_t ioThreadNum{};
+    uint32_t tcpIOThreadNum{};
+    uint32_t udpIOThreadNum{};
+    uint32_t workThreadNum{};
 };
 
 extern ConfigVar<AppXmlConfig>::ptr g_app_config;

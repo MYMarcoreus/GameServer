@@ -2,7 +2,8 @@
 <root> this is root
     <app
         appID            = "2000"
-        appPort          = "13333"
+        appTcpPort       = "13333"
+        appUdpPort       = "14444"
         appMaxPlayer     = "30"
         appMaxConnection = "2000"
         appXorCode       = "130"
@@ -16,7 +17,9 @@
         securityCode     = "csdnxxxx"
         checkCode        = "DE"
         closeDelay       = "1"
-        ioThreadNum      = "2"
+        tcpIOThreadNum   = "2"
+        udpIOThreadNum   = "2"
+        workThreadNum   = "2"
     />
 
     <remote

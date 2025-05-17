@@ -14,27 +14,24 @@ namespace yy::app {
 
 
 
-void GameManager::AppNotifier_Secutiry(const yy::net::TcpConnectionPtr& conn) {
-    auto userdata = m_server->FindUser(conn->GetName());
+void GameManager::AppNotifier_Secutiry(core::UserConnectionPtr userdata) {
     userdata->SetState(core::UserConnection::E_UserBaseState::eSecure);
 }
 
-void GameManager::AppNotifier_Disconnect(const yy::net::TcpConnectionPtr& conn) {
-    YLOG_INFO("↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ 用户<{},{}>断开连接", conn->GetSocketFD(), conn->GetName())
-
-    auto userdata = m_server->FindUser(conn->GetName());
+void GameManager::AppNotifier_Disconnect(core::UserConnectionPtr userdata) {
+    YLOG_INFO("↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ 用户<{}>断开连接", userdata->GetUID())
 
     // 已登陆，保存数据
     if(userdata->IsLoggedIn())
     {
         //! 被动离开时执行
-        YLOG_INFO("<{},{}> Saving Data Now!", conn->GetSocketFD(), conn->GetName())
+        YLOG_INFO("<{}> Saving Data Now!", userdata->GetSocketFD())
         m_player->LeaveAndSave(userdata);
-        YLOG_INFO("<{},{}> User Data Saved!", conn->GetSocketFD(), conn->GetName())
+        YLOG_INFO("<{}> User Data Saved!", userdata->GetSocketFD())
     }
     else // 未登录，重置数据
     {
-        YLOG_INFO("<{},{}> DataReset", conn->GetSocketFD(), conn->GetName())
+        YLOG_INFO("<{}> DataReset", userdata->GetSocketFD())
         userdata->Shutdown();
     }
 }
@@ -66,7 +63,7 @@ void GameManager::RunApp()
     StartListenAndIOLoop();
 
     //! 启动服务器的工作线程
-    m_wordThreads.Start(m_accpetorLoop, 2);
+    m_wordThreads.Start(m_accpetorLoop, config::g_app_config->GetValue().work_thread_num());
     // this->m_wordThreads.RunTaskEvery( 8333us, [this](){this->m_server->Update();});
 
     //! 启动监听线程(即主线程)的
@@ -76,16 +73,20 @@ void GameManager::RunApp()
 
 void GameManager::Init()
 {
-    //! ①、读取服务器配置文件
+    //! ①、读取配置文件
     yy::config::ConfigManager::LoadXmlConfigs();
 
-    //! ②、初始化
+    //! ②、读取日志配置
+    yy::Ylog::LoggerManager::getInstance().ReadConfigs();
+
+    //! ③、初始化
     m_accpetorLoop = new net::EventLoop(500ms);
 
-    //! ③、初始化监听的端口和IP地址(IP地址未给出，则使用INADDR_ANY绑定所有IP地址)
-    yy::net::IPAddressPtr listenAddr = std::make_shared<net::IPv4Address>(config::g_app_config->GetValue().app_port());
+    //! ④、初始化监听的端口和IP地址(IP地址未给出，则使用INADDR_ANY绑定所有IP地址)
+    yy::net::IPAddressPtr listenAddr = std::make_shared<net::IPv4Address>(
+            config::g_app_config->GetValue().app_tcp_port());
 
-    //! ④、初始化服务器对象（②和③）
+    //! ⑤、初始化服务器对象（③和④）
     m_server = new core::GameServer(m_accpetorLoop, listenAddr);
     m_server->SetNotifier_Security(std::bind(&GameManager::AppNotifier_Secutiry, this, _1));
     m_server->SetNotifier_DisConnect(std::bind(&GameManager::AppNotifier_Disconnect, this, _1));
@@ -104,7 +105,8 @@ void GameManager::StartListenAndIOLoop()
 }
 
 GameManager::GameManager()
-    : m_server{},
+    : m_wordThreads("Game Work Thread"),
+      m_server{},
       m_player{},
       m_test{},
       m_dispatcher{std::bind(&GameManager::UnkonwnCommand, this, _1, _2)},

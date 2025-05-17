@@ -2,47 +2,58 @@
 #include "ConfigManager.h"
 #include "AppXmlConfig.h"
 #include "log.h"
-#include "codec/ProtobufCodec.h"
+#include "codec/ProtobufTcpCodec.h"
+#include "codec/ProtobufUdpCodec.h"
 #include "EventLoop.h"
 
 namespace yy::core {
 
 
-UserConnection::UserConnection(net::TcpConnectionPtr conn, ProtobufCodec & m_codec)
-        : m_conn{conn},
+UserConnection::UserConnection(net::TcpConnectionPtr conn, ProtobufTcpCodec & tcpCodec, ProtobufUdpCodec & udpCodec)
+        : m_tcpChannel{conn},
           m_state{E_UserBaseState::eConnected},
           m_uid{0},
-          m_codec(m_codec)
+          m_tcpCodec(tcpCodec),
+          m_udpCodec(udpCodec)
 {
 
 }
 
-void UserConnection::Send(const MessagePtr &message) {
+void UserConnection::SendTCP(const MessagePtr &message) {
     if(message) {
-        m_codec.Send(m_conn, *message);
+        m_tcpCodec.SendTCP(m_tcpChannel, *message);
     }
 }
 
-void UserConnection::Send(const google::protobuf::Message &message) {
-    m_codec.Send(m_conn, message);
+void UserConnection::SendTCP(const google::protobuf::Message &message) {
+    m_tcpCodec.SendTCP(m_tcpChannel, message);
 }
 
+void UserConnection::SendUDP(const MessagePtr &message) {
+    if(message) {
+        m_udpCodec.SendUDP(m_udpChannel, *message);
+    }
+}
+
+void UserConnection::SendUDP(const google::protobuf::Message &message) {
+    m_udpCodec.SendUDP(m_udpChannel, message);
+}
 
 
 net::TimerID UserConnection::RunAt(net::Timestamp time, net::F_TaskCallback cb) {
-    return m_conn->GetLoop()->RunAt(time, std::move(cb));
+    return m_tcpChannel->GetIOLoop()->RunAt(time, std::move(cb));
 }
 
 net::TimerID UserConnection::RunAfter(net::Microseconds delay, net::F_TaskCallback cb) {
-    return m_conn->GetLoop()->RunAfter(delay, std::move(cb));
+    return m_tcpChannel->GetIOLoop()->RunAfter(delay, std::move(cb));
 }
 
 net::TimerID UserConnection::RunEvery(net::Microseconds interval, net::F_TaskCallback cb) {
-    return m_conn->GetLoop()->RunEvery(interval, std::move(cb));
+    return m_tcpChannel->GetIOLoop()->RunEvery(interval, std::move(cb));
 }
 
 void UserConnection::CancelTimer(net::TimerID timerid) {
-    m_conn->GetLoop()->CancelTimer(timerid);
+    m_tcpChannel->GetIOLoop()->CancelTimer(timerid);
 }
 
 

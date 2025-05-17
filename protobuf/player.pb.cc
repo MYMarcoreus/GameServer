@@ -46,7 +46,6 @@ PROTOBUF_CONSTEXPR PlayerMove::PlayerMove(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_.position_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.rotation_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
-  , /*decltype(_impl_.move_target_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.ani_speed_)*/0
   , /*decltype(_impl_.ani_motion_speed_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
@@ -229,7 +228,6 @@ const uint32_t TableStruct_player_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(p
   PROTOBUF_FIELD_OFFSET(::yy::protocol::app::PlayerMove, _impl_.rotation_),
   PROTOBUF_FIELD_OFFSET(::yy::protocol::app::PlayerMove, _impl_.ani_speed_),
   PROTOBUF_FIELD_OFFSET(::yy::protocol::app::PlayerMove, _impl_.ani_motion_speed_),
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::PlayerMove, _impl_.move_target_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::yy::protocol::app::PlayerJumpAndGravity, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -313,16 +311,16 @@ const uint32_t TableStruct_player_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(p
 static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::yy::protocol::app::PlayerBaseData)},
   { 13, -1, -1, sizeof(::yy::protocol::app::PlayerMove)},
-  { 24, -1, -1, sizeof(::yy::protocol::app::PlayerJumpAndGravity)},
-  { 33, -1, -1, sizeof(::yy::protocol::app::PlayerLeave)},
-  { 40, -1, -1, sizeof(::yy::protocol::app::SelfMovement)},
-  { 48, -1, -1, sizeof(::yy::protocol::app::OtherMovement)},
-  { 56, -1, -1, sizeof(::yy::protocol::app::SelfJumpAndGravity)},
-  { 64, -1, -1, sizeof(::yy::protocol::app::OtherJumpAndGravity)},
-  { 72, -1, -1, sizeof(::yy::protocol::app::LoginRequest)},
-  { 79, -1, -1, sizeof(::yy::protocol::app::LoginResponse)},
-  { 88, -1, -1, sizeof(::yy::protocol::app::OtherPlayerDataRequest)},
-  { 96, -1, -1, sizeof(::yy::protocol::app::OtherPlayerDataResponse)},
+  { 23, -1, -1, sizeof(::yy::protocol::app::PlayerJumpAndGravity)},
+  { 32, -1, -1, sizeof(::yy::protocol::app::PlayerLeave)},
+  { 39, -1, -1, sizeof(::yy::protocol::app::SelfMovement)},
+  { 47, -1, -1, sizeof(::yy::protocol::app::OtherMovement)},
+  { 55, -1, -1, sizeof(::yy::protocol::app::SelfJumpAndGravity)},
+  { 63, -1, -1, sizeof(::yy::protocol::app::OtherJumpAndGravity)},
+  { 71, -1, -1, sizeof(::yy::protocol::app::LoginRequest)},
+  { 78, -1, -1, sizeof(::yy::protocol::app::LoginResponse)},
+  { 87, -1, -1, sizeof(::yy::protocol::app::OtherPlayerDataRequest)},
+  { 95, -1, -1, sizeof(::yy::protocol::app::OtherPlayerDataResponse)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -347,34 +345,33 @@ const char descriptor_table_protodef_player_2eproto[] PROTOBUF_SECTION_VARIABLE(
   "\006hp_max\030\005 \001(\005\022-\n\010movement\030\006 \001(\0132\033.yy.pro"
   "tocol.app.PlayerMove\022\?\n\020jump_and_gravity"
   "\030\007 \001(\0132%.yy.protocol.app.PlayerJumpAndGr"
-  "avity\"r\n\nPlayerMove\022\020\n\010position\030\002 \001(\014\022\020\n"
+  "avity\"]\n\nPlayerMove\022\020\n\010position\030\002 \001(\014\022\020\n"
   "\010rotation\030\003 \001(\014\022\021\n\tani_speed\030\005 \001(\002\022\030\n\020an"
-  "i_motion_speed\030\006 \001(\002\022\023\n\013move_target\030\004 \001("
-  "\014\"[\n\024PlayerJumpAndGravity\022\023\n\013ani_is_jump"
-  "\030\002 \001(\010\022\025\n\rani_is_ground\030\003 \001(\010\022\027\n\017ani_is_"
-  "freefall\030\004 \001(\010\"!\n\013PlayerLeave\022\022\n\nleaver_"
-  "uid\030\001 \001(\r\"J\n\014SelfMovement\022\013\n\003uid\030\001 \001(\r\022-"
-  "\n\010movement\030\002 \001(\0132\033.yy.protocol.app.Playe"
-  "rMove\"K\n\rOtherMovement\022\013\n\003uid\030\001 \001(\r\022-\n\010m"
-  "ovement\030\002 \001(\0132\033.yy.protocol.app.PlayerMo"
-  "ve\"b\n\022SelfJumpAndGravity\022\013\n\003uid\030\001 \001(\r\022\?\n"
+  "i_motion_speed\030\006 \001(\002\"[\n\024PlayerJumpAndGra"
+  "vity\022\023\n\013ani_is_jump\030\002 \001(\010\022\025\n\rani_is_grou"
+  "nd\030\003 \001(\010\022\027\n\017ani_is_freefall\030\004 \001(\010\"!\n\013Pla"
+  "yerLeave\022\022\n\nleaver_uid\030\001 \001(\r\"J\n\014SelfMove"
+  "ment\022\013\n\003uid\030\001 \001(\r\022-\n\010movement\030\002 \001(\0132\033.yy"
+  ".protocol.app.PlayerMove\"K\n\rOtherMovemen"
+  "t\022\013\n\003uid\030\001 \001(\r\022-\n\010movement\030\002 \001(\0132\033.yy.pr"
+  "otocol.app.PlayerMove\"b\n\022SelfJumpAndGrav"
+  "ity\022\013\n\003uid\030\001 \001(\r\022\?\n\020jump_and_gravity\030\002 \001"
+  "(\0132%.yy.protocol.app.PlayerJumpAndGravit"
+  "y\"c\n\023OtherJumpAndGravity\022\013\n\003uid\030\001 \001(\r\022\?\n"
   "\020jump_and_gravity\030\002 \001(\0132%.yy.protocol.ap"
-  "p.PlayerJumpAndGravity\"c\n\023OtherJumpAndGr"
-  "avity\022\013\n\003uid\030\001 \001(\r\022\?\n\020jump_and_gravity\030\002"
-  " \001(\0132%.yy.protocol.app.PlayerJumpAndGrav"
-  "ity\"!\n\014LoginRequest\022\021\n\tconn_name\030\001 \001(\014\"\211"
-  "\001\n\rLoginResponse\022\016\n\006result\030\001 \001(\010\0222\n\tself"
-  "_data\030\002 \001(\0132\037.yy.protocol.app.PlayerBase"
-  "Data\0224\n\013other_datas\030\003 \003(\0132\037.yy.protocol."
-  "app.PlayerBaseData\"F\n\026OtherPlayerDataReq"
-  "uest\022\025\n\rrequester_uid\030\001 \001(\r\022\025\n\rrequested"
-  "_uid\030\002 \001(\r\"N\n\027OtherPlayerDataResponse\0223\n"
-  "\nother_data\030\001 \001(\0132\037.yy.protocol.app.Play"
-  "erBaseDatab\006proto3"
+  "p.PlayerJumpAndGravity\"!\n\014LoginRequest\022\021"
+  "\n\tconn_name\030\001 \001(\014\"\211\001\n\rLoginResponse\022\016\n\006r"
+  "esult\030\001 \001(\010\0222\n\tself_data\030\002 \001(\0132\037.yy.prot"
+  "ocol.app.PlayerBaseData\0224\n\013other_datas\030\003"
+  " \003(\0132\037.yy.protocol.app.PlayerBaseData\"F\n"
+  "\026OtherPlayerDataRequest\022\025\n\rrequester_uid"
+  "\030\001 \001(\r\022\025\n\rrequested_uid\030\002 \001(\r\"N\n\027OtherPl"
+  "ayerDataResponse\0223\n\nother_data\030\001 \001(\0132\037.y"
+  "y.protocol.app.PlayerBaseDatab\006proto3"
   ;
 static ::_pbi::once_flag descriptor_table_player_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_player_2eproto = {
-    false, false, 1178, descriptor_table_protodef_player_2eproto,
+    false, false, 1157, descriptor_table_protodef_player_2eproto,
     "player.proto",
     &descriptor_table_player_2eproto_once, nullptr, 0, 12,
     schemas, file_default_instances, TableStruct_player_2eproto::offsets,
@@ -797,7 +794,6 @@ PlayerMove::PlayerMove(const PlayerMove& from)
   new (&_impl_) Impl_{
       decltype(_impl_.position_){}
     , decltype(_impl_.rotation_){}
-    , decltype(_impl_.move_target_){}
     , decltype(_impl_.ani_speed_){}
     , decltype(_impl_.ani_motion_speed_){}
     , /*decltype(_impl_._cached_size_)*/{}};
@@ -819,14 +815,6 @@ PlayerMove::PlayerMove(const PlayerMove& from)
     _this->_impl_.rotation_.Set(from._internal_rotation(), 
       _this->GetArenaForAllocation());
   }
-  _impl_.move_target_.InitDefault();
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-    _impl_.move_target_.Set("", GetArenaForAllocation());
-  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (!from._internal_move_target().empty()) {
-    _this->_impl_.move_target_.Set(from._internal_move_target(), 
-      _this->GetArenaForAllocation());
-  }
   ::memcpy(&_impl_.ani_speed_, &from._impl_.ani_speed_,
     static_cast<size_t>(reinterpret_cast<char*>(&_impl_.ani_motion_speed_) -
     reinterpret_cast<char*>(&_impl_.ani_speed_)) + sizeof(_impl_.ani_motion_speed_));
@@ -840,7 +828,6 @@ inline void PlayerMove::SharedCtor(
   new (&_impl_) Impl_{
       decltype(_impl_.position_){}
     , decltype(_impl_.rotation_){}
-    , decltype(_impl_.move_target_){}
     , decltype(_impl_.ani_speed_){0}
     , decltype(_impl_.ani_motion_speed_){0}
     , /*decltype(_impl_._cached_size_)*/{}
@@ -852,10 +839,6 @@ inline void PlayerMove::SharedCtor(
   _impl_.rotation_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
     _impl_.rotation_.Set("", GetArenaForAllocation());
-  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  _impl_.move_target_.InitDefault();
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-    _impl_.move_target_.Set("", GetArenaForAllocation());
   #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
 }
 
@@ -872,7 +855,6 @@ inline void PlayerMove::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
   _impl_.position_.Destroy();
   _impl_.rotation_.Destroy();
-  _impl_.move_target_.Destroy();
 }
 
 void PlayerMove::SetCachedSize(int size) const {
@@ -887,7 +869,6 @@ void PlayerMove::Clear() {
 
   _impl_.position_.ClearToEmpty();
   _impl_.rotation_.ClearToEmpty();
-  _impl_.move_target_.ClearToEmpty();
   ::memset(&_impl_.ani_speed_, 0, static_cast<size_t>(
       reinterpret_cast<char*>(&_impl_.ani_motion_speed_) -
       reinterpret_cast<char*>(&_impl_.ani_speed_)) + sizeof(_impl_.ani_motion_speed_));
@@ -913,15 +894,6 @@ const char* PlayerMove::_InternalParse(const char* ptr, ::_pbi::ParseContext* ct
       case 3:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
           auto str = _internal_mutable_rotation();
-          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(ptr);
-        } else
-          goto handle_unusual;
-        continue;
-      // bytes move_target = 4;
-      case 4:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 34)) {
-          auto str = _internal_mutable_move_target();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
         } else
@@ -984,12 +956,6 @@ uint8_t* PlayerMove::_InternalSerialize(
         3, this->_internal_rotation(), target);
   }
 
-  // bytes move_target = 4;
-  if (!this->_internal_move_target().empty()) {
-    target = stream->WriteBytesMaybeAliased(
-        4, this->_internal_move_target(), target);
-  }
-
   // float ani_speed = 5;
   static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
   float tmp_ani_speed = this->_internal_ani_speed();
@@ -1040,13 +1006,6 @@ size_t PlayerMove::ByteSizeLong() const {
         this->_internal_rotation());
   }
 
-  // bytes move_target = 4;
-  if (!this->_internal_move_target().empty()) {
-    total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::BytesSize(
-        this->_internal_move_target());
-  }
-
   // float ani_speed = 5;
   static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
   float tmp_ani_speed = this->_internal_ani_speed();
@@ -1089,9 +1048,6 @@ void PlayerMove::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PRO
   if (!from._internal_rotation().empty()) {
     _this->_internal_set_rotation(from._internal_rotation());
   }
-  if (!from._internal_move_target().empty()) {
-    _this->_internal_set_move_target(from._internal_move_target());
-  }
   static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
   float tmp_ani_speed = from._internal_ani_speed();
   uint32_t raw_ani_speed;
@@ -1132,10 +1088,6 @@ void PlayerMove::InternalSwap(PlayerMove* other) {
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
       &_impl_.rotation_, lhs_arena,
       &other->_impl_.rotation_, rhs_arena
-  );
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
-      &_impl_.move_target_, lhs_arena,
-      &other->_impl_.move_target_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
       PROTOBUF_FIELD_OFFSET(PlayerMove, _impl_.ani_motion_speed_)

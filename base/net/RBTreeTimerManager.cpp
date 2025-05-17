@@ -304,7 +304,7 @@ std::vector<TimerPtr> RBTreeTimerManager::GetExpiredTimers() {
         m_TimeridMap.erase(expiredTimer->GetID());
     }
 
-    return expiredTimers;
+    return std::move(expiredTimers);
 }
 
 void RBTreeTimerManager::ResetAndFreeExpiredTimers(std::vector<TimerPtr> &expiredTimers) {

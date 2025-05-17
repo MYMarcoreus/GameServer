@@ -133,7 +133,7 @@ void GamePlayerManager::Broadcast(const UserConnectionPtr &from, const google::p
         auto to = m_server->FindUser(p.second->conn_name());
         if(to == nullptr) continue;
 
-        to->Send(data);
+        to->SendTCP(data);
     }
 }
 
@@ -257,7 +257,7 @@ void GamePlayerManager::OnLogin(const UserConnectionPtr& userdata, const Ptr<pro
 
     // 转换状态
     // 返回给登录用户自己的信息和其他人的信息
-    userdata->Send(loginResponse);
+    userdata->SendTCP(loginResponse);
     userdata->SetState(core::UserConnection::E_UserBaseState::eLoggedIn);
 
     // 返回登录用户的信息给其他用户
@@ -289,7 +289,7 @@ void GamePlayerManager::OnOtherPlayerDataRequest(const UserConnectionPtr& userda
     // return_if(userdata_other == nullptr);
     OtherPlayerDataResponse response;
     *response.mutable_other_data() = *player_other;
-    userdata_self->Send(response);
+    userdata_self->SendTCP(response);
 }
 
 void GamePlayerManager::OnSelfMovement(const UserConnectionPtr& userdata_self, const Ptr<protocol::app::SelfMovement> & selfmove)
@@ -302,7 +302,7 @@ void GamePlayerManager::OnSelfMovement(const UserConnectionPtr& userdata_self, c
 
     // playerdata_self->set_allocated_player_move(new PlayerMove(selfmove->self_move()));
     *playerdata_self->mutable_movement() = selfmove->movement();
-    userdata_self->Send(selfmove);
+    userdata_self->SendTCP(selfmove);
 
     OtherMovement othermove;
     othermove.set_uid(selfmove->uid());
@@ -322,7 +322,7 @@ void GamePlayerManager::OnSelfJumpAndGravity(const UserConnectionPtr& userdata_s
     // 记录玩家状态
     // playerdata_self->mutable_ani_jump_and_gravity()->CopyFrom(selfJumpAndGravity->self_jump_and_gravity());
     *playerdata_self->mutable_jump_and_gravity() = selfJumpAndGravity->jump_and_gravity();
-    userdata_self->Send(selfJumpAndGravity);
+    userdata_self->SendTCP(selfJumpAndGravity);
 
     OtherJumpAndGravity otherJumpAndGravity;
     otherJumpAndGravity.set_uid(selfJumpAndGravity->uid());

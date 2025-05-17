@@ -352,7 +352,7 @@ private:
     mutable util::RWLock m_mutex;
     T m_val;
     //变更回调函数组, uint64_t key,要求唯一，一般可以用hash
-    std::map<uint64_t, OnChangeCallback> m_cbs;
+    std::unordered_map <uint64_t, OnChangeCallback> m_cbs;
 };
 
 
@@ -479,10 +479,10 @@ private:
      *       结点的名字为：root.log.logger
      *       属性的名字为：root.log.logger[m_TypeName]
      */
-    static std::map<std::string, ConfigVarBase::ptr> &
+    static std::unordered_map <std::string, ConfigVarBase::ptr> &
     GetConfigVarMap()
     {
-        static typename std::map<std::string, ConfigVarBase::ptr> s_configvar_map;
+        static typename std::unordered_map <std::string, ConfigVarBase::ptr> s_configvar_map;
         return (s_configvar_map);
     }
 

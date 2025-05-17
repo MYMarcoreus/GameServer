@@ -55,14 +55,14 @@ MessageHeader::MessageHeader(const google::protobuf::Message & message) {
 }
 
 
-MessageParseErrorCode MessageHeader::RetrieveFromBuffer(net::Buffer &buf, uint8_t xorCode) {
+MessageParseErrorCode MessageHeader::ParseFromBuffer(net::Buffer &buf, uint8_t xorCode) {
     if(buf.GetDataSize() < kMinHeaderLen)
         return MessageParseErrorCode::eNotReceiveFullHeader;
 
     /*! 读入数据，边读边解密 !*/
     int peekedLen = 0;
     /**** CheckCode ****/
-    buf.PeekCBuffer(0, m_CheckCode, sizeof m_CheckCode);
+    buf.PeekCopyCBuffer(0, m_CheckCode, sizeof m_CheckCode);
     strncpy(m_CheckCode, XorCheckCode(xorCode).c_str(), sizeof(m_CheckCode));
     if(strncmp(m_CheckCode, config::g_app_config->GetValue().check_code(), sizeof(m_CheckCode)) != 0) {
         return MessageParseErrorCode::eInvalidCheckCode;
@@ -70,18 +70,18 @@ MessageParseErrorCode MessageHeader::RetrieveFromBuffer(net::Buffer &buf, uint8_
     peekedLen += sizeof(m_CheckCode);
 
     /**** FullLength ****/
-    buf.PeekPodStruct(peekedLen, m_FullLength);
+    buf.PeekCopyPodStruct(peekedLen, m_FullLength);
     m_FullLength = XorFullLength(xorCode);
     if(m_FullLength < kMinHeaderLen) {
         return MessageParseErrorCode::eInvalidFullLength;
     }
-    if(buf.GetDataSize() < m_FullLength){
+    if(buf.GetDataSize() < m_FullLength) {
         return MessageParseErrorCode::eNotReceiveFullLength;
     }
     peekedLen += sizeof(m_FullLength);
 
     /**** TypeNameLength ****/
-    buf.PeekPodStruct(peekedLen, m_TypeNameLength);
+    buf.PeekCopyPodStruct(peekedLen, m_TypeNameLength);
     m_TypeNameLength = XorNameLength(xorCode);
     if(buf.GetDataSize() < CalcHeaderLen()) { //! TypeName还没接收完全
         return MessageParseErrorCode::eNotReceiveFullHeader;

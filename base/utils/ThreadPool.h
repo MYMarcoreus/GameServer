@@ -21,7 +21,7 @@ public:
 public:
     ///@param thread_num 线程池中的线程数量，默认为CPU的核心数
     ///@param queueSize 任务队列的长度，默认为无限队列（其实为int的最大值）
-    explicit ThreadPool(int queueSize = util::BoundedQueue<Task>::NO_BOUND_SIZE);
+    explicit ThreadPool(std::string name, int queueSize = util::BoundedQueue<Task>::NO_BOUND_SIZE);
 
     ~ThreadPool();
 
@@ -54,10 +54,11 @@ private:
     void PopAndExecuteTask();
 
 private:
-    util::BoundedQueue<Task>                m_Queue;     // 任务队列
-    std::vector<std::thread>                m_Threads;   // 管理线程
-    bool                                    m_IsRunning;
-    net::EventLoop *                        m_TimerLoop;
+    util::BoundedQueue<Task>   m_Queue;     // 任务队列
+    std::vector<std::thread>   m_Threads;   // 管理线程
+    bool                       m_IsRunning;
+    net::EventLoop *           m_TimerLoop;
+    std::string                m_name;
     // std::unique_ptr<yy::net::TimerManager>  m_TimerManager;
 };
 

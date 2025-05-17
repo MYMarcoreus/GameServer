@@ -12,7 +12,8 @@ public:
         AppXmlConfig appXmlConfig;
 
         appXmlConfig.appID = XmlAttributeTo<uint32_t>(xml_app->FindAttribute("appID"));
-        appXmlConfig.appPort = XmlAttributeTo<uint16_t>(xml_app->FindAttribute("appPort"));
+        appXmlConfig.appTcpPort = XmlAttributeTo<uint16_t>(xml_app->FindAttribute("appTcpPort"));
+        appXmlConfig.appUdpPort = XmlAttributeTo<uint16_t>(xml_app->FindAttribute("appUdpPort"));
         appXmlConfig.appMaxPlayer = XmlAttributeTo<int32_t>(xml_app->FindAttribute("appMaxPlayer"));
         appXmlConfig.appMaxConnection = XmlAttributeTo<int32_t>(xml_app->FindAttribute("appMaxConnection"));
         appXmlConfig.appXorCode = XmlAttributeTo<uint8_t>(xml_app->FindAttribute("appXorCode"));
@@ -24,7 +25,9 @@ public:
         appXmlConfig.maxHeartTime = XmlAttributeTo<int32_t>(xml_app->FindAttribute("maxHeartTime"));
         appXmlConfig.maxSecurityTime = XmlAttributeTo<int32_t>(xml_app->FindAttribute("maxSecurityTime"));
         appXmlConfig.closeDelay = XmlAttributeTo<int32_t>(xml_app->FindAttribute("closeDelay"));
-        appXmlConfig.ioThreadNum = XmlAttributeTo<uint32_t>(xml_app->FindAttribute("ioThreadNum"));
+        appXmlConfig.tcpIOThreadNum = XmlAttributeTo<uint32_t>(xml_app->FindAttribute("tcpIOThreadNum"));
+        appXmlConfig.udpIOThreadNum = XmlAttributeTo<uint32_t>(xml_app->FindAttribute("udpIOThreadNum"));
+        appXmlConfig.workThreadNum  = XmlAttributeTo<uint32_t>(xml_app->FindAttribute("workThreadNum"));
 
         auto securityCode = XmlAttributeTo<std::string>(xml_app->FindAttribute("securityCode"));
         auto checkCode    = XmlAttributeTo<std::string>(xml_app->FindAttribute("checkCode"));

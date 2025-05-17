@@ -98,6 +98,8 @@ public:
 
     SocketApiWrapper::SocketResult Readv(IOV_TYPE *iov, int iovcnt);
 
+    SocketApiWrapper::SocketResult Readmsg(IOV_TYPE *iov, int iovcnt, IPAddress::ptr peerAddr);
+
 /* UDP的I / O函数 */
     //! NOTE：本函数不处理返回值，需要调用者自行处理（如判断是否为ET模式）
     SocketApiWrapper::SocketResult Recvfrom(void *ptr, size_t nbytes, int flags, IPAddress::ptr peerAddr);

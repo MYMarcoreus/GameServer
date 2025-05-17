@@ -1,7 +1,7 @@
 #ifndef LINUXGAMESERVER_POLLER_H
 #define LINUXGAMESERVER_POLLER_H
 
-#include <map>
+#include <unordered_map >
 #include <vector>
 #include <chrono>
 #include "socket_definations.h"
@@ -10,12 +10,12 @@
 namespace yy::net {
 
 class EventLoop;
-class Channel;
+class IOChannel;
 
 
 class Poller {
 public:
-    using ChannelList = std::vector<Channel *>;
+    using ChannelList = std::vector<IOChannel *>;
 
     Poller(EventLoop * loop);
     virtual ~Poller();
@@ -26,13 +26,13 @@ public:
     virtual void PollWait(ChannelList &activeChannel, std::chrono::milliseconds timeout/* = std::chrono::milliseconds::max()*/) = 0;
 
     ///@brief 在m_ChannelMap中更新channel
-    virtual void UpdateChannel(Channel * channel) = 0;
+    virtual void UpdateChannel(IOChannel * channel) = 0;
 
     ///@brief 在m_ChannelMap中删除channel
-    virtual void RemoveChannel(Channel * channel) = 0;
+    virtual void RemoveChannel(IOChannel * channel) = 0;
 
     ///@brief 在m_ChannelMap中查询
-    bool HasChannel(Channel *channel);
+    bool HasChannel(IOChannel *channel);
 
     ///@brief 返回epoll或poll实现的Poller实现子类
     static Poller *NewDefaultPoller(EventLoop *loop);
@@ -43,7 +43,7 @@ public:
 
 protected:
     EventLoop *                 m_OwnerLoop;
-    std::map<SocketApiWrapper::socket_t, Channel *>    m_ChannelMap; //  get_fd->Channel*
+    std::unordered_map <SocketApiWrapper::socket_t, IOChannel *>    m_ChannelMap; //  get_fd->Channel*
 };
 
 } // yy::net

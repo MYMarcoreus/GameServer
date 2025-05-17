@@ -13,7 +13,7 @@
 
 namespace yy::net {
 
-class Channel;
+class IOChannel;
 class Poller;
 class TimerManager;
 class Timer;
@@ -22,7 +22,7 @@ class WakeupManager;
 //! 循环执行IO
 class EventLoop {
 public:
-    using ChanneList = std::vector<Channel *>;
+    using ChanneList = std::vector<IOChannel *>;
     using F_PendingCallback = std::function<void()>;
     using PendingCallbackList = std::vector<F_PendingCallback>;
     using F_CloseSocketsCallback = std::function<void()>;
@@ -46,9 +46,9 @@ public:
     //End 代办函数相关
 
     //Region 调用Poller的对应函数
-    void UpdateChannel(Channel * channel);
-    void RemoveChannel(Channel * channel);
-    bool    HasChannel(Channel * channel);
+    void UpdateChannel(IOChannel * channel);
+    void RemoveChannel(IOChannel * channel);
+    bool    HasChannel(IOChannel * channel);
     //End 调用Poller的对应函数
 
     //Region 定时器相关函数

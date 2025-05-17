@@ -1,7 +1,7 @@
 #include "TcpClient.h"
 #include "TcpConnection.h"
 #include "Connector.h"
-#include "Channel.h"
+#include "IOChannel.h"
 #include "Socket.h"
 #include "EventLoop.h"
 #include "log.h"
@@ -90,7 +90,7 @@ void TcpClient::RemoveConnection(TcpConnectionPtr conn) {
         std::lock_guard lg{m_ConnectionMutex};
         m_Connection.reset();
     }
-    conn->GetLoop()->EnqueueCallbackInLoop([conn](){conn->ConnectionDestroyed();});
+    conn->GetIOLoop()->EnqueueCallbackInLoop([conn](){conn->ConnectionDestroyed();});
 
     if(m_CanAutoRetry and m_IsStarted)
         m_Connector->Restart();

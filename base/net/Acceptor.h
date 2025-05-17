@@ -2,7 +2,7 @@
 #define LINUXGAMESERVER_ACCEPTOR_H
 
 #include "Socket.h"
-#include "Channel.h"
+#include "IOChannel.h"
 #include <functional>
 
 namespace yy::net {
@@ -40,7 +40,7 @@ private:
 private:
     EventLoop *             m_AcceptorLoop;
     Socket                  m_AcceptSocket;
-    Channel                 m_AcceptChannel;
+    IOChannel                 m_AcceptChannel;
     NewConnectionCallback   m_NewConnectionCallback;
     bool                    m_IsListening;
     IPAddressPtr            m_ListenAddr;

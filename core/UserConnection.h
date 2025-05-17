@@ -11,8 +11,9 @@
 namespace yy::core {
 
 
-class ProtobufCodec;
 
+class ProtobufTcpCodec;
+class ProtobufUdpCodec;
 
 /// @brief 用户连接数据
 class UserConnection
@@ -30,18 +31,23 @@ public:
     };
 
 public:
-    UserConnection(net::TcpConnectionPtr conn, ProtobufCodec & m_codec);
+    UserConnection(net::TcpConnectionPtr conn, ProtobufTcpCodec & tcpCodec, ProtobufUdpCodec & udpCodec);
 
-    void Shutdown() { m_conn->Shutdown(); }
+    void Shutdown() { m_tcpChannel->Shutdown(); }
 
-    void Send(const MessagePtr & message) ;
-    void Send(const google::protobuf::Message & message);
+    void SendTCP(const MessagePtr & message) ;
+    void SendTCP(const google::protobuf::Message & message);
 
-    net::TcpConnectionPtr GetConnection() { return m_conn; }
+    void SendUDP(const MessagePtr & message) ;
+    void SendUDP(const google::protobuf::Message & message);
 
     void SetState(E_UserBaseState state) { m_state = state; }
 
+
     void SetUID(uint32_t uid) { m_uid = uid; }
+
+    ///Region GETTER
+    net::TcpConnectionPtr GetConnection() { return m_tcpChannel; }
 
     /// @brief 是否已连接
     bool IsConnected() const { return m_state != E_UserBaseState::eFree and m_state != E_UserBaseState::eSavingData; }
@@ -56,9 +62,9 @@ public:
     bool IsNeedSave() const { return m_state == E_UserBaseState::eSavingData; }
 
     uint32_t GetUID() const { return m_uid; }
-    const std::string & GetConnName() const { return m_conn->GetName(); }
-    auto GetSocketFD() const { return m_conn->GetSocketFD(); }
-
+    const std::string & GetConnName() const { return m_tcpChannel->GetName(); }
+    auto GetSocketFD() const { return m_tcpChannel->GetSocketFD(); }
+    ///End GETTER
 
     net::TimerID RunAt(net::Timestamp time, net::F_TaskCallback cb);
     net::TimerID RunAfter(net::Microseconds delay, net::F_TaskCallback cb);
@@ -66,10 +72,12 @@ public:
     void CancelTimer(net::TimerID timerid);
 
 private:
-    E_UserBaseState       m_state;
-    uint32_t              m_uid;
-    net::TcpConnectionPtr m_conn;
-    ProtobufCodec &       m_codec;
+    E_UserBaseState                             m_state;
+    uint32_t                                    m_uid;
+    net::TcpConnectionPtr                       m_tcpChannel;
+    net::UdpSessionPtr                          m_udpChannel;
+    ProtobufTcpCodec &                          m_tcpCodec;
+    ProtobufUdpCodec &                          m_udpCodec;
 };
 
 // #pragma pack(pop, packing) // 恢复字节对齐状态

@@ -1,5 +1,5 @@
-#ifndef LINUXGAMESERVER_PROTOBUFCODEC_H
-#define LINUXGAMESERVER_PROTOBUFCODEC_H
+#ifndef LINUXGAMESERVER_PROTOBUFTCPCODEC_H
+#define LINUXGAMESERVER_PROTOBUFTCPCODEC_H
 
 
 #include "noncopyable.h"
@@ -46,18 +46,18 @@ Message的传递路线(Call Callback)：
                   ==> ProtobufDispatcher(根据信息的种类调用在XXXServer中注册的回调)
                   ==> AAAServer、BBBServer、CCCServer(注册回调)
 */
-class ProtobufCodec: public util::noncopyable {
+class ProtobufTcpCodec: public util::noncopyable {
     using F_ProtobufMessageDispatchCallback = std::function<void(const net::TcpConnectionPtr &, const MessagePtr &)>;
     using F_ProtobufErrorMessageCallback = std::function<void(const net::TcpConnectionPtr &, yy::net::Buffer &, MessageParseErrorCode)>;
 
 public:
-    ProtobufCodec(F_ProtobufMessageDispatchCallback msgCb, F_ProtobufErrorMessageCallback errCb = DefaultErrorCallback);
+    ProtobufTcpCodec(F_ProtobufMessageDispatchCallback msgCb, F_ProtobufErrorMessageCallback errCb = DefaultErrorCallback);
 
     ///@brief TcpConnection接收字节流到输入缓冲以后调用的回调函数，该函数用于处理字节流，解析并创建出消息，然后传递消息给ProtobufDispatcher
     void OnData(const yy::net::TcpConnectionPtr &conn, yy::net::Buffer &buf);
 
     ///@brief 发送message（加Header后Send）
-    void Send(const yy::net::TcpConnectionPtr & conn, const google::protobuf::Message & message);
+    void SendTCP(const yy::net::TcpConnectionPtr &conn, const google::protobuf::Message & message);
 
 private:
     ///@brief 解析Buffer中的二进制数据，将其解析为protobuf的Message
@@ -75,5 +75,5 @@ private:
 
 }
 
-#endif //LINUXGAMESERVER_PROTOBUFCODEC_H
+#endif //LINUXGAMESERVER_PROTOBUFTCPCODEC_H
 

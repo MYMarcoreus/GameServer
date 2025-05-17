@@ -8,7 +8,7 @@
 namespace yy::net {
 
 class EventLoop;
-class Channel;
+class IOChannel;
 
 
 ///@brief 对标Acceptor，实现了非阻塞connect
@@ -72,7 +72,7 @@ private:
 private:
     EventLoop *                  m_Loop;
     IPAddressPtr                 m_ServerAddr;
-    std::unique_ptr<Channel>     m_Channel; //! 在connect中，sockfd是一次性的，所以其对应的channel也是一次性的
+    std::unique_ptr<IOChannel>     m_Channel; //! 在connect中，sockfd是一次性的，所以其对应的channel也是一次性的
     E_ConnectionState            m_State;
     bool                         m_IsStarted;
     F_NewConnectionCallback      m_NewConnectionCallback;

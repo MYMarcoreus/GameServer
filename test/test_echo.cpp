@@ -57,7 +57,7 @@ private:
 
         {
             YLOG_INFO("消息为：{}\n", message);
-            conn->Send(message);
+            conn->SendTCP(message);
         }
     }
 
@@ -74,7 +74,7 @@ int main()
 {
     config::ConfigManager::LoadXmlConfigs();
     EventLoop loop{10000s};
-    IPAddressPtr listenAddr = std::make_shared<IPv4Address>(config::g_app_config->GetValue().app_port());
+    IPAddressPtr listenAddr = std::make_shared<IPv4Address>(config::g_app_config->GetValue().app_tcp_port());
     EchoServer server(&loop, listenAddr);
     server.Start();
     loop.Loop();

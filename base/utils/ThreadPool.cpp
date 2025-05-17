@@ -8,8 +8,9 @@ namespace yy::net {
 
 using namespace yy::util;
 
-ThreadPool::ThreadPool(int queueSize)
-        : m_IsRunning(false)
+ThreadPool::ThreadPool(std::string name, int queueSize)
+        : m_name(name)
+        , m_IsRunning(false)
         , m_Threads{}
         , m_Queue(queueSize)
         // , m_TimerManager{nullptr}

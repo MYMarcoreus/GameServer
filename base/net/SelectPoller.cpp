@@ -1,5 +1,5 @@
 #include "SelectPoller.h"
-#include "Channel.h"
+#include "IOChannel.h"
 #include "Timestamp.h"
 #include "log.h"
 #include "util_functions.h"
@@ -52,7 +52,7 @@ SelectPoller::SelectPoller(EventLoop* loop) : Poller(loop)
     FD_ZERO(&happended_expectfds_);
 }
 
-void SelectPoller::UpdateChannel(Channel* channel)
+void SelectPoller::UpdateChannel(IOChannel* channel)
 {
     // Channel的，Channel调用EventLoop调用本函数(Poller::UpdateChannel)以更改Channel对应的系统套接字
     socket_t fd = channel->GetFD();
@@ -68,7 +68,7 @@ void SelectPoller::UpdateChannel(Channel* channel)
 }
 
 
-void SelectPoller::RemoveChannel(Channel* channel)
+void SelectPoller::RemoveChannel(IOChannel* channel)
 {
     assert(channel);
     socket_t fd = channel->GetFD();
@@ -81,7 +81,7 @@ void SelectPoller::RemoveChannel(Channel* channel)
     fdSet_.erase(fd);
 }
 
-void SelectPoller::Update(Channel* channel)
+void SelectPoller::Update(IOChannel* channel)
 {
     assert(channel);
 
@@ -151,7 +151,7 @@ void SelectPoller::FillActiveChannel(ChannelList& activeChannels, int numEvents)
 
         if (!readyEvent.HasNoneEvent()) {
             if (auto it = m_ChannelMap.find(fd); it != m_ChannelMap.end()) {
-                Channel* channel = it->second;
+                IOChannel* channel = it->second;
                 assert(channel);
                 channel->SetHappendedEvent(readyEvent);
                 activeChannels.push_back(channel);

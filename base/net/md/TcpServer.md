@@ -9,11 +9,11 @@ classDiagram
     class GameManager {
     	<<Singleton>>
         - **EventLoop** * m_accpetorLoop = new *EventLoop*(500ms)
-        - **IServer**   * m_server = new *GameServer*(m_accpetorLoop, listenAddr)
+        - **IServer**   * m_tcpServer = new *GameServer*(m_accpetorLoop, listenAddr)
         
         - **GamePlayerManager** * m_player
         - **GameTestManager**   * m_test
-        - **ProtobufDispatcher**<**UserConnection**::ptr> m_dispatcher
+        - **ProtobufDispatcher**<**UserConnection**::ptr> m_tcpDispatcher
         - **ThreadPool** m_wordThreads
     }
     
@@ -27,11 +27,11 @@ classDiagram
     }
     
     class ProtobufDispatcher {
-        <<template ConnectionType>>
+        <<template NetworkChannelType>>
 
         std::map<
         	const google::protobuf::Descriptor *,
-        	std::shared_ptr＜ Callback~ConnectionType~ ＞
+        	std::shared_ptr＜ Callback~NetworkChannelType~ ＞
         >;
         
         ProtobufMessageCallback m_UnknownCallback;
@@ -51,32 +51,32 @@ classDiagram
     }
 	
 	class GameServer {
-        - **TcpServer** m_server
+        - **TcpServer** m_tcpServer
         - **EventLoop** * m_AccpetorLoop
         - std::unordered_map~string , **UserConnection**::ptr~ m_users
-        - **ProtobufCodec**               m_codec
-        - **ProtobufDispatcher**<**TcpConnection**::ptr~ m_dispatcher
+        - **ProtobufTcpCodec**               m_tcpCodec
+        - **ProtobufDispatcher**<**TcpConnection**::ptr~ m_tcpDispatcher
         
         ......
         
-        - F_Notifier        m_notifier_security
-        - F_Notifier        m_notifier_disconnect
-        - F_NotifierCommand m_notifier_command
+        - F_Notifier        m_NotifierSecurity
+        - F_Notifier        m_NotifierDisconnect
+        - F_NotifierCommand m_NotifierCommand
         
         ......
 	}
 	
-	class ProtobufCodec {
+	class ProtobufTcpCodec {
 	    - F_ProtobufMessageDispatchCallback   m_ProtobufMessageDispatchCallback
         - F_ProtobufErrorMessageCallback      m_ProtobufErrorMessageCallback
 	}
 	    
     class UserConnection {
-        - **TcpConnection**::ptr m_conn
+        - **TcpConnection**::ptr m_tcpChannel
         
         - E_UserBaseState       m_state;
         - uint32_t              m_uid;
-        - ProtobufCodec &       m_codec;
+        - ProtobufTcpCodec &       m_tcpCodec;
     }
 
     class TcpServer {
@@ -89,7 +89,7 @@ classDiagram
         
         - F_ConnectionEstablishedCallback      m_ConnectionEstablishedCallback
         - F_ConnectionWriteCompleteCallback    m_ConnectionWriteCompleteCallback
-        - F_MessageCallback                    m_MessageCallback
+        - F_TcpMessageCallback                    m_UdpMessageCallback
         - F_ConnectionShutdownCallback         m_ConnectionShutdownCallback
         
         ......
@@ -100,7 +100,7 @@ classDiagram
     class Acceptor {
         **EventLoop** *           m_AcceptorLoop;
         *Socket*                  m_AcceptSocket;
-        *Channel*                 m_AcceptChannel;
+        *IOChannel*                 m_AcceptChannel;
         
         ......
         
@@ -110,19 +110,19 @@ classDiagram
     }
 
     class TcpConnection {
-        - **EventLoop** *                 m_ioLoop;
+        - **EventLoop** *                 m_eventLoop;
         
         ......
         
-        - unique_ptr~*Socket*~             m_Socket;
-        - unique_ptr~*Channel*~            m_Channel;
-        - *Buffer* m_SendBuf;
-        - *Buffer* m_RecvBuf;
+        - unique_ptr~*Socket*~             m_socket;
+        - unique_ptr~*IOChannel*~            m_channel;
+        - *Buffer* m_sendBuf;
+        - *Buffer* m_recvBuf;
         
         ......
         
         - F_ConnectionEstablishedCallback      m_ConnectionEstablishedCallback  
-        - F_MessageCallback                    m_MessageCallback
+        - F_TcpMessageCallback                    m_UdpMessageCallback
         - F_ConnectionWriteCompleteCallback    m_ConnectionWriteCompleteCallback
         - F_ConnectionCloseCallback            m_ConnectionCloseCallback
         - F_ConnectionShutdownCallback         m_ConnectionShutdownCallback
@@ -142,7 +142,7 @@ classDiagram
     }
     
 	class EventLoopThread {
-		- **EventLoop** * m_ioLoop
+		- **EventLoop** * m_eventLoop
 		- std::thread m_LoopThread
 		......
 	}
@@ -166,9 +166,9 @@ classDiagram
         GameServer "1" *-- "1" TcpServer : contains 
         
         GameServer "1" *-- "n" UserConnection  : manages
-        GameServer "1" *-- "1" ProtobufCodec : manages        
+        GameServer "1" *-- "1" ProtobufTcpCodec : manages        
         UserConnection "1" o-- "1" TcpConnection :  每个UserConnection对应一个TcpConnection
-        UserConnection  o-- ProtobufCodec : uses by reference
+        UserConnection  o-- ProtobufTcpCodec : uses by reference
     end
     
     subgraph LAYER_NET
@@ -186,12 +186,12 @@ classDiagram
         EventLoopThread "1" *-- "1" EventLoop: creates(ioLoop)(in stack)
     end
     class CallbackT {
-    	<<template ConnectionType, T>>
+    	<<template NetworkChannelType, T>>
     	- ProtobufMessageTCallback m_Callback
     }
     
     class Callback {
-    	<<template ConnectionType>>
+    	<<template NetworkChannelType>>
     }
 
     Callback "1" <|-- "n" CallbackT
@@ -213,9 +213,9 @@ classDiagram
 classDiagram
     direction TB
 
-    CallbackT~ConnectionType, T~ --|> Callback~ConnectionType~
-    Callback~ConnectionType~ "n" --* "1"  ProtobufDispatcher~ConnectionType~
-    ProtobufDispatcher_Tcp~ConnectionType~ "1" --* "1" GameServer
+    CallbackT~NetworkChannelType, T~ --|> Callback~NetworkChannelType~
+    Callback~NetworkChannelType~ "n" --* "1"  ProtobufDispatcher~NetworkChannelType~
+    ProtobufDispatcher_Tcp~NetworkChannelType~ "1" --* "1" GameServer
     
     CallbackT_1~TcpConnection, HeartBody~    --|> Callback_Tcp~TcpConnection~
     CallbackT_2~TcpConnection, SecurityBody~ --|> Callback_Tcp~TcpConnection~

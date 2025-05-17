@@ -2,7 +2,7 @@
 #define LINUXGAMESERVER_TIMERMANAGER_H
 
 #include "Timestamp.h"
-#include "Channel.h"
+#include "IOChannel.h"
 #include "net_definations.h"
 #include "TimerManager.h"
 
@@ -80,11 +80,11 @@ private:
 
     //! 无需考虑以下三个容器的互斥操作，因为cancelTimer和addTimer操作都被放入了EventLoop中，是单线程操作！
     std::set<TimerPtr, TimerComparator> m_TimerList;  // 只有key
-    std::map<TimerID, TimerPtr>         m_TimeridMap;
+    std::unordered_map<TimerID, TimerPtr>         m_TimeridMap;
     //! m_TimeridMap逻辑上是m_TimerList的副本，可以以id为索引进行查找。因此将m_TimerList和m_TimeridMap统称为“定时器列表”
 
     //! 用于解决在timer回调函数执行时自我cancel的行为带来的错误
-    std::map<TimerID, TimerPtr> m_CancelingTimerList; //! 逻辑上是expired列表的子集
+    std::unordered_map<TimerID, TimerPtr> m_CancelingTimerList; //! 逻辑上是expired列表的子集
     std::atomic_bool            m_IsCallingExpiredTimers;
 };
 

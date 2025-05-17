@@ -25,13 +25,13 @@ public:
     ~TcpServer();
 
     ///@brief 启动连接池并开启监听套接字
-    void Start(int threadNum, Milliseconds ioWaitTimeout, F_ThreadInitCallback cb = F_ThreadInitCallback());
+    void Start(int ioThreadNum, Milliseconds ioWaitTimeout, F_ThreadInitCallback cb = F_ThreadInitCallback());
 
     void Stop();
 
     //! TcpConnection回调，由TcpServer的上层定义并实现
     void SetConnectionEstablishedCallback(F_ConnectionEstablishedCallback cb) { m_ConnectionEstablishedCallback = cb; };
-    // void SetConnectionDestroyedCallback(F_ConnectionDestroyedCallback cb) { m_ConnectionDestroyedCallback = cb; };
+    void SetConnectionDestroyedCallback(F_ConnectionDestroyedCallback cb) { m_ConnectionDestroyedCallback = cb; };
     void SetConnectionWriteCompleteCallback(F_ConnectionWriteCompleteCallback cb) { m_ConnectionWriteCompleteCallback = cb; };
     void SetConnectionShutdownCallback     (F_ConnectionShutdownCallback cb)      { m_ConnectionShutdownCallback = cb; }
     void SetCloseSocketsCallback(F_CloseShutdownConnectionsCallback cb);
@@ -40,7 +40,7 @@ public:
     /* ! 注意：当使用线程池时，不要把recvBuf的引用或指针作为参数传递给另一线程（如线程池中的线程），
        ! MessageCallback需在的调用者线程中（即TcpConnection对象所在线程，即在onMessage中）完成对recvBuf数据的拷贝，
        ! 否则可能在成recvBuf的线程不安全 */
-    void SetMessageCallback(F_MessageCallback cb) { m_MessageCallback = cb; };
+    void SetMessageCallback(F_TcpMessageCallback cb) { m_MessageCallback = cb; };
 
     size_t GetConnectionsCount() { return m_NumConnect; }
 
@@ -54,8 +54,6 @@ private:
 
     void RemoveConnection(const TcpConnectionPtr &conn);
     void RemoveConnectionInLoop(TcpConnectionPtr conn); //! 不能是const引用
-
-    void InitLog();
 
     void HandleSignal();
 private:
@@ -73,15 +71,15 @@ private:
 
 
     F_ConnectionEstablishedCallback      m_ConnectionEstablishedCallback;
- // F_ConnectionDestroyedCallback        m_ConnectionDestroyedCallback;
+    F_ConnectionDestroyedCallback        m_ConnectionDestroyedCallback;
     F_ConnectionWriteCompleteCallback    m_ConnectionWriteCompleteCallback;
-    F_MessageCallback                    m_MessageCallback;
+    F_TcpMessageCallback                    m_MessageCallback;
  // F_ConnectionCloseCallback            m_ConnectionCloseCallback;  // 不允许让用户指定close回调
     F_ConnectionShutdownCallback         m_ConnectionShutdownCallback;
     // F_CloseShutdownConnectionsCallback   m_CloseSocketsCallback;
 
     config::ConfigVar<config::AppXmlConfig>::ptr m_AppConfigVar; // 用于获取配置项
-    std::map<std::string , TcpConnectionPtr> m_ConnectionMap;
+    std::unordered_map<std::string , TcpConnectionPtr> m_ConnectionMap;
 
 
 };

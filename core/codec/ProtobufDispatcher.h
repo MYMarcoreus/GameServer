@@ -12,31 +12,46 @@
 
 namespace yy::core {
 
+
+template<typename T>
+concept IsNetworkChannelType =
+    std::is_same_v<T, net::TcpConnectionPtr> ||
+    std::is_same_v<T, net::UdpSessionPtr> ||
+    std::is_same_v<T, UserConnectionPtr>
+;
+
+// template<IsNetworkChannelType NetworkChannelType>
+
+
+
+
+
+
 //! 为了
-template<typename ConnectionType>
+template<IsNetworkChannelType NetworkChannelType>
 class Callback : util::noncopyable {
 public:
     virtual ~Callback() = default;
 
-    virtual void OnMessage(const ConnectionType &, const MessagePtr &message) const = 0;
+    virtual void OnMessage(const NetworkChannelType &, const MessagePtr &message) const = 0;
 };
 
 //! 用于Protobuf
-template<typename ConnectionType, typename T> requires requires {
+template<IsNetworkChannelType NetworkChannelType, typename T> requires requires {
     requires std::is_base_of_v<google::protobuf::Message, T>;
 }
-class CallbackT : public Callback<ConnectionType> {
+class CallbackT : public Callback<NetworkChannelType> {
     static_assert(std::is_base_of_v<google::protobuf::Message, T>, "T must be derived from gpb::Message.");
 public:
     //! message的子类回调
     using ProtobufMessageTCallback = std::function<void(
-            const ConnectionType &,
+            const NetworkChannelType &,
             const std::shared_ptr<T> &message //! 针对特定的protobuf消息类
     )>;
 
     CallbackT(const ProtobufMessageTCallback &callback) : m_Callback(callback) {}
 
-    void OnMessage(const ConnectionType &conn, const MessagePtr &message) const override {
+    void OnMessage(const NetworkChannelType &conn, const MessagePtr &message) const override {
         //! 基类指针转换为子类指针
         std::shared_ptr<T> concrete = std::static_pointer_cast<T>(message);
         assert(concrete != NULL);
@@ -47,18 +62,20 @@ private:
     ProtobufMessageTCallback m_Callback;
 };
 
-template<typename ConnectionType>
+
+
+template<IsNetworkChannelType NetworkChannelType>
 class ProtobufDispatcher {
 public:
     using ProtobufMessageCallback = std::function<void(
-            const ConnectionType &,
+            const NetworkChannelType &,
             const MessagePtr &message) //! ConnectionType未知的消息类型，因此用MessagePtr引用向上传递
     >;
 
     explicit ProtobufDispatcher(ProtobufMessageCallback unknownCb) : m_UnknownCallback(unknownCb) {}
 
     //! 该函数会作为回调被上层（XXXServer）传递给ProtobufCodec
-    void OnProtobufMessage(const ConnectionType &conn, const MessagePtr &message) const {
+    void OnProtobufMessage(const NetworkChannelType &conn, const MessagePtr &message) const {
         const auto it = m_CallbacksMap.find(message->GetDescriptor());
         if (it != m_CallbacksMap.end()) {
             //! ConnectionType已知已注册该消息，直接处理之。
@@ -74,16 +91,16 @@ public:
     requires requires {
         requires std::is_base_of_v<google::protobuf::Message, T>;
     }
-    void RegisterMessageCallback(const typename CallbackT<ConnectionType, T>::ProtobufMessageTCallback & callback) {
+    void RegisterMessageCallback(const typename CallbackT<NetworkChannelType, T>::ProtobufMessageTCallback & callback) {
         //! 子类指针交给map内的父类指针存储
-        m_CallbacksMap[T::descriptor()] = std::make_shared< CallbackT<ConnectionType, T> >(callback);
+        m_CallbacksMap[T::descriptor()] = std::make_shared< CallbackT<NetworkChannelType, T> >(callback);
     }
 
 
 private:
-    using CallbackMap = std::map<
+    using CallbackMap = std::unordered_map <
             const google::protobuf::Descriptor *,
-            std::shared_ptr< Callback<ConnectionType> > //! 能够指向“所有消息类型的回调函数”
+            std::shared_ptr< Callback<NetworkChannelType> > //! 能够指向“所有消息类型的回调函数”
     >;
 
     CallbackMap m_CallbacksMap;

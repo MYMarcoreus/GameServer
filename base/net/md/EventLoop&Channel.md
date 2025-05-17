@@ -12,16 +12,16 @@ classDiagram
     }
     
     class TcpConnection {
-        - **EventLoop** *                  m_ioLoop;  
-        - unique_ptr~*Socket*~             m_Socket;
-        - unique_ptr~*Channel*~            m_Channel;   
+        - **EventLoop** *                  m_eventLoop;  
+        - unique_ptr~*Socket*~             m_socket;
+        - unique_ptr~*IOChannel*~            m_channel;   
         ......
     }
     
 
     
 	class EventLoop {
-	    using ChanneList = std::vector~**Channel** *~
+	    using ChanneList = std::vector~**IOChannel** *~
         using F_PendingCallback = std::function~void（）~
         using PendingCallbackList = std::vector~F_PendingCallback~
         using F_CloseSocketsCallback = std::function~void（）~
@@ -43,11 +43,11 @@ classDiagram
         F_CloseSocketsCallback m_CloseSocketsCallback;
 	}
 	
-	class Channel {
+	class IOChannel {
         **EventLoop** *              m_OwnerLoop; 
-        Channel::State               m_State;     
+        IOChannel::State               m_State;     
         SocketApiWrapper::socket_t   m_FD;       
-        std::string         m_Name;
+        std::string         m_connName;
 
         --------
 
@@ -73,7 +73,7 @@ classDiagram
     class Acceptor {
         **EventLoop** *           m_AcceptorLoop;
         *Socket*                  m_AcceptSocket;
-        *Channel*                 m_AcceptChannel;
+        *IOChannel*                 m_AcceptChannel;
     }
     
     class Socket {
@@ -84,7 +84,7 @@ classDiagram
 		<<Interface>>
 		
         + EventLoop *                 m_OwnerLoop;
-        + std::map~int, Channel *~    m_ChannelMap; //  get_fd->Channel*
+        + std::map~int, IOChannel *~    m_ChannelMap; //  get_fd->IOChannel*
 	}
 	
 	class EpollPoller {
@@ -117,7 +117,7 @@ classDiagram
         - OnNotify() void
 
         - WakeupFD wakeupEventFD_
-        - std::unique_ptr<Channel> wakeupChannel_
+        - std::unique_ptr<IOChannel> wakeupChannel_
 	}
 	
 	class WakeUpFD_windows {
@@ -148,12 +148,12 @@ classDiagram
 	
 
     Acceptor o-- EventLoop
-    Acceptor *-- Channel
+    Acceptor *-- IOChannel
     Acceptor *-- Socket	
     TcpConnection *-- Socket
     TcpConnection o-- EventLoop
-    TcpConnection *-- Channel
-    EventLoop "1" o-- "n" Channel
+    TcpConnection *-- IOChannel
+    EventLoop "1" o-- "n" IOChannel
     EventLoop "1" *-- "1" Poller
     Poller <|-- EpollPoller
     Poller <|-- SelectPoller
@@ -177,7 +177,7 @@ classDiagram
     当套接字可写时（其实一直都可写）时调用TcpConnection设置的回调函数来发送数据，
     并在数据发送完毕后取消监听写事件（与被动的读事件不同，如果不取消监听写事件，便会一直触发写事件）"
     
-    note for Channel "Channel实际上是套接字或文件描述符与监听者Poller的通道（中介），
+    note for IOChannel "Channel实际上是套接字或文件描述符与监听者Poller的通道（中介），
     只要需要设置读或写事件的回调（主要），就会需要Channel"
     
     note for Poller "一个套接字实际上对应一个Channel，而Poller也保存了这种关系。
@@ -205,7 +205,7 @@ sequenceDiagram
     participant ConfigManager
 	participant GameServer
     participant ProtobufDispatcher
-    participant ProtobufCodec
+    participant ProtobufTcpCodec
 	participant TcpServer
 	participant EventLoopThreadPool
 
@@ -213,7 +213,7 @@ sequenceDiagram
     participant Socket
     participant EventLoop
     participant Poller
-    participant Channel
+    participant IOChannel
     participant TcpConnection
     
     main ->> +GameManager: GameManager::Init()
@@ -228,7 +228,7 @@ sequenceDiagram
         rect rgb(242, 242, 255) 
             note over GameManager, GameServer: Init GameServer
 
-            GameManager ->> +GameServer: m_server = new GameServer<br>(m_accpetorLoop, listenAddr);
+            GameManager ->> +GameServer: m_tcpServer = new GameServer<br>(m_accpetorLoop, listenAddr);
             rect rgb(242, 242, 255) 
                 note over GameServer, TcpServer: Constructor of GameServer 
                 GameServer ->> +TcpServer: TcpServer<br>(acceptorLoop, listenAddr)
@@ -250,7 +250,7 @@ sequenceDiagram
                         end
                         Acceptor -->> -TcpServer:  
                 end
-                GameServer ->> +TcpServer: SetMessageCallback(ProtobufCodec::OnData)
+                GameServer ->> +TcpServer: SetUdpRecievedCallback(ProtobufTcpCodec::OnData)
                 TcpServer -->> -GameServer: 
                 GameServer ->> +TcpServer: SetConnectionEstablishedCallback
                 TcpServer -->> -GameServer: 
@@ -258,27 +258,27 @@ sequenceDiagram
                 TcpServer -->> -GameServer: 
                 TcpServer -->> -GameServer: 
 
-                GameServer ->> +ProtobufDispatcher: ProtobufDispatcher(OnUnknownMessage)
+                GameServer ->> +ProtobufDispatcher: ProtobufDispatcher(OnUnknownTcpMessage)
                 ProtobufDispatcher -->> -GameServer: 
                 GameServer ->> +ProtobufDispatcher: RegisterMessageCallback(OnHeart)
                 ProtobufDispatcher -->> -GameServer:           
                 GameServer ->> +ProtobufDispatcher: RegisterMessageCallback(OnSecurity)
                 ProtobufDispatcher -->> -GameServer:             
 
-                GameServer ->> +ProtobufCodec: ProtobufCodec(ProtobufDispatcher::OnProtobufMessage)
-                ProtobufCodec -->> -GameServer: 
+                GameServer ->> +ProtobufTcpCodec: ProtobufTcpCodec(ProtobufDispatcher::OnProtobufMessage)
+                ProtobufTcpCodec -->> -GameServer: 
             end
 
             GameServer -->> -GameManager: 
 
             GameManager ->> GameServer: SetNotifier_Security<br>(cb=AppNotifier_Secutiry)
-            %% GameServer ->> GameServer: m_notifier_security = cb
+            %% GameServer ->> GameServer: m_NotifierSecurity = cb
             GameServer -->> GameManager: 
             GameManager ->> GameServer: SetNotifier_DisConnect<br>(cb=AppNotifier_Disconnect)
-            %% GameServer ->> GameServer: m_notifier_disconnect = cb
+            %% GameServer ->> GameServer: m_NotifierDisconnect = cb
             GameServer -->> GameManager: 
             GameManager ->> GameServer: SetNotifier_Command<br>(cb=AppNotifier_Command)
-            %% GameServer ->> GameServer:  m_notifier_command = cb
+            %% GameServer ->> GameServer:  m_NotifierCommand = cb
             GameServer -->> GameManager: 
         end
 
@@ -289,8 +289,8 @@ sequenceDiagram
     GameManager ->> -main: 
     
     
-    %%TcpConnection ->> Channel: m_Channel->SetReadCallback(cb: this->HandleRead)
-    %%Channel ->> Channel: m_ReadCallback = cb
+    %%TcpConnection ->> IOChannel: m_channel->SetReadCallback(cb: this->HandleRead)
+    %%IOChannel ->> IOChannel: m_ReadCallback = cb
     
 
 
@@ -314,13 +314,13 @@ sequenceDiagram
     participant Acceptor
     participant EventLoop
     participant Poller
-    participant Channel
+    participant IOChannel
     participant Socket
     participant TcpConnection
     
     main ->> +GameManager: StartListenAndIOLoop()
         GameManager ->> +GameServer: Start()
-            GameServer ->> +TcpServer: Start(nIOthread=<br>appconfig::io_thread_num())
+            GameServer ->> +TcpServer: Start(nIOthread=<br>appconfig::tcp_io_thread_num())
                 
                 TcpServer ->> +EventLoopThreadPool: Start(nIOthread)
                 EventLoopThreadPool -->> -TcpServer:  
@@ -329,10 +329,10 @@ sequenceDiagram
                 Acceptor -->> -TcpServer: 
                 
                 TcpServer ->> +Acceptor: StartListen()
-                    Acceptor ->> +Channel: SetReadCallback(HandleAcceptAll)
-                    Channel -->> -Acceptor: 
-                    Acceptor ->> +Channel: EnableReading()
-                    Channel -->> -Acceptor: 
+                    Acceptor ->> +IOChannel: SetReadCallback(HandleAcceptAll)
+                    IOChannel -->> -Acceptor: 
+                    Acceptor ->> +IOChannel: EnableReading()
+                    IOChannel -->> -Acceptor: 
                     Acceptor ->> +Socket: Listen()
                     Socket -->> -Acceptor: 
                     
@@ -385,7 +385,7 @@ sequenceDiagram
                         TcpServer ->> +TcpConnection: SetConnectionEstablishedCallback<br>(GameServer设置的回调函数)
                         TcpConnection -->> -TcpServer: 
                         
-                        TcpServer ->> +TcpConnection: SetMessageCallback<br>(GameServer设置的回调函数)
+                        TcpServer ->> +TcpConnection: SetUdpRecievedCallback<br>(GameServer设置的回调函数)
                         TcpConnection -->> -TcpServer: 
                         
                         TcpServer ->> +TcpConnection: SetConnectionWriteCompleteCallback<br>(GameServer设置的回调函数)
@@ -457,12 +457,12 @@ sequenceDiagram
 
     participant Poller
     participant EventLoop
-    participant Channel
+    participant IOChannel
     participant TcpConnection
     participant Buffer
 
     participant TcpServer
-    participant ProtobufCodec
+    participant ProtobufTcpCodec
     participant ProtobufDispatcher_Tcp
     participant GameServer
 
@@ -474,21 +474,21 @@ sequenceDiagram
     
 	EventLoop ->>+ Poller: m_Poller->PollWait
 	Poller  -->> - EventLoop : filled m_ActiveChannels
-	note over EventLoop, Channel: 有客户端数据到来，TcpConnection对应的的套接字有读事件
+	note over EventLoop, IOChannel: 有客户端数据到来，TcpConnection对应的的套接字有读事件
 	loop for activeChannel in m_ActiveChannels
-        EventLoop ->> +Channel: activeChannel->HandleHappenedEvent() 
+        EventLoop ->> +IOChannel: activeChannel->HandleHappenedEvent() 
 		opt 读事件发生(执行m_ReadCallback回调)
-			Channel ->> TcpConnection: HandleRead()
+			IOChannel ->> TcpConnection: HandleRead()
                 alt  HandleRead_LT
-                    TcpConnection ->> Buffer : AppendAllDataFromSocket()
+                    TcpConnection ->> Buffer : RecvAllFromSocket()
                     Buffer -->> TcpConnection: 
                     
                     note over TcpConnection, TcpServer : 执行回调→
-                    TcpConnection ->> +TcpServer: m_MessageCallback <br> 执行回调
-                        TcpServer ->> +GameServer: m_MessageCallback
-                            GameServer ->> +ProtobufCodec: OnData()
-                                ProtobufCodec ->> +ProtobufDispatcher_Tcp: OnProtobufMessage()
-                                    ProtobufDispatcher_Tcp ->> +GameServer: OnUnknownMessage()
+                    TcpConnection ->> +TcpServer: m_UdpMessageCallback <br> 执行回调
+                        TcpServer ->> +GameServer: m_UdpMessageCallback
+                            GameServer ->> +ProtobufTcpCodec: OnData()
+                                ProtobufTcpCodec ->> +ProtobufDispatcher_Tcp: OnProtobufMessage()
+                                    ProtobufDispatcher_Tcp ->> +GameServer: OnUnknownTcpMessage()
                                         GameServer ->> +GameManager: AppNotifier_Command()
                                         	note over GameManager, GameTestManager: 异步函数
                                             GameManager -) ProtobufDispatcher_User: m_wordThreads.PushTask<br>(OnProtobufMessage)
@@ -521,31 +521,33 @@ sequenceDiagram
                                             ProtobufDispatcher_User --) GameManager: 
                                         GameManager -->> -GameServer: 
                                     GameServer -->> -ProtobufDispatcher_Tcp: 
-                                ProtobufDispatcher_Tcp -->> -ProtobufCodec: 
-                            ProtobufCodec -->> -GameServer: 
+                                ProtobufDispatcher_Tcp -->> -ProtobufTcpCodec: 
+                            ProtobufTcpCodec -->> -GameServer: 
                         GameServer -->> -TcpServer: 
                     TcpServer -->> -TcpConnection: 
                     
                  else HandleRead_ET
-                    TcpConnection ->> Buffer : AppendAllDataFromSocket()
-                    Buffer -->> TcpConnection: 
+                     loop 直到调用返回eAgain错误代码，表示结束ET
+                        TcpConnection ->> Buffer : RecvAllFromSocket()
+                        Buffer -->> TcpConnection: 
+                    end
                 end
-			TcpConnection -->> Channel:  
+			TcpConnection -->> IOChannel:  
 		end 
 		
 		opt 写事件发生(执行m_WriteCallback回调)
-			Channel ->> TcpConnection: HandleWrite()
+			IOChannel ->> TcpConnection: HandleWrite()
 		end
         
 		opt 错误事件发生(执行m_ErrorCallback回调)
-			Channel ->> TcpConnection: HandleError()
+			IOChannel ->> TcpConnection: HandleError()
 		end
 		
 		opt 关闭事件发生(执行m_CloseCallback回调)
-			Channel ->> TcpConnection: HandleClose()
+			IOChannel ->> TcpConnection: HandleClose()
 		end
 		
-        Channel -->> -EventLoop: 
+        IOChannel -->> -EventLoop: 
     end
     
 ```
@@ -558,7 +560,7 @@ sequenceDiagram
 
     participant Poller
     participant EventLoop
-    participant Channel
+    participant IOChannel
     participant Socket
     participant TcpConnection
     participant AnyBody
@@ -567,7 +569,7 @@ sequenceDiagram
 
     participant GameServer
  
-    participant ProtobufCodec
+    participant ProtobufTcpCodec
     participant UserConnection
     participant GameManager
     participant GamePlayerManager
@@ -575,27 +577,27 @@ sequenceDiagram
 
 
     GameManager ->> +GamePlayerManager: OnSelfMovement
-        GamePlayerManager ->> +UserConnection: Send()
-            UserConnection ->> +ProtobufCodec: Send()
-                ProtobufCodec -) +TcpConnection: Send() in ioLoop
-                note over ProtobufCodec, TcpConnection: CallPenddingCallbacks的异步函数
+        GamePlayerManager ->> +UserConnection: SendUDP()
+            UserConnection ->> +ProtobufTcpCodec: SendUDP()
+                ProtobufTcpCodec -) +TcpConnection: SendUDP() in ioLoop
+                note over ProtobufTcpCodec, TcpConnection: CallPenddingCallbacks的异步函数
                     alt 输出缓冲为空
-                            TcpConnection ->> Socket: Send() 
+                            TcpConnection ->> Socket: SendUDP() 
                             Socket -->> TcpConnection: 
-                    	alt  Send()发送了所有数据
+                    	alt  SendUDP()发送了所有数据
                     		TcpConnection ->> AnyBody: 执行上层的写回调（项目中未设置）
                     		AnyBody -->> TcpConnection: 
-                        else Send()不能发送所有数据
-                            TcpConnection ->>  Channel: EnableWriting()，注册写事件，<br>等待写事件发生在EventLoop中执行HandleWrite()
-                            Channel -->> TcpConnection: 
+                        else SendUDP()不能发送所有数据
+                            TcpConnection ->>  IOChannel: EnableWriting()，注册写事件，<br>等待写事件发生在EventLoop中执行HandleWrite()
+                            IOChannel -->> TcpConnection: 
                         end
                         
-                        TcpConnection --) ProtobufCodec: 
+                        TcpConnection --) ProtobufTcpCodec: 
                     else 输出缓冲不为空
-                    	TcpConnection --) -ProtobufCodec: 
+                    	TcpConnection --) -ProtobufTcpCodec: 
                     end
 
-            ProtobufCodec -->> -UserConnection: 
+            ProtobufTcpCodec -->> -UserConnection: 
         UserConnection -->> -GamePlayerManager: 
     GamePlayerManager -->> -GameManager: 
 
@@ -603,27 +605,27 @@ sequenceDiagram
 
     EventLoop ->>+ Poller: m_Poller->PollWait
 	Poller  -->> - EventLoop : filled m_ActiveChannels
-	note over EventLoop, Channel: 有客户端数据到来，TcpConnection对应的的套接字有读事件
+	note over EventLoop, IOChannel: 有客户端数据到来，TcpConnection对应的的套接字有读事件
 	loop for activeChannel in m_ActiveChannels
-        EventLoop ->> +Channel: activeChannel->HandleHappenedEvent() 
+        EventLoop ->> +IOChannel: activeChannel->HandleHappenedEvent() 
 		opt 读事件发生(执行m_ReadCallback回调)
-			Channel -x TcpConnection: HandleRead()
+			IOChannel -x TcpConnection: HandleRead()
 		end 
 		
 		opt 写事件发生(执行m_WriteCallback回调)
-			Channel ->> TcpConnection: HandleWrite()
-			TcpConnection -->> Channel: 
+			IOChannel ->> TcpConnection: HandleWrite()
+			TcpConnection -->> IOChannel: 
 		end
         
 		opt 错误事件发生(执行m_ErrorCallback回调)
-			Channel -x TcpConnection: HandleError()
+			IOChannel -x TcpConnection: HandleError()
 		end
 		
 		opt 关闭事件发生(执行m_CloseCallback回调)
-			Channel -x TcpConnection: HandleClose()
+			IOChannel -x TcpConnection: HandleClose()
 		end
 		
-        Channel -->> -EventLoop: 
+        IOChannel -->> -EventLoop: 
     end
     
 ```
@@ -644,7 +646,7 @@ sequenceDiagram
 
     participant EventLoop
     participant Poller
-    participant Channel
+    participant IOChannel
     participant TcpConnection
     actor AnyBody
     
@@ -653,25 +655,25 @@ sequenceDiagram
 	EventLoop ->>+ Poller: m_Poller->PollWait
 	Poller  -->> - EventLoop : filled m_ActiveChannels
 	loop for activeChannel in m_ActiveChannels
-        EventLoop ->> +Channel: activeChannel->HandleHappenedEvent() 
+        EventLoop ->> +IOChannel: activeChannel->HandleHappenedEvent() 
 		opt 读事件发生(执行m_ReadCallback回调)
-			Channel -x TcpConnection: HandleRead()
+			IOChannel -x TcpConnection: HandleRead()
 		end 
 		
 		opt 写事件发生(执行m_WriteCallback回调)
-			Channel ->> TcpConnection: HandleWrite()
-			TcpConnection -->> Channel: 
+			IOChannel ->> TcpConnection: HandleWrite()
+			TcpConnection -->> IOChannel: 
 		end
         
 		opt 错误事件发生(执行m_ErrorCallback回调)
-			Channel -x TcpConnection: HandleError()
+			IOChannel -x TcpConnection: HandleError()
 		end
 		
 		opt 关闭事件发生(执行m_CloseCallback回调)
-			Channel -x TcpConnection: HandleClose()
+			IOChannel -x TcpConnection: HandleClose()
 		end
 		
-        Channel -->> -EventLoop: 
+        IOChannel -->> -EventLoop: 
     end
     
     rect rgb(242, 242, 255) 

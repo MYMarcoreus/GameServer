@@ -125,7 +125,7 @@ classDiagram
     	+ FromXmlElement(const XMLElement * elem) bool
     	+ FromXmlAttribute(const XMLAttribute * attr) bool
     	
-        # std::string m_name
+        # std::string m_connName
         # std::string m_description
     }
 

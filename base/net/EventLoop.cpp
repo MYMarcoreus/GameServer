@@ -1,6 +1,6 @@
 #include "EventLoop.h"
 #include "Poller.h"
-#include "Channel.h"
+#include "IOChannel.h"
 #include "log.h"
 #include "TimerManager.h"
 #include "SocketApiWrapper.h"
@@ -84,14 +84,14 @@ private:
     void Notify();
 
     WakeupFD wakeupEventFD_;
-    std::unique_ptr<Channel> wakeupChannel_;
+    std::unique_ptr<IOChannel> wakeupChannel_;
     std::atomic<bool> isNeedWakeup;
 };
 
 
 WakeupManager::WakeupManager(EventLoop *loop)
         : wakeupEventFD_{},
-          wakeupChannel_(std::make_unique<Channel>(loop, wakeupEventFD_.wait_fd, "Wakeup Eventfd Channel")),
+          wakeupChannel_(std::make_unique<IOChannel>(loop, wakeupEventFD_.wait_fd, "Wakeup Eventfd Channel")),
           isNeedWakeup{false}
 {
     wakeupChannel_->SetReadCallback([this](){ this->OnNotify(); });
@@ -174,17 +174,17 @@ EventLoop::~EventLoop() {
     }
 }
 
-void EventLoop::UpdateChannel(Channel * channel) {
+void EventLoop::UpdateChannel(IOChannel * channel) {
     AssertInLoopingThread();
     m_Poller->UpdateChannel(channel);
 }
 
-void EventLoop::RemoveChannel(Channel *channel) {
+void EventLoop::RemoveChannel(IOChannel *channel) {
     AssertInLoopingThread(__FILE__, __LINE__);
     m_Poller->RemoveChannel(channel);
 }
 
-bool EventLoop::HasChannel(Channel *channel) {
+bool EventLoop::HasChannel(IOChannel *channel) {
     return m_Poller->HasChannel(channel);
 }
 
@@ -229,7 +229,7 @@ void EventLoop::Loop() {
         YLOG_TRACE("\nAfter PollWait(), 发生了{}个事件", m_ActiveChannels.size())
 
         //! 处理发生了事件的channel
-        for(Channel * activeChannel: m_ActiveChannels) {
+        for(IOChannel * activeChannel: m_ActiveChannels) {
             activeChannel->HandleHappenedEvent();
         }
         YLOG_TRACE("Before CallPenddingCallbacks();")

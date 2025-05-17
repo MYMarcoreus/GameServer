@@ -4,7 +4,7 @@ set(CMAKE_CXX_STANDARD 20)
 
 
 set(LocalSrc
-        codec/ProtobufCodec.cpp
+        codec/ProtobufTcpCodec.cpp
         codec/ProtobufDispatcher.cpp
         codec/MessageHeader.cpp
         GameServer.cpp

@@ -24,7 +24,7 @@ public:
     void SetConnectionEstablishedCallback(const F_ConnectionEstablishedCallback &connectionEstablishedCallback) {
         m_ConnectionEstablishedCallback = connectionEstablishedCallback;
     }
-    void SetMessageCallback(const F_MessageCallback &messageCallback) {
+    void SetMessageCallback(const F_TcpMessageCallback &messageCallback) {
         m_MessageCallback = messageCallback;
     }
     void SetConnectionWriteCompleteCallback(const F_ConnectionWriteCompleteCallback &connectionWriteCompleteCallback) {
@@ -51,7 +51,7 @@ private:
     std::mutex       m_ConnectionMutex;
 
     F_ConnectionEstablishedCallback   m_ConnectionEstablishedCallback;
-    F_MessageCallback                 m_MessageCallback;
+    F_TcpMessageCallback                 m_MessageCallback;
     F_ConnectionWriteCompleteCallback m_ConnectionWriteCompleteCallback;
 
 };

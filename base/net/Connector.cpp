@@ -1,5 +1,5 @@
 #include "Connector.h"
-#include "Channel.h"
+#include "IOChannel.h"
 #include "EventLoop.h"
 #include "log.h"
 #include "ErrnoSaver.h"
@@ -162,7 +162,7 @@ void Connector::HandleError() {
 void Connector::Connecting(SocketApiWrapper::socket_t sockfd) {
     YLOG_TRACE("In Connector::Connecting, sockfd = {}", sockfd)
     SetState(eConnecting);
-    m_Channel.reset(new Channel(m_Loop, sockfd, "Connector Channel"));
+    m_Channel.reset(new IOChannel(m_Loop, sockfd, "Connector Channel"));
     m_Channel->SetWriteCallback([this](){ this->HandleWrite(); });
     m_Channel->SetErrorCallback([this](){ this->HandleError(); });
     m_Channel->EnableWriting();

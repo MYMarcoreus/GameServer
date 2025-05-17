@@ -151,7 +151,7 @@ public:
 };
 
 
-thread_local static std::map<char, LogFormatter::IFormatItem::ptr> g_format_item_map
+thread_local static std::unordered_map <char, LogFormatter::IFormatItem::ptr> g_format_item_map
 {
         {'l', std::make_shared<LevelFormatItem>()      }, // 日志级别
         {'i', std::make_shared<ThreadIDFormatItem>()   }, // 线程id

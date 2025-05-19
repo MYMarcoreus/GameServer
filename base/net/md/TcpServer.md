@@ -83,7 +83,7 @@ classDiagram
         - map~string, **TcpConnection**::ptr~ m_ConnectionMap
         - **EventLoop** * m_AcceptorLoop
         - unique_ptr~**Acceptor**~ m_Acceptor
-        - unique_ptr~**EventLoopThreadPool**~ m_IOThreadPool
+        - unique_ptr~**EventLoopThreadPool**~ m_recvEventThreadPool
         
         ......
         
@@ -110,7 +110,7 @@ classDiagram
     }
 
     class TcpConnection {
-        - **EventLoop** *                 m_eventLoop;
+        - **EventLoop** *                 m_mainLoop;
         
         ......
         
@@ -142,7 +142,7 @@ classDiagram
     }
     
 	class EventLoopThread {
-		- **EventLoop** * m_eventLoop
+		- **EventLoop** * m_mainLoop
 		- std::thread m_LoopThread
 		......
 	}

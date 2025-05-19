@@ -52,5 +52,6 @@ message SecurityBody {
 
 message ResultBody {
     ResultCode result_code = 1;
+    optional string conn_id = 2; // 长度为32的连接标识，仅在 eSuccess 时使用
 }
 

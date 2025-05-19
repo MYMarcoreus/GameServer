@@ -46,7 +46,7 @@ private:
     std::string      m_Name;
     bool             m_CanAutoRetry;
     bool             m_IsStarted;
-    uint64_t         m_NextConnID{0};
+    uint64_t         m_NextConnID;
     IPAddressPtr     m_ServerAddr;
     std::mutex       m_ConnectionMutex;
 

@@ -18,28 +18,12 @@ UdpSession::~UdpSession() {
 
 }
 
-void UdpSession::SendUDP(const Buffer &buf) {
-    m_udpTran.SendUDP(buf, m_peerAddr);
-}
-
 void UdpSession::SendUDP(const void *buf, size_t len) {
     m_udpTran.SendUDP(buf, len, m_peerAddr);
-
-}
-
-void UdpSession::SendUDP(const std::shared_ptr<google::protobuf::Message> &message) {
-    m_udpTran.SendUDP(message, m_peerAddr);
-
-}
-
-void UdpSession::SendUDP(const google::protobuf::Message &message) {
-    m_udpTran.SendUDP(message, m_peerAddr);
-
 }
 
 void UdpSession::SendUDP(const std::string_view &message) {
     m_udpTran.SendUDP(message, m_peerAddr);
-
 }
 
 

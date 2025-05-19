@@ -30,15 +30,15 @@ GamePlayerManager::GamePlayerManager()
       m_player_pool{m_server->GetAppConfig().app_player_max()}
 {
     GameManager::getInstance().RegisterMessageCallback<LoginRequest>(
-            std::bind(&GamePlayerManager::OnLogin, this, _1, _2));
+            std::bind_front(&GamePlayerManager::OnLogin, this));
     GameManager::getInstance().RegisterMessageCallback<OtherPlayerDataRequest>(
-            std::bind(&GamePlayerManager::OnOtherPlayerDataRequest, this, _1, _2));
+            std::bind_front(&GamePlayerManager::OnOtherPlayerDataRequest, this));
     GameManager::getInstance().RegisterMessageCallback<SelfMovement>(
-            std::bind(&GamePlayerManager::OnSelfMovement, this, _1, _2));
+            std::bind_front(&GamePlayerManager::OnSelfMovement, this));
     GameManager::getInstance().RegisterMessageCallback<SelfJumpAndGravity>(
-            std::bind(&GamePlayerManager::OnSelfJumpAndGravity, this, _1, _2));
+            std::bind_front(&GamePlayerManager::OnSelfJumpAndGravity, this));
     GameManager::getInstance().RegisterMessageCallback<PlayerLeave>(
-            std::bind(&GamePlayerManager::OnLeave, this, _1, _2));
+            std::bind_front(&GamePlayerManager::OnLeave, this));
 
     // m_server->RunTaskEvery(1s, [this]() {
     //     std::lock_guard lg{this->m_online_players_mutex};

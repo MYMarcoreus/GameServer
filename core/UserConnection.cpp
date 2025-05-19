@@ -29,7 +29,7 @@ void UserConnection::SendTCP(const google::protobuf::Message &message) {
     m_tcpCodec.SendTCP(m_tcpChannel, message);
 }
 
-void UserConnection::SendUDP(const MessagePtr &message) {
+void UserConnection::SendUDP(const MessagePtr & message) {
     if(message) {
         m_udpCodec.SendUDP(m_udpChannel, *message);
     }

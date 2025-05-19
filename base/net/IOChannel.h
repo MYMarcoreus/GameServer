@@ -46,7 +46,7 @@ public:
     bool IsNoneEvent      () { return m_InterestedEvent.HasNoneEvent(); };
 
     /*! SETTER !*/
-    // Set Interested Events
+    //! Set Interested Events：注意这些也需要在Channel所在Loop运行，即RunCallbackInLoop！
     void  EnableReading()  { m_InterestedEvent.AddEvent(PollerEvent::eReadEvent ); UpdateFromPoller(); };
     void DisableReading()  { m_InterestedEvent.DelEvent(PollerEvent::eReadEvent ); UpdateFromPoller(); };
     void  EnableWriting()  { m_InterestedEvent.AddEvent(PollerEvent::eWriteEvent); UpdateFromPoller(); };

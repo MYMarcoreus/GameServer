@@ -40,7 +40,7 @@ private:
 private:
     EventLoop *             m_AcceptorLoop;
     Socket                  m_AcceptSocket;
-    IOChannel                 m_AcceptChannel;
+    IOChannel               m_AcceptChannel;
     NewConnectionCallback   m_NewConnectionCallback;
     bool                    m_IsListening;
     IPAddressPtr            m_ListenAddr;

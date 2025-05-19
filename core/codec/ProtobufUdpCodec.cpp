@@ -1,11 +1,11 @@
 #include "ProtobufUdpCodec.h"
 #include "Buffer.h"
 #include "TcpConnection.h"
-#include "AppXmlConfig.h"
 #include "log.h"
+#include "UdpSession.h"
+#include "MessageHeader.h"
 #include <google/protobuf/message.h>
 #include <google/protobuf/message_lite.h>
-#include "UdpSession.h"
 
 namespace yy::core {
 
@@ -69,8 +69,10 @@ void ProtobufUdpCodec::OnData(const UdpSessionPtr & udpSession, Buffer & buf) {
                 continue;
             //! 分发消息，交给其对应的处理函数处理
             case MessageParseErrorCode::eNoError:
-                if(message)
+                if(message) {
+                    YLOG_TRACE("收到Udp消息: {}", message->GetTypeName())
                     m_ProtobufMessageDispatchCallback(udpSession, message);
+                }
                 break;
             default:
                 m_ProtobufErrorMessageCallback(udpSession, buf, errCode);
@@ -101,7 +103,7 @@ void ProtobufUdpCodec::SendUDP(const UdpSessionPtr &udpSession, const google::pr
     YLOG_TRACE("发送消息体<{}>", header.CalcBodyLen());
 
     //! 发送
-    udpSession->SendUDP(buffer);
+    udpSession->SendUDP(std::string_view(buffer.Peek(), buffer.GetDataSize()));
 }
 
 

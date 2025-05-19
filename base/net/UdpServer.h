@@ -37,8 +37,8 @@ private:
     void HandleSignal();
 private:
     EventLoop *                                   m_mainLoop;
-    std::unique_ptr<class EventLoopThreadPool>    m_IOThreadPool;
     F_UdpMessageCallback                          m_MessageCallback;
+    std::unique_ptr<class EventLoopThreadPool>    m_recvEventThreadPool;
     std::unique_ptr<class UdpTransport>           m_udpTran;
 
 #ifdef ____LINUX

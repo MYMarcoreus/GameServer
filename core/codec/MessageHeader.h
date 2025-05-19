@@ -29,7 +29,7 @@ class MessageHeader
 public:
     MessageHeader() = default;
 
-    //! 发送时使用：用message初始化首部字段
+    /// @brief 发送时使用：用message初始化首部字段
     MessageHeader(const google::protobuf::Message & message);
 
     void SetCheckCode(const void * const value) {
@@ -37,12 +37,11 @@ public:
         m_CheckCode[1] = ((char*)value)[1];
     }
 
-    /// @brief 从Buffer中读入未解密的数据，并解密
+    /// @brief 接收时使用，从Buffer中读入未解密的数据，并解密
     MessageParseErrorCode ParseFromBuffer(net::Buffer &buf, uint8_t xorCode);
 
     /// @brief 将*this中的数据加密并序列化后写入Buffer中
     bool AppendIntoBuffer(net::Buffer &buf, uint8_t xorCode);
-
 
     std::string GetCheckCode() const { return m_CheckCode; }
 

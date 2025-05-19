@@ -73,10 +73,9 @@ private:
     F_ConnectionEstablishedCallback      m_ConnectionEstablishedCallback;
     F_ConnectionDestroyedCallback        m_ConnectionDestroyedCallback;
     F_ConnectionWriteCompleteCallback    m_ConnectionWriteCompleteCallback;
-    F_TcpMessageCallback                    m_MessageCallback;
+    F_TcpMessageCallback                 m_MessageCallback;
  // F_ConnectionCloseCallback            m_ConnectionCloseCallback;  // 不允许让用户指定close回调
     F_ConnectionShutdownCallback         m_ConnectionShutdownCallback;
-    // F_CloseShutdownConnectionsCallback   m_CloseSocketsCallback;
 
     config::ConfigVar<config::AppXmlConfig>::ptr m_AppConfigVar; // 用于获取配置项
     std::unordered_map<std::string , TcpConnectionPtr> m_ConnectionMap;

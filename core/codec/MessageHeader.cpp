@@ -4,6 +4,7 @@
 #include "AppXmlConfig.h"
 #include "log.h"
 #include <algorithm>
+#include <google/protobuf/message.h>
 
 namespace yy::core {
 
@@ -62,7 +63,7 @@ MessageParseErrorCode MessageHeader::ParseFromBuffer(net::Buffer &buf, uint8_t x
     /*! 读入数据，边读边解密 !*/
     int peekedLen = 0;
     /**** CheckCode ****/
-    buf.PeekCopyCBuffer(0, m_CheckCode, sizeof m_CheckCode);
+    buf.PeekToCBuffer(0, m_CheckCode, sizeof m_CheckCode);
     strncpy(m_CheckCode, XorCheckCode(xorCode).c_str(), sizeof(m_CheckCode));
     if(strncmp(m_CheckCode, config::g_app_config->GetValue().check_code(), sizeof(m_CheckCode)) != 0) {
         return MessageParseErrorCode::eInvalidCheckCode;
@@ -70,7 +71,7 @@ MessageParseErrorCode MessageHeader::ParseFromBuffer(net::Buffer &buf, uint8_t x
     peekedLen += sizeof(m_CheckCode);
 
     /**** FullLength ****/
-    buf.PeekCopyPodStruct(peekedLen, m_FullLength);
+    buf.PeekToPodStruct(peekedLen, m_FullLength);
     m_FullLength = XorFullLength(xorCode);
     if(m_FullLength < kMinHeaderLen) {
         return MessageParseErrorCode::eInvalidFullLength;
@@ -81,7 +82,7 @@ MessageParseErrorCode MessageHeader::ParseFromBuffer(net::Buffer &buf, uint8_t x
     peekedLen += sizeof(m_FullLength);
 
     /**** TypeNameLength ****/
-    buf.PeekCopyPodStruct(peekedLen, m_TypeNameLength);
+    buf.PeekToPodStruct(peekedLen, m_TypeNameLength);
     m_TypeNameLength = XorNameLength(xorCode);
     if(buf.GetDataSize() < CalcHeaderLen()) { //! TypeName还没接收完全
         return MessageParseErrorCode::eNotReceiveFullHeader;
@@ -90,7 +91,7 @@ MessageParseErrorCode MessageHeader::ParseFromBuffer(net::Buffer &buf, uint8_t x
 
     /**** TypeName ****/
     if(m_TypeNameLength > 0) {
-        m_TypeName.assign(buf.Peek(peekedLen), buf.Peek(peekedLen + m_TypeNameLength));
+        buf.PeekToString(peekedLen, m_TypeName, m_TypeNameLength);
         m_TypeName = XorTypeName(xorCode);
     }
     peekedLen += m_TypeNameLength;
@@ -99,7 +100,7 @@ MessageParseErrorCode MessageHeader::ParseFromBuffer(net::Buffer &buf, uint8_t x
     YLOG_TRACE("收到消息头<{}>：[{}][{}][{}][{}]", CalcHeaderLen(), m_CheckCode, m_FullLength, m_TypeNameLength, m_TypeName);
 
     //! Peek成功，移动Head
-    buf.MoveHead(CalcHeaderLen());
+    buf.PopData(CalcHeaderLen());
 
     return MessageParseErrorCode::eNoError;
 }

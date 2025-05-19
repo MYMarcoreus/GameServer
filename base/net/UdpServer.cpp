@@ -65,7 +65,7 @@ FullDuplexPipe SignalManager::pipe_{};
 
 UdpServer::UdpServer(EventLoop *mainLoop, bool reusePort) noexcept
     : m_mainLoop(mainLoop)
-    , m_IOThreadPool( new EventLoopThreadPool(mainLoop) )
+    , m_recvEventThreadPool(std::make_unique<EventLoopThreadPool>(mainLoop))
 #ifdef ____LINUX
     , m_SignalManager{std::make_unique<SignalManager>(mainLoop, [this](){ this->HandleSignal(); })}
 #endif
@@ -82,13 +82,10 @@ UdpServer::~UdpServer() {
 
 void UdpServer::Start(int ioThreadNum, Milliseconds ioWaitTimeout, F_ThreadInitCallback cb) {
     if(!m_IsStarted.exchange(true)) {
-        m_IOThreadPool->Start(ioThreadNum, ioWaitTimeout, cb);
+        m_recvEventThreadPool->Start(1, ioWaitTimeout, cb);
+        m_udpTran = std::make_unique<UdpTransport>(m_recvEventThreadPool->GetNextLoop());
+        m_udpTran->SetUdpRecievedCallback(std::bind_front(&UdpServer::HandleNewMessage, this));
     }
-
-    m_udpTran = std::make_unique<UdpTransport>(m_IOThreadPool->GetNextLoop());
-    assert(m_udpTran);
-    m_udpTran->SetUdpRecievedCallback(std::bind_front(&UdpServer::HandleNewMessage, this));
-
 }
 
 

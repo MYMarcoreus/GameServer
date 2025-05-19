@@ -6,13 +6,13 @@ classDiagram
         - map~string, **TcpConnection**::ptr~ m_ConnectionMap
         - **EventLoop** * m_AcceptorLoop
         - unique_ptr~**Acceptor**~ m_Acceptor
-        - unique_ptr~**EventLoopThreadPool**~ m_IOThreadPool
+        - unique_ptr~**EventLoopThreadPool**~ m_recvEventThreadPool
         
         ......
     }
     
     class TcpConnection {
-        - **EventLoop** *                  m_eventLoop;  
+        - **EventLoop** *                  m_mainLoop;  
         - unique_ptr~*Socket*~             m_socket;
         - unique_ptr~*IOChannel*~            m_channel;   
         ......
@@ -163,7 +163,7 @@ classDiagram
     EventLoop "1" *-- "1" TimerManager
     TimerManager <|-- PriorityQueueTimerManager
     TimerManager <|-- RBTreeTimerManager
-    TcpConnection <-- TcpServer: gets ioLoop from m_IOThreadPool
+    TcpConnection <-- TcpServer: gets ioLoop from m_recvEventThreadPool
     TcpServer "1" *-- "n" TcpConnection
     TcpServer "1" *-- "1" EventLoopThreadPool
     
@@ -260,7 +260,7 @@ sequenceDiagram
 
                 GameServer ->> +ProtobufDispatcher: ProtobufDispatcher(OnUnknownTcpMessage)
                 ProtobufDispatcher -->> -GameServer: 
-                GameServer ->> +ProtobufDispatcher: RegisterMessageCallback(OnHeart)
+                GameServer ->> +ProtobufDispatcher: RegisterMessageCallback(OnTcpHeart)
                 ProtobufDispatcher -->> -GameServer:           
                 GameServer ->> +ProtobufDispatcher: RegisterMessageCallback(OnSecurity)
                 ProtobufDispatcher -->> -GameServer:             

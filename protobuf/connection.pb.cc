@@ -64,8 +64,10 @@ struct SecurityBodyDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 SecurityBodyDefaultTypeInternal _SecurityBody_default_instance_;
 PROTOBUF_CONSTEXPR ResultBody::ResultBody(
     ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_.result_code_)*/0
-  , /*decltype(_impl_._cached_size_)*/{}} {}
+    /*decltype(_impl_._has_bits_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}
+  , /*decltype(_impl_.conn_id_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_.result_code_)*/0} {}
 struct ResultBodyDefaultTypeInternal {
   PROTOBUF_CONSTEXPR ResultBodyDefaultTypeInternal()
       : _instance(::_pbi::ConstantInitialized{}) {}
@@ -105,19 +107,22 @@ const uint32_t TableStruct_connection_2eproto::offsets[] PROTOBUF_SECTION_VARIAB
   PROTOBUF_FIELD_OFFSET(::yy::protocol::core::SecurityBody, _impl_.app_id_),
   PROTOBUF_FIELD_OFFSET(::yy::protocol::core::SecurityBody, _impl_.app_version_),
   PROTOBUF_FIELD_OFFSET(::yy::protocol::core::SecurityBody, _impl_.app_md5_),
-  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::core::ResultBody, _impl_._has_bits_),
   PROTOBUF_FIELD_OFFSET(::yy::protocol::core::ResultBody, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
   PROTOBUF_FIELD_OFFSET(::yy::protocol::core::ResultBody, _impl_.result_code_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::core::ResultBody, _impl_.conn_id_),
+  ~0u,
+  0,
 };
 static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::yy::protocol::core::XorBody)},
   { 7, -1, -1, sizeof(::yy::protocol::core::HeartBody)},
   { 13, -1, -1, sizeof(::yy::protocol::core::SecurityBody)},
-  { 22, -1, -1, sizeof(::yy::protocol::core::ResultBody)},
+  { 22, 30, -1, sizeof(::yy::protocol::core::ResultBody)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -131,15 +136,16 @@ const char descriptor_table_protodef_connection_2eproto[] PROTOBUF_SECTION_VARIA
   "\n\020connection.proto\022\020yy.protocol.core\"\033\n\007"
   "XorBody\022\020\n\010xor_code\030\001 \001(\r\"\013\n\tHeartBody\"D"
   "\n\014SecurityBody\022\016\n\006app_id\030\001 \001(\r\022\023\n\013app_ve"
-  "rsion\030\002 \001(\r\022\017\n\007app_md5\030\003 \001(\t\"\?\n\nResultBo"
+  "rsion\030\002 \001(\r\022\017\n\007app_md5\030\003 \001(\t\"a\n\nResultBo"
   "dy\0221\n\013result_code\030\001 \001(\0162\034.yy.protocol.co"
-  "re.ResultCode*A\n\nResultCode\022\014\n\010eSuccess\020"
-  "\000\022\025\n\021eAppVersionFailed\020\001\022\016\n\neMd5Failed\020\002"
-  "b\006proto3"
+  "re.ResultCode\022\024\n\007conn_id\030\002 \001(\tH\000\210\001\001B\n\n\010_"
+  "conn_id*A\n\nResultCode\022\014\n\010eSuccess\020\000\022\025\n\021e"
+  "AppVersionFailed\020\001\022\016\n\neMd5Failed\020\002b\006prot"
+  "o3"
   ;
 static ::_pbi::once_flag descriptor_table_connection_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_connection_2eproto = {
-    false, false, 288, descriptor_table_protodef_connection_2eproto,
+    false, false, 322, descriptor_table_protodef_connection_2eproto,
     "connection.proto",
     &descriptor_table_connection_2eproto_once, nullptr, 0, 4,
     schemas, file_default_instances, TableStruct_connection_2eproto::offsets,
@@ -656,6 +662,10 @@ void SecurityBody::InternalSwap(SecurityBody* other) {
 
 class ResultBody::_Internal {
  public:
+  using HasBits = decltype(std::declval<ResultBody>()._impl_._has_bits_);
+  static void set_has_conn_id(HasBits* has_bits) {
+    (*has_bits)[0] |= 1u;
+  }
 };
 
 ResultBody::ResultBody(::PROTOBUF_NAMESPACE_ID::Arena* arena,
@@ -668,10 +678,20 @@ ResultBody::ResultBody(const ResultBody& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   ResultBody* const _this = this; (void)_this;
   new (&_impl_) Impl_{
-      decltype(_impl_.result_code_){}
-    , /*decltype(_impl_._cached_size_)*/{}};
+      decltype(_impl_._has_bits_){from._impl_._has_bits_}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.conn_id_){}
+    , decltype(_impl_.result_code_){}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _impl_.conn_id_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.conn_id_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (from._internal_has_conn_id()) {
+    _this->_impl_.conn_id_.Set(from._internal_conn_id(), 
+      _this->GetArenaForAllocation());
+  }
   _this->_impl_.result_code_ = from._impl_.result_code_;
   // @@protoc_insertion_point(copy_constructor:yy.protocol.core.ResultBody)
 }
@@ -681,9 +701,15 @@ inline void ResultBody::SharedCtor(
   (void)arena;
   (void)is_message_owned;
   new (&_impl_) Impl_{
-      decltype(_impl_.result_code_){0}
+      decltype(_impl_._has_bits_){}
     , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.conn_id_){}
+    , decltype(_impl_.result_code_){0}
   };
+  _impl_.conn_id_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.conn_id_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
 }
 
 ResultBody::~ResultBody() {
@@ -697,6 +723,7 @@ ResultBody::~ResultBody() {
 
 inline void ResultBody::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_.conn_id_.Destroy();
 }
 
 void ResultBody::SetCachedSize(int size) const {
@@ -709,12 +736,18 @@ void ResultBody::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
+  cached_has_bits = _impl_._has_bits_[0];
+  if (cached_has_bits & 0x00000001u) {
+    _impl_.conn_id_.ClearNonDefaultToEmpty();
+  }
   _impl_.result_code_ = 0;
+  _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
 const char* ResultBody::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  _Internal::HasBits has_bits{};
   while (!ctx->Done(&ptr)) {
     uint32_t tag;
     ptr = ::_pbi::ReadTag(ptr, &tag);
@@ -725,6 +758,16 @@ const char* ResultBody::_InternalParse(const char* ptr, ::_pbi::ParseContext* ct
           uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
           _internal_set_result_code(static_cast<::yy::protocol::core::ResultCode>(val));
+        } else
+          goto handle_unusual;
+        continue;
+      // optional string conn_id = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
+          auto str = _internal_mutable_conn_id();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "yy.protocol.core.ResultBody.conn_id"));
         } else
           goto handle_unusual;
         continue;
@@ -744,6 +787,7 @@ const char* ResultBody::_InternalParse(const char* ptr, ::_pbi::ParseContext* ct
     CHK_(ptr != nullptr);
   }  // while
 message_done:
+  _impl_._has_bits_.Or(has_bits);
   return ptr;
 failure:
   ptr = nullptr;
@@ -764,6 +808,16 @@ uint8_t* ResultBody::_InternalSerialize(
       1, this->_internal_result_code(), target);
   }
 
+  // optional string conn_id = 2;
+  if (_internal_has_conn_id()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_conn_id().data(), static_cast<int>(this->_internal_conn_id().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "yy.protocol.core.ResultBody.conn_id");
+    target = stream->WriteStringMaybeAliased(
+        2, this->_internal_conn_id(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -779,6 +833,14 @@ size_t ResultBody::ByteSizeLong() const {
   uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
+
+  // optional string conn_id = 2;
+  cached_has_bits = _impl_._has_bits_[0];
+  if (cached_has_bits & 0x00000001u) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_conn_id());
+  }
 
   // .yy.protocol.core.ResultCode result_code = 1;
   if (this->_internal_result_code() != 0) {
@@ -804,6 +866,9 @@ void ResultBody::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PRO
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
+  if (from._internal_has_conn_id()) {
+    _this->_internal_set_conn_id(from._internal_conn_id());
+  }
   if (from._internal_result_code() != 0) {
     _this->_internal_set_result_code(from._internal_result_code());
   }
@@ -823,7 +888,14 @@ bool ResultBody::IsInitialized() const {
 
 void ResultBody::InternalSwap(ResultBody* other) {
   using std::swap;
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.conn_id_, lhs_arena,
+      &other->_impl_.conn_id_, rhs_arena
+  );
   swap(_impl_.result_code_, other->_impl_.result_code_);
 }
 

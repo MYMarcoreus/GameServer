@@ -24,7 +24,8 @@ GameServer::GameServer(EventLoop *accpetorLoop, IPAddressPtr listenAddr)
           m_udpCodec(std::bind(&decltype(m_udpDispatcher)::OnProtobufMessage, &m_udpDispatcher, _1, _2)),
           m_appConfigvar(g_app_config)
 {
-    m_tcpDispatcher.RegisterMessageCallback<yy::protocol::core::HeartBody>(std::bind(&GameServer::OnHeart, this, _1, _2));
+    //! TCP消息回调注册
+    m_tcpDispatcher.RegisterMessageCallback<yy::protocol::core::HeartBody>(std::bind(&GameServer::OnTcpHeart, this, _1, _2));
     m_tcpDispatcher.RegisterMessageCallback<yy::protocol::core::SecurityBody>(std::bind(&GameServer::OnSecurity, this, _1, _2));
 
     m_tcpServer.SetMessageCallback(std::bind_front(&ProtobufTcpCodec::OnData, &m_tcpCodec));
@@ -32,7 +33,9 @@ GameServer::GameServer(EventLoop *accpetorLoop, IPAddressPtr listenAddr)
     m_tcpServer.SetConnectionShutdownCallback([this](const TcpConnectionPtr & conn) { this->AfterShutdownConnection(conn); });
     // m_server.SetCloseSocketsCallback([this]() { this->CheckDisconnections(); });
 
-    // UDP
+    //! UDP消息回调注册
+    m_udpDispatcher.RegisterMessageCallback<yy::protocol::core::HeartBody>(std::bind(&GameServer::OnUdpHeart, this, _1, _2));
+
     m_udpServer.SetMessageCallback(std::bind_front(&ProtobufUdpCodec::OnData, &m_udpCodec));
 }
 
@@ -135,12 +138,20 @@ void GameServer::SendXorCode(const TcpConnectionPtr &conn) {
 
 
 
-void GameServer::OnHeart(const TcpConnectionPtr & conn, const HeartPtr & message) {
+void GameServer::OnTcpHeart(const TcpConnectionPtr & conn, const HeartPtr & message) {
     assert(conn != nullptr);
-
+    YLOG_DEBUG("收到TCP心跳包");
     // 只需发一个只有消息头的包
     yy::protocol::core::HeartBody heartBody;
     m_tcpCodec.SendTCP(conn, heartBody);
+}
+
+void GameServer::OnUdpHeart(const UdpSessionPtr & conn, const HeartPtr & message) {
+    assert(conn != nullptr);
+    YLOG_DEBUG("收到UDP心跳包");
+    // 只需发一个只有消息头的包
+    yy::protocol::core::HeartBody heartBody;
+    m_udpCodec.SendUDP(conn, heartBody);
 }
 
 void GameServer::OnSecurity(const TcpConnectionPtr & conn, const SecurityPtr & message)
@@ -168,8 +179,10 @@ void GameServer::OnSecurity(const TcpConnectionPtr & conn, const SecurityPtr & m
     else {
         resultCode = yy::protocol::core::ResultCode::eSuccess;
     }
+
     yy::protocol::core::ResultBody resultBody;
     resultBody.set_result_code(resultCode);
+    resultBody.set_conn_id(conn->GetName());
     m_tcpCodec.SendTCP(conn, resultBody);
 
     // 安全验证通过：交由业务层

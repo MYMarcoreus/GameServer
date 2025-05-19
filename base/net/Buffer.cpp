@@ -1,6 +1,7 @@
 #include "Buffer.h"
 #include "SocketApiWrapper.h"
 #include "Socket.h"
+#include <google/protobuf/message.h>
 
 namespace yy::net {
 Buffer::Buffer(size_t _maxsize)
@@ -15,7 +16,7 @@ Buffer::Buffer(size_t _maxsize)
 #pragma ide diagnostic ignored "ConstantFunctionResult"
 bool Buffer::AppendDataFromCBuffer(const void *src_buf, size_t data_len) {
     bool isEnsured = TryMakeEnoughSpace(data_len);
-    memcpy(GetFreeBegin(), src_buf, data_len);
+    std::memcpy(GetFreeBegin(), src_buf, data_len);
     MoveTail(data_len);
     return isEnsured;
 }
@@ -24,10 +25,10 @@ bool Buffer::AppendDataFromCBuffer(const void *src_buf, size_t data_len) {
 
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "ConstantFunctionResult"
-bool Buffer::AppendDataFromProtobuf(const std::shared_ptr<google::protobuf::Message> & src_msg) {
-    bool isEnsured = TryMakeEnoughSpace(src_msg->ByteSizeLong());
-    src_msg->SerializeToArray(GetFreeBegin(), (int)src_msg->ByteSizeLong());
-    MoveTail(src_msg->ByteSizeLong());
+bool Buffer::AppendDataFromArray(const std::string_view &message) {
+   bool isEnsured = TryMakeEnoughSpace(message.size());
+    std::memcpy(GetFreeBegin(), message.data(), message.size());
+    MoveTail(message.size());
     return isEnsured;
 }
 #pragma clang diagnostic pop
@@ -35,7 +36,7 @@ bool Buffer::AppendDataFromProtobuf(const std::shared_ptr<google::protobuf::Mess
 
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "ConstantFunctionResult"
-bool Buffer::AppendDataFromProtobuf(const google::protobuf::Message &src_msg) {
+bool Buffer::AppendDataFromProtobuf(const google::protobuf::Message & src_msg) {
     bool isEnsured = TryMakeEnoughSpace(src_msg.ByteSizeLong());
     src_msg.SerializeToArray(GetFreeBegin(), (int)src_msg.ByteSizeLong());
     MoveTail(src_msg.ByteSizeLong());
@@ -183,7 +184,6 @@ SocketApiWrapper::SocketResult Buffer::SendToSocket(std::unique_ptr<Socket> &soc
             break;
     }
 
-
     if(rst.HasNoError()) {
         MoveHeadAndTryReset(rst.Result());
     }
@@ -216,12 +216,20 @@ void Buffer::MoveHeadAndTryReset(size_t offset) {
 
 
 
-bool Buffer::PeekCopyCBuffer(int start_index, void *dest, int len) {
+bool Buffer::PeekToCBuffer(int start_index, void *dest, int len) const {
     if(GetDataSize() < len)
         return false;
     memcpy(dest, GetDataBegin()+start_index, len);
     return true;
 }
+
+bool Buffer::PeekToString(int start_index, std::string & dest, int len) const {
+     if(GetDataSize() < len)
+        return false;
+    dest.assign(GetDataBegin()+start_index, len);
+    return true;
+}
+
 
 void Buffer::Print() const {
     for(int i = 0; i < GetMaxsize() ;++i)

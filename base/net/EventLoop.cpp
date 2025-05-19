@@ -190,7 +190,9 @@ bool EventLoop::HasChannel(IOChannel *channel) {
 
 
 void EventLoop::AssertInLoopingThread(const std::string & filepath, int fileline) {
-    if(!IsInLoopingThread()) {
+    if(!IsInLoopingThread())
+    {
+        1+1;
         YLOG_FATAL("[{}:{}]::EventLoop Created In thread<{}>, but now in {}", filepath, fileline,
             ::yy::util::CastThreadIDToStr(m_ThreadID), ::yy::util::GetStrThreadID())
     }

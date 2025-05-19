@@ -17,7 +17,8 @@ TcpClient::TcpClient(EventLoop *loop, IPAddressPtr serverAddr)
       m_Loop(loop),
       m_Connection(),
       m_Connector(std::make_shared<Connector>(loop, serverAddr)),
-      m_ServerAddr{serverAddr}
+      m_ServerAddr{serverAddr},
+      m_NextConnID{0}
 {
     InitLog();
     m_Connector->SetNewConnectionCallback( std::bind(&TcpClient::NewConnection, this, _1) );

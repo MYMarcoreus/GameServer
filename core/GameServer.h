@@ -69,7 +69,8 @@ private:
     void CheckHeart(const UserConnectionPtr & conn);
     void SendXorCode(const yy::net::TcpConnectionPtr &conn);
 
-    void OnHeart(const net::TcpConnectionPtr & conn, const HeartPtr & message);
+    void OnTcpHeart(const yy::net::TcpConnectionPtr &conn, const HeartPtr & message);
+    void OnUdpHeart(const yy::net::UdpSessionPtr &conn, const HeartPtr & message);
     void OnSecurity(const net::TcpConnectionPtr & conn, const SecurityPtr & message);
 
     void AfterShutdownConnection(const yy::net::TcpConnectionPtr &conn);

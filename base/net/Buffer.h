@@ -5,8 +5,10 @@
 #include "net_definations.h"
 #include <cstring>
 #include <atomic>
-#include <google/protobuf/message.h>
 
+namespace google::protobuf {
+class Message;
+}
 
 namespace yy::net {
 
@@ -57,7 +59,7 @@ public:
         requires std::is_standard_layout_v<T>;
         requires std::is_trivial_v<T>;
     }
-    bool PeekCopyPodStruct(int start_index, T &dest)
+    bool PeekToPodStruct(int start_index, T &dest) const
     {
         if(GetDataSize() < sizeof(T))
             return false;
@@ -65,15 +67,18 @@ public:
         return true;
     }
 
-    bool PeekCopyCBuffer(int start_index, void *dest, int len);
+    bool PeekToCBuffer(int start_index, void *dest, int len) const;
+
+    bool PeekToString(int start_index, std::string & dest, int len) const;
 
     const char * Peek(int start = 0) const { return GetBufBegin() + m_Head + start; }
 
 
-
-    //! 填充数据（生产数据）
-    ///@brief 从C语言的缓冲区`src_buf`中读入`data_len`长度的数据 ———— recvBuf从临时缓冲区读取数据
+    ///Region 填充数据（生产数据）
+    ///@brief 从C语言的缓冲区`src_buf`中读入`data_len`长度的数据
     bool AppendDataFromCBuffer(const void* src_buf, size_t data_len);
+
+    bool AppendDataFromArray(const std::string_view &message);
 
     ///@brief 从类型`T`的结构src读入数据到缓冲区中 ———— sendBuf封装消息头
     template<class T>
@@ -86,17 +91,16 @@ public:
     }
 
     ///@brief 读取protobuf对象到缓冲区中 ———— sendBuf封装消息体
-    bool AppendDataFromProtobuf(const std::shared_ptr<google::protobuf::Message> & src_msg);
-    bool AppendDataFromProtobuf(const google::protobuf::Message & src_msg);
+    bool AppendDataFromProtobuf(const google::protobuf::Message & message);
 
     /*! Buffer不实现来自套接字Socket的recv任务，因为对于recv任务，存在ET和LT的区别，因此原样recv的错误，让其所有者TcpConnection实现 !*/
     // ET
     bool RecvFromSocket(std::unique_ptr<Socket> &sock, size_t nBytesRecvOnce, SocketApiWrapper::SocketResult &rst, std::shared_ptr<IPAddress> peerAddr);
     // LT
     bool RecvAllFromSocket(std::unique_ptr<Socket> & sock, SocketApiWrapper::SocketResult & rst, std::shared_ptr<IPAddress> peerAddr);
+    ///End
 
-
-    //! 取出数据（消费数据）
+    /// Region 取出数据（消费数据）
     ///@brief 将`data_len`长度的数据写入C语言的缓冲区`src_buf`中
     bool PopDataToCBuffer(void* dest_buf, size_t data_len);
     ///@brief 将大小为类型T的数据写入类型`T`的结构  ———— 从recvBuf读取数据到消息头结构体中
@@ -113,7 +117,6 @@ public:
     ///@brief 将缓冲区的数据写入protobuf对象，调用者须知道protobuf对象的实际长度 ———— 从recvBuf读取数据到protobuf消息中
     bool PopDataToProtobuf(const std::shared_ptr<google::protobuf::Message> & outMsg, size_t len);
 
-    SocketApiWrapper::SocketResult SendToSocket(std::unique_ptr<Socket> & sock, std::shared_ptr<IPAddress> peerAddr);
 
     ///@brief 读取len长度的数据到string中并返回
     std::string PopDataAsString(int len);
@@ -121,7 +124,10 @@ public:
     ///@brief 将所有数据读入string中并返回
     std::string PopAllDataAsString();
 
-    void MoveHead(size_t offset) { m_Head += offset; }
+    void PopData(size_t offset) { m_Head += offset; }
+
+    SocketApiWrapper::SocketResult SendToSocket(std::unique_ptr<Socket> & sock, std::shared_ptr<IPAddress> peerAddr);
+    /// End
 
 private:
     // 整体缓冲区：可读写

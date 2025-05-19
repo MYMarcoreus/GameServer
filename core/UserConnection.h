@@ -43,7 +43,6 @@ public:
 
     void SetState(E_UserBaseState state) { m_state = state; }
 
-
     void SetUID(uint32_t uid) { m_uid = uid; }
 
     ///Region GETTER

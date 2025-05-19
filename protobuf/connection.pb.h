@@ -664,8 +664,27 @@ class ResultBody final :
   // accessors -------------------------------------------------------
 
   enum : int {
+    kConnIdFieldNumber = 2,
     kResultCodeFieldNumber = 1,
   };
+  // optional string conn_id = 2;
+  bool has_conn_id() const;
+  private:
+  bool _internal_has_conn_id() const;
+  public:
+  void clear_conn_id();
+  const std::string& conn_id() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_conn_id(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_conn_id();
+  PROTOBUF_NODISCARD std::string* release_conn_id();
+  void set_allocated_conn_id(std::string* conn_id);
+  private:
+  const std::string& _internal_conn_id() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_conn_id(const std::string& value);
+  std::string* _internal_mutable_conn_id();
+  public:
+
   // .yy.protocol.core.ResultCode result_code = 1;
   void clear_result_code();
   ::yy::protocol::core::ResultCode result_code() const;
@@ -683,8 +702,10 @@ class ResultBody final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
-    int result_code_;
+    ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr conn_id_;
+    int result_code_;
   };
   union { Impl_ _impl_; };
   friend struct ::TableStruct_connection_2eproto;
@@ -840,6 +861,74 @@ inline void ResultBody::_internal_set_result_code(::yy::protocol::core::ResultCo
 inline void ResultBody::set_result_code(::yy::protocol::core::ResultCode value) {
   _internal_set_result_code(value);
   // @@protoc_insertion_point(field_set:yy.protocol.core.ResultBody.result_code)
+}
+
+// optional string conn_id = 2;
+inline bool ResultBody::_internal_has_conn_id() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
+  return value;
+}
+inline bool ResultBody::has_conn_id() const {
+  return _internal_has_conn_id();
+}
+inline void ResultBody::clear_conn_id() {
+  _impl_.conn_id_.ClearToEmpty();
+  _impl_._has_bits_[0] &= ~0x00000001u;
+}
+inline const std::string& ResultBody::conn_id() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.core.ResultBody.conn_id)
+  return _internal_conn_id();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void ResultBody::set_conn_id(ArgT0&& arg0, ArgT... args) {
+ _impl_._has_bits_[0] |= 0x00000001u;
+ _impl_.conn_id_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:yy.protocol.core.ResultBody.conn_id)
+}
+inline std::string* ResultBody::mutable_conn_id() {
+  std::string* _s = _internal_mutable_conn_id();
+  // @@protoc_insertion_point(field_mutable:yy.protocol.core.ResultBody.conn_id)
+  return _s;
+}
+inline const std::string& ResultBody::_internal_conn_id() const {
+  return _impl_.conn_id_.Get();
+}
+inline void ResultBody::_internal_set_conn_id(const std::string& value) {
+  _impl_._has_bits_[0] |= 0x00000001u;
+  _impl_.conn_id_.Set(value, GetArenaForAllocation());
+}
+inline std::string* ResultBody::_internal_mutable_conn_id() {
+  _impl_._has_bits_[0] |= 0x00000001u;
+  return _impl_.conn_id_.Mutable(GetArenaForAllocation());
+}
+inline std::string* ResultBody::release_conn_id() {
+  // @@protoc_insertion_point(field_release:yy.protocol.core.ResultBody.conn_id)
+  if (!_internal_has_conn_id()) {
+    return nullptr;
+  }
+  _impl_._has_bits_[0] &= ~0x00000001u;
+  auto* p = _impl_.conn_id_.Release();
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.conn_id_.IsDefault()) {
+    _impl_.conn_id_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  return p;
+}
+inline void ResultBody::set_allocated_conn_id(std::string* conn_id) {
+  if (conn_id != nullptr) {
+    _impl_._has_bits_[0] |= 0x00000001u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000001u;
+  }
+  _impl_.conn_id_.SetAllocated(conn_id, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.conn_id_.IsDefault()) {
+    _impl_.conn_id_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:yy.protocol.core.ResultBody.conn_id)
 }
 
 #ifdef __GNUC__

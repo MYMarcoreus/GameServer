@@ -4,15 +4,14 @@
 #include "noncopyable.h"
 #include "core_definations.h"
 #include "net_definations.h"
-#include "MessageHeader.h"
-#include "Buffer.h"
-
 
 namespace google::protobuf {
 class Message;
 }
 
-
+namespace yy::net {
+class Buffer;
+}
 
 namespace yy::core {
 

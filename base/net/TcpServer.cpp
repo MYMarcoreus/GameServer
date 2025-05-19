@@ -64,8 +64,8 @@ FullDuplexPipe SignalManager::pipe_{};
 
 TcpServer::TcpServer(EventLoop *acceptorLoop, IPAddress::ptr listenAddr, bool reusePort) noexcept
     : m_AcceptorLoop(acceptorLoop)
-    , m_Acceptor( new Acceptor(m_AcceptorLoop, Socket::Type::TCP, listenAddr, reusePort) )
-    , m_IOThreadPool( new EventLoopThreadPool(acceptorLoop) )
+    , m_Acceptor(std::make_unique<Acceptor>(m_AcceptorLoop, Socket::Type::TCP, listenAddr, reusePort))
+    , m_IOThreadPool(std::make_unique<EventLoopThreadPool>(acceptorLoop))
     , m_AppConfigVar{config::g_app_config}
 #ifdef ____LINUX
     , m_SignalManager{std::make_unique<SignalManager>(acceptorLoop, [this](){ this->HandleSignal(); })}
@@ -109,7 +109,7 @@ void TcpServer::HandleNewConnection(SocketApiWrapper::socket_t sockfd, IPAddress
     IPAddressPtr localAddr = SocketApiWrapper::GetLocalAddr(sockfd);
 
     //! 以"连接时间:连接编号"作为连接的唯一标记，相同连接时间的连接编号一定不同
-    auto name = std::format("{}:{}", Timestamp::Now().GetMircoSecondSinceEpoch().count(), m_NextConnID++);
+    auto name = std::format("{:020}-{:011}", Timestamp::Now().GetMircoSecondSinceEpoch().count(), m_NextConnID++);
 
     TcpConnectionPtr conn = std::make_shared<TcpConnection>(
             name,
@@ -119,6 +119,8 @@ void TcpServer::HandleNewConnection(SocketApiWrapper::socket_t sockfd, IPAddress
             peerAddr
     );
     m_ConnectionMap[name] = conn;
+
+    // YLOG_INFO("连接[{}], {}", name, name.size());
 
     //! 传递上层的回调
     conn->SetConnectionEstablishedCallback(m_ConnectionEstablishedCallback);

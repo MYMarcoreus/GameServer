@@ -1,10 +1,11 @@
 #include "UserConnection.h"
 #include "ConfigManager.h"
-#include "AppXmlConfig.h"
 #include "log.h"
 #include "codec/ProtobufTcpCodec.h"
 #include "codec/ProtobufUdpCodec.h"
 #include "EventLoop.h"
+#include "UdpSession.h"
+#include "TcpConnection.h"
 
 namespace yy::core {
 
@@ -19,6 +20,11 @@ UserConnection::UserConnection(net::TcpConnectionPtr conn, ProtobufTcpCodec & tc
 
 }
 
+void UserConnection::Shutdown() { m_tcpChannel->Shutdown(); }
+
+const std::string &UserConnection::GetConnName() const { return m_tcpChannel->GetName(); }
+
+
 void UserConnection::SendTCP(const MessagePtr &message) {
     if(message) {
         m_tcpCodec.SendTCP(m_tcpChannel, *message);
@@ -30,13 +36,15 @@ void UserConnection::SendTCP(const google::protobuf::Message &message) {
 }
 
 void UserConnection::SendUDP(const MessagePtr & message) {
-    if(message) {
+    if(message and m_udpChannel) {
         m_udpCodec.SendUDP(m_udpChannel, *message);
     }
 }
 
 void UserConnection::SendUDP(const google::protobuf::Message &message) {
-    m_udpCodec.SendUDP(m_udpChannel, message);
+    if(m_udpChannel) {
+        m_udpCodec.SendUDP(m_udpChannel, message);
+    }
 }
 
 
@@ -54,6 +62,14 @@ net::TimerID UserConnection::RunEvery(net::Microseconds interval, net::F_TaskCal
 
 void UserConnection::CancelTimer(net::TimerID timerid) {
     m_tcpChannel->GetIOLoop()->CancelTimer(timerid);
+}
+
+void UserConnection::BindUdp(net::UdpSessionPtr u) {
+    m_udpChannel = u;
+}
+
+SocketApiWrapper::socket_t UserConnection::GetSocketFD() const {
+    return m_tcpChannel->GetSocketFD();
 }
 
 

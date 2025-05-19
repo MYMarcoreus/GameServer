@@ -6,6 +6,7 @@
 #include "md5/md5.h"
 #include "UserConnection.h"
 #include "EventLoop.h"
+#include "Socket.h"
 
 #include <google/protobuf/message.h>
 
@@ -25,8 +26,12 @@ GameServer::GameServer(EventLoop *accpetorLoop, IPAddressPtr listenAddr)
           m_appConfigvar(g_app_config)
 {
     //! TCP消息回调注册
-    m_tcpDispatcher.RegisterMessageCallback<yy::protocol::core::HeartBody>(std::bind(&GameServer::OnTcpHeart, this, _1, _2));
-    m_tcpDispatcher.RegisterMessageCallback<yy::protocol::core::SecurityBody>(std::bind(&GameServer::OnSecurity, this, _1, _2));
+    m_tcpDispatcher.RegisterMessageCallback<yy::protocol::core::HeartBody>(
+            std::bind(&GameServer::OnTcpHeart, this, _1, _2));
+    m_tcpDispatcher.RegisterMessageCallback<yy::protocol::core::SecurityBody>(
+            std::bind(&GameServer::OnSecurity, this, _1, _2));
+    m_tcpDispatcher.RegisterMessageCallback<yy::protocol::core::UdpPortRegisterRequest>(
+            std::bind_front(&GameServer::OnUdpPortRegisterRequest, this));
 
     m_tcpServer.SetMessageCallback(std::bind_front(&ProtobufTcpCodec::OnData, &m_tcpCodec));
     m_tcpServer.SetConnectionEstablishedCallback(std::bind_front(&GameServer::OnConnectionEstablished, this));
@@ -166,39 +171,60 @@ void GameServer::OnSecurity(const TcpConnectionPtr & conn, const SecurityPtr & m
     YLOG_DEBUG("服务器: {}, {}, {}", GetAppConfig().app_id(), GetAppConfig().app_version(), md5Arr)
     YLOG_DEBUG("客户端: {}, {}, {}", message->app_id(),message->app_version(), message->app_md5().c_str())
 
-    // 进行安全验证，并返回验证结果给用户
-    yy::protocol::core::ResultCode resultCode;
+    //! 进行安全验证
+    yy::protocol::core::ResultBody::ResultCode resultCode;
     if(message->app_version() != GetAppConfig().app_version()) {
-        YLOG_DEBUG("<{}>解包执行：版本不同，安全验证失败！", conn->GetSocketFD())
-        resultCode = yy::protocol::core::ResultCode::eAppVersionFailed;
+        YLOG_DEBUG("<{}>解包执行：版本不同，安全验证失败！", conn->GetName())
+        resultCode = yy::protocol::core::ResultBody_ResultCode_eAppVersionFailed;
     }
     else if(util::StrCmp_IgnoreCase(message->app_md5().c_str(), md5Arr)) {
-        YLOG_DEBUG("<{}>解包执行：md5码不同，安全验证失败！", conn->GetSocketFD())
-        resultCode = yy::protocol::core::ResultCode::eMd5Failed;
+        YLOG_DEBUG("<{}>解包执行：md5码不同，安全验证失败！", conn->GetName())
+        resultCode = yy::protocol::core::ResultBody_ResultCode_eMd5Failed;
     }
     else {
-        resultCode = yy::protocol::core::ResultCode::eSuccess;
+        resultCode = yy::protocol::core::ResultBody_ResultCode_eSuccess;
     }
 
+    //! 发送安全验证结果
     yy::protocol::core::ResultBody resultBody;
     resultBody.set_result_code(resultCode);
-    resultBody.set_conn_id(conn->GetName());
+    resultBody.set_server_udp_port(FindUser(conn->GetName())->GetSocketFD());
+    resultBody.set_session_id(conn->GetName());
     m_tcpCodec.SendTCP(conn, resultBody);
 
-    // 安全验证通过：交由业务层
-    if(resultBody.result_code() == yy::protocol::core::ResultCode::eSuccess) {
+    //! 安全验证通过：交由业务层
+    if(resultBody.result_code() == yy::protocol::core::ResultBody_ResultCode_eSuccess) {
         m_numSecurity++;
         if(m_NotifierSecurity)
             m_NotifierSecurity(FindUser(conn->GetName()));
-        YLOG_INFO("<{}>解包执行：安全验证通过", conn->GetSocketFD())
+        YLOG_INFO("<{}>解包执行：安全验证通过", conn->GetName())
     }
     //? 安全验证失败：需要关闭用户连接吗？
     else {
-        YLOG_INFO("<{}>解包执行：用户安全验证失败！", conn->GetSocketFD())
+        conn->Shutdown();
+        YLOG_INFO("<{}>解包执行：用户安全验证失败！", conn->GetName())
     }
 }
 
+void GameServer::OnUdpPortRegisterRequest(const TcpConnectionPtr & conn, const UdpPortRegisterRequestPtr & message)
+{
+    if(message->session_id() != conn->GetName()) {
+        YLOG_INFO("<{}>客户端会话ID验证错误", conn->GetName())
+        conn->Shutdown();
+    }
 
+    auto client_ip   = message->client_udp_ip();
+    auto client_port = message->client_udp_port();
+    net::IPAddressPtr udpAddr = std::make_shared<net::IPv4Address>(client_ip, client_port);
+    YLOG_INFO("<{}>客户端Udp地址[{}:{}]", conn->GetName(), client_ip, client_port);
+
+    UdpSessionPtr udpSession = std::make_unique<net::UdpSession>(conn->GetName(), m_udpServer.GetUdpTran(), udpAddr);
+    FindUser(conn->GetName())->BindUdp(udpSession);
+
+    yy::protocol::core::UdpPortRegisterResponse response;
+    response.set_status(protocol::core::UdpPortRegisterResponse_Status_eSuccess);
+    m_tcpCodec.SendTCP(conn, response);
+}
 
 
 
@@ -248,9 +274,6 @@ void GameServer::AddUser(const std::string & conn_name, const UserConnectionPtr 
 
     m_users[conn_name] = userdata;
 }
-
-
-
 
 
 

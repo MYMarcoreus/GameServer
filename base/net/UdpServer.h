@@ -8,6 +8,9 @@
 
 namespace yy::net {
 
+class UdpTransport;
+class EventLoopThreadPool;
+
 class UdpServer {
 public:
     ///@param
@@ -31,6 +34,8 @@ public:
 
     EventLoop * GetMainLoop() const { return m_mainLoop; }
 
+    UdpTransport & GetUdpTran() { return * m_udpTran; }
+
 private:
     void HandleNewMessage(Buffer & recvBuf, IPAddressPtr peerAddr);
 
@@ -38,8 +43,8 @@ private:
 private:
     EventLoop *                                   m_mainLoop;
     F_UdpMessageCallback                          m_MessageCallback;
-    std::unique_ptr<class EventLoopThreadPool>    m_recvEventThreadPool;
-    std::unique_ptr<class UdpTransport>           m_udpTran;
+    std::unique_ptr<EventLoopThreadPool>    m_recvEventThreadPool;
+    std::unique_ptr<UdpTransport>           m_udpTran;
 
 #ifdef ____LINUX
     std::unique_ptr<class SignalManager> m_SignalManager;

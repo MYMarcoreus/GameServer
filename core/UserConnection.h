@@ -3,10 +3,13 @@
 
 #include <cstring>
 #include <atomic>
-#include "TcpConnection.h"
 #include "core_definations.h"
 #include "net_definations.h"
+#include "socket_definations.h"
 
+namespace yy::net {
+class TcpConnection;
+}
 
 namespace yy::core {
 
@@ -33,7 +36,7 @@ public:
 public:
     UserConnection(net::TcpConnectionPtr conn, ProtobufTcpCodec & tcpCodec, ProtobufUdpCodec & udpCodec);
 
-    void Shutdown() { m_tcpChannel->Shutdown(); }
+    void Shutdown();
 
     void SendTCP(const MessagePtr & message) ;
     void SendTCP(const google::protobuf::Message & message);
@@ -44,6 +47,8 @@ public:
     void SetState(E_UserBaseState state) { m_state = state; }
 
     void SetUID(uint32_t uid) { m_uid = uid; }
+
+    void BindUdp(net::UdpSessionPtr);
 
     ///Region GETTER
     net::TcpConnectionPtr GetConnection() { return m_tcpChannel; }
@@ -61,8 +66,8 @@ public:
     bool IsNeedSave() const { return m_state == E_UserBaseState::eSavingData; }
 
     uint32_t GetUID() const { return m_uid; }
-    const std::string & GetConnName() const { return m_tcpChannel->GetName(); }
-    auto GetSocketFD() const { return m_tcpChannel->GetSocketFD(); }
+    const std::string & GetConnName() const;
+    SocketApiWrapper::socket_t GetSocketFD() const;
     ///End GETTER
 
     net::TimerID RunAt(net::Timestamp time, net::F_TaskCallback cb);

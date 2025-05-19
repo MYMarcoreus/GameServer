@@ -29,11 +29,7 @@ package yy.protocol.core;
 
 
 /*********** 消息体 ***********/
-enum ResultCode {
-    eSuccess          = 0;
-    eAppVersionFailed = 1;
-    eMd5Failed        = 2;
-}
+
 
 message XorBody {
     uint32 xor_code = 1;
@@ -49,9 +45,27 @@ message SecurityBody {
     uint32 app_version = 2;
     string app_md5     = 3;
 }
-
 message ResultBody {
-    ResultCode result_code = 1;
-    optional string conn_id = 2; // 长度为32的连接标识，仅在 eSuccess 时使用
+    enum ResultCode {
+        eSuccess          = 0;
+        eAppVersionFailed = 1;
+        eMd5Failed        = 2;
+    }
+    ResultCode result_code  = 1;
+    optional uint32 server_udp_port  = 2;
+    optional string session_id = 3; // 长度为32的连接标识，仅在 eSuccess 时使用
 }
 
+message UdpPortRegisterRequest  {
+    string session_id = 1;
+    string client_udp_ip  = 2;
+    uint32 client_udp_port  = 3;
+}
+message UdpPortRegisterResponse {
+    enum Status {
+        eSuccess = 0;
+        eInvalidPort = 1;
+        eDuplicatePort = 2;
+    }
+    Status status = 1;
+}

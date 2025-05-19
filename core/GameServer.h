@@ -16,6 +16,7 @@
 namespace yy::protocol::core {
 class HeartBody;
 class SecurityBody;
+class UdpPortRegisterRequest;
 }
 
 
@@ -25,6 +26,7 @@ namespace yy::core {
 class GameServer final: public IServer{
     using HeartPtr    = std::shared_ptr<yy::protocol::core::HeartBody> ;
     using SecurityPtr = std::shared_ptr<yy::protocol::core::SecurityBody> ;
+    using UdpPortRegisterRequestPtr = std::shared_ptr<yy::protocol::core::UdpPortRegisterRequest> ;
 
 public:
     GameServer(yy::net::EventLoop* accpetorLoop, yy::net::IPAddressPtr listenAddr);
@@ -72,8 +74,10 @@ private:
     void OnTcpHeart(const yy::net::TcpConnectionPtr &conn, const HeartPtr & message);
     void OnUdpHeart(const yy::net::UdpSessionPtr &conn, const HeartPtr & message);
     void OnSecurity(const net::TcpConnectionPtr & conn, const SecurityPtr & message);
+    void OnUdpPortRegisterRequest(const net::TcpConnectionPtr & conn, const UdpPortRegisterRequestPtr & message);
 
     void AfterShutdownConnection(const yy::net::TcpConnectionPtr &conn);
+
 private:
     yy::net::EventLoop *                                    m_accpetorLoop;
 

@@ -133,7 +133,8 @@ void GamePlayerManager::Broadcast(const UserConnectionPtr &from, const google::p
         auto to = m_server->FindUser(p.second->conn_name());
         if(to == nullptr) continue;
 
-        to->SendTCP(data);
+        // to->SendTCP(data);
+        to->SendUDP(data);
     }
 }
 

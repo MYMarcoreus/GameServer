@@ -59,7 +59,7 @@ TcpConnection::~TcpConnection() {
 }
 
 
-int TcpConnection::GetSocketFD() const {
+SocketApiWrapper::socket_t TcpConnection::GetSocketFD() const {
     return m_socket->GetFD();
 }
 

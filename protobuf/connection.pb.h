@@ -58,6 +58,12 @@ extern ResultBodyDefaultTypeInternal _ResultBody_default_instance_;
 class SecurityBody;
 struct SecurityBodyDefaultTypeInternal;
 extern SecurityBodyDefaultTypeInternal _SecurityBody_default_instance_;
+class UdpPortRegisterRequest;
+struct UdpPortRegisterRequestDefaultTypeInternal;
+extern UdpPortRegisterRequestDefaultTypeInternal _UdpPortRegisterRequest_default_instance_;
+class UdpPortRegisterResponse;
+struct UdpPortRegisterResponseDefaultTypeInternal;
+extern UdpPortRegisterResponseDefaultTypeInternal _UdpPortRegisterResponse_default_instance_;
 class XorBody;
 struct XorBodyDefaultTypeInternal;
 extern XorBodyDefaultTypeInternal _XorBody_default_instance_;
@@ -68,37 +74,65 @@ PROTOBUF_NAMESPACE_OPEN
 template<> ::yy::protocol::core::HeartBody* Arena::CreateMaybeMessage<::yy::protocol::core::HeartBody>(Arena*);
 template<> ::yy::protocol::core::ResultBody* Arena::CreateMaybeMessage<::yy::protocol::core::ResultBody>(Arena*);
 template<> ::yy::protocol::core::SecurityBody* Arena::CreateMaybeMessage<::yy::protocol::core::SecurityBody>(Arena*);
+template<> ::yy::protocol::core::UdpPortRegisterRequest* Arena::CreateMaybeMessage<::yy::protocol::core::UdpPortRegisterRequest>(Arena*);
+template<> ::yy::protocol::core::UdpPortRegisterResponse* Arena::CreateMaybeMessage<::yy::protocol::core::UdpPortRegisterResponse>(Arena*);
 template<> ::yy::protocol::core::XorBody* Arena::CreateMaybeMessage<::yy::protocol::core::XorBody>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
 namespace yy {
 namespace protocol {
 namespace core {
 
-enum ResultCode : int {
-  eSuccess = 0,
-  eAppVersionFailed = 1,
-  eMd5Failed = 2,
-  ResultCode_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
-  ResultCode_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
+enum ResultBody_ResultCode : int {
+  ResultBody_ResultCode_eSuccess = 0,
+  ResultBody_ResultCode_eAppVersionFailed = 1,
+  ResultBody_ResultCode_eMd5Failed = 2,
+  ResultBody_ResultCode_ResultBody_ResultCode_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
+  ResultBody_ResultCode_ResultBody_ResultCode_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
 };
-bool ResultCode_IsValid(int value);
-constexpr ResultCode ResultCode_MIN = eSuccess;
-constexpr ResultCode ResultCode_MAX = eMd5Failed;
-constexpr int ResultCode_ARRAYSIZE = ResultCode_MAX + 1;
+bool ResultBody_ResultCode_IsValid(int value);
+constexpr ResultBody_ResultCode ResultBody_ResultCode_ResultCode_MIN = ResultBody_ResultCode_eSuccess;
+constexpr ResultBody_ResultCode ResultBody_ResultCode_ResultCode_MAX = ResultBody_ResultCode_eMd5Failed;
+constexpr int ResultBody_ResultCode_ResultCode_ARRAYSIZE = ResultBody_ResultCode_ResultCode_MAX + 1;
 
-const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ResultCode_descriptor();
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ResultBody_ResultCode_descriptor();
 template<typename T>
-inline const std::string& ResultCode_Name(T enum_t_value) {
-  static_assert(::std::is_same<T, ResultCode>::value ||
+inline const std::string& ResultBody_ResultCode_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, ResultBody_ResultCode>::value ||
     ::std::is_integral<T>::value,
-    "Incorrect type passed to function ResultCode_Name.");
+    "Incorrect type passed to function ResultBody_ResultCode_Name.");
   return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
-    ResultCode_descriptor(), enum_t_value);
+    ResultBody_ResultCode_descriptor(), enum_t_value);
 }
-inline bool ResultCode_Parse(
-    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, ResultCode* value) {
-  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<ResultCode>(
-    ResultCode_descriptor(), name, value);
+inline bool ResultBody_ResultCode_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, ResultBody_ResultCode* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<ResultBody_ResultCode>(
+    ResultBody_ResultCode_descriptor(), name, value);
+}
+enum UdpPortRegisterResponse_Status : int {
+  UdpPortRegisterResponse_Status_eSuccess = 0,
+  UdpPortRegisterResponse_Status_eInvalidPort = 1,
+  UdpPortRegisterResponse_Status_eDuplicatePort = 2,
+  UdpPortRegisterResponse_Status_UdpPortRegisterResponse_Status_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
+  UdpPortRegisterResponse_Status_UdpPortRegisterResponse_Status_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
+};
+bool UdpPortRegisterResponse_Status_IsValid(int value);
+constexpr UdpPortRegisterResponse_Status UdpPortRegisterResponse_Status_Status_MIN = UdpPortRegisterResponse_Status_eSuccess;
+constexpr UdpPortRegisterResponse_Status UdpPortRegisterResponse_Status_Status_MAX = UdpPortRegisterResponse_Status_eDuplicatePort;
+constexpr int UdpPortRegisterResponse_Status_Status_ARRAYSIZE = UdpPortRegisterResponse_Status_Status_MAX + 1;
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* UdpPortRegisterResponse_Status_descriptor();
+template<typename T>
+inline const std::string& UdpPortRegisterResponse_Status_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, UdpPortRegisterResponse_Status>::value ||
+    ::std::is_integral<T>::value,
+    "Incorrect type passed to function UdpPortRegisterResponse_Status_Name.");
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
+    UdpPortRegisterResponse_Status_descriptor(), enum_t_value);
+}
+inline bool UdpPortRegisterResponse_Status_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, UdpPortRegisterResponse_Status* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<UdpPortRegisterResponse_Status>(
+    UdpPortRegisterResponse_Status_descriptor(), name, value);
 }
 // ===================================================================
 
@@ -661,37 +695,83 @@ class ResultBody final :
 
   // nested types ----------------------------------------------------
 
+  typedef ResultBody_ResultCode ResultCode;
+  static constexpr ResultCode eSuccess =
+    ResultBody_ResultCode_eSuccess;
+  static constexpr ResultCode eAppVersionFailed =
+    ResultBody_ResultCode_eAppVersionFailed;
+  static constexpr ResultCode eMd5Failed =
+    ResultBody_ResultCode_eMd5Failed;
+  static inline bool ResultCode_IsValid(int value) {
+    return ResultBody_ResultCode_IsValid(value);
+  }
+  static constexpr ResultCode ResultCode_MIN =
+    ResultBody_ResultCode_ResultCode_MIN;
+  static constexpr ResultCode ResultCode_MAX =
+    ResultBody_ResultCode_ResultCode_MAX;
+  static constexpr int ResultCode_ARRAYSIZE =
+    ResultBody_ResultCode_ResultCode_ARRAYSIZE;
+  static inline const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
+  ResultCode_descriptor() {
+    return ResultBody_ResultCode_descriptor();
+  }
+  template<typename T>
+  static inline const std::string& ResultCode_Name(T enum_t_value) {
+    static_assert(::std::is_same<T, ResultCode>::value ||
+      ::std::is_integral<T>::value,
+      "Incorrect type passed to function ResultCode_Name.");
+    return ResultBody_ResultCode_Name(enum_t_value);
+  }
+  static inline bool ResultCode_Parse(::PROTOBUF_NAMESPACE_ID::ConstStringParam name,
+      ResultCode* value) {
+    return ResultBody_ResultCode_Parse(name, value);
+  }
+
   // accessors -------------------------------------------------------
 
   enum : int {
-    kConnIdFieldNumber = 2,
+    kSessionIdFieldNumber = 3,
     kResultCodeFieldNumber = 1,
+    kServerUdpPortFieldNumber = 2,
   };
-  // optional string conn_id = 2;
-  bool has_conn_id() const;
+  // optional string session_id = 3;
+  bool has_session_id() const;
   private:
-  bool _internal_has_conn_id() const;
+  bool _internal_has_session_id() const;
   public:
-  void clear_conn_id();
-  const std::string& conn_id() const;
+  void clear_session_id();
+  const std::string& session_id() const;
   template <typename ArgT0 = const std::string&, typename... ArgT>
-  void set_conn_id(ArgT0&& arg0, ArgT... args);
-  std::string* mutable_conn_id();
-  PROTOBUF_NODISCARD std::string* release_conn_id();
-  void set_allocated_conn_id(std::string* conn_id);
+  void set_session_id(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_session_id();
+  PROTOBUF_NODISCARD std::string* release_session_id();
+  void set_allocated_session_id(std::string* session_id);
   private:
-  const std::string& _internal_conn_id() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_conn_id(const std::string& value);
-  std::string* _internal_mutable_conn_id();
+  const std::string& _internal_session_id() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_session_id(const std::string& value);
+  std::string* _internal_mutable_session_id();
   public:
 
-  // .yy.protocol.core.ResultCode result_code = 1;
+  // .yy.protocol.core.ResultBody.ResultCode result_code = 1;
   void clear_result_code();
-  ::yy::protocol::core::ResultCode result_code() const;
-  void set_result_code(::yy::protocol::core::ResultCode value);
+  ::yy::protocol::core::ResultBody_ResultCode result_code() const;
+  void set_result_code(::yy::protocol::core::ResultBody_ResultCode value);
   private:
-  ::yy::protocol::core::ResultCode _internal_result_code() const;
-  void _internal_set_result_code(::yy::protocol::core::ResultCode value);
+  ::yy::protocol::core::ResultBody_ResultCode _internal_result_code() const;
+  void _internal_set_result_code(::yy::protocol::core::ResultBody_ResultCode value);
+  public:
+
+  // optional uint32 server_udp_port = 2;
+  bool has_server_udp_port() const;
+  private:
+  bool _internal_has_server_udp_port() const;
+  public:
+  void clear_server_udp_port();
+  uint32_t server_udp_port() const;
+  void set_server_udp_port(uint32_t value);
+  private:
+  uint32_t _internal_server_udp_port() const;
+  void _internal_set_server_udp_port(uint32_t value);
   public:
 
   // @@protoc_insertion_point(class_scope:yy.protocol.core.ResultBody)
@@ -704,8 +784,369 @@ class ResultBody final :
   struct Impl_ {
     ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
-    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr conn_id_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr session_id_;
     int result_code_;
+    uint32_t server_udp_port_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_connection_2eproto;
+};
+// -------------------------------------------------------------------
+
+class UdpPortRegisterRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:yy.protocol.core.UdpPortRegisterRequest) */ {
+ public:
+  inline UdpPortRegisterRequest() : UdpPortRegisterRequest(nullptr) {}
+  ~UdpPortRegisterRequest() override;
+  explicit PROTOBUF_CONSTEXPR UdpPortRegisterRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  UdpPortRegisterRequest(const UdpPortRegisterRequest& from);
+  UdpPortRegisterRequest(UdpPortRegisterRequest&& from) noexcept
+    : UdpPortRegisterRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline UdpPortRegisterRequest& operator=(const UdpPortRegisterRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline UdpPortRegisterRequest& operator=(UdpPortRegisterRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const UdpPortRegisterRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const UdpPortRegisterRequest* internal_default_instance() {
+    return reinterpret_cast<const UdpPortRegisterRequest*>(
+               &_UdpPortRegisterRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    4;
+
+  friend void swap(UdpPortRegisterRequest& a, UdpPortRegisterRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(UdpPortRegisterRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(UdpPortRegisterRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  UdpPortRegisterRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<UdpPortRegisterRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const UdpPortRegisterRequest& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const UdpPortRegisterRequest& from) {
+    UdpPortRegisterRequest::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(UdpPortRegisterRequest* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "yy.protocol.core.UdpPortRegisterRequest";
+  }
+  protected:
+  explicit UdpPortRegisterRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kSessionIdFieldNumber = 1,
+    kClientUdpIpFieldNumber = 2,
+    kClientUdpPortFieldNumber = 3,
+  };
+  // string session_id = 1;
+  void clear_session_id();
+  const std::string& session_id() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_session_id(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_session_id();
+  PROTOBUF_NODISCARD std::string* release_session_id();
+  void set_allocated_session_id(std::string* session_id);
+  private:
+  const std::string& _internal_session_id() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_session_id(const std::string& value);
+  std::string* _internal_mutable_session_id();
+  public:
+
+  // string client_udp_ip = 2;
+  void clear_client_udp_ip();
+  const std::string& client_udp_ip() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_client_udp_ip(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_client_udp_ip();
+  PROTOBUF_NODISCARD std::string* release_client_udp_ip();
+  void set_allocated_client_udp_ip(std::string* client_udp_ip);
+  private:
+  const std::string& _internal_client_udp_ip() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_client_udp_ip(const std::string& value);
+  std::string* _internal_mutable_client_udp_ip();
+  public:
+
+  // uint32 client_udp_port = 3;
+  void clear_client_udp_port();
+  uint32_t client_udp_port() const;
+  void set_client_udp_port(uint32_t value);
+  private:
+  uint32_t _internal_client_udp_port() const;
+  void _internal_set_client_udp_port(uint32_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:yy.protocol.core.UdpPortRegisterRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr session_id_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr client_udp_ip_;
+    uint32_t client_udp_port_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_connection_2eproto;
+};
+// -------------------------------------------------------------------
+
+class UdpPortRegisterResponse final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:yy.protocol.core.UdpPortRegisterResponse) */ {
+ public:
+  inline UdpPortRegisterResponse() : UdpPortRegisterResponse(nullptr) {}
+  ~UdpPortRegisterResponse() override;
+  explicit PROTOBUF_CONSTEXPR UdpPortRegisterResponse(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  UdpPortRegisterResponse(const UdpPortRegisterResponse& from);
+  UdpPortRegisterResponse(UdpPortRegisterResponse&& from) noexcept
+    : UdpPortRegisterResponse() {
+    *this = ::std::move(from);
+  }
+
+  inline UdpPortRegisterResponse& operator=(const UdpPortRegisterResponse& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline UdpPortRegisterResponse& operator=(UdpPortRegisterResponse&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const UdpPortRegisterResponse& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const UdpPortRegisterResponse* internal_default_instance() {
+    return reinterpret_cast<const UdpPortRegisterResponse*>(
+               &_UdpPortRegisterResponse_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    5;
+
+  friend void swap(UdpPortRegisterResponse& a, UdpPortRegisterResponse& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(UdpPortRegisterResponse* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(UdpPortRegisterResponse* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  UdpPortRegisterResponse* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<UdpPortRegisterResponse>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const UdpPortRegisterResponse& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const UdpPortRegisterResponse& from) {
+    UdpPortRegisterResponse::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(UdpPortRegisterResponse* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "yy.protocol.core.UdpPortRegisterResponse";
+  }
+  protected:
+  explicit UdpPortRegisterResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  typedef UdpPortRegisterResponse_Status Status;
+  static constexpr Status eSuccess =
+    UdpPortRegisterResponse_Status_eSuccess;
+  static constexpr Status eInvalidPort =
+    UdpPortRegisterResponse_Status_eInvalidPort;
+  static constexpr Status eDuplicatePort =
+    UdpPortRegisterResponse_Status_eDuplicatePort;
+  static inline bool Status_IsValid(int value) {
+    return UdpPortRegisterResponse_Status_IsValid(value);
+  }
+  static constexpr Status Status_MIN =
+    UdpPortRegisterResponse_Status_Status_MIN;
+  static constexpr Status Status_MAX =
+    UdpPortRegisterResponse_Status_Status_MAX;
+  static constexpr int Status_ARRAYSIZE =
+    UdpPortRegisterResponse_Status_Status_ARRAYSIZE;
+  static inline const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
+  Status_descriptor() {
+    return UdpPortRegisterResponse_Status_descriptor();
+  }
+  template<typename T>
+  static inline const std::string& Status_Name(T enum_t_value) {
+    static_assert(::std::is_same<T, Status>::value ||
+      ::std::is_integral<T>::value,
+      "Incorrect type passed to function Status_Name.");
+    return UdpPortRegisterResponse_Status_Name(enum_t_value);
+  }
+  static inline bool Status_Parse(::PROTOBUF_NAMESPACE_ID::ConstStringParam name,
+      Status* value) {
+    return UdpPortRegisterResponse_Status_Parse(name, value);
+  }
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kStatusFieldNumber = 1,
+  };
+  // .yy.protocol.core.UdpPortRegisterResponse.Status status = 1;
+  void clear_status();
+  ::yy::protocol::core::UdpPortRegisterResponse_Status status() const;
+  void set_status(::yy::protocol::core::UdpPortRegisterResponse_Status value);
+  private:
+  ::yy::protocol::core::UdpPortRegisterResponse_Status _internal_status() const;
+  void _internal_set_status(::yy::protocol::core::UdpPortRegisterResponse_Status value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:yy.protocol.core.UdpPortRegisterResponse)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    int status_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
   friend struct ::TableStruct_connection_2eproto;
@@ -843,97 +1284,277 @@ inline void SecurityBody::set_allocated_app_md5(std::string* app_md5) {
 
 // ResultBody
 
-// .yy.protocol.core.ResultCode result_code = 1;
+// .yy.protocol.core.ResultBody.ResultCode result_code = 1;
 inline void ResultBody::clear_result_code() {
   _impl_.result_code_ = 0;
 }
-inline ::yy::protocol::core::ResultCode ResultBody::_internal_result_code() const {
-  return static_cast< ::yy::protocol::core::ResultCode >(_impl_.result_code_);
+inline ::yy::protocol::core::ResultBody_ResultCode ResultBody::_internal_result_code() const {
+  return static_cast< ::yy::protocol::core::ResultBody_ResultCode >(_impl_.result_code_);
 }
-inline ::yy::protocol::core::ResultCode ResultBody::result_code() const {
+inline ::yy::protocol::core::ResultBody_ResultCode ResultBody::result_code() const {
   // @@protoc_insertion_point(field_get:yy.protocol.core.ResultBody.result_code)
   return _internal_result_code();
 }
-inline void ResultBody::_internal_set_result_code(::yy::protocol::core::ResultCode value) {
+inline void ResultBody::_internal_set_result_code(::yy::protocol::core::ResultBody_ResultCode value) {
   
   _impl_.result_code_ = value;
 }
-inline void ResultBody::set_result_code(::yy::protocol::core::ResultCode value) {
+inline void ResultBody::set_result_code(::yy::protocol::core::ResultBody_ResultCode value) {
   _internal_set_result_code(value);
   // @@protoc_insertion_point(field_set:yy.protocol.core.ResultBody.result_code)
 }
 
-// optional string conn_id = 2;
-inline bool ResultBody::_internal_has_conn_id() const {
+// optional uint32 server_udp_port = 2;
+inline bool ResultBody::_internal_has_server_udp_port() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000002u) != 0;
+  return value;
+}
+inline bool ResultBody::has_server_udp_port() const {
+  return _internal_has_server_udp_port();
+}
+inline void ResultBody::clear_server_udp_port() {
+  _impl_.server_udp_port_ = 0u;
+  _impl_._has_bits_[0] &= ~0x00000002u;
+}
+inline uint32_t ResultBody::_internal_server_udp_port() const {
+  return _impl_.server_udp_port_;
+}
+inline uint32_t ResultBody::server_udp_port() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.core.ResultBody.server_udp_port)
+  return _internal_server_udp_port();
+}
+inline void ResultBody::_internal_set_server_udp_port(uint32_t value) {
+  _impl_._has_bits_[0] |= 0x00000002u;
+  _impl_.server_udp_port_ = value;
+}
+inline void ResultBody::set_server_udp_port(uint32_t value) {
+  _internal_set_server_udp_port(value);
+  // @@protoc_insertion_point(field_set:yy.protocol.core.ResultBody.server_udp_port)
+}
+
+// optional string session_id = 3;
+inline bool ResultBody::_internal_has_session_id() const {
   bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
   return value;
 }
-inline bool ResultBody::has_conn_id() const {
-  return _internal_has_conn_id();
+inline bool ResultBody::has_session_id() const {
+  return _internal_has_session_id();
 }
-inline void ResultBody::clear_conn_id() {
-  _impl_.conn_id_.ClearToEmpty();
+inline void ResultBody::clear_session_id() {
+  _impl_.session_id_.ClearToEmpty();
   _impl_._has_bits_[0] &= ~0x00000001u;
 }
-inline const std::string& ResultBody::conn_id() const {
-  // @@protoc_insertion_point(field_get:yy.protocol.core.ResultBody.conn_id)
-  return _internal_conn_id();
+inline const std::string& ResultBody::session_id() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.core.ResultBody.session_id)
+  return _internal_session_id();
 }
 template <typename ArgT0, typename... ArgT>
 inline PROTOBUF_ALWAYS_INLINE
-void ResultBody::set_conn_id(ArgT0&& arg0, ArgT... args) {
+void ResultBody::set_session_id(ArgT0&& arg0, ArgT... args) {
  _impl_._has_bits_[0] |= 0x00000001u;
- _impl_.conn_id_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:yy.protocol.core.ResultBody.conn_id)
+ _impl_.session_id_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:yy.protocol.core.ResultBody.session_id)
 }
-inline std::string* ResultBody::mutable_conn_id() {
-  std::string* _s = _internal_mutable_conn_id();
-  // @@protoc_insertion_point(field_mutable:yy.protocol.core.ResultBody.conn_id)
+inline std::string* ResultBody::mutable_session_id() {
+  std::string* _s = _internal_mutable_session_id();
+  // @@protoc_insertion_point(field_mutable:yy.protocol.core.ResultBody.session_id)
   return _s;
 }
-inline const std::string& ResultBody::_internal_conn_id() const {
-  return _impl_.conn_id_.Get();
+inline const std::string& ResultBody::_internal_session_id() const {
+  return _impl_.session_id_.Get();
 }
-inline void ResultBody::_internal_set_conn_id(const std::string& value) {
+inline void ResultBody::_internal_set_session_id(const std::string& value) {
   _impl_._has_bits_[0] |= 0x00000001u;
-  _impl_.conn_id_.Set(value, GetArenaForAllocation());
+  _impl_.session_id_.Set(value, GetArenaForAllocation());
 }
-inline std::string* ResultBody::_internal_mutable_conn_id() {
+inline std::string* ResultBody::_internal_mutable_session_id() {
   _impl_._has_bits_[0] |= 0x00000001u;
-  return _impl_.conn_id_.Mutable(GetArenaForAllocation());
+  return _impl_.session_id_.Mutable(GetArenaForAllocation());
 }
-inline std::string* ResultBody::release_conn_id() {
-  // @@protoc_insertion_point(field_release:yy.protocol.core.ResultBody.conn_id)
-  if (!_internal_has_conn_id()) {
+inline std::string* ResultBody::release_session_id() {
+  // @@protoc_insertion_point(field_release:yy.protocol.core.ResultBody.session_id)
+  if (!_internal_has_session_id()) {
     return nullptr;
   }
   _impl_._has_bits_[0] &= ~0x00000001u;
-  auto* p = _impl_.conn_id_.Release();
+  auto* p = _impl_.session_id_.Release();
 #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (_impl_.conn_id_.IsDefault()) {
-    _impl_.conn_id_.Set("", GetArenaForAllocation());
+  if (_impl_.session_id_.IsDefault()) {
+    _impl_.session_id_.Set("", GetArenaForAllocation());
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   return p;
 }
-inline void ResultBody::set_allocated_conn_id(std::string* conn_id) {
-  if (conn_id != nullptr) {
+inline void ResultBody::set_allocated_session_id(std::string* session_id) {
+  if (session_id != nullptr) {
     _impl_._has_bits_[0] |= 0x00000001u;
   } else {
     _impl_._has_bits_[0] &= ~0x00000001u;
   }
-  _impl_.conn_id_.SetAllocated(conn_id, GetArenaForAllocation());
+  _impl_.session_id_.SetAllocated(session_id, GetArenaForAllocation());
 #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (_impl_.conn_id_.IsDefault()) {
-    _impl_.conn_id_.Set("", GetArenaForAllocation());
+  if (_impl_.session_id_.IsDefault()) {
+    _impl_.session_id_.Set("", GetArenaForAllocation());
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:yy.protocol.core.ResultBody.conn_id)
+  // @@protoc_insertion_point(field_set_allocated:yy.protocol.core.ResultBody.session_id)
+}
+
+// -------------------------------------------------------------------
+
+// UdpPortRegisterRequest
+
+// string session_id = 1;
+inline void UdpPortRegisterRequest::clear_session_id() {
+  _impl_.session_id_.ClearToEmpty();
+}
+inline const std::string& UdpPortRegisterRequest::session_id() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.core.UdpPortRegisterRequest.session_id)
+  return _internal_session_id();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void UdpPortRegisterRequest::set_session_id(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.session_id_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:yy.protocol.core.UdpPortRegisterRequest.session_id)
+}
+inline std::string* UdpPortRegisterRequest::mutable_session_id() {
+  std::string* _s = _internal_mutable_session_id();
+  // @@protoc_insertion_point(field_mutable:yy.protocol.core.UdpPortRegisterRequest.session_id)
+  return _s;
+}
+inline const std::string& UdpPortRegisterRequest::_internal_session_id() const {
+  return _impl_.session_id_.Get();
+}
+inline void UdpPortRegisterRequest::_internal_set_session_id(const std::string& value) {
+  
+  _impl_.session_id_.Set(value, GetArenaForAllocation());
+}
+inline std::string* UdpPortRegisterRequest::_internal_mutable_session_id() {
+  
+  return _impl_.session_id_.Mutable(GetArenaForAllocation());
+}
+inline std::string* UdpPortRegisterRequest::release_session_id() {
+  // @@protoc_insertion_point(field_release:yy.protocol.core.UdpPortRegisterRequest.session_id)
+  return _impl_.session_id_.Release();
+}
+inline void UdpPortRegisterRequest::set_allocated_session_id(std::string* session_id) {
+  if (session_id != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.session_id_.SetAllocated(session_id, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.session_id_.IsDefault()) {
+    _impl_.session_id_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:yy.protocol.core.UdpPortRegisterRequest.session_id)
+}
+
+// string client_udp_ip = 2;
+inline void UdpPortRegisterRequest::clear_client_udp_ip() {
+  _impl_.client_udp_ip_.ClearToEmpty();
+}
+inline const std::string& UdpPortRegisterRequest::client_udp_ip() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.core.UdpPortRegisterRequest.client_udp_ip)
+  return _internal_client_udp_ip();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void UdpPortRegisterRequest::set_client_udp_ip(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.client_udp_ip_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:yy.protocol.core.UdpPortRegisterRequest.client_udp_ip)
+}
+inline std::string* UdpPortRegisterRequest::mutable_client_udp_ip() {
+  std::string* _s = _internal_mutable_client_udp_ip();
+  // @@protoc_insertion_point(field_mutable:yy.protocol.core.UdpPortRegisterRequest.client_udp_ip)
+  return _s;
+}
+inline const std::string& UdpPortRegisterRequest::_internal_client_udp_ip() const {
+  return _impl_.client_udp_ip_.Get();
+}
+inline void UdpPortRegisterRequest::_internal_set_client_udp_ip(const std::string& value) {
+  
+  _impl_.client_udp_ip_.Set(value, GetArenaForAllocation());
+}
+inline std::string* UdpPortRegisterRequest::_internal_mutable_client_udp_ip() {
+  
+  return _impl_.client_udp_ip_.Mutable(GetArenaForAllocation());
+}
+inline std::string* UdpPortRegisterRequest::release_client_udp_ip() {
+  // @@protoc_insertion_point(field_release:yy.protocol.core.UdpPortRegisterRequest.client_udp_ip)
+  return _impl_.client_udp_ip_.Release();
+}
+inline void UdpPortRegisterRequest::set_allocated_client_udp_ip(std::string* client_udp_ip) {
+  if (client_udp_ip != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.client_udp_ip_.SetAllocated(client_udp_ip, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.client_udp_ip_.IsDefault()) {
+    _impl_.client_udp_ip_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:yy.protocol.core.UdpPortRegisterRequest.client_udp_ip)
+}
+
+// uint32 client_udp_port = 3;
+inline void UdpPortRegisterRequest::clear_client_udp_port() {
+  _impl_.client_udp_port_ = 0u;
+}
+inline uint32_t UdpPortRegisterRequest::_internal_client_udp_port() const {
+  return _impl_.client_udp_port_;
+}
+inline uint32_t UdpPortRegisterRequest::client_udp_port() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.core.UdpPortRegisterRequest.client_udp_port)
+  return _internal_client_udp_port();
+}
+inline void UdpPortRegisterRequest::_internal_set_client_udp_port(uint32_t value) {
+  
+  _impl_.client_udp_port_ = value;
+}
+inline void UdpPortRegisterRequest::set_client_udp_port(uint32_t value) {
+  _internal_set_client_udp_port(value);
+  // @@protoc_insertion_point(field_set:yy.protocol.core.UdpPortRegisterRequest.client_udp_port)
+}
+
+// -------------------------------------------------------------------
+
+// UdpPortRegisterResponse
+
+// .yy.protocol.core.UdpPortRegisterResponse.Status status = 1;
+inline void UdpPortRegisterResponse::clear_status() {
+  _impl_.status_ = 0;
+}
+inline ::yy::protocol::core::UdpPortRegisterResponse_Status UdpPortRegisterResponse::_internal_status() const {
+  return static_cast< ::yy::protocol::core::UdpPortRegisterResponse_Status >(_impl_.status_);
+}
+inline ::yy::protocol::core::UdpPortRegisterResponse_Status UdpPortRegisterResponse::status() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.core.UdpPortRegisterResponse.status)
+  return _internal_status();
+}
+inline void UdpPortRegisterResponse::_internal_set_status(::yy::protocol::core::UdpPortRegisterResponse_Status value) {
+  
+  _impl_.status_ = value;
+}
+inline void UdpPortRegisterResponse::set_status(::yy::protocol::core::UdpPortRegisterResponse_Status value) {
+  _internal_set_status(value);
+  // @@protoc_insertion_point(field_set:yy.protocol.core.UdpPortRegisterResponse.status)
 }
 
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------
@@ -949,10 +1570,15 @@ inline void ResultBody::set_allocated_conn_id(std::string* conn_id) {
 
 PROTOBUF_NAMESPACE_OPEN
 
-template <> struct is_proto_enum< ::yy::protocol::core::ResultCode> : ::std::true_type {};
+template <> struct is_proto_enum< ::yy::protocol::core::ResultBody_ResultCode> : ::std::true_type {};
 template <>
-inline const EnumDescriptor* GetEnumDescriptor< ::yy::protocol::core::ResultCode>() {
-  return ::yy::protocol::core::ResultCode_descriptor();
+inline const EnumDescriptor* GetEnumDescriptor< ::yy::protocol::core::ResultBody_ResultCode>() {
+  return ::yy::protocol::core::ResultBody_ResultCode_descriptor();
+}
+template <> struct is_proto_enum< ::yy::protocol::core::UdpPortRegisterResponse_Status> : ::std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::yy::protocol::core::UdpPortRegisterResponse_Status>() {
+  return ::yy::protocol::core::UdpPortRegisterResponse_Status_descriptor();
 }
 
 PROTOBUF_NAMESPACE_CLOSE

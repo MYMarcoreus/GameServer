@@ -52,15 +52,15 @@ public:
 
 
     ///Region GETTER
-    const std::string &    GetName()          const { return m_name; }
-    EventLoop *            GetIOLoop()        const { return m_ioLoop; }
-    const IPAddress::ptr & GetLocalAddr()     const { return m_localAddr; }
-    const IPAddress::ptr & GetPeerAddr()      const { return m_peerAddr; }
-    Timestamp              GetConnectedTime() const { return m_connectedTime; }
-    Timestamp              GetShudownTime()   const { return m_shudownTime; }
-    Timestamp              GetHeartTime()     const { return m_heartTime; }
-    uint8_t                GetXorCode()       const { return m_xorCode; }
-    int                    GetSocketFD()      const ;
+    const std::string &         GetName()          const { return m_name; }
+    EventLoop *                 GetIOLoop()        const { return m_ioLoop; }
+    const IPAddress::ptr &      GetLocalAddr()     const { return m_localAddr; }
+    const IPAddress::ptr &      GetPeerAddr()      const { return m_peerAddr; }
+    Timestamp                   GetConnectedTime() const { return m_connectedTime; }
+    Timestamp                   GetShudownTime()   const { return m_shudownTime; }
+    Timestamp                   GetHeartTime()     const { return m_heartTime; }
+    uint8_t                     GetXorCode()       const { return m_xorCode; }
+    SocketApiWrapper::socket_t  GetSocketFD()      const ;
     bool  IsConnected()    { return m_connectionState == eConnected; }
     bool  IsConnecting()   { return m_connectionState == eConnecting; }
     bool  IsDisconnected() { return m_connectionState == eDisconnected; }

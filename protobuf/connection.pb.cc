@@ -66,8 +66,9 @@ PROTOBUF_CONSTEXPR ResultBody::ResultBody(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_._has_bits_)*/{}
   , /*decltype(_impl_._cached_size_)*/{}
-  , /*decltype(_impl_.conn_id_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
-  , /*decltype(_impl_.result_code_)*/0} {}
+  , /*decltype(_impl_.session_id_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_.result_code_)*/0
+  , /*decltype(_impl_.server_udp_port_)*/0u} {}
 struct ResultBodyDefaultTypeInternal {
   PROTOBUF_CONSTEXPR ResultBodyDefaultTypeInternal()
       : _instance(::_pbi::ConstantInitialized{}) {}
@@ -77,11 +78,39 @@ struct ResultBodyDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ResultBodyDefaultTypeInternal _ResultBody_default_instance_;
+PROTOBUF_CONSTEXPR UdpPortRegisterRequest::UdpPortRegisterRequest(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.session_id_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_.client_udp_ip_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_.client_udp_port_)*/0u
+  , /*decltype(_impl_._cached_size_)*/{}} {}
+struct UdpPortRegisterRequestDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR UdpPortRegisterRequestDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
+  ~UdpPortRegisterRequestDefaultTypeInternal() {}
+  union {
+    UdpPortRegisterRequest _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 UdpPortRegisterRequestDefaultTypeInternal _UdpPortRegisterRequest_default_instance_;
+PROTOBUF_CONSTEXPR UdpPortRegisterResponse::UdpPortRegisterResponse(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.status_)*/0
+  , /*decltype(_impl_._cached_size_)*/{}} {}
+struct UdpPortRegisterResponseDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR UdpPortRegisterResponseDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
+  ~UdpPortRegisterResponseDefaultTypeInternal() {}
+  union {
+    UdpPortRegisterResponse _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 UdpPortRegisterResponseDefaultTypeInternal _UdpPortRegisterResponse_default_instance_;
 }  // namespace core
 }  // namespace protocol
 }  // namespace yy
-static ::_pb::Metadata file_level_metadata_connection_2eproto[4];
-static const ::_pb::EnumDescriptor* file_level_enum_descriptors_connection_2eproto[1];
+static ::_pb::Metadata file_level_metadata_connection_2eproto[6];
+static const ::_pb::EnumDescriptor* file_level_enum_descriptors_connection_2eproto[2];
 static constexpr ::_pb::ServiceDescriptor const** file_level_service_descriptors_connection_2eproto = nullptr;
 
 const uint32_t TableStruct_connection_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
@@ -114,15 +143,35 @@ const uint32_t TableStruct_connection_2eproto::offsets[] PROTOBUF_SECTION_VARIAB
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
   PROTOBUF_FIELD_OFFSET(::yy::protocol::core::ResultBody, _impl_.result_code_),
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::core::ResultBody, _impl_.conn_id_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::core::ResultBody, _impl_.server_udp_port_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::core::ResultBody, _impl_.session_id_),
   ~0u,
+  1,
   0,
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::core::UdpPortRegisterRequest, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::core::UdpPortRegisterRequest, _impl_.session_id_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::core::UdpPortRegisterRequest, _impl_.client_udp_ip_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::core::UdpPortRegisterRequest, _impl_.client_udp_port_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::core::UdpPortRegisterResponse, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::core::UdpPortRegisterResponse, _impl_.status_),
 };
 static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::yy::protocol::core::XorBody)},
   { 7, -1, -1, sizeof(::yy::protocol::core::HeartBody)},
   { 13, -1, -1, sizeof(::yy::protocol::core::SecurityBody)},
-  { 22, 30, -1, sizeof(::yy::protocol::core::ResultBody)},
+  { 22, 31, -1, sizeof(::yy::protocol::core::ResultBody)},
+  { 34, -1, -1, sizeof(::yy::protocol::core::UdpPortRegisterRequest)},
+  { 43, -1, -1, sizeof(::yy::protocol::core::UdpPortRegisterResponse)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -130,24 +179,33 @@ static const ::_pb::Message* const file_default_instances[] = {
   &::yy::protocol::core::_HeartBody_default_instance_._instance,
   &::yy::protocol::core::_SecurityBody_default_instance_._instance,
   &::yy::protocol::core::_ResultBody_default_instance_._instance,
+  &::yy::protocol::core::_UdpPortRegisterRequest_default_instance_._instance,
+  &::yy::protocol::core::_UdpPortRegisterResponse_default_instance_._instance,
 };
 
 const char descriptor_table_protodef_connection_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
   "\n\020connection.proto\022\020yy.protocol.core\"\033\n\007"
   "XorBody\022\020\n\010xor_code\030\001 \001(\r\"\013\n\tHeartBody\"D"
   "\n\014SecurityBody\022\016\n\006app_id\030\001 \001(\r\022\023\n\013app_ve"
-  "rsion\030\002 \001(\r\022\017\n\007app_md5\030\003 \001(\t\"a\n\nResultBo"
-  "dy\0221\n\013result_code\030\001 \001(\0162\034.yy.protocol.co"
-  "re.ResultCode\022\024\n\007conn_id\030\002 \001(\tH\000\210\001\001B\n\n\010_"
-  "conn_id*A\n\nResultCode\022\014\n\010eSuccess\020\000\022\025\n\021e"
-  "AppVersionFailed\020\001\022\016\n\neMd5Failed\020\002b\006prot"
-  "o3"
+  "rsion\030\002 \001(\r\022\017\n\007app_md5\030\003 \001(\t\"\347\001\n\nResultB"
+  "ody\022<\n\013result_code\030\001 \001(\0162\'.yy.protocol.c"
+  "ore.ResultBody.ResultCode\022\034\n\017server_udp_"
+  "port\030\002 \001(\rH\000\210\001\001\022\027\n\nsession_id\030\003 \001(\tH\001\210\001\001"
+  "\"A\n\nResultCode\022\014\n\010eSuccess\020\000\022\025\n\021eAppVers"
+  "ionFailed\020\001\022\016\n\neMd5Failed\020\002B\022\n\020_server_u"
+  "dp_portB\r\n\013_session_id\"\\\n\026UdpPortRegiste"
+  "rRequest\022\022\n\nsession_id\030\001 \001(\t\022\025\n\rclient_u"
+  "dp_ip\030\002 \001(\t\022\027\n\017client_udp_port\030\003 \001(\r\"\231\001\n"
+  "\027UdpPortRegisterResponse\022@\n\006status\030\001 \001(\016"
+  "20.yy.protocol.core.UdpPortRegisterRespo"
+  "nse.Status\"<\n\006Status\022\014\n\010eSuccess\020\000\022\020\n\014eI"
+  "nvalidPort\020\001\022\022\n\016eDuplicatePort\020\002b\006proto3"
   ;
 static ::_pbi::once_flag descriptor_table_connection_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_connection_2eproto = {
-    false, false, 322, descriptor_table_protodef_connection_2eproto,
+    false, false, 640, descriptor_table_protodef_connection_2eproto,
     "connection.proto",
-    &descriptor_table_connection_2eproto_once, nullptr, 0, 4,
+    &descriptor_table_connection_2eproto_once, nullptr, 0, 6,
     schemas, file_default_instances, TableStruct_connection_2eproto::offsets,
     file_level_metadata_connection_2eproto, file_level_enum_descriptors_connection_2eproto,
     file_level_service_descriptors_connection_2eproto,
@@ -161,11 +219,11 @@ PROTOBUF_ATTRIBUTE_INIT_PRIORITY2 static ::_pbi::AddDescriptorsRunner dynamic_in
 namespace yy {
 namespace protocol {
 namespace core {
-const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ResultCode_descriptor() {
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ResultBody_ResultCode_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_connection_2eproto);
   return file_level_enum_descriptors_connection_2eproto[0];
 }
-bool ResultCode_IsValid(int value) {
+bool ResultBody_ResultCode_IsValid(int value) {
   switch (value) {
     case 0:
     case 1:
@@ -176,6 +234,37 @@ bool ResultCode_IsValid(int value) {
   }
 }
 
+#if (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
+constexpr ResultBody_ResultCode ResultBody::eSuccess;
+constexpr ResultBody_ResultCode ResultBody::eAppVersionFailed;
+constexpr ResultBody_ResultCode ResultBody::eMd5Failed;
+constexpr ResultBody_ResultCode ResultBody::ResultCode_MIN;
+constexpr ResultBody_ResultCode ResultBody::ResultCode_MAX;
+constexpr int ResultBody::ResultCode_ARRAYSIZE;
+#endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* UdpPortRegisterResponse_Status_descriptor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_connection_2eproto);
+  return file_level_enum_descriptors_connection_2eproto[1];
+}
+bool UdpPortRegisterResponse_Status_IsValid(int value) {
+  switch (value) {
+    case 0:
+    case 1:
+    case 2:
+      return true;
+    default:
+      return false;
+  }
+}
+
+#if (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
+constexpr UdpPortRegisterResponse_Status UdpPortRegisterResponse::eSuccess;
+constexpr UdpPortRegisterResponse_Status UdpPortRegisterResponse::eInvalidPort;
+constexpr UdpPortRegisterResponse_Status UdpPortRegisterResponse::eDuplicatePort;
+constexpr UdpPortRegisterResponse_Status UdpPortRegisterResponse::Status_MIN;
+constexpr UdpPortRegisterResponse_Status UdpPortRegisterResponse::Status_MAX;
+constexpr int UdpPortRegisterResponse::Status_ARRAYSIZE;
+#endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 
 // ===================================================================
 
@@ -663,7 +752,10 @@ void SecurityBody::InternalSwap(SecurityBody* other) {
 class ResultBody::_Internal {
  public:
   using HasBits = decltype(std::declval<ResultBody>()._impl_._has_bits_);
-  static void set_has_conn_id(HasBits* has_bits) {
+  static void set_has_server_udp_port(HasBits* has_bits) {
+    (*has_bits)[0] |= 2u;
+  }
+  static void set_has_session_id(HasBits* has_bits) {
     (*has_bits)[0] |= 1u;
   }
 };
@@ -680,19 +772,22 @@ ResultBody::ResultBody(const ResultBody& from)
   new (&_impl_) Impl_{
       decltype(_impl_._has_bits_){from._impl_._has_bits_}
     , /*decltype(_impl_._cached_size_)*/{}
-    , decltype(_impl_.conn_id_){}
-    , decltype(_impl_.result_code_){}};
+    , decltype(_impl_.session_id_){}
+    , decltype(_impl_.result_code_){}
+    , decltype(_impl_.server_udp_port_){}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  _impl_.conn_id_.InitDefault();
+  _impl_.session_id_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-    _impl_.conn_id_.Set("", GetArenaForAllocation());
+    _impl_.session_id_.Set("", GetArenaForAllocation());
   #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (from._internal_has_conn_id()) {
-    _this->_impl_.conn_id_.Set(from._internal_conn_id(), 
+  if (from._internal_has_session_id()) {
+    _this->_impl_.session_id_.Set(from._internal_session_id(), 
       _this->GetArenaForAllocation());
   }
-  _this->_impl_.result_code_ = from._impl_.result_code_;
+  ::memcpy(&_impl_.result_code_, &from._impl_.result_code_,
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.server_udp_port_) -
+    reinterpret_cast<char*>(&_impl_.result_code_)) + sizeof(_impl_.server_udp_port_));
   // @@protoc_insertion_point(copy_constructor:yy.protocol.core.ResultBody)
 }
 
@@ -703,12 +798,13 @@ inline void ResultBody::SharedCtor(
   new (&_impl_) Impl_{
       decltype(_impl_._has_bits_){}
     , /*decltype(_impl_._cached_size_)*/{}
-    , decltype(_impl_.conn_id_){}
+    , decltype(_impl_.session_id_){}
     , decltype(_impl_.result_code_){0}
+    , decltype(_impl_.server_udp_port_){0u}
   };
-  _impl_.conn_id_.InitDefault();
+  _impl_.session_id_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-    _impl_.conn_id_.Set("", GetArenaForAllocation());
+    _impl_.session_id_.Set("", GetArenaForAllocation());
   #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
 }
 
@@ -723,7 +819,7 @@ ResultBody::~ResultBody() {
 
 inline void ResultBody::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
-  _impl_.conn_id_.Destroy();
+  _impl_.session_id_.Destroy();
 }
 
 void ResultBody::SetCachedSize(int size) const {
@@ -738,9 +834,10 @@ void ResultBody::Clear() {
 
   cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x00000001u) {
-    _impl_.conn_id_.ClearNonDefaultToEmpty();
+    _impl_.session_id_.ClearNonDefaultToEmpty();
   }
   _impl_.result_code_ = 0;
+  _impl_.server_udp_port_ = 0u;
   _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
@@ -752,22 +849,31 @@ const char* ResultBody::_InternalParse(const char* ptr, ::_pbi::ParseContext* ct
     uint32_t tag;
     ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // .yy.protocol.core.ResultCode result_code = 1;
+      // .yy.protocol.core.ResultBody.ResultCode result_code = 1;
       case 1:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
           uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
-          _internal_set_result_code(static_cast<::yy::protocol::core::ResultCode>(val));
+          _internal_set_result_code(static_cast<::yy::protocol::core::ResultBody_ResultCode>(val));
         } else
           goto handle_unusual;
         continue;
-      // optional string conn_id = 2;
+      // optional uint32 server_udp_port = 2;
       case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
-          auto str = _internal_mutable_conn_id();
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
+          _Internal::set_has_server_udp_port(&has_bits);
+          _impl_.server_udp_port_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // optional string session_id = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
+          auto str = _internal_mutable_session_id();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
-          CHK_(::_pbi::VerifyUTF8(str, "yy.protocol.core.ResultBody.conn_id"));
+          CHK_(::_pbi::VerifyUTF8(str, "yy.protocol.core.ResultBody.session_id"));
         } else
           goto handle_unusual;
         continue;
@@ -801,21 +907,27 @@ uint8_t* ResultBody::_InternalSerialize(
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // .yy.protocol.core.ResultCode result_code = 1;
+  // .yy.protocol.core.ResultBody.ResultCode result_code = 1;
   if (this->_internal_result_code() != 0) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteEnumToArray(
       1, this->_internal_result_code(), target);
   }
 
-  // optional string conn_id = 2;
-  if (_internal_has_conn_id()) {
+  // optional uint32 server_udp_port = 2;
+  if (_internal_has_server_udp_port()) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteUInt32ToArray(2, this->_internal_server_udp_port(), target);
+  }
+
+  // optional string session_id = 3;
+  if (_internal_has_session_id()) {
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-      this->_internal_conn_id().data(), static_cast<int>(this->_internal_conn_id().length()),
+      this->_internal_session_id().data(), static_cast<int>(this->_internal_session_id().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "yy.protocol.core.ResultBody.conn_id");
+      "yy.protocol.core.ResultBody.session_id");
     target = stream->WriteStringMaybeAliased(
-        2, this->_internal_conn_id(), target);
+        3, this->_internal_session_id(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -834,18 +946,23 @@ size_t ResultBody::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // optional string conn_id = 2;
+  // optional string session_id = 3;
   cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x00000001u) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-        this->_internal_conn_id());
+        this->_internal_session_id());
   }
 
-  // .yy.protocol.core.ResultCode result_code = 1;
+  // .yy.protocol.core.ResultBody.ResultCode result_code = 1;
   if (this->_internal_result_code() != 0) {
     total_size += 1 +
       ::_pbi::WireFormatLite::EnumSize(this->_internal_result_code());
+  }
+
+  // optional uint32 server_udp_port = 2;
+  if (cached_has_bits & 0x00000002u) {
+    total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_server_udp_port());
   }
 
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
@@ -866,11 +983,14 @@ void ResultBody::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PRO
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (from._internal_has_conn_id()) {
-    _this->_internal_set_conn_id(from._internal_conn_id());
+  if (from._internal_has_session_id()) {
+    _this->_internal_set_session_id(from._internal_session_id());
   }
   if (from._internal_result_code() != 0) {
     _this->_internal_set_result_code(from._internal_result_code());
+  }
+  if (from._internal_has_server_udp_port()) {
+    _this->_internal_set_server_udp_port(from._internal_server_udp_port());
   }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
@@ -893,16 +1013,482 @@ void ResultBody::InternalSwap(ResultBody* other) {
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
-      &_impl_.conn_id_, lhs_arena,
-      &other->_impl_.conn_id_, rhs_arena
+      &_impl_.session_id_, lhs_arena,
+      &other->_impl_.session_id_, rhs_arena
   );
-  swap(_impl_.result_code_, other->_impl_.result_code_);
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(ResultBody, _impl_.server_udp_port_)
+      + sizeof(ResultBody::_impl_.server_udp_port_)
+      - PROTOBUF_FIELD_OFFSET(ResultBody, _impl_.result_code_)>(
+          reinterpret_cast<char*>(&_impl_.result_code_),
+          reinterpret_cast<char*>(&other->_impl_.result_code_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata ResultBody::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_connection_2eproto_getter, &descriptor_table_connection_2eproto_once,
       file_level_metadata_connection_2eproto[3]);
+}
+
+// ===================================================================
+
+class UdpPortRegisterRequest::_Internal {
+ public:
+};
+
+UdpPortRegisterRequest::UdpPortRegisterRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor(arena, is_message_owned);
+  // @@protoc_insertion_point(arena_constructor:yy.protocol.core.UdpPortRegisterRequest)
+}
+UdpPortRegisterRequest::UdpPortRegisterRequest(const UdpPortRegisterRequest& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  UdpPortRegisterRequest* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.session_id_){}
+    , decltype(_impl_.client_udp_ip_){}
+    , decltype(_impl_.client_udp_port_){}
+    , /*decltype(_impl_._cached_size_)*/{}};
+
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _impl_.session_id_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.session_id_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_session_id().empty()) {
+    _this->_impl_.session_id_.Set(from._internal_session_id(), 
+      _this->GetArenaForAllocation());
+  }
+  _impl_.client_udp_ip_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.client_udp_ip_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_client_udp_ip().empty()) {
+    _this->_impl_.client_udp_ip_.Set(from._internal_client_udp_ip(), 
+      _this->GetArenaForAllocation());
+  }
+  _this->_impl_.client_udp_port_ = from._impl_.client_udp_port_;
+  // @@protoc_insertion_point(copy_constructor:yy.protocol.core.UdpPortRegisterRequest)
+}
+
+inline void UdpPortRegisterRequest::SharedCtor(
+    ::_pb::Arena* arena, bool is_message_owned) {
+  (void)arena;
+  (void)is_message_owned;
+  new (&_impl_) Impl_{
+      decltype(_impl_.session_id_){}
+    , decltype(_impl_.client_udp_ip_){}
+    , decltype(_impl_.client_udp_port_){0u}
+    , /*decltype(_impl_._cached_size_)*/{}
+  };
+  _impl_.session_id_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.session_id_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  _impl_.client_udp_ip_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.client_udp_ip_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+}
+
+UdpPortRegisterRequest::~UdpPortRegisterRequest() {
+  // @@protoc_insertion_point(destructor:yy.protocol.core.UdpPortRegisterRequest)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
+  SharedDtor();
+}
+
+inline void UdpPortRegisterRequest::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_.session_id_.Destroy();
+  _impl_.client_udp_ip_.Destroy();
+}
+
+void UdpPortRegisterRequest::SetCachedSize(int size) const {
+  _impl_._cached_size_.Set(size);
+}
+
+void UdpPortRegisterRequest::Clear() {
+// @@protoc_insertion_point(message_clear_start:yy.protocol.core.UdpPortRegisterRequest)
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  _impl_.session_id_.ClearToEmpty();
+  _impl_.client_udp_ip_.ClearToEmpty();
+  _impl_.client_udp_port_ = 0u;
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* UdpPortRegisterRequest::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // string session_id = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
+          auto str = _internal_mutable_session_id();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "yy.protocol.core.UdpPortRegisterRequest.session_id"));
+        } else
+          goto handle_unusual;
+        continue;
+      // string client_udp_ip = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
+          auto str = _internal_mutable_client_udp_ip();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "yy.protocol.core.UdpPortRegisterRequest.client_udp_ip"));
+        } else
+          goto handle_unusual;
+        continue;
+      // uint32 client_udp_port = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 24)) {
+          _impl_.client_udp_port_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+uint8_t* UdpPortRegisterRequest::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:yy.protocol.core.UdpPortRegisterRequest)
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string session_id = 1;
+  if (!this->_internal_session_id().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_session_id().data(), static_cast<int>(this->_internal_session_id().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "yy.protocol.core.UdpPortRegisterRequest.session_id");
+    target = stream->WriteStringMaybeAliased(
+        1, this->_internal_session_id(), target);
+  }
+
+  // string client_udp_ip = 2;
+  if (!this->_internal_client_udp_ip().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_client_udp_ip().data(), static_cast<int>(this->_internal_client_udp_ip().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "yy.protocol.core.UdpPortRegisterRequest.client_udp_ip");
+    target = stream->WriteStringMaybeAliased(
+        2, this->_internal_client_udp_ip(), target);
+  }
+
+  // uint32 client_udp_port = 3;
+  if (this->_internal_client_udp_port() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteUInt32ToArray(3, this->_internal_client_udp_port(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:yy.protocol.core.UdpPortRegisterRequest)
+  return target;
+}
+
+size_t UdpPortRegisterRequest::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:yy.protocol.core.UdpPortRegisterRequest)
+  size_t total_size = 0;
+
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // string session_id = 1;
+  if (!this->_internal_session_id().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_session_id());
+  }
+
+  // string client_udp_ip = 2;
+  if (!this->_internal_client_udp_ip().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_client_udp_ip());
+  }
+
+  // uint32 client_udp_port = 3;
+  if (this->_internal_client_udp_port() != 0) {
+    total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_client_udp_port());
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData UdpPortRegisterRequest::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    UdpPortRegisterRequest::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*UdpPortRegisterRequest::GetClassData() const { return &_class_data_; }
+
+
+void UdpPortRegisterRequest::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<UdpPortRegisterRequest*>(&to_msg);
+  auto& from = static_cast<const UdpPortRegisterRequest&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:yy.protocol.core.UdpPortRegisterRequest)
+  GOOGLE_DCHECK_NE(&from, _this);
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (!from._internal_session_id().empty()) {
+    _this->_internal_set_session_id(from._internal_session_id());
+  }
+  if (!from._internal_client_udp_ip().empty()) {
+    _this->_internal_set_client_udp_ip(from._internal_client_udp_ip());
+  }
+  if (from._internal_client_udp_port() != 0) {
+    _this->_internal_set_client_udp_port(from._internal_client_udp_port());
+  }
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void UdpPortRegisterRequest::CopyFrom(const UdpPortRegisterRequest& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:yy.protocol.core.UdpPortRegisterRequest)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool UdpPortRegisterRequest::IsInitialized() const {
+  return true;
+}
+
+void UdpPortRegisterRequest::InternalSwap(UdpPortRegisterRequest* other) {
+  using std::swap;
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.session_id_, lhs_arena,
+      &other->_impl_.session_id_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.client_udp_ip_, lhs_arena,
+      &other->_impl_.client_udp_ip_, rhs_arena
+  );
+  swap(_impl_.client_udp_port_, other->_impl_.client_udp_port_);
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata UdpPortRegisterRequest::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_connection_2eproto_getter, &descriptor_table_connection_2eproto_once,
+      file_level_metadata_connection_2eproto[4]);
+}
+
+// ===================================================================
+
+class UdpPortRegisterResponse::_Internal {
+ public:
+};
+
+UdpPortRegisterResponse::UdpPortRegisterResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor(arena, is_message_owned);
+  // @@protoc_insertion_point(arena_constructor:yy.protocol.core.UdpPortRegisterResponse)
+}
+UdpPortRegisterResponse::UdpPortRegisterResponse(const UdpPortRegisterResponse& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  UdpPortRegisterResponse* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.status_){}
+    , /*decltype(_impl_._cached_size_)*/{}};
+
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _this->_impl_.status_ = from._impl_.status_;
+  // @@protoc_insertion_point(copy_constructor:yy.protocol.core.UdpPortRegisterResponse)
+}
+
+inline void UdpPortRegisterResponse::SharedCtor(
+    ::_pb::Arena* arena, bool is_message_owned) {
+  (void)arena;
+  (void)is_message_owned;
+  new (&_impl_) Impl_{
+      decltype(_impl_.status_){0}
+    , /*decltype(_impl_._cached_size_)*/{}
+  };
+}
+
+UdpPortRegisterResponse::~UdpPortRegisterResponse() {
+  // @@protoc_insertion_point(destructor:yy.protocol.core.UdpPortRegisterResponse)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
+  SharedDtor();
+}
+
+inline void UdpPortRegisterResponse::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+}
+
+void UdpPortRegisterResponse::SetCachedSize(int size) const {
+  _impl_._cached_size_.Set(size);
+}
+
+void UdpPortRegisterResponse::Clear() {
+// @@protoc_insertion_point(message_clear_start:yy.protocol.core.UdpPortRegisterResponse)
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  _impl_.status_ = 0;
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* UdpPortRegisterResponse::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // .yy.protocol.core.UdpPortRegisterResponse.Status status = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_status(static_cast<::yy::protocol::core::UdpPortRegisterResponse_Status>(val));
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+uint8_t* UdpPortRegisterResponse::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:yy.protocol.core.UdpPortRegisterResponse)
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // .yy.protocol.core.UdpPortRegisterResponse.Status status = 1;
+  if (this->_internal_status() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+      1, this->_internal_status(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:yy.protocol.core.UdpPortRegisterResponse)
+  return target;
+}
+
+size_t UdpPortRegisterResponse::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:yy.protocol.core.UdpPortRegisterResponse)
+  size_t total_size = 0;
+
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // .yy.protocol.core.UdpPortRegisterResponse.Status status = 1;
+  if (this->_internal_status() != 0) {
+    total_size += 1 +
+      ::_pbi::WireFormatLite::EnumSize(this->_internal_status());
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData UdpPortRegisterResponse::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    UdpPortRegisterResponse::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*UdpPortRegisterResponse::GetClassData() const { return &_class_data_; }
+
+
+void UdpPortRegisterResponse::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<UdpPortRegisterResponse*>(&to_msg);
+  auto& from = static_cast<const UdpPortRegisterResponse&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:yy.protocol.core.UdpPortRegisterResponse)
+  GOOGLE_DCHECK_NE(&from, _this);
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from._internal_status() != 0) {
+    _this->_internal_set_status(from._internal_status());
+  }
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void UdpPortRegisterResponse::CopyFrom(const UdpPortRegisterResponse& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:yy.protocol.core.UdpPortRegisterResponse)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool UdpPortRegisterResponse::IsInitialized() const {
+  return true;
+}
+
+void UdpPortRegisterResponse::InternalSwap(UdpPortRegisterResponse* other) {
+  using std::swap;
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  swap(_impl_.status_, other->_impl_.status_);
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata UdpPortRegisterResponse::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_connection_2eproto_getter, &descriptor_table_connection_2eproto_once,
+      file_level_metadata_connection_2eproto[5]);
 }
 
 // @@protoc_insertion_point(namespace_scope)
@@ -925,6 +1511,14 @@ Arena::CreateMaybeMessage< ::yy::protocol::core::SecurityBody >(Arena* arena) {
 template<> PROTOBUF_NOINLINE ::yy::protocol::core::ResultBody*
 Arena::CreateMaybeMessage< ::yy::protocol::core::ResultBody >(Arena* arena) {
   return Arena::CreateMessageInternal< ::yy::protocol::core::ResultBody >(arena);
+}
+template<> PROTOBUF_NOINLINE ::yy::protocol::core::UdpPortRegisterRequest*
+Arena::CreateMaybeMessage< ::yy::protocol::core::UdpPortRegisterRequest >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::yy::protocol::core::UdpPortRegisterRequest >(arena);
+}
+template<> PROTOBUF_NOINLINE ::yy::protocol::core::UdpPortRegisterResponse*
+Arena::CreateMaybeMessage< ::yy::protocol::core::UdpPortRegisterResponse >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::yy::protocol::core::UdpPortRegisterResponse >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
 

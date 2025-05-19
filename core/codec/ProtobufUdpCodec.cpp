@@ -86,6 +86,9 @@ void ProtobufUdpCodec::OnData(const UdpSessionPtr & udpSession, Buffer & buf) {
 }
 
 void ProtobufUdpCodec::SendUDP(const UdpSessionPtr &udpSession, const google::protobuf::Message & message) {
+    if(udpSession == nullptr)
+        return;
+
     //! 设置消息头
     MessageHeader header{message};
 

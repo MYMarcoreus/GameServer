@@ -5,6 +5,7 @@
 #include "log.h"
 #include <algorithm>
 #include <google/protobuf/message.h>
+#include <array>
 
 namespace yy::core {
 
@@ -63,9 +64,10 @@ MessageParseErrorCode MessageHeader::ParseFromBuffer(net::Buffer &buf, uint8_t x
     /*! 读入数据，边读边解密 !*/
     int peekedLen = 0;
     /**** CheckCode ****/
-    buf.PeekToCBuffer(0, m_CheckCode, sizeof m_CheckCode);
-    strncpy(m_CheckCode, XorCheckCode(xorCode).c_str(), sizeof(m_CheckCode));
-    if(strncmp(m_CheckCode, config::g_app_config->GetValue().check_code(), sizeof(m_CheckCode)) != 0) {
+    buf.PeekToCBuffer(0, m_CheckCode.data(), sizeof m_CheckCode);
+    m_CheckCode[0] ^= xorCode;
+    m_CheckCode[1] ^= xorCode;
+    if(not std::equal(m_CheckCode.begin(), m_CheckCode.end(), config::g_app_config->GetValue().check_code())) {
         return MessageParseErrorCode::eInvalidCheckCode;
     }
     peekedLen += sizeof(m_CheckCode);
@@ -96,8 +98,11 @@ MessageParseErrorCode MessageHeader::ParseFromBuffer(net::Buffer &buf, uint8_t x
     }
     peekedLen += m_TypeNameLength;
 
-
-    YLOG_TRACE("收到消息头<{}>：[{}][{}][{}][{}]", CalcHeaderLen(), m_CheckCode, m_FullLength, m_TypeNameLength, m_TypeName);
+    YLOG_TRACE("收到消息头<{}>：[{}][{}][{}][{}]", CalcHeaderLen(),
+               std::string_view{m_CheckCode.data(), m_CheckCode.size()},
+               m_FullLength,
+               m_TypeNameLength,
+               m_TypeName);
 
     //! Peek成功，移动Head
     buf.PopData(CalcHeaderLen());
@@ -110,7 +115,7 @@ bool MessageHeader::AppendIntoBuffer(net::Buffer &buf, uint8_t xorCode) {
         return false;
     }
 
-    buf.AppendDataFromCBuffer(XorCheckCode(xorCode).c_str(), sizeof(m_CheckCode)) ;
+    buf.AppendDataFromCBuffer(XorCheckCode(xorCode).data(), sizeof(m_CheckCode)) ;
     buf.AppendDataFromPODStruct(XorFullLength(xorCode)) ;
     buf.AppendDataFromPODStruct(XorNameLength(xorCode)) ;
     buf.AppendDataFromCBuffer(XorTypeName(xorCode).c_str(), m_TypeNameLength);
@@ -138,13 +143,19 @@ void MessageHeader::SetAllFieldsFromMessage(const google::protobuf::Message &mes
 }
 
 
-std::string MessageHeader::XorCheckCode(uint8_t xorCode) { std::string rst = m_CheckCode; rst[0]^=xorCode; rst[1]^=xorCode; return rst; }
+std::array<char, MessageHeader::kCheckCodeSize>
+MessageHeader::XorCheckCode(uint8_t xorCode) const {
+    std::array<char, MessageHeader::kCheckCodeSize> result = m_CheckCode;
+    result[0] ^= xorCode;
+    result[1] ^= xorCode;
+    return result;
+}
 
-uint32_t MessageHeader::XorFullLength(uint8_t xorCode) { return m_FullLength ^ xorCode; }
+uint32_t MessageHeader::XorFullLength(uint8_t xorCode) const { return m_FullLength ^ xorCode; }
 
-uint16_t MessageHeader::XorNameLength(uint8_t xorCode) { return m_TypeNameLength ^ xorCode; }
+uint16_t MessageHeader::XorNameLength(uint8_t xorCode) const { return m_TypeNameLength ^ xorCode; }
 
-std::string MessageHeader::XorTypeName(uint8_t xorCode) {
+std::string MessageHeader::XorTypeName(uint8_t xorCode) const {
     std::string val = m_TypeName;
     std::for_each(std::begin(val), std::end(val), [xorCode](char & ch) { ch ^= xorCode; });
     return val;

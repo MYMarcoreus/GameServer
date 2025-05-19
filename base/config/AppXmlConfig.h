@@ -88,7 +88,7 @@ private:
     int32_t closeDelay{};      // 连接被shutdown后，
 
     char securityCode[20]{};  // md5码加密
-    char checkCode[3]{};      // 游戏协议校验码
+    char checkCode[2]{};      // 游戏协议校验码
 
     uint32_t tcpIOThreadNum{};
     uint32_t udpIOThreadNum{};

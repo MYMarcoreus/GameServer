@@ -89,7 +89,10 @@ void ProtobufTcpCodec::SendTCP(const TcpConnectionPtr &conn, const google::proto
     header.AppendIntoBuffer(buffer, conn->GetXorCode());
 
     YLOG_TRACE("发送消息头<{}>：[{}][{}][{}][{}]", header.CalcHeaderLen(),
-               header.GetCheckCode(), header.GetFullLength(), header.GetTypeNameLength(), header.GetTypeName());
+               std::string_view {header.GetCheckCode().data(), header.kCheckCodeSize},
+               header.GetFullLength(),
+               header.GetTypeNameLength(),
+               header.GetTypeName());
 
 
     //! 填充消息体

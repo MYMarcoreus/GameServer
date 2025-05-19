@@ -5,6 +5,7 @@
 #include <cstdint>
 #include <cstddef>
 #include <random>
+#include <array>
 #include "ProtobufTcpCodec.h"
 #include "SFINAE.h"
 
@@ -27,6 +28,9 @@ namespace yy::core {
 class MessageHeader
 {
 public:
+    static constexpr int kCheckCodeSize = 2;
+
+public:
     MessageHeader() = default;
 
     /// @brief 发送时使用：用message初始化首部字段
@@ -43,7 +47,7 @@ public:
     /// @brief 将*this中的数据加密并序列化后写入Buffer中
     bool AppendIntoBuffer(net::Buffer &buf, uint8_t xorCode);
 
-    std::string GetCheckCode() const { return m_CheckCode; }
+    const auto & GetCheckCode() const { return m_CheckCode; }
 
     ///@brief 消息头+消息体长度
     size_t GetFullLength() const { return m_FullLength; }
@@ -69,17 +73,17 @@ private:
     void SetTypeNameLength(uint16_t     value) { m_TypeNameLength = value; }
     void SetTypeName(std::string typeName) { m_TypeName = typeName; }
 
-    std::string XorCheckCode(uint8_t xorCode);
-    uint32_t    XorFullLength(uint8_t xorCode);
-    uint16_t    XorNameLength(uint8_t xorCode);
-    std::string XorTypeName(uint8_t xorCode);
+    std::array<char, kCheckCodeSize> XorCheckCode(uint8_t xorCode) const;
+    uint32_t    XorFullLength(uint8_t xorCode) const;
+    uint16_t    XorNameLength(uint8_t xorCode) const;
+    std::string XorTypeName(uint8_t xorCode) const;
 
 private:
-    char        m_CheckCode[2];   // 2B: 用于验证该包是否是我们规定的游戏协议包
-    uint32_t    m_FullLength;     // 4B: 指示整个包的长度
-    uint16_t    m_TypeNameLength; // 2B: RPC类型
-    std::string m_TypeName;       // TypeNameLength B：RPC名称
-                                  //... protobuf消息
+    std::array<char, kCheckCodeSize> m_CheckCode;    // 2B: 用于验证该包是否是我们规定的游戏协议包
+    uint32_t    m_FullLength;                // 4B: 指示整个包的长度
+    uint16_t    m_TypeNameLength;            // 2B: RPC类型
+    std::string m_TypeName;                  // TypeNameLength B：RPC名称
+                                             //... protobuf消息
 
 public:
     static constexpr int kMinHeaderLen =

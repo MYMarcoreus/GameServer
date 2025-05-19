@@ -33,7 +33,7 @@ public:
         auto checkCode    = XmlAttributeTo<std::string>(xml_app->FindAttribute("checkCode"));
 
         memcpy(appXmlConfig.securityCode, securityCode.c_str(), 20);
-        memcpy(appXmlConfig.checkCode, checkCode.c_str(), 3);
+        memcpy(appXmlConfig.checkCode, checkCode.c_str(), 2);
 
         return appXmlConfig;
     }

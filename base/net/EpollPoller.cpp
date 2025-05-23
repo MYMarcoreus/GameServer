@@ -3,7 +3,7 @@
 
 
 #include "EpollPoller.h"
-#include "Channel.h"
+#include "IOChannel.h"
 #include "log.h"
 #include "ErrnoSaver.h"
 #include "status/Status.h"
@@ -78,7 +78,7 @@ void EpollPoller::PollWait(ChannelList &activeChannel, std::chrono::milliseconds
     int numEvents = epoll_wait(m_EpollFD, &*m_EpollEventList.begin(),
                                (int) m_EpollEventList.size(),
                                timeout == std::chrono::milliseconds::max() ? -1 : timeout.count());
-    ::yy::util::ErrnoSaver savedErrno;
+    ::yy::util::ErrnoSaver savedErrno{};
     if(numEvents > 0) {
         YLOG_TRACE("epoll_wait() return {} events, m_EpollEventList.size = {}", numEvents, m_EpollEventList.size())
 
@@ -101,27 +101,27 @@ void EpollPoller::PollWait(ChannelList &activeChannel, std::chrono::milliseconds
     }
 }
 
-void EpollPoller::UpdateChannel(Channel * channel) {
+void EpollPoller::UpdateChannel(IOChannel * channel) {
     AssertInLoopingThread();
 
     switch (channel->GetState()) {
-        case Channel::State::eNew:
-        case Channel::State::eDeleted: {
+        case IOChannel::State::eNew:
+        case IOChannel::State::eDeleted: {
             //! 加入channel映射表（注意eDeleted状态的channel仍在映射表中，只是不在epoll监视列表中）
-            if(channel->GetState() == Channel::State::eNew) {
+            if(channel->GetState() == IOChannel::State::eNew) {
                 m_ChannelMap[channel->GetFD()] = channel;
             }
 
             //! 加入epoll监视列表
             SetEpollOperation(channel, EPOLL_CTL_ADD);
-            channel->SetState(Channel::State::eAdded); //* 状态转换: eNew/eDeleted -> eAdded
+            channel->SetState(IOChannel::State::eAdded); //* 状态转换: eNew/eDeleted -> eAdded
             break;
         }
-        case Channel::State::eAdded: {
+        case IOChannel::State::eAdded: {
             if(channel->IsNoneEvent()) {
                 //! 只是从epoll底层数据结构中删除，并不从channel映射表中删除
                 SetEpollOperation(channel, EPOLL_CTL_DEL);
-                channel->SetState(Channel::State::eDeleted); //* 状态转换: eAdded -> eDeleted
+                channel->SetState(IOChannel::State::eDeleted); //* 状态转换: eAdded -> eDeleted
                 YLOG_TRACE("已将Channel<{}>从epoll底层删除，但是仍在channel映射表中", channel->GetFD())
             } else {
                 //! 覆盖原来的事件
@@ -133,14 +133,14 @@ void EpollPoller::UpdateChannel(Channel * channel) {
     }
 }
 
-void EpollPoller::RemoveChannel(Channel * channel) {
+void EpollPoller::RemoveChannel(IOChannel * channel) {
     AssertInLoopingThread();
 
     //! 完全删除channel（不仅从epoll底层数据结构中删除，也从channel映射表中删除）
-    if(channel->GetState() == Channel::State::eAdded) {
+    if(channel->GetState() == IOChannel::State::eAdded) {
         SetEpollOperation(channel, EPOLL_CTL_DEL);
     }
-    channel->SetState(Channel::State::eNew); //* 状态转换: eAdded -> eNew
+    channel->SetState(IOChannel::State::eNew); //* 状态转换: eAdded -> eNew
     m_ChannelMap.erase(channel->GetFD());
     YLOG_TRACE("已完全删除Channel<{}>", channel->GetFD())
 }
@@ -151,13 +151,13 @@ void EpollPoller::FillActiveChannels(ChannelList & activeChannel, int numEvents)
 
         /*! 找到发生了事件的event，找到跟它对应的channel，设置channel发生的事件并将该channel加入activeChannel
          慢一点的方法：使用m_ChannelMap::find()按照happend_event.GetFD()查找m_EpollList， */
-        Channel * channel = static_cast<Channel*>(happend_event.GetHanppededPtr()); //
+        IOChannel * channel = static_cast<IOChannel*>(happend_event.GetHanppededPtr()); //
         channel->SetHappendedEvent(happend_event.GetHanppendEvents());
         activeChannel.push_back(channel);
     }
 }
 
-void EpollPoller::SetEpollOperation(Channel * channel, int EPOLL_CTL_XXX) {
+void EpollPoller::SetEpollOperation(IOChannel * channel, int EPOLL_CTL_XXX) {
     EpollPollerEvent new_event;
     new_event.SetInterestedEvents(channel->GetInterestedEvent());
     new_event.SetInterestedPtr(channel); // 将和fd相关联的channel保存至data.ptr中

@@ -10,6 +10,10 @@
 #include "IPAddress.h"
 #endif
 
+#ifdef ____LINUX
+#include <sys/eventfd.h>
+#endif
+
 namespace yy::net {
 
 using namespace yy::util;
@@ -107,7 +111,7 @@ void WakeupManager::OnNotify() {
 
     uint64_t msg = 1;
 #ifdef ____LINUX
-    auto ret = ::read(wakeupEventFD_.read_fd, &msg, sizeof msg);
+    auto ret = ::read(wakeupEventFD_.wait_fd, &msg, sizeof msg);
     if(ret < 0) {
         YLOG_ERROR("EventLoop::WakeupManager::Read() ::read() error: {}", GetLastErrorInfo())
     }
@@ -127,7 +131,7 @@ void WakeupManager::OnNotify() {
 void WakeupManager::Notify() {
     uint64_t msg = 1;
 #ifdef ____LINUX
-    auto ret = ::write(wakeupEventFD_.write_fd, &msg, sizeof msg);
+    auto ret = ::write(wakeupEventFD_.notify_fd, &msg, sizeof msg);
     if(ret < 0) {
         YLOG_ERROR("EventLoop::WakeupManager::Write ::write() error: {}", GetLastErrorInfo())
     }

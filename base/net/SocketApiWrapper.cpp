@@ -301,7 +301,7 @@ SocketApiWrapper::SocketResult readv(socket_t sockfd, IOV_TYPE *iov, int iovcnt)
     }
 #elif defined(____LINUX)
     auto ret = ::readv(sockfd, iov, iovcnt);
-    return {ret, get_socket_error()};
+    return {ret, get_last_socket_error()};
 #else
     #error Platform not supported
 #endif
@@ -324,11 +324,11 @@ SocketApiWrapper::SocketResult readmsg(socket_t sockfd, IOV_TYPE *iov, int iovcn
     struct msghdr msg = {};
     msg.msg_name = peerAddr->GetRawAddr();
     msg.msg_namelen = peerAddr->GetRawAddrLen();
-    msg.msg_iov = &iov;
+    msg.msg_iov = iov;
     msg.msg_iovlen = iovcnt;
 
     auto ret = ::recvmsg(sockfd, &msg, 0);
-    return {ret, get_socket_error()};
+    return {ret, get_last_socket_error()};
 #else
     #error Platform not supported
 #endif

@@ -46,7 +46,7 @@ int PriorityQueueTimerManager::HandleExpiredTimersInLoop()
 
     Timer* node;
     while (!m_timers.empty()) {
-         node = m_timers.top();
+        node = m_timers.top();
 
         if (net::Timestamp::Now() < node->GetExpireTime())
             break; // 没有到期的timer

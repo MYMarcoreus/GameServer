@@ -16,7 +16,7 @@ namespace yy::net {
 class SignalManager {
 public:
     SignalManager(EventLoop * loop, std::function<void()> handler)
-        : loop_{loop}, channel_(std::make_unique<Channel>(loop_, SignalManager::pipe_.sideR(), "Wakeup Eventfd Channel"))
+        : loop_{loop}, channel_(std::make_unique<IOChannel>(loop_, SignalManager::pipe_.sideR(), "Wakeup Eventfd Channel"))
     {
         // 屏蔽SIGPIPE：当服务器进程向已收到RST的用户套接字执行写操作时，内核会向进程发送SIGPIPE信号来结束进程
         util::set_signal_ignore(SIGPIPE);
@@ -49,7 +49,7 @@ public:
 
 private:
     EventLoop * loop_;
-    std::unique_ptr<Channel> channel_;
+    std::unique_ptr<IOChannel> channel_;
 };
 
 FullDuplexPipe SignalManager::pipe_{};

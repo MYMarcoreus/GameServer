@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" remoteFilesAllowedToDisappearOnAutoupload="false">
+  <component name="PublishConfigData" autoUpload="Always" serverName="Ubuntu24 (803521c4-53f8-46fa-a6d5-9f9e317f9966)" remoteFilesAllowedToDisappearOnAutoupload="false" confirmBeforeUploading="false">
+    <option name="confirmBeforeUploading" value="false" />
     <serverData>
       <paths name="Matebook">
         <serverdata>
@@ -9,13 +10,40 @@
           </mappings>
         </serverdata>
       </paths>
-      <paths name="远程主机 (c79aadbf-b730-466c-9273-612260cec7f0)">
+      <paths name="Ubuntu24 (803521c4-53f8-46fa-a6d5-9f9e317f9966)">
         <serverdata>
           <mappings>
-            <mapping local="$PROJECT_DIR$" web="/" />
+            <mapping deploy="/YYGameServer" local="$PROJECT_DIR$" />
           </mappings>
+          <excludedPaths>
+            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-release-gnuc-13" />
+            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-release-linux-remote" />
+            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug-msvc" />
+            <excludedPath path="/YYGameServer/cmake-build-release-msvc" />
+            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug-msvc" />
+            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-release-msvc" />
+            <excludedPath path="/YYGameServer/cmake-build-debug-linux-remote" />
+            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-release-linux" />
+            <excludedPath path="/YYGameServer/cmake-build-debug-gnuc-13" />
+            <excludedPath path="/YYGameServer/cmake-build-release-linux" />
+            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-release-gnuc-13" />
+            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-release-linux" />
+            <excludedPath path="/YYGameServer/cmake-build-release-gnuc-13" />
+            <excludedPath path="/YYGameServer/cmake-build-debug-msvc" />
+            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug-linux" />
+            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug-linux-remote" />
+            <excludedPath path="/YYGameServer/cmake-build-debug-linux" />
+            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug-gnuc-13" />
+            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug-linux" />
+            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-release-linux-remote" />
+            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-release-msvc" />
+            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug-linux-remote" />
+            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug-gnuc-13" />
+            <excludedPath path="/YYGameServer/cmake-build-release-linux-remote" />
+          </excludedPaths>
         </serverdata>
       </paths>
     </serverData>
+    <option name="myAutoUpload" value="ALWAYS" />
   </component>
 </project>

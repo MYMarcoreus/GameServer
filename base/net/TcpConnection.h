@@ -6,6 +6,7 @@
 #include "Timestamp.h"
 
 #include <memory>
+#include <atomic>
 
 namespace yy::net {
 

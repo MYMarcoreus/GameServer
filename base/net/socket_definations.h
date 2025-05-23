@@ -19,6 +19,8 @@ using __socket_type = int;
 #include <arpa/inet.h>
 #include <sys/time.h> // gettimeofday
 #include <unistd.h>   // readlink
+#include <cassert>
+
 #else
     #error Platform not supported
 #endif
@@ -68,8 +70,8 @@ public:
             default:                return SocketError::eUnknown;
         }
     #elif defined(____LINUX)
-        switch (errCode) {
-            case EAGAIN:
+        switch (errorCode) {
+            // case EAGAIN:
             case EWOULDBLOCK:       return SocketError::eAgain;
             case EINTR:             return SocketError::eInterrupted;
             case ENOTCONN:          return SocketError::eNotConnected;

@@ -10,53 +10,11 @@
 #include "AppXmlConfig.h"
 
 
-namespace yy::net {
-
 #ifdef ____LINUX
-
-class SignalManager {
-public:
-    SignalManager(EventLoop * loop, std::function<void()> handler)
-        : loop_{loop}, channel_(std::make_unique<Channel>(loop_, SignalManager::pipe_.sideR(), "Wakeup Eventfd Channel"))
-    {
-        // 屏蔽SIGPIPE：当服务器进程向已收到RST的用户套接字执行写操作时，内核会向进程发送SIGPIPE信号来结束进程
-        util::set_signal_ignore(SIGPIPE);
-
-        channel_->SetReadCallback(handler);
-        channel_->EnableReading();
-
-        // 设置三个信号处理函数：该处理函数将信号通过管道传送
-        yy::util::set_signal_handler(SIGALRM, WritePipe);
-        yy::util::set_signal_handler(SIGINT, WritePipe);/* Ctrl+c */
-        yy::util::set_signal_handler(SIGTERM, WritePipe);// kill <pid>
-    }
-
-
-    static void WritePipe(int sig) {
-        //! 向唤醒事件文件描述符进行写，以触发其eoll事件
-        int msg = sig;
-        pipe_.Write((const char *)&msg, 1);
-    }
-
-    static std::string ReadPipe() {
-        //! 向唤醒事件文件描述符进行写，以触发其epoll事件
-        static std::string sigs;
-        sigs.assign(128, 0);
-        auto nSig = pipe_.Read(sigs.data(), sigs.size());
-        return sigs;
-    }
-
-    static FullDuplexPipe pipe_;
-
-private:
-    EventLoop * loop_;
-    std::unique_ptr<Channel> channel_;
-};
-
-FullDuplexPipe SignalManager::pipe_{};
-
-
+#include "FullDuplexPipe.h"
 #endif
+
+namespace yy::net {
 
 
 
@@ -66,13 +24,8 @@ FullDuplexPipe SignalManager::pipe_{};
 UdpServer::UdpServer(EventLoop *mainLoop, bool reusePort) noexcept
     : m_mainLoop(mainLoop)
     , m_recvEventThreadPool(std::make_unique<EventLoopThreadPool>(mainLoop))
-#ifdef ____LINUX
-    , m_SignalManager{std::make_unique<SignalManager>(mainLoop, [this](){ this->HandleSignal(); })}
-#endif
 {
-#ifdef ____LINUX
-    util::set_signal_ignore(SIGPIPE);
-#endif
+
 }
 
 UdpServer::~UdpServer() {
@@ -104,36 +57,6 @@ void UdpServer::HandleNewMessage(Buffer & recvBuf, IPAddressPtr peerAddr) {
 
 
 
-void UdpServer::HandleSignal() {
-#ifdef ____LINUX
-    auto sigs = SignalManager::ReadPipe();
-
-    for(int i = 0 ; i < sigs.size() ; ++i) {
-        switch((int)sigs[i]) {
-            // 定时器
-            case SIGALRM: {
-                YLOG_WARN("收到SIGALRM信号！")
-                break;
-            }
-            // case SIGQUIT: /* Ctrl+\ */
-            case SIGINT:  /* Ctrl+C */
-            case SIGTERM: // kill <pid>
-            // case SIGKILL: // kill -9 <pid>
-            {
-                YLOG_WARN("收到{}信号，结束服务器进程！", strsignal(sigs[i]))
-                this->Stop();
-                break;
-            }
-            case 0:
-                break;
-            default: {
-                YLOG_WARN("收到其它信号！")
-                break;
-            }
-        }
-    }
-#endif
-}
 
 
 

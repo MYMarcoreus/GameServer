@@ -39,7 +39,7 @@ private:
     /* * Linux的特有的定时器，使用文件描述符的读写事件来通知定时器到期。
        * 当定时器到期时，用户可使用::read从定时器文件描述符读取定时器到期信息，read缓冲区类型是uint64_t */
     int     m_LinuxTimerFD;
-    Channel m_LinuxTimerChannel;
+    IOChannel m_LinuxTimerChannel;
 
     const Microseconds  kMinInterval = 100us;
 };
@@ -55,8 +55,7 @@ __TimerfdManager::__TimerfdManager(EventLoop * owner_loop, std::function<void()>
 }
 
 __TimerfdManager::~__TimerfdManager() {
-    this->m_LinuxTimerChannel.DisableAllEvent();
-    this->m_LinuxTimerChannel.RemoveFromLoop();
+    this->m_LinuxTimerChannel.ResetAndRemoveFromPoller();
     ::close(m_LinuxTimerFD);
 }
 

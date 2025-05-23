@@ -38,17 +38,11 @@ public:
 
 private:
     void HandleNewMessage(Buffer & recvBuf, IPAddressPtr peerAddr);
-
-    void HandleSignal();
 private:
     EventLoop *                                   m_mainLoop;
     F_UdpMessageCallback                          m_MessageCallback;
     std::unique_ptr<EventLoopThreadPool>    m_recvEventThreadPool;
     std::unique_ptr<UdpTransport>           m_udpTran;
-
-#ifdef ____LINUX
-    std::unique_ptr<class SignalManager> m_SignalManager;
-#endif
 
     std::atomic<bool>   m_IsStarted{false};
 };

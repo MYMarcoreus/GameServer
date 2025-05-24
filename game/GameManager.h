@@ -21,28 +21,28 @@ class GameTestManager;
 
 
 
-class GameManager : public Singleton<GameManager>
+class GameManager final : public Singleton<GameManager>
 {
     SINGLETON_NECESSITY(GameManager)
 public:
     void RunApp();
 
     template<typename T>
-    void RegisterMessageCallback( core::CallbackT<core::UserConnectionPtr, T>::ProtobufMessageTCallback callback) {
+    void RegisterMessageCallback(typename core::CallbackT<core::UserConnectionPtr, T>::ProtobufMessageTCallback callback) {
         m_dispatcher.RegisterMessageCallback<T>(callback);
     }
 
     IServer * GetServer() { return m_server; }
 private:
     GameManager();
-    ~GameManager();
+    ~GameManager() override;
 
     void Init();
 
     void StartListenAndIOLoop();
 
-    void AppNotifier_Secutiry(core::UserConnectionPtr userdata) ;
-    void AppNotifier_Disconnect(core::UserConnectionPtr userdata) ;
+    void AppNotifier_Secutiry(const core::UserConnectionPtr& userdata) ;
+    void AppNotifier_Disconnect(const core::UserConnectionPtr& userdata) ;
     void AppNotifier_Command(const core::UserConnectionPtr &, const core::MessagePtr &);
 
     void UnkonwnCommand(const core::UserConnectionPtr &, const core::MessagePtr &);

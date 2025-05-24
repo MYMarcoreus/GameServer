@@ -1,57 +1,74 @@
 cmake_minimum_required(VERSION 3.22)
 project(GameServer)
 
+message(STATUS "CMAKE_TOOLCHAIN_FILE: ${CMAKE_TOOLCHAIN_FILE}")
+
 # -std=c++20
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-
+#! 查找 Lua
 find_package(Lua REQUIRED)
 message(STATUS "LUA_INCLUDE_DIR: ${LUA_INCLUDE_DIR}")
 message(STATUS "LUA_LIBRARIES: ${LUA_LIBRARIES}")
 message(STATUS "LUA_EXECUTABLE: ${LUA_EXECUTABLE}")
 
-# 判断平台
-if(CMAKE_HOST_SYSTEM_NAME MATCHES Windows)
+#! 打印平台和编译器信息
+message(STATUS "CMAKE_HOST_SYSTEM_NAME = ${CMAKE_HOST_SYSTEM_NAME}")
+message(STATUS "CMAKE_CXX_COMPILER_ID = ${CMAKE_CXX_COMPILER_ID}")
+
+
+#! 根据平台设置宏定义和依赖
+if(CMAKE_HOST_SYSTEM_NAME MATCHES "Windows")
     message(STATUS "Platform: Windows")
     add_definitions(-D____WINDOWS)
-    find_package(Protobuf CONFIG REQUIRED)
-
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /source-charset:utf-8")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /source-charset:utf-8")
-    #    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /execution-charset:utf-8")
-    #    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /execution-charset:utf-8")
-elseif(CMAKE_HOST_SYSTEM_NAME MATCHES Linux)
+elseif(CMAKE_HOST_SYSTEM_NAME MATCHES "Linux")
     message(STATUS "Platform: Linux")
     add_definitions(-D____LINUX)
-    #! 加载Protobuf包
-    find_package(Protobuf REQUIRED) #  CONFIG
-elseif(CMAKE_HOST_SYSTEM_NAME MATCHES Darwin)
-    message(STATUS "Platform: Darwin(MacOS)")
+elseif(CMAKE_HOST_SYSTEM_NAME MATCHES "Darwin")
+    message(STATUS "Platform: macOS")
     add_definitions(-D____MACOS)
 else()
-    message(STATUS "unknown platform")
+    message(WARNING "Unknown platform: ${CMAKE_HOST_SYSTEM_NAME}")
 endif()
 
+#! 根据编译器设置参数
+if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+    message(STATUS "Using MSVC compiler")
+    add_definitions(-D____MSVC)
+    add_compile_options(/MP)
+    add_compile_options("/Zc:__cplusplus")
+    # 防止控制台输出乱码
+    if(CMAKE_BUILD_TYPE MATCHES "Debug")
+        # 调试似乎使用的是Clion自带的控制台，支持UTF-8
+        add_compile_options("/source-charset:utf-8" "/execution-charset:utf-8")
+    else ()
+        # 运行似乎使用的是Windows的控制台，默认编码为GBK
+        add_compile_options("/source-charset:utf-8" "/execution-charset:gbk")
+    endif ()
 
-# 如果是以Debug模式构建的就定义一个名为____DEBUG的宏定义
-if(CMAKE_BUILD_TYPE MATCHES Debug)
+elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+    message(STATUS "Using GCC compiler")
+    add_definitions(-D____GNUC)
+    # 防止控制台输出乱码
+    if(CMAKE_BUILD_TYPE MATCHES "Debug")
+        add_compile_options(-finput-charset=utf-8 -fexec-charset=utf-8)
+    else ()
+        add_compile_options(-finput-charset=utf-8 -fexec-charset=gbk)
+    endif ()
+
+endif()
+
+# 添加 Debug 构建宏
+if(CMAKE_BUILD_TYPE MATCHES "Debug")
     add_definitions(-D____DEBUG)
 endif()
 
-
-
-message(STATUS "CMAKE_CXX_COMPILER_ID = ${CMAKE_CXX_COMPILER_ID}")
-
-if(CMAKE_CXX_COMPILER_ID MATCHES GNU)
-    message(STATUS "Using GCC compiler")
-    add_definitions(-D____GNUC)
-
-elseif(CMAKE_CXX_COMPILER_ID MATCHES MSVC)
-    message(STATUS "Using MSVC compiler")
-    add_definitions(-D____MSVC)
-
-    add_compile_options(/MP)
-    add_compile_options("/Zc:__cplusplus")
+# 查找 protobuf（Windows 下使用 CONFIG 模式）
+if(WIN32)
+    find_package(Protobuf CONFIG REQUIRED)
+else()
+    find_package(Protobuf REQUIRED)
 endif()
 
 
@@ -77,10 +94,9 @@ execute_process(
         WORKING_DIRECTORY ${ProtocDirname}
 )
 
+message(STATUS "Protobuf_FOUND = ${Protobuf_FOUND}")
 message(STATUS "Protobuf_VERSION = ${Protobuf_VERSION}")
 message(STATUS "PROTOBUF_INCLUDE_DIRS = ${PROTOBUF_INCLUDE_DIRS}")
-message(STATUS "Protobuf_FOUND = ${Protobuf_FOUND}")
-
 message(STATUS "Protobuf_INCLUDE_DIR = ${Protobuf_INCLUDE_DIR}")
 message(STATUS "Protobuf_LIBRARY = ${Protobuf_LIBRARY}")
 message(STATUS "Protobuf_PROTOC_LIBRARY = ${Protobuf_PROTOC_LIBRARY}")
@@ -88,9 +104,7 @@ message(STATUS "Protobuf_LIBRARY_DEBUG = ${Protobuf_LIBRARY_DEBUG}")
 message(STATUS "Protobuf_PROTOC_LIBRARY_DEBUG = ${Protobuf_PROTOC_LIBRARY_DEBUG}")
 message(STATUS "Protobuf_LITE_LIBRARY = ${Protobuf_LITE_LIBRARY}")
 message(STATUS "Protobuf_LITE_LIBRARY_DEBUG = ${Protobuf_LITE_LIBRARY_DEBUG}")
-
-
-message(STATUS "Protobuf_LIBRARIES = ${Protobuf_LIBRARIES}")
+message(STATUS "PROTOBUF_LIBRARIES = ${PROTOBUF_LIBRARIES}")
 message(STATUS "Protobuf_PROTOC_LIBRARIES = ${Protobuf_PROTOC_LIBRARIES}")
 message(STATUS "Protobuf_LITE_LIBRARIES = ${Protobuf_LITE_LIBRARIES}")
 
@@ -113,51 +127,6 @@ include_directories(
 
 #file(GLOB ProtocSrcs ${ProtocDirname}/*.cc )
 #
-
-#set(COMMON_SOURCES
-#        ${ProtocSrcs}
-#        base/public/md5/md5.cpp
-#        base/public/tinyxml/tinyxml2.cpp
-#        base/log/log.cpp
-#        base/config/ConfigManager.cpp
-#        base/config/AppXmlConfig.cpp
-#        base/config/LogXmlConfig.cpp
-#        base/config/RemoteXmlConfig.cpp
-#        base/utils/util_functions.cpp
-#        base/utils/BoundedQueue.hpp
-#        base/utils/ThreadPool.cpp
-#        base/utils/status/Status.cpp
-#        base/net/IPAddress.cpp
-#        base/net/Channel.cpp
-#        base/net/EpollPoller.cpp
-#        base/net/EventLoop.cpp
-#        base/net/Poller.cpp
-#        base/net/NewDefaultPoller.cpp
-#        base/net/Timestamp.cpp
-#        base/net/TimerManager.cpp
-#        base/net/Timer.cpp
-#        base/net/EventLoopThread.cpp
-#        base/net/Acceptor.cpp
-#        base/net/Socket.cpp
-#        base/net/TcpConnection.cpp
-#        base/net/Buffer.cpp
-#        base/net/TcpServer.cpp
-#        base/net/EventLoopThreadPool.cpp
-#        base/net/Connector.cpp
-#        base/net/TcpClient.cpp
-#        base/net/SocketApiWrapper.cpp
-#        base/net/SelectPoller.cpp
-#        base/net/FullDuplexPipe.cpp
-#        core/codec/ProtobufCodec.cpp
-#        core/codec/ProtobufDispatcher.cpp
-#        core/codec/MessageHeader.cpp
-#        core/GameServer.cpp
-#        core/UserConnection.cpp
-#        game/GameManager.cpp
-#        game/GamePlayerManager.cpp
-#        game/GameTestManager.cpp
-#)
-
 #file(GLOB_RECURSE COMMON_SOURCES
 #        base/*.cpp
 #        core/*.cpp

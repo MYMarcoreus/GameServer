@@ -1,10 +1,10 @@
 #include "log.h"
 #include "util_functions.h"
-#include "net/cross_platform_defines.h"
 #include "FileLogAppender.h"
 #include "StdoutLogApeender.h"
 #include "ILogAppender.h"
 #include <algorithm>
+#include "LogXmlConfig.h"
 
 #ifdef ____WINDOWS
 #include <io.h>
@@ -15,16 +15,13 @@
 
 #include <utility>
 #include <cassert>
-#include <map>
-
-#include <fcntl.h>
 
 
 namespace yy::Ylog {
 
 
 /******************************* LogLevel *******************************/
-std::string LogLevel::ToString()
+std::string LogLevel::ToString() const
 {
     switch (m_level) {
         case eUNKNOWN: return "unknown";
@@ -41,7 +38,7 @@ std::string LogLevel::ToString()
 LogLevel LogLevel::FromString(const std::string &level_str)
 {
     std::string str{level_str};
-    std::transform(str.begin(), str.end(), str.begin(), ::tolower);
+    std::ranges::transform(str, str.begin(), ::tolower);
 
     if (str == "trace") return eTRACE;
     if (str == "debug") return eDEBUG;
@@ -58,7 +55,7 @@ LogLevel LogLevel::FromString(const std::string &level_str)
 
 /******************************* Formatter *******************************/
 ///@brief 格式化字符串中的普通字符
-class PlainFormatItem : public LogFormatter::IFormatItem
+class PlainFormatItem final : public LogFormatter::IFormatItem
 {
 public:
     explicit PlainFormatItem(std::string  str) : m_str(std::move(str)) {}
@@ -70,7 +67,7 @@ private:
 };
 
 ///@brief 格式化字符串中的%l：日志级别
-class LevelFormatItem : public LogFormatter::IFormatItem
+class LevelFormatItem final : public LogFormatter::IFormatItem
 {
 public:
     void format(std::ostream& out, const LogMessage::ptr & msg) override
@@ -78,7 +75,7 @@ public:
 };
 
 ///@brief 格式化字符串中的%i：线程id
-class ThreadIDFormatItem : public LogFormatter::IFormatItem
+class ThreadIDFormatItem final : public LogFormatter::IFormatItem
 {
 public:
     void format(std::ostream& out, const LogMessage::ptr & msg) override
@@ -86,7 +83,7 @@ public:
 };
 
 ///@brief 格式化字符串中的%c：日志内容
-class ContentFormatItem : public LogFormatter::IFormatItem
+class ContentFormatItem final : public LogFormatter::IFormatItem
 {
 public:
     void format(std::ostream& out, const LogMessage::ptr & msg) override
@@ -94,11 +91,12 @@ public:
 };
 
 ///@brief 格式化字符串中的%t：日志时间，以产生日志的时间为准
-class TimeFormatItem : public LogFormatter::IFormatItem
+class TimeFormatItem final : public LogFormatter::IFormatItem
 {
 public:
     ///@param timeFmtPattern 自定义时间格式
-    explicit TimeFormatItem(std::string  timeFmtPattern = "%Y-%m-%d %H:%M:%S.",  bool need_us = true)
+    ///@param need_us
+    explicit TimeFormatItem(std::string  timeFmtPattern = "%Y-%m-%d %H:%M:%S.", const bool need_us = true)
         : m_time_fmt_pattern(std::move(timeFmtPattern)), m_need_us(need_us) {}
 
     void format(std::ostream& out, const LogMessage::ptr & msg) override
@@ -111,7 +109,7 @@ private:
 };
 
 ///@brief 格式化字符串中的%f：产生日志的代码文件
-class FilepathFormatItem : public LogFormatter::IFormatItem
+class FilepathFormatItem final : public LogFormatter::IFormatItem
 {
 public:
     void format(std::ostream& out, const LogMessage::ptr & msg) override
@@ -119,7 +117,7 @@ public:
 };
 
 ///@brief 格式化字符串中的%L：产生日志的代码所在行数
-class FilelineFormatItem : public LogFormatter::IFormatItem
+class FilelineFormatItem final : public LogFormatter::IFormatItem
 {
 public:
     void format(std::ostream& out, const LogMessage::ptr & msg) override
@@ -127,7 +125,7 @@ public:
 };
 
 ///@brief 格式化字符串中的%n：换行符
-class NewlineFormatItem : public LogFormatter::IFormatItem
+class NewlineFormatItem final : public LogFormatter::IFormatItem
 {
 public:
     void format(std::ostream& out, const LogMessage::ptr & ) override
@@ -135,7 +133,7 @@ public:
 };
 
 ///@brief 格式化字符串中的%T：输出Tab
-class TabFormatItem : public LogFormatter::IFormatItem
+class TabFormatItem final : public LogFormatter::IFormatItem
 {
 public:
     void format(std::ostream& out, const LogMessage::ptr & ) override
@@ -143,7 +141,7 @@ public:
 };
 
 ///@brief 格式化字符串中的%p：输出百分号%
-class PercentSignFormatItem : public LogFormatter::IFormatItem
+class PercentSignFormatItem final : public LogFormatter::IFormatItem
 {
 public:
     void format(std::ostream& out, const LogMessage::ptr & ) override
@@ -175,7 +173,7 @@ void LogFormatter::init()
         Normal,
         Sign
     };
-    LogFormatParseStatus status = LogFormatParseStatus::Normal;
+    auto status = LogFormatParseStatus::Normal;
 
     for(size_t i = 0 ; i < m_format_pattern.size() ; ++i) {
         switch(status) {
@@ -288,7 +286,7 @@ void Logger::clearAppenders() {
     }
 }
 
-void Logger::Log(const LogMessage::ptr& msg)
+void Logger::Log(const LogMessage::ptr& msg) const
 {
     assert(msg != nullptr);
 
@@ -309,7 +307,7 @@ void Logger::Log(const LogMessage::ptr& msg)
     // TICK_END_CALC()
 }
 
-void Logger::LogAsync(const LogMessage::ptr& msg)
+void Logger::LogAsync(const LogMessage::ptr& msg) const
 {
     assert(msg != nullptr);
 
@@ -320,7 +318,7 @@ void Logger::LogAsync(const LogMessage::ptr& msg)
     }
 }
 
-void Logger::LogSynch(const LogMessage::ptr& msg)
+void Logger::LogSynch(const LogMessage::ptr& msg) const
 {
     assert(msg != nullptr);
 
@@ -402,7 +400,7 @@ void LoggerManager::ReadConfigs()
     }
 
     auto default_name = "default";
-    if(m_loggers.find(default_name) == m_loggers.end())
+    if(not m_loggers.contains(default_name))
     {
         auto default_level      = LogLevel::eTRACE;
         auto default_use_us      = true;

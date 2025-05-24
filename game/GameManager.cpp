@@ -14,11 +14,11 @@ namespace yy::app {
 
 
 
-void GameManager::AppNotifier_Secutiry(core::UserConnectionPtr userdata) {
+void GameManager::AppNotifier_Secutiry(const core::UserConnectionPtr& userdata) {
     userdata->SetState(core::UserConnection::E_UserBaseState::eSecure);
 }
 
-void GameManager::AppNotifier_Disconnect(core::UserConnectionPtr userdata) {
+void GameManager::AppNotifier_Disconnect(const core::UserConnectionPtr& userdata) {
     YLOG_INFO("↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ 用户<{}>断开连接", userdata->GetUID())
 
     // 已登陆，保存数据
@@ -88,9 +88,21 @@ void GameManager::Init()
 
     //! ⑤、初始化服务器对象（③和④）
     m_server = new core::GameServer(m_accpetorLoop, listenAddr);
-    m_server->SetNotifier_Security(std::bind(&GameManager::AppNotifier_Secutiry, this, _1));
-    m_server->SetNotifier_DisConnect(std::bind(&GameManager::AppNotifier_Disconnect, this, _1));
-    m_server->SetNotifier_Command(std::bind(&GameManager::AppNotifier_Command, this, _1, _2));
+    m_server->SetNotifier_Security(
+        [this](const core::UserConnectionPtr& userdata) {
+            this->AppNotifier_Secutiry(userdata);
+        });
+
+    m_server->SetNotifier_DisConnect(
+        [this](const core::UserConnectionPtr & userdata) {
+            this->AppNotifier_Disconnect(userdata);
+        });
+
+    m_server->SetNotifier_Command(
+        [this](const core::UserConnectionPtr & userdata, const core::MessagePtr & message) {
+            this->AppNotifier_Command(userdata, message);
+        });
+
 
     m_player = &GamePlayerManager::getInstance();
     m_player->Init();
@@ -109,9 +121,10 @@ GameManager::GameManager()
       m_server{},
       m_player{},
       m_test{},
-      m_dispatcher{std::bind(&GameManager::UnkonwnCommand, this, _1, _2)},
+      m_dispatcher{[this](const core::UserConnectionPtr& userdata, const core::MessagePtr& message) { this->UnkonwnCommand(userdata, message); }},
       m_accpetorLoop{}
 {
+
 
 }
 

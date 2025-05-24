@@ -32,7 +32,7 @@ class TcpConnection: public std::enable_shared_from_this<TcpConnection> {
 public:
     ///@brief Acceptor接受用户连接后，在NewConnection回调函数（由TcpServer定义）中创建的数据结构
     TcpConnection(std::string name, EventLoop *loop, SocketApiWrapper::socket_t sockfd,
-                  IPAddress::ptr localAddr, IPAddress::ptr peerAddr);
+                  const IPAddress::ptr& localAddr, const IPAddress::ptr& peerAddr);
 
     ~TcpConnection();
 
@@ -62,24 +62,24 @@ public:
     Timestamp                   GetHeartTime()     const { return m_heartTime; }
     uint8_t                     GetXorCode()       const { return m_xorCode; }
     SocketApiWrapper::socket_t  GetSocketFD()      const ;
-    bool  IsConnected()    { return m_connectionState == eConnected; }
-    bool  IsConnecting()   { return m_connectionState == eConnecting; }
-    bool  IsDisconnected() { return m_connectionState == eDisconnected; }
-    bool  IsShutdown()     { return m_connectionState == eShutdown; }
+    bool  IsConnected() const { return m_connectionState == eConnected; }
+    bool  IsConnecting() const { return m_connectionState == eConnecting; }
+    bool  IsDisconnected() const { return m_connectionState == eDisconnected; }
+    bool  IsShutdown() const { return m_connectionState == eShutdown; }
     ///End
 
     ///Region SETTER
-    void SetConnectionEstablishedCallback  (F_ConnectionEstablishedCallback cb)   { m_ConnectionEstablishedCallback = cb; }
-    void SetConnectionDestroyedCallback    (F_ConnectionDestroyedCallback cb)     { m_ConnectionDestroyedCallback = cb; }
-    void SetMessageCallback                (F_TcpMessageCallback cb)              { m_MessageCallback = cb; }
-    void SetConnectionWriteCompleteCallback(F_ConnectionWriteCompleteCallback cb) { m_ConnectionWriteCompleteCallback = cb; }
-    void SetConnectionCloseCallback        (F_ConnectionCloseCallback cb)         { m_ConnectionCloseCallback = cb; }
-    void SetConnectionShutdownCallback     (F_ConnectionShutdownCallback cb)      { m_ConnectionShutdownCallback = cb; }
-    void SetXorCode(uint8_t xorCode) { m_xorCode = xorCode; }
+    void SetConnectionEstablishedCallback  (const F_ConnectionEstablishedCallback& cb)   { m_ConnectionEstablishedCallback = cb; }
+    void SetConnectionDestroyedCallback    (const F_ConnectionDestroyedCallback& cb)     { m_ConnectionDestroyedCallback = cb; }
+    void SetMessageCallback                (const F_TcpMessageCallback& cb)              { m_MessageCallback = cb; }
+    void SetConnectionWriteCompleteCallback(const F_ConnectionWriteCompleteCallback& cb) { m_ConnectionWriteCompleteCallback = cb; }
+    void SetConnectionCloseCallback        (const F_ConnectionCloseCallback& cb)         { m_ConnectionCloseCallback = cb; }
+    void SetConnectionShutdownCallback     (const F_ConnectionShutdownCallback& cb)      { m_ConnectionShutdownCallback = cb; }
+    void SetXorCode(const uint8_t xorCode) { m_xorCode = xorCode; }
     ///End
 
 private:
-    void SetState(E_ConnectionState state) { m_connectionState = state; }
+    void SetState(const E_ConnectionState state) { m_connectionState = state; }
 
     void HandleRead();     // 将套接字的数据接收到RecvBuf中
     SocketApiWrapper::SocketResult HandleRead_ET();  // 将套接字的数据接收到RecvBuf中
@@ -91,9 +91,9 @@ private:
     void SendTCPInLoop(const std::string_view &buf);
     void ShutdownInLoop();
 
-    bool CanShutdown() { return !IsShutdown() and IsConnected(); }
+    bool CanShutdown() const { return !IsShutdown() and IsConnected(); }
 
-    bool CanIO() { return IsConnected(); }
+    bool CanIO() const { return IsConnected(); }
 
 private:
     std::string                      m_name;

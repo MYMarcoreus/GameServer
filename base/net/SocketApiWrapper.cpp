@@ -276,13 +276,13 @@ SocketApiWrapper::SocketResult send(socket_t sockfd, const void *ptr, size_t nby
     return {ret, get_last_socket_error()};
 }
 
-SocketApiWrapper::SocketResult sendto(socket_t sockfd, const void *ptr, size_t nbytes, int flags, std::shared_ptr<IPAddress> peerAddr) {
+SocketApiWrapper::SocketResult sendto(socket_t sockfd, const void *ptr, size_t nbytes, int flags, const std::shared_ptr<IPAddress> peerAddr) {
     assert(peerAddr);
     auto ret = ::sendto(sockfd, (char *) ptr, nbytes, flags, peerAddr->GetRawAddr(), peerAddr->GetRawAddrLen());
     return {ret, get_last_socket_error()};
 }
 
-SocketApiWrapper::SocketResult recvfrom(socket_t sockfd, void *ptr, size_t nbytes, int flags, std::shared_ptr<IPAddress> peerAddr) {
+SocketApiWrapper::SocketResult recvfrom(socket_t sockfd, void *ptr, size_t nbytes, int flags, const std::shared_ptr<IPAddress> peerAddr) {
     assert(peerAddr);
     auto addrLen = peerAddr->GetRawAddrLen();
     auto ret = ::recvfrom(sockfd, (char *) ptr, nbytes, flags, peerAddr->GetRawAddr(), &addrLen);

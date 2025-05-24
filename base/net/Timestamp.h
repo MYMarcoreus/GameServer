@@ -47,7 +47,7 @@ public:
     ///@brief 从`secondPart.microSecondPart`的时间格式构造Timestamp
     static Timestamp FromUnixTime(Seconds secondPart, Microseconds  microSecondPart);
 private:
-    constexpr static const Microseconds  k10_6 = 1000000us; // mircosecond == μs == 10^{-6} s
+    constexpr static Microseconds  k10_6 = 1000000us; // mircosecond == μs == 10^{-6} s
     Microseconds  us_SinceEpoch_; // Microsecond Since Epoch
 };
 

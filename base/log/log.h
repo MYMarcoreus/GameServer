@@ -5,7 +5,6 @@
 #include "util_functions.h"
 #include "ConfigManager.h"
 #include "ThreadSafeQueue.hpp"
-#include "LogXmlConfig.h"
 #include "ILogAppender.h"
 
 #include <unordered_map>
@@ -97,20 +96,20 @@ public:
         return *this;
     }
 
-    bool operator==(const LogLevel& log_level) { return m_level == log_level.m_level; }
-    bool operator==(const LogLevel::Level& level) { return m_level == level; }
-    bool operator!=(const LogLevel& log_level) { return m_level != log_level.m_level; }
-    bool operator!=(const LogLevel::Level& level) { return m_level != level; }
-    bool operator> (const LogLevel& log_level) { return m_level > log_level.m_level; }
-    bool operator> (const LogLevel::Level& level) { return m_level > level; }
-    bool operator< (const LogLevel& log_level) { return m_level < log_level.m_level; }
-    bool operator< (const LogLevel::Level& level) { return m_level < level; }
-    bool operator>=(const LogLevel& log_level) { return m_level >= log_level.m_level; }
-    bool operator>=(const LogLevel::Level& level) { return m_level >= level; }
-    bool operator<=(const LogLevel& log_level) { return m_level <= log_level.m_level; }
-    bool operator<=(const LogLevel::Level& level) { return m_level <= level; }
+    bool operator==(const LogLevel& log_level) const { return m_level == log_level.m_level; }
+    bool operator==(const LogLevel::Level& level) const { return m_level == level; }
+    bool operator!=(const LogLevel& log_level) const { return m_level != log_level.m_level; }
+    bool operator!=(const LogLevel::Level& level ) const { return m_level != level; }
+    bool operator> (const LogLevel& log_level) const { return m_level > log_level.m_level; }
+    bool operator> (const LogLevel::Level& level) const { return m_level > level; }
+    bool operator< (const LogLevel& log_level) const { return m_level < log_level.m_level; }
+    bool operator< (const LogLevel::Level& level) const { return m_level < level; }
+    bool operator>=(const LogLevel& log_level) const { return m_level >= log_level.m_level; }
+    bool operator>=(const LogLevel::Level& level) const { return m_level >= level; }
+    bool operator<=(const LogLevel& log_level) const { return m_level <= log_level.m_level; }
+    bool operator<=(const LogLevel::Level& level) const { return m_level <= level; }
 
-    std::string ToString();
+    std::string ToString() const;
 
     static LogLevel FromString(const std::string& level_str);
 
@@ -166,6 +165,7 @@ public:
     class IFormatItem
     {
     public:
+        virtual ~IFormatItem() = default;
         using ptr = std::shared_ptr<IFormatItem>;
 
         virtual void format(std::ostream & out, const LogMessage::ptr& msg) = 0;
@@ -215,7 +215,7 @@ public:
 
     /// @brief 对appender列表内的所有appender执行log
     /// @param msg 一条日志信息，在该函数中可能被输出到不同的地方(file、stdout)
-    void Log(const LogMessage::ptr& msg);
+    void Log(const LogMessage::ptr& msg) const;
 
     /// @brief 向日志器添加一个日志添加器
     void addAppender(const std::shared_ptr<ILogAppender>& appender);
@@ -230,10 +230,10 @@ public:
 
 private:
     /// @brief 同步写日志，直接将日志写到文件/标准输出中
-    void LogSynch(const LogMessage::ptr& msg);
+    void LogSynch(const LogMessage::ptr& msg) const;
 
     /// @brief 异步写日志，其实只是将日志信息push到blockqueue中
-    void LogAsync(const LogMessage::ptr& msg);
+    void LogAsync(const LogMessage::ptr& msg) const;
 
 private:
     std::string                   m_name;      // 日志器名称
@@ -251,7 +251,7 @@ private:
 class LoggerManager : public Singleton<LoggerManager>
 {
     SINGLETON_NECESSITY(LoggerManager)
-    friend void Logger::LogAsync(const LogMessage::ptr&);
+    friend void Logger::LogAsync(const LogMessage::ptr&) const;
 public:
     /// @brief 读取保存在LogXmlConfig单例对象中的配置信息
     void ReadConfigs();

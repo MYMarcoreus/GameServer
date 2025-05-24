@@ -95,9 +95,9 @@ public:
 
     /*! Buffer不实现来自套接字Socket的recv任务，因为对于recv任务，存在ET和LT的区别，因此原样recv的错误，让其所有者TcpConnection实现 !*/
     // ET
-    bool RecvFromSocket(std::unique_ptr<Socket> &sock, size_t nBytesRecvOnce, SocketApiWrapper::SocketResult &rst, std::shared_ptr<IPAddress> peerAddr);
+    bool RecvFromSocket(const std::unique_ptr<Socket> &sock, size_t nBytesRecvOnce, SocketApiWrapper::SocketResult &rst, const std::shared_ptr<IPAddress>& peerAddr);
     // LT
-    bool RecvAllFromSocket(std::unique_ptr<Socket> & sock, SocketApiWrapper::SocketResult & rst, std::shared_ptr<IPAddress> peerAddr);
+    bool RecvAllFromSocket(const std::unique_ptr<Socket> & sock, SocketApiWrapper::SocketResult & rst, const std::shared_ptr<IPAddress>& peerAddr);
     ///End
 
     /// Region 取出数据（消费数据）

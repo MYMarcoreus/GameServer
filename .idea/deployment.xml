@@ -16,30 +16,22 @@
             <mapping deploy="/YYGameServer" local="$PROJECT_DIR$" />
           </mappings>
           <excludedPaths>
-            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-release-gnuc-13" />
             <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-release-linux-remote" />
+            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-release-mingw" />
             <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug-msvc" />
-            <excludedPath path="/YYGameServer/cmake-build-release-msvc" />
             <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug-msvc" />
             <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-release-msvc" />
-            <excludedPath path="/YYGameServer/cmake-build-debug-linux-remote" />
             <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-release-linux" />
-            <excludedPath path="/YYGameServer/cmake-build-debug-gnuc-13" />
-            <excludedPath path="/YYGameServer/cmake-build-release-linux" />
-            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-release-gnuc-13" />
+            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug-mingw" />
             <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-release-linux" />
-            <excludedPath path="/YYGameServer/cmake-build-release-gnuc-13" />
-            <excludedPath path="/YYGameServer/cmake-build-debug-msvc" />
+            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-release-mingw" />
             <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug-linux" />
             <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug-linux-remote" />
-            <excludedPath path="/YYGameServer/cmake-build-debug-linux" />
-            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug-gnuc-13" />
+            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug-mingw" />
             <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug-linux" />
             <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-release-linux-remote" />
             <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-release-msvc" />
             <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug-linux-remote" />
-            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug-gnuc-13" />
-            <excludedPath path="/YYGameServer/cmake-build-release-linux-remote" />
           </excludedPaths>
         </serverdata>
       </paths>

@@ -1,98 +1,51 @@
-#include <winsock2.h>
-#include <ws2tcpip.h>
+#include <vector>
+#include <string>
 #include <iostream>
+#include <format>
 
-#pragma comment(lib, "ws2_32.lib")
+struct Person {
+    std::string name;
+    int age{};
 
-void set_reuseaddr(SOCKET sockfd, bool onoff)
-{
-    int opt_val = onoff;
-    ::setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, (const char *)&opt_val, sizeof(opt_val));
-}
+    Person(std::string n, int a) : name(std::move(n)), age(a) {
+        std::cout << std::format("Constructor called: {}\n", name);
+    }
+
+    Person(const Person& obj) {
+        std::cout << std::format("Copy constructor called: {}\n", obj.name);
+    }
+
+    Person(Person&& obj) noexcept {
+        std::cout << std::format("Move constructor called: {}\n", obj.name);
+    }
+
+};
 
 int main() {
-    WSADATA wsaData;
-    if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
-        std::cerr << "WSAStartup failed." << std::endl;
-        return 1;
-    }
+    std::vector<Person> v;
+    v.reserve(100);
 
-    SOCKET listenSocket = socket(AF_INET, SOCK_STREAM, 0);
-    if (listenSocket == INVALID_SOCKET) {
-        std::cerr << "Socket creation failed." << std::endl;
-        WSACleanup();
-        return 1;
-    }
+    // 调用构造函数
+    Person p("Tom", 30); std::cout  << std::endl;
 
-    set_reuseaddr(listenSocket, true);
-
-    sockaddr_in serverAddr{};
-    serverAddr.sin_family = AF_INET;
-    serverAddr.sin_addr.s_addr = INADDR_ANY;
-    serverAddr.sin_port = htons(12345);
-
-    if (bind(listenSocket, (struct sockaddr*)&serverAddr, sizeof(serverAddr)) == SOCKET_ERROR) {
-        std::cerr << "Bind failed." << std::endl;
-        closesocket(listenSocket);
-        WSACleanup();
-        return 1;
-    }
-
-    if (listen(listenSocket, SOMAXCONN) == SOCKET_ERROR) {
-        std::cerr << "Listen failed." << std::endl;
-        closesocket(listenSocket);
-        WSACleanup();
-        return 1;
-    }
-
-    fd_set readSet;
-    fd_set tempSet;
-
-    FD_ZERO(&readSet);
-    FD_SET(listenSocket, &readSet);
-
-    std::cout << "Server listening on port 12345..." << std::endl;
-
-    while (true) {
-        tempSet = readSet;
-        int result = select(0, &tempSet, nullptr, nullptr, nullptr);
-        if (result == SOCKET_ERROR) {
-            std::cerr << "Select failed." << std::endl;
-            break;
-        }
-
-        for (int socketId = 0; socketId < readSet.fd_count; ++socketId) {
-            SOCKET currentSocket = readSet.fd_array[socketId];
-
-            if (FD_ISSET(currentSocket, &tempSet)) {
-                if (currentSocket == listenSocket) {
-                    SOCKET clientSocket = accept(listenSocket, nullptr, nullptr);
-                    std::cout << "Client connected." << std::endl;
-                    FD_SET(clientSocket, &readSet);
-                } else {
-                    char buffer[1024]{};
-                    int bytesRead = recv(currentSocket, buffer, sizeof(buffer), 0);
-                    if (bytesRead == 0) {
-                        std::cout << "Client disconnected." << std::endl;
-                        closesocket(currentSocket);
-                        FD_CLR(currentSocket, &readSet);
-                    } else if (bytesRead == SOCKET_ERROR) {
-                        std::cerr << "Recv failed." << std::endl;
-                        closesocket(currentSocket);
-                        FD_CLR(currentSocket, &readSet);
-                    } else {
-                        // Echo the received data back to the client.
-                        printf("%s\n", buffer);
-                        send(currentSocket, buffer, bytesRead, 0);
-                    }
-                }
-            }
-        }
-    }
-
-    closesocket(listenSocket);
-    WSACleanup();
+    // 调用push_back(const value_type& __x)
+    v.push_back(p);                        // 调用：拷贝构造
+    // 调用push_back(value_type&& __x)
+    v.push_back(Person("Jerry", 28));      // 调用：构造临时对象 + 移动临时对象
+    
+    /* 都调用
+        template<typename... _Args>
+        #if __cplusplus > 201402L
+            _GLIBCXX20_CONSTEXPR
+            reference
+        #else
+            void
+        #endif
+            emplace_back(_Args&&... __args);
+        #endif                                  
+    */    
+    v.emplace_back(p);                     // 调用：拷贝构造
+    v.emplace_back("Alice", 25);           // 调用：构造
 
     return 0;
 }
-

@@ -7,7 +7,6 @@ using namespace std::chrono_literals;
 
 int main()
 {
-    // setvbuf(stdout, nullptr, );
     yy::app::GameManager::getInstance().RunApp();
 }
 

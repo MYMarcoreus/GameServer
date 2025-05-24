@@ -2,7 +2,6 @@
 #define GAMESERVER_GAMESERVER_H
 
 #include "IServer.h"
-#include "Singleton.h"
 #include "TcpServer.h"
 #include "UdpServer.h"
 #include "codec/ProtobufTcpCodec.h"
@@ -29,7 +28,7 @@ class GameServer final: public IServer{
     using UdpPortRegisterRequestPtr = std::shared_ptr<yy::protocol::core::UdpPortRegisterRequest> ;
 
 public:
-    GameServer(yy::net::EventLoop* accpetorLoop, yy::net::IPAddressPtr listenAddr);
+    GameServer(yy::net::EventLoop* accpetorLoop, const yy::net::IPAddressPtr& listenAddr);
     ~GameServer() override;
 
     /// @brief Start Listen & IOLoop
@@ -47,9 +46,9 @@ public:
     virtual const config::AppXmlConfig & GetAppConfig() override { return m_appConfigvar->GetValue(); }
 
     /* * 由业务层定义并传入 * */
-    virtual void SetNotifier_Security  (F_Notifier cb) override { m_NotifierSecurity   = cb; }
-    virtual void SetNotifier_DisConnect(F_Notifier cb) override { m_NotifierDisconnect = cb; }
-    virtual void SetNotifier_Command(F_NotifierCommand cb) override { m_NotifierCommand = cb; }
+    virtual void SetNotifier_Security  (const F_Notifier cb) override { m_NotifierSecurity   = cb; }
+    virtual void SetNotifier_DisConnect(const F_Notifier cb) override { m_NotifierDisconnect = cb; }
+    virtual void SetNotifier_Command(const F_NotifierCommand cb) override { m_NotifierCommand = cb; }
 
     /* * 在Acceptor中运行定时器（其实可以新建一个定时器线程） * */
     virtual net::TimerID RunAt(net::Timestamp time, net::F_TaskCallback cb) override;
@@ -66,9 +65,9 @@ private:
     void OnUnknownTcpMessage(const net::TcpConnectionPtr &conn, const MessagePtr& message);
     void OnUnknownUdpMessage(const net::UdpSessionPtr &conn, const MessagePtr& message);
 
-    void OnConnectionEstablished(const net::TcpConnectionPtr & userdata);
+    void OnConnectionEstablished(const net::TcpConnectionPtr & conn);
     void AddCheckTimer(const net::TcpConnectionPtr & conn, const UserConnectionPtr & userdata);
-    void CheckHeart(const UserConnectionPtr & conn);
+    void CheckHeart(const UserConnectionPtr & userdata);
     void SendXorCode(const yy::net::TcpConnectionPtr &conn);
 
     void OnTcpHeart(const yy::net::TcpConnectionPtr &conn, const HeartPtr & message);

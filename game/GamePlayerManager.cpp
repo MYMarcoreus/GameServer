@@ -26,19 +26,34 @@ namespace yy::app {
 
 
 GamePlayerManager::GamePlayerManager()
-    : m_global_id{10000}, m_server{GameManager::getInstance().GetServer()},
-      m_player_pool{m_server->GetAppConfig().app_player_max()}
+    : m_server{GameManager::getInstance().GetServer()}, m_player_pool{m_server->GetAppConfig().app_player_max()},
+      m_global_id{10000}
 {
     GameManager::getInstance().RegisterMessageCallback<LoginRequest>(
-            std::bind_front(&GamePlayerManager::OnLogin, this));
+        [this](const UserConnectionPtr& user, const Ptr<LoginRequest>& msg) {
+            this->OnLogin(user, msg);
+        });
+
     GameManager::getInstance().RegisterMessageCallback<OtherPlayerDataRequest>(
-            std::bind_front(&GamePlayerManager::OnOtherPlayerDataRequest, this));
+        [this](const UserConnectionPtr& user, const Ptr<OtherPlayerDataRequest>& msg) {
+            this->OnOtherPlayerDataRequest(user, msg);
+        });
+
     GameManager::getInstance().RegisterMessageCallback<SelfMovement>(
-            std::bind_front(&GamePlayerManager::OnSelfMovement, this));
+        [this](const UserConnectionPtr& user, const Ptr<SelfMovement>& msg) {
+            this->OnSelfMovement(user, msg);
+        });
+
     GameManager::getInstance().RegisterMessageCallback<SelfJumpAndGravity>(
-            std::bind_front(&GamePlayerManager::OnSelfJumpAndGravity, this));
+        [this](const UserConnectionPtr& user, const Ptr<SelfJumpAndGravity>& msg) {
+            this->OnSelfJumpAndGravity(user, msg);
+        });
+
     GameManager::getInstance().RegisterMessageCallback<PlayerLeave>(
-            std::bind_front(&GamePlayerManager::OnLeave, this));
+        [this](const UserConnectionPtr& user, const Ptr<PlayerLeave>& msg) {
+            this->OnLeave(user, msg);
+        });
+
 
     // m_server->RunTaskEvery(1s, [this]() {
     //     std::lock_guard lg{this->m_online_players_mutex};

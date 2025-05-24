@@ -44,7 +44,7 @@ void Connector::StartInLoop() {
         return;
     }
     //! 创建非阻塞套接字并开始非阻塞connect
-    SocketApiWrapper::socket_t sockfd = SocketApiWrapper::create_or_die();
+    const SocketApiWrapper::socket_t sockfd = SocketApiWrapper::create_or_die();
     int ret = SocketApiWrapper::connect(sockfd, m_ServerAddr);
     YLOG_INFO("In Connector::StartInLoop(), 开始连接服务器<{}:{}>", m_ServerAddr->GetIPStr().c_str(), m_ServerAddr->GetPort())
 
@@ -153,7 +153,7 @@ void Connector::HandleError() {
     if(m_State != eConnecting)
         return;
 
-    SocketApiWrapper::socket_t sockfd = RemoveAndResetChannel();
+    const SocketApiWrapper::socket_t sockfd = RemoveAndResetChannel();
     int err = SocketApiWrapper::get_socket_error(sockfd);
     YLOG_ERROR("In Connector::HandleError(), Socket Error: {}", yy::util::GetErrorInfo(err))
     Retry(sockfd);

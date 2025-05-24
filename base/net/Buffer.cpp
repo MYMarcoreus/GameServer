@@ -45,7 +45,7 @@ bool Buffer::AppendDataFromProtobuf(const google::protobuf::Message & src_msg) {
 #pragma clang diagnostic pop
 
 
-bool Buffer::RecvFromSocket(std::unique_ptr<Socket> &sock, size_t nBytesRecvOnce, SocketApiWrapper::SocketResult &rst, std::shared_ptr<IPAddress> peerAddr) {
+bool Buffer::RecvFromSocket(const std::unique_ptr<Socket> &sock, const size_t nBytesRecvOnce, SocketApiWrapper::SocketResult &rst, const std::shared_ptr<IPAddress>& peerAddr) {
     Compact(GetMaxsize());
 
     switch (sock->GetType()) {
@@ -63,7 +63,7 @@ bool Buffer::RecvFromSocket(std::unique_ptr<Socket> &sock, size_t nBytesRecvOnce
     return true;
 }
 
-bool Buffer::RecvAllFromSocket(std::unique_ptr<Socket> &sock, SocketApiWrapper::SocketResult & rst, std::shared_ptr<IPAddress> peerAddr) {
+bool Buffer::RecvAllFromSocket(const std::unique_ptr<Socket> &sock, SocketApiWrapper::SocketResult & rst, const std::shared_ptr<IPAddress>& peerAddr) {
     Compact(GetMaxsize());
     const uint32_t writable =  static_cast<uint32_t>(GetFreeSize());
 
@@ -77,7 +77,7 @@ bool Buffer::RecvAllFromSocket(std::unique_ptr<Socket> &sock, SocketApiWrapper::
     vec[0].IOV_LEN_FIELD = writable;
     vec[1].IOV_PTR_FIELD = tempBuf;
     vec[1].IOV_LEN_FIELD = sizeof tempBuf;
-    const int iovcnt = 2;
+    constexpr int iovcnt = 2;
 
     bool isOk = true;
 

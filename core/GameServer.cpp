@@ -15,34 +15,67 @@ using namespace yy::config;
 
 namespace yy::core {
 
-GameServer::GameServer(EventLoop *accpetorLoop, IPAddressPtr listenAddr)
+GameServer::GameServer(EventLoop *accpetorLoop, const IPAddressPtr& listenAddr)
         : m_accpetorLoop{accpetorLoop},
           m_tcpServer(accpetorLoop, listenAddr, true),
-          m_tcpDispatcher(std::bind(&GameServer::OnUnknownTcpMessage, this, _1, _2) ),
-          m_tcpCodec(std::bind(&decltype(m_tcpDispatcher)::OnProtobufMessage, &m_tcpDispatcher, _1, _2)),
+          m_tcpDispatcher([this](const TcpConnectionPtr& conn, const MessagePtr& msg) {
+              this->OnUnknownTcpMessage(conn, msg);
+          }),
+          m_tcpCodec([this](const TcpConnectionPtr& conn, const MessagePtr& msg) {
+              m_tcpDispatcher.OnProtobufMessage(conn, msg);
+          }),
           m_udpServer(accpetorLoop, true),
-          m_udpDispatcher(std::bind(&GameServer::OnUnknownUdpMessage, this, _1, _2) ),
-          m_udpCodec(std::bind(&decltype(m_udpDispatcher)::OnProtobufMessage, &m_udpDispatcher, _1, _2)),
+          m_udpDispatcher([this](const UdpSessionPtr& conn, const MessagePtr& msg) {
+              this->OnUnknownUdpMessage(conn, msg);
+          }),
+          m_udpCodec([this](const UdpSessionPtr& conn, const MessagePtr& msg) {
+              m_udpDispatcher.OnProtobufMessage(conn, msg);
+          }),
           m_appConfigvar(g_app_config)
 {
     //! TCP消息回调注册
     m_tcpDispatcher.RegisterMessageCallback<yy::protocol::core::HeartBody>(
-            std::bind(&GameServer::OnTcpHeart, this, _1, _2));
-    m_tcpDispatcher.RegisterMessageCallback<yy::protocol::core::SecurityBody>(
-            std::bind(&GameServer::OnSecurity, this, _1, _2));
-    m_tcpDispatcher.RegisterMessageCallback<yy::protocol::core::UdpPortRegisterRequest>(
-            std::bind_front(&GameServer::OnUdpPortRegisterRequest, this));
+        [this](const TcpConnectionPtr& conn, const HeartPtr& msg) {
+            this->OnTcpHeart(conn, msg);
+        });
 
-    m_tcpServer.SetMessageCallback(std::bind_front(&ProtobufTcpCodec::OnData, &m_tcpCodec));
-    m_tcpServer.SetConnectionEstablishedCallback(std::bind_front(&GameServer::OnConnectionEstablished, this));
-    m_tcpServer.SetConnectionShutdownCallback([this](const TcpConnectionPtr & conn) { this->AfterShutdownConnection(conn); });
-    // m_server.SetCloseSocketsCallback([this]() { this->CheckDisconnections(); });
+    m_tcpDispatcher.RegisterMessageCallback<yy::protocol::core::SecurityBody>(
+        [this](const TcpConnectionPtr& conn, const SecurityPtr& msg) {
+            this->OnSecurity(conn, msg);
+        });
+
+    m_tcpDispatcher.RegisterMessageCallback<yy::protocol::core::UdpPortRegisterRequest>(
+        [this](const TcpConnectionPtr& conn, const UdpPortRegisterRequestPtr& msg) {
+            this->OnUdpPortRegisterRequest(conn, msg);
+        });
+
+    m_tcpServer.SetMessageCallback(
+        [this](const TcpConnectionPtr& conn, Buffer& buf) {
+            m_tcpCodec.OnData(conn, buf);
+        });
+
+    m_tcpServer.SetConnectionEstablishedCallback(
+        [this](const TcpConnectionPtr& conn) {
+            this->OnConnectionEstablished(conn);
+        });
+
+    m_tcpServer.SetConnectionShutdownCallback(
+        [this](const TcpConnectionPtr& conn) {
+            this->AfterShutdownConnection(conn);
+        });
 
     //! UDP消息回调注册
-    m_udpDispatcher.RegisterMessageCallback<yy::protocol::core::HeartBody>(std::bind(&GameServer::OnUdpHeart, this, _1, _2));
+    m_udpDispatcher.RegisterMessageCallback<yy::protocol::core::HeartBody>(
+        [this](const UdpSessionPtr& conn, const HeartPtr& msg) {
+            this->OnUdpHeart(conn, msg);
+        });
 
-    m_udpServer.SetMessageCallback(std::bind_front(&ProtobufUdpCodec::OnData, &m_udpCodec));
+    m_udpServer.SetMessageCallback(
+        [this](const UdpSessionPtr& conn, Buffer& buf) {
+            m_udpCodec.OnData(conn, buf);
+        });
 }
+
 
 GameServer::~GameServer() {
     Stop();
@@ -101,8 +134,8 @@ void GameServer::AddCheckTimer(const TcpConnectionPtr & conn, const UserConnecti
     conn->GetIOLoop()->RunAfter(Seconds{GetAppConfig().time_heart_max()},
                                 [this, weak_userdata = std::weak_ptr<UserConnection>{userdata}]()
     {
-        if(auto userdata = weak_userdata.lock()) {
-            this->CheckHeart(userdata);
+        if(const auto user_connection = weak_userdata.lock()) {
+            this->CheckHeart(user_connection);
         }
     });
 }
@@ -118,8 +151,8 @@ void GameServer::CheckHeart(const UserConnectionPtr & userdata) {
         conn->GetIOLoop()->RunAfter(Seconds{GetAppConfig().time_heart_max()},
                                     [this, weak_userdata = std::weak_ptr<UserConnection>{userdata}]
         {
-            if(auto userdata = weak_userdata.lock()) {
-                this->CheckHeart(userdata);
+            if(const auto user_connection = weak_userdata.lock()) {
+                this->CheckHeart(user_connection);
             }
         });
     }
@@ -194,7 +227,7 @@ void GameServer::OnSecurity(const TcpConnectionPtr & conn, const SecurityPtr & m
 
     //! 安全验证通过：交由业务层
     if(resultBody.result_code() == yy::protocol::core::ResultBody_ResultCode_eSuccess) {
-        m_numSecurity++;
+        ++m_numSecurity;
         if(m_NotifierSecurity)
             m_NotifierSecurity(FindUser(conn->GetName()));
         YLOG_INFO("<{}>解包执行：安全验证通过", conn->GetName())
@@ -259,7 +292,7 @@ void GameServer::AfterShutdownConnection(const TcpConnectionPtr & conn) {
 UserConnectionPtr GameServer::FindUser(const std::string & conn_name) {
     std::lock_guard lg{m_usersMutex};
 
-    auto it = m_users.find(conn_name);
+    const auto it = m_users.find(conn_name);
     return (it == m_users.end()) ? nullptr : it->second;
 }
 

@@ -21,7 +21,7 @@ TcpClient::TcpClient(EventLoop *loop, IPAddressPtr serverAddr)
       m_NextConnID{0}
 {
     InitLog();
-    m_Connector->SetNewConnectionCallback( std::bind(&TcpClient::NewConnection, this, _1) );
+    m_Connector->SetNewConnectionCallback( [this](const SocketApiWrapper::socket_t sockfd){ this->NewConnection(sockfd); } );
     m_Connector->SetConnectFailedCallback( [this]() { YLOG_WARN("coonect to <{}:{}>", this->m_ServerAddr->GetIPStr().c_str(), m_ServerAddr->GetPort()) } );
 }
 
@@ -82,7 +82,7 @@ void TcpClient::NewConnection(SocketApiWrapper::socket_t sockfd) {
     conn->SetConnectionEstablishedCallback(m_ConnectionEstablishedCallback);
     conn->SetMessageCallback(m_MessageCallback);
     conn->SetConnectionWriteCompleteCallback(m_ConnectionWriteCompleteCallback);
-    conn->SetConnectionCloseCallback(std::bind(&TcpClient::RemoveConnection, this, _1));
+    conn->SetConnectionCloseCallback([this](const TcpConnectionPtr& tcpconn){ this->RemoveConnection(tcpconn); });
     conn->ConnectionEstablished();
 }
 

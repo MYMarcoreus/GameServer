@@ -20,7 +20,7 @@ using yy::SocketApiWrapper::SocketError;
 
 
 TcpConnection::TcpConnection(std::string name, EventLoop *loop, SocketApiWrapper::socket_t sockfd,
-                             IPAddress::ptr localAddr, IPAddress::ptr peerAddr)
+                             const IPAddress::ptr& localAddr, const IPAddress::ptr& peerAddr)
     : m_name(name),
       m_ioLoop(loop),
       m_channel(std::make_unique<IOChannel>(loop, sockfd, name)),
@@ -64,7 +64,7 @@ SocketApiWrapper::socket_t TcpConnection::GetSocketFD() const {
 }
 
 
-void TcpConnection::SendTCP(const void *buf, size_t len) {
+void TcpConnection::SendTCP(const void *buf, const size_t len) {
     SendTCP(std::string_view((char *) buf, len)); // 使用 string_view 观察调用者提供的内存，生命周期由调用者保证
 }
 
@@ -107,7 +107,6 @@ void TcpConnection::SendTCPInLoop(const std::string_view & buf) { //! const &延
 
     //! 输出缓冲中目前没有任何的未发送数据，便直接向套接字发送数据（不借助输出缓冲）
     SocketApiWrapper::SocketResult rst = m_socket->Send(buf.data(), buf.size());
-
     if(rst.HasNoError()) {
         YLOG_TRACE("<{}>TcpConnection::SendTCPInLoop：直接将长{}B数据包发送给用户, head-tail=={}-{}",
                    m_socket->GetFD(), rst.Result(), m_sendBuf->GetHead(), m_sendBuf->GetTail())
@@ -298,7 +297,8 @@ void TcpConnection::HandleRead() {
     // 返回值为是否有逻辑错误（而非socket错误）：用户是否发送过多数据
 #ifdef ____WINDOWS
     //! ET读取数据到recvBuf中
-    auto rst = HandleRead_ET();
+    // auto rst = HandleRead_ET();
+    auto rst = HandleRead_LT();
 #elif defined(____LINUX)
     auto rst = HandleRead_ET();
 #else
@@ -362,13 +362,12 @@ SocketApiWrapper::SocketResult TcpConnection::HandleRead_ET() {
         // 数据读取完毕
         if (rst.HasError())
         {
-            const auto err = rst.ErrorCode();
-            switch (err) {
+            switch (rst.ErrorCode()) {
                 //! 接收正常结束： EAGAIN，表示已无数据可recv，即数据全部recv完毕
                 case SocketError::eAgain:
-                    rst = {};
+                    rst = {0, 0};
                     break;
-                //! 再次尝试：recv被信号打断，应重试
+                //! 再次尝试：recv被信号打断，应重试（ET模式，触发过一次，若有数据未读，不会再次触发，所以应该在while(true)中continue）
                 case SocketError::eInterrupted:
                     continue;
                 case SocketError::eConnectionReset:
@@ -413,15 +412,14 @@ SocketApiWrapper::SocketResult TcpConnection::HandleRead_LT() {
 
     if (rst.HasError()) {
         YLOG_ERROR("<{}>TcpConnection::HandleRead_:LT(): recv() error: {}", m_socket->GetFD(), rst.GetErrorInfo())
-        const auto err = rst.ErrorCode();
-        switch (err) {
+        switch (rst.ErrorCode()) {
             //! 接收正常结束： EAGAIN，表示已无数据可recv，即数据全部recv完毕
             case SocketError::eAgain:
-                rst = {rst.Result(), 0};
+                rst = {0, 0};
                 break;
-            //! 再次尝试：recv被信号打断，应等待下一次的读事件
+            //! 再次尝试：recv被信号打断，应等待下一次的读事件（LT模式，还有数据未读便会一直触发）
             case SocketError::eInterrupted:
-                rst = {rst.Result(), 0};
+                rst = {0, 0};
                 break;
             case SocketError::eConnectionReset:
             case SocketError::eConnectionAborted:

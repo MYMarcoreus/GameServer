@@ -21,7 +21,7 @@ public:
     UdpServer(EventLoop * mainLoop, bool reusePort) noexcept;
     ~UdpServer();
 
-    void Start(int ioThreadNum, Milliseconds ioWaitTimeout, F_ThreadInitCallback cb = F_ThreadInitCallback());
+    void Start(int ioThreadNum, Milliseconds ioWaitTimeout, const F_ThreadInitCallback& cb = F_ThreadInitCallback());
 
     void Stop();
 

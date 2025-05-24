@@ -130,23 +130,23 @@ void Socket::Close() {
 }
 
 
-SocketApiWrapper::SocketResult Socket::Recv(void *ptr, size_t nbytes, int flags)
+SocketApiWrapper::SocketResult Socket::Recv(void *ptr, const size_t nbytes, const int flags)
 {
     return SocketApiWrapper::recv(m_socketfd, (char *)ptr, nbytes, flags);
 }
 
-SocketApiWrapper::SocketResult Socket::Send(const void *ptr, size_t nbytes, int flags)
+SocketApiWrapper::SocketResult Socket::Send(const void *ptr, const size_t nbytes, const int flags)
 {
     return SocketApiWrapper::send(m_socketfd, (char *)ptr, nbytes, flags);
 }
 
-SocketApiWrapper::SocketResult Socket::Sendto(const void *ptr, size_t nbytes, int flags, IPAddress::ptr peerAddr)
+SocketApiWrapper::SocketResult Socket::Sendto(const void *ptr, const size_t nbytes, const int flags, const IPAddress::ptr& peerAddr)
 {
     return SocketApiWrapper::sendto(m_socketfd, (char *)ptr, nbytes, flags, peerAddr);
 }
 
 
-SocketApiWrapper::SocketResult Socket::Recvfrom(void *ptr, size_t nbytes, int flags, IPAddress::ptr peerAddr)
+SocketApiWrapper::SocketResult Socket::Recvfrom(void *ptr, const size_t nbytes, const int flags, const IPAddress::ptr& peerAddr)
 {
     return SocketApiWrapper::recvfrom(m_socketfd, (char *)ptr, nbytes, flags, peerAddr);
 }

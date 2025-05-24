@@ -102,9 +102,9 @@ public:
 
 /* UDP的I / O函数 */
     //! NOTE：本函数不处理返回值，需要调用者自行处理（如判断是否为ET模式）
-    SocketApiWrapper::SocketResult Recvfrom(void *ptr, size_t nbytes, int flags, IPAddress::ptr peerAddr);
+    SocketApiWrapper::SocketResult Recvfrom(void* ptr, size_t nbytes, int flags, const IPAddress::ptr& peerAddr);
 
-    SocketApiWrapper::SocketResult Sendto(const void *ptr, size_t nbytes, int flags, IPAddress::ptr peerAddr);
+    SocketApiWrapper::SocketResult Sendto(const void *ptr, size_t nbytes, int flags, const IPAddress::ptr& peerAddr);
 
 
     ///@brief 关闭套接字读写端

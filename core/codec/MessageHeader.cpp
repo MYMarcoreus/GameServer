@@ -23,10 +23,10 @@ requires requires {
     requires !std::is_pointer_v<T>;
 }
 T CalcXor(T val, uint8_t xorCode) {
-    char * p = (char *)&val;
+    auto p = static_cast<char*>(&val);
     for (int i = 0; i < sizeof(T); ++i) {
         *p ^= xorCode;
-        p++;
+        ++p;
     }
     return val;
 }

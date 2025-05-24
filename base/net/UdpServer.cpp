@@ -33,11 +33,11 @@ UdpServer::~UdpServer() {
     m_IsStarted = false;
 }
 
-void UdpServer::Start(int ioThreadNum, Milliseconds ioWaitTimeout, F_ThreadInitCallback cb) {
+void UdpServer::Start(int ioThreadNum, const Milliseconds ioWaitTimeout, const F_ThreadInitCallback& cb) {
     if(!m_IsStarted.exchange(true)) {
         m_recvEventThreadPool->Start(1, ioWaitTimeout, cb);
         m_udpTran = std::make_unique<UdpTransport>(m_recvEventThreadPool->GetNextLoop());
-        m_udpTran->SetUdpRecievedCallback(std::bind_front(&UdpServer::HandleNewMessage, this));
+        m_udpTran->SetUdpRecievedCallback([this](Buffer & recvBuf, const IPAddressPtr& peerAddr){ this->HandleNewMessage(recvBuf, peerAddr); });
     }
 }
 

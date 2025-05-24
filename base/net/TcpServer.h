@@ -25,7 +25,7 @@ public:
     ~TcpServer();
 
     ///@brief 启动连接池并开启监听套接字
-    void Start(int ioThreadNum, Milliseconds ioWaitTimeout, F_ThreadInitCallback cb = F_ThreadInitCallback());
+    void Start(int ioThreadNum, Milliseconds ioWaitTimeout, const F_ThreadInitCallback& cb = F_ThreadInitCallback());
 
     void Stop();
 
@@ -34,7 +34,7 @@ public:
     void SetConnectionDestroyedCallback(F_ConnectionDestroyedCallback cb) { m_ConnectionDestroyedCallback = cb; };
     void SetConnectionWriteCompleteCallback(F_ConnectionWriteCompleteCallback cb) { m_ConnectionWriteCompleteCallback = cb; };
     void SetConnectionShutdownCallback     (F_ConnectionShutdownCallback cb)      { m_ConnectionShutdownCallback = cb; }
-    void SetCloseSocketsCallback(F_CloseShutdownConnectionsCallback cb);
+    void SetCloseSocketsCallback(const F_CloseShutdownConnectionsCallback& cb);
 
 
     /* ! 注意：当使用线程池时，不要把recvBuf的引用或指针作为参数传递给另一线程（如线程池中的线程），
@@ -61,9 +61,7 @@ private:
     EventLoop *                          m_AcceptorLoop;
     std::unique_ptr<Acceptor>            m_Acceptor;
     std::unique_ptr<EventLoopThreadPool> m_IOThreadPool;
-#ifdef ____LINUX
-    std::unique_ptr<class SignalManager> m_SignalManager;
-#endif
+
 
     std::atomic<bool>   m_IsStarted{false};
     uint64_t            m_NextConnID{0};
@@ -80,7 +78,9 @@ private:
     config::ConfigVar<config::AppXmlConfig>::ptr m_AppConfigVar; // 用于获取配置项
     std::unordered_map<std::string , TcpConnectionPtr> m_ConnectionMap;
 
-
+#ifdef ____LINUX
+    std::unique_ptr<class SignalManager> m_SignalManager;
+#endif
 };
 
 

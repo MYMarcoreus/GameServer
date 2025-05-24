@@ -1,4 +1,7 @@
 #include "TcpServer.h"
+
+#include <ranges>
+
 #include "Acceptor.h"
 #include "EventLoopThreadPool.h"
 #include "EventLoop.h"
@@ -15,7 +18,7 @@ namespace yy::net {
 
 class SignalManager {
 public:
-    SignalManager(EventLoop * loop, std::function<void()> handler)
+    SignalManager(EventLoop * loop, const std::function<void()>& handler)
         : loop_{loop}, channel_(std::make_unique<IOChannel>(loop_, SignalManager::pipe_.sideR(), "Wakeup Eventfd Channel"))
     {
         // 屏蔽SIGPIPE：当服务器进程向已收到RST的用户套接字执行写操作时，内核会向进程发送SIGPIPE信号来结束进程
@@ -33,7 +36,7 @@ public:
 
     static void WritePipe(int sig) {
         //! 向唤醒事件文件描述符进行写，以触发其eoll事件
-        int msg = sig;
+        const int msg = sig;
         pipe_.Write((const char *)&msg, 1);
     }
 
@@ -79,8 +82,7 @@ TcpServer::TcpServer(EventLoop *acceptorLoop, IPAddress::ptr listenAddr, bool re
 TcpServer::~TcpServer() {
     m_AcceptorLoop->AssertInLoopingThread(__FILE__, __LINE__);
 
-    for(auto & p: m_ConnectionMap) {
-        auto conn = p.second;
+    for(auto& conn : m_ConnectionMap | std::views::values) {
         conn->GetIOLoop()->RunCallbackInLoop([conn](){ conn->ConnectionDestroyed(); } );
         conn.reset();
     }
@@ -88,10 +90,10 @@ TcpServer::~TcpServer() {
     m_IsStarted = false;
 }
 
-void TcpServer::Start(int ioThreadNum, Milliseconds ioWaitTimeout, F_ThreadInitCallback cb) {
+void TcpServer::Start(const int ioThreadNum, const Milliseconds ioWaitTimeout, const F_ThreadInitCallback& cb) {
     if(!m_IsStarted.exchange(true)) {
         m_IOThreadPool->Start(ioThreadNum, ioWaitTimeout, cb);
-        m_Acceptor->SetNewConnectionCallback(std::bind(&TcpServer::HandleNewConnection, this, _1, _2));
+        m_Acceptor->SetNewConnectionCallback([this](const SocketApiWrapper::socket_t sockfd, const IPAddressPtr& peerAddr){return this->HandleNewConnection(sockfd, peerAddr);} );
         m_Acceptor->StartListen();
     }
 }
@@ -127,7 +129,7 @@ void TcpServer::HandleNewConnection(SocketApiWrapper::socket_t sockfd, IPAddress
     conn->SetConnectionDestroyedCallback(m_ConnectionDestroyedCallback);
     conn->SetMessageCallback(m_MessageCallback);
     conn->SetConnectionWriteCompleteCallback(m_ConnectionWriteCompleteCallback);
-    conn->SetConnectionCloseCallback(std::bind(&TcpServer::RemoveConnection, this, _1));
+    conn->SetConnectionCloseCallback([this](const TcpConnectionPtr & conn_cb){ return this->RemoveConnection(conn_cb); });
     conn->SetConnectionShutdownCallback(m_ConnectionShutdownCallback);
 
     //!
@@ -136,7 +138,7 @@ void TcpServer::HandleNewConnection(SocketApiWrapper::socket_t sockfd, IPAddress
     YLOG_INFO("In TcpServer::HandleNewConnection<{}:{}>，PeerAddr<{},{}>", conn->GetSocketFD(), conn->GetName().c_str(),
               conn->GetPeerAddr()->GetIPStr().c_str(), conn->GetPeerAddr()->GetPortStr().c_str());
 
-    m_NumConnect++;
+    ++m_NumConnect;
 }
 
 void TcpServer::RemoveConnection(const TcpConnectionPtr &conn) {
@@ -148,7 +150,7 @@ void TcpServer::RemoveConnectionInLoop(TcpConnectionPtr conn) {
     m_AcceptorLoop->AssertInLoopingThread(__FILE__, __LINE__);
 
     m_ConnectionMap.erase(conn->GetName());
-    m_NumConnect--;
+    --m_NumConnect;
 
     conn->GetIOLoop()->EnqueueCallbackInLoop([conn](){ conn->ConnectionDestroyed(); });
 }
@@ -157,7 +159,7 @@ void TcpServer::RemoveConnectionInLoop(TcpConnectionPtr conn) {
 
 
 
-void TcpServer::SetCloseSocketsCallback(F_CloseShutdownConnectionsCallback cb) {
+void TcpServer::SetCloseSocketsCallback(const F_CloseShutdownConnectionsCallback& cb) {
     m_AcceptorLoop->SetCloseSocketsCallback(cb);
 }
 
@@ -166,7 +168,7 @@ void TcpServer::HandleSignal() {
     auto sigs = SignalManager::ReadPipe();
 
     for(int i = 0 ; i < sigs.size() ; ++i) {
-        switch((int)sigs[i]) {
+        switch(sigs[i]) {
             // 定时器
             case SIGALRM: {
                 YLOG_WARN("收到SIGALRM信号！")

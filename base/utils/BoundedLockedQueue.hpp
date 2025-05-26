@@ -11,12 +11,12 @@
 
 namespace yy::util {
 
-
+// muduo实现
 template<typename T>
-class BoundedQueue
+class BoundedLockedQueue
 {
 public:
-    explicit BoundedQueue(int _maxsize = NO_BOUND_SIZE): m_maxsize(_maxsize)  {}
+    explicit BoundedLockedQueue(int _maxsize = NO_BOUND_SIZE): m_maxsize(_maxsize)  {}
 
     /// @brief  虽然element参数类型是右值引用&&，但是C++有“引用折叠”机制，就是右值引用&&可以“折叠”以接收左值引用&，
     /// 此时的引用称为“万能引用”，它既能引用左值又能引用右值(常出现在auto和模板这类自动推导类型的场景出现)
@@ -109,18 +109,18 @@ public:
     }
 
     [[nodiscard]] int maxsize() const { return m_maxsize; }
-    [[nodiscard]] bool is_bounded() { return m_maxsize != NO_BOUND_SIZE; }
+    [[nodiscard]] bool is_bounded() const { return m_maxsize != NO_BOUND_SIZE; }
     [[nodiscard]] bool is_full() { return m_queue.size() == m_maxsize; }
 
     // 禁止复制与移动该容器
-    BoundedQueue(const BoundedQueue &) = delete;
-    BoundedQueue &operator=(const BoundedQueue &) = delete;
-    BoundedQueue(BoundedQueue &&) = delete;
-    BoundedQueue &operator=(BoundedQueue &&) = delete;
+    BoundedLockedQueue(const BoundedLockedQueue &) = delete;
+    BoundedLockedQueue &operator=(const BoundedLockedQueue &) = delete;
+    BoundedLockedQueue(BoundedLockedQueue &&) = delete;
+    BoundedLockedQueue &operator=(BoundedLockedQueue &&) = delete;
 
-    ~BoundedQueue() = default;
+    ~BoundedLockedQueue() = default;
 
-    static const int            NO_BOUND_SIZE = INT_MAX;
+    static constexpr int            NO_BOUND_SIZE = INT_MAX;
 private:
     const int                   m_maxsize;
     std::queue<T>               m_queue;

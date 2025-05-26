@@ -5,6 +5,7 @@
 #include "IPAddress.h"
 #include "log.h"
 #include "ThreadPool.h"
+#include "NetBuffer.h"
 
 #include <stdio.h>
 
@@ -21,7 +22,12 @@ class EchoServer
 {
 public:
     EchoServer(EventLoop* loop, IPAddressPtr listenAddr)
-        : server_(loop, listenAddr, true)
+        : server_(loop, listenAddr, true,
+            yy::config::g_app_config->GetValue().send_bytes_one(),
+            yy::config::g_app_config->GetValue().send_bytes_max(),
+            yy::config::g_app_config->GetValue().recv_bytes_one(),
+            yy::config::g_app_config->GetValue().recv_bytes_max(),
+            yy::config::g_app_config->GetValue().app_xor_code())
     {
         server_.SetConnectionEstablishedCallback( std::bind(&EchoServer::OnConnectionEstablished, this, _1));
         server_.SetMessageCallback( std::bind(&EchoServer::onMessage, this, _1, _2));
@@ -41,7 +47,7 @@ private:
 
     /* ! 注意：在onMessage中，不要把recvBuf的引用或指针作为参数传递给另一线程（如线程池中的线程），
        ! onMessage需在的调用者线程中操作recvBuf， 否则可能在成recvBuf的线程不安全 */
-    void onMessage(TcpConnectionPtr conn, Buffer& recvBuf)
+    void onMessage(TcpConnectionPtr conn, NetBuffer& recvBuf)
     {
         YLOG_INFO("▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲处理用户<%d: %s>的消息<%zu>",
                   conn->GetSocketFD(), conn->GetName().c_str(), recvBuf.GetDataSize())
@@ -72,7 +78,11 @@ private:
 
 int main()
 {
-    config::ConfigManager::LoadXmlConfigs();
+    config::ConfigManager::AddFilePath("./configs.xml");
+    config::ConfigManager::AddFilePath("../configs.xml");
+    yy::config::ConfigManager::LoadXmlConfigs();
+    yy::Ylog::LoggerManager::getInstance().ReadConfigs();
+
     EventLoop loop{10000s};
     IPAddressPtr listenAddr = std::make_shared<IPv4Address>(config::g_app_config->GetValue().app_tcp_port());
     EchoServer server(&loop, listenAddr);

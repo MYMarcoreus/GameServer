@@ -11,9 +11,10 @@ set(LocalSrc
         config/LogXmlConfig.cpp
         config/RemoteXmlConfig.cpp
         utils/util_functions.cpp
-        utils/BoundedQueue.hpp
+        utils/BoundedLockedQueue.hpp
         utils/ThreadPool.cpp
         utils/status/Status.cpp
+        utils/Buffer.cpp
         net/IPAddress.cpp
         net/IOChannel.cpp
         net/EpollPoller.cpp
@@ -27,7 +28,6 @@ set(LocalSrc
         net/Acceptor.cpp
         net/Socket.cpp
         net/TcpConnection.cpp
-        net/Buffer.cpp
         net/TcpServer.cpp
         net/EventLoopThreadPool.cpp
         net/Connector.cpp
@@ -35,6 +35,7 @@ set(LocalSrc
         net/SocketApiWrapper.cpp
         net/SelectPoller.cpp
         net/FullDuplexPipe.cpp
+        net/NetBuffer.cpp
 )
 
 #! 给本地相对路径添加前缀，变为绝对路径

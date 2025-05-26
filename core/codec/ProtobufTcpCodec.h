@@ -6,7 +6,7 @@
 #include "core_definations.h"
 #include "net_definations.h"
 #include "MessageHeader.h"
-#include "Buffer.h"
+#include "NetBuffer.h"
 
 
 namespace google::protobuf {
@@ -27,7 +27,7 @@ using MessagePtr = std::shared_ptr<google::protobuf::Message>;
 
 /*
 Message回调的传递路线(SetCallback)：
-                                    调用MessageCallback(Buffer&)
+                                    调用MessageCallback(NetBuffer&)
                         ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
                         ▼                                             ┃
                   ProtobufCodec ==> XXXServer ==> TcpServer ==> TcpConnection
@@ -48,22 +48,22 @@ Message的传递路线(Call Callback)：
 */
 class ProtobufTcpCodec: public util::noncopyable {
     using F_ProtobufMessageDispatchCallback = std::function<void(const net::TcpConnectionPtr &, const MessagePtr &)>;
-    using F_ProtobufErrorMessageCallback = std::function<void(const net::TcpConnectionPtr &, yy::net::Buffer &, MessageParseErrorCode)>;
+    using F_ProtobufErrorMessageCallback = std::function<void(const net::TcpConnectionPtr &, yy::net::NetBuffer &, MessageParseErrorCode)>;
 
 public:
     ProtobufTcpCodec(F_ProtobufMessageDispatchCallback msgCb, F_ProtobufErrorMessageCallback errCb = DefaultErrorCallback);
 
     ///@brief TcpConnection接收字节流到输入缓冲以后调用的回调函数，该函数用于处理字节流，解析并创建出消息，然后传递消息给ProtobufDispatcher
-    void OnData(const yy::net::TcpConnectionPtr &conn, yy::net::Buffer &buf);
+    void OnData(const yy::net::TcpConnectionPtr &conn, yy::net::NetBuffer &buf);
 
     ///@brief 发送message（加Header后Send）
     void SendTCP(const yy::net::TcpConnectionPtr &conn, const google::protobuf::Message & message);
 
 private:
     ///@brief 解析Buffer中的二进制数据，将其解析为protobuf的Message
-    MessagePtr Parse(const yy::net::TcpConnectionPtr &conn, yy::net::Buffer &buf, MessageParseErrorCode & outErrCode);
+    MessagePtr Parse(const yy::net::TcpConnectionPtr &conn, yy::net::NetBuffer &buf, MessageParseErrorCode & outErrCode);
 
-    static void DefaultErrorCallback(const yy::net::TcpConnectionPtr & conn, yy::net::Buffer & buf, MessageParseErrorCode);
+    static void DefaultErrorCallback(const yy::net::TcpConnectionPtr & conn, yy::net::NetBuffer & buf, MessageParseErrorCode);
 
     static MessagePtr CreateMessage(const std::string & typeName);
 

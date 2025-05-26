@@ -1,19 +1,21 @@
 #ifndef LINUXGAMESERVER_BUFFER_H
 #define LINUXGAMESERVER_BUFFER_H
 
-#include "socket_definations.h"
-#include "net_definations.h"
 #include <cstring>
-#include <atomic>
+#include <string>
+#include <string_view>
+#include <memory>
+#include <vector>
+#include "copyable.h"
 
 namespace google::protobuf {
 class Message;
 }
 
-namespace yy::net {
+namespace yy::util {
 
 // 每一个TcpConnection对应一个recvbuf和sendbuf，而每一个TcpConnection仅仅会被一个ioloop线程操作io，因此Buffer在此场景下线程安全
-class Buffer: util::copyable {
+class Buffer: copyable {
 public:
     explicit Buffer(size_t _maxsize);
     Buffer(Buffer &&) = default;
@@ -27,14 +29,12 @@ public:
 
     ///@brief 已填充的字节数
     size_t GetDataSize() const {
-        assert(m_Tail >= m_Head);
         return GetTail() - GetHead();
     }
 
     ///@brief 未填充的字节数
     size_t GetFreeSize() const {
-        auto rst = GetMaxsize() - GetTail();
-        assert(rst >= 0);
+        const auto rst = GetMaxsize() - GetTail();
         return rst;
     }
 
@@ -47,6 +47,8 @@ public:
     ///@brief
     bool IsDataFull() const { return GetFreeSize() == 0; }
 
+    bool HaveEnoughFreeSpace(const int len) const { return GetFreeSize() >= len; }
+    bool HaveEnoughDataSpace(const int len) const { return GetDataSize() >= len; }
 
     /*
      * concept and requires：
@@ -59,11 +61,11 @@ public:
         requires std::is_standard_layout_v<T>;
         requires std::is_trivial_v<T>;
     }
-    bool PeekToPodStruct(int start_index, T &dest) const
+    bool PeekToPodStruct(const int start_index, T &dest) const
     {
         if(GetDataSize() < sizeof(T))
             return false;
-        memcpy(&dest, GetDataBegin()+start_index, sizeof(dest));
+        std::memcpy(&dest, GetDataBegin()+start_index, sizeof(dest));
         return true;
     }
 
@@ -71,7 +73,7 @@ public:
 
     bool PeekToString(int start_index, std::string & dest, int len) const;
 
-    const char * Peek(int start = 0) const { return GetBufBegin() + m_Head + start; }
+    const char * Peek(const int start = 0) const { return GetBufBegin() + m_Head + start; }
 
 
     ///Region 填充数据（生产数据）
@@ -93,12 +95,7 @@ public:
     ///@brief 读取protobuf对象到缓冲区中 ———— sendBuf封装消息体
     bool AppendDataFromProtobuf(const google::protobuf::Message & message);
 
-    /*! Buffer不实现来自套接字Socket的recv任务，因为对于recv任务，存在ET和LT的区别，因此原样recv的错误，让其所有者TcpConnection实现 !*/
-    // ET
-    bool RecvFromSocket(const std::unique_ptr<Socket> &sock, size_t nBytesRecvOnce, SocketApiWrapper::SocketResult &rst, const std::shared_ptr<IPAddress>& peerAddr);
-    // LT
-    bool RecvAllFromSocket(const std::unique_ptr<Socket> & sock, SocketApiWrapper::SocketResult & rst, const std::shared_ptr<IPAddress>& peerAddr);
-    ///End
+
 
     /// Region 取出数据（消费数据）
     ///@brief 将`data_len`长度的数据写入C语言的缓冲区`src_buf`中
@@ -124,12 +121,10 @@ public:
     ///@brief 将所有数据读入string中并返回
     std::string PopAllDataAsString();
 
-    void PopData(size_t offset) { m_Head += offset; }
-
-    SocketApiWrapper::SocketResult SendToSocket(std::unique_ptr<Socket> & sock, std::shared_ptr<IPAddress> peerAddr);
+    void PopData(const size_t offset) { m_Head += offset; }
     /// End
 
-private:
+protected:
     // 整体缓冲区：可读写
     char*       GetBufBegin()       { return m_Buf.data(); }
     const char* GetBufBegin() const { return m_Buf.data(); }
@@ -142,17 +137,15 @@ private:
     char* GetFreeBegin() { return GetBufBegin() + m_Tail; }
 
 
-    bool HaveEnoughData(int len) { return GetDataSize() >= len; }
-
     bool TryMakeEnoughSpace(int needLen);
     bool Compact(int needLen);
 
 
     void MoveHeadAndTryReset(size_t offset);
 
-    void BackHead(size_t offset) { m_Head -= offset; }
-    void MoveTail(size_t offset) { m_Tail += offset; }
-    void BackTail(size_t offset) { m_Tail -= offset; }
+    void BackHead(const size_t offset) { m_Head -= offset; }
+    void MoveTail(const size_t offset) { m_Tail += offset; }
+    void BackTail(const size_t offset) { m_Tail -= offset; }
 
 
     void Reset() {
@@ -162,11 +155,7 @@ private:
     void Print() const;
 
 
-
-
-
-
-private:
+protected:
 /// +-------------------+------------------+------------------+
 /// | prependable bytes |       数据区      |       空闲区       |
 /// |                   |  (GetDataSize)   |  (GetFreeSize)   |
@@ -174,9 +163,9 @@ private:
 /// |                   |                  |                  |
 /// 0      <=        m_Head      <=     m_Tail    <=       GetMaxsize
     std::vector<char> m_Buf{ };
+    size_t            m_Maxsize{ };
     size_t            m_Head{ }; // 消费者指针：用于读取，head是数据区的第一个字节
     size_t            m_Tail{ }; // 生产者指针：用于接收，tail是空闲区的第一个字节
-    size_t            m_Maxsize{ };
 };
 
 }

@@ -4,7 +4,7 @@
 #include "Singleton.h"
 #include "util_functions.h"
 #include "ConfigManager.h"
-#include "ThreadSafeQueue.hpp"
+#include "UnboundedLockedQueue.hpp"
 #include "ILogAppender.h"
 
 #include <unordered_map>
@@ -180,7 +180,7 @@ public:
     /// @brief 配置文件中的日志格式能够指定时间项的格式
     void SetTimeFormat(const std::string&  timeFmtPattern = "%Y-%m-%d %H:%M:%S.",  bool need_us = true);
 
-    std::string format(const LogMessage::ptr& msg)
+    std::string format(const LogMessage::ptr& msg) const
     {
         // 遍历每一项，将其转换为最终被输出的字符串
         std::stringstream ss;
@@ -193,7 +193,7 @@ private:
     void init();
 
 private:
-    std::string                  m_format_pattern; // 支持自定义日志格式
+    std::string                   m_format_pattern; // 支持自定义日志格式
     std::vector<IFormatItem::ptr> m_format_items;   // 解析pattern后，格式化后的日志格式项
 };
 
@@ -212,6 +212,8 @@ public:
     std::string getName() const { return m_name; }
 
     LogLevel getLevel() const { return m_level; }
+
+    void Stop() { m_isStop = true; }
 
     /// @brief 对appender列表内的所有appender执行log
     /// @param msg 一条日志信息，在该函数中可能被输出到不同的地方(file、stdout)
@@ -236,10 +238,11 @@ private:
     void LogAsync(const LogMessage::ptr& msg) const;
 
 private:
-    std::string                   m_name;      // 日志器名称
-    LogLevel                      m_level;     // 日志器级别
-    std::vector<std::shared_ptr<ILogAppender>> m_appenders; // 日志添加器
-    mutable std::mutex            m_mutex;     // 管理appenders的互斥锁
+    std::string                                 m_name;      // 日志器名称
+    LogLevel                                    m_level;     // 日志器级别
+    std::vector<std::shared_ptr<ILogAppender>>  m_appenders; // 日志添加器
+    mutable std::mutex                          m_mutex;     // 管理appenders的互斥锁
+    std::atomic<bool>                           m_isStop;
 
     /* 异步 */
     bool m_isAsync;    // 是否使用异步
@@ -295,10 +298,11 @@ private:
     std::mutex m_mutex;
 
     /* 所有日志器共用一个阻塞队列，并用m_isRun控制异步写日志线程的运行 */
-    yy::util::ThreadSafeQueue<std::pair<std::shared_ptr<ILogAppender>, LogMessage::ptr>> m_blockqueue;
+    yy::util::UnboundedLockedQueue<std::pair<std::shared_ptr<ILogAppender>, LogMessage::ptr>> m_blockqueue;
     // 某线程因遇到错误结束程序，为使得detach的线程也能够关闭，故使用原子变量isRun进行同步
-    std::atomic<bool> m_isRunning;
-    std::thread       m_async_thread;
+    std::atomic<bool>       m_isRunning;
+    std::condition_variable m_isAsyncStart;
+    std::thread             m_async_thread;
 };
 
 

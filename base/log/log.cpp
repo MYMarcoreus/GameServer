@@ -254,7 +254,7 @@ void LogFormatter::SetTimeFormat(const std::string& timeFmtPattern, bool need_us
 
 /******************************* Logger *******************************/
 Logger::Logger(const std::string& name, LogLevel level, bool isAsync) //NOLINT
-        : m_name(name), m_level(level), m_isAsync(isAsync)
+        : m_name(name), m_level(level), m_isStop{false}, m_isAsync(isAsync)
 { }
 
 
@@ -290,8 +290,9 @@ void Logger::Log(const LogMessage::ptr& msg) const
 {
     assert(msg != nullptr);
 
-
     // TICK_START()
+    if (m_isStop)
+        return;
 
     // 日志器将过滤掉级别比它低的日志
     if (msg->getLevel() < m_level)
@@ -415,7 +416,7 @@ void LoggerManager::ReadConfigs()
 
 LoggerManager::LoggerManager(): m_isRunning{false} {
     ReadConfigs();
-    if(!m_isRunning)
+    if(not m_isRunning)
         StartAsyncThread();
 
     addListener();
@@ -430,18 +431,22 @@ LoggerManager::~LoggerManager()
 
 void LoggerManager::StartAsyncThread()
 {
-    m_isRunning = true;
     m_async_thread = std::thread( [this](){
         std::cout << "异步写线程开启！" << std::endl;
         AsyncLogFlushThread();
         std::cout << "异步写线程结束！" << std::endl;
     } );
+
+    // 等待异步写线程启动完毕才能返回给使用者使用
     m_async_thread.detach();
+    m_isRunning.wait(false);
 }
 
 void LoggerManager::AsyncLogFlushThread()
 {
-    while (true)
+    m_isRunning = true;
+    m_isRunning.notify_all();
+    while (m_isRunning)
     {
         // 等待队列中有元素被push，然后将元素pop至msg中返回
         // std::pair<std::shared_ptr<LogAppender>, LogMessage::ptr> p;
@@ -449,24 +454,12 @@ void LoggerManager::AsyncLogFlushThread()
         m_blockqueue.wait_pop(p);
 
         // 在异步线程中进行同步写
-        if(m_isRunning and p.first != nullptr) {
-            assert(p.second != nullptr);
+        assert(p.second != nullptr);
+        p.first->WriteLog(p.second);
 
-            p.first->WriteLog(p.second);
-
-            //FIXME: 收到FATAL日志时到底该不该结束程序呢？
-            if(p.second->getLevel() == LogLevel::eFATAL) {
-                std::terminate();
-            }
-        }
-        // 收到结束线程的信号
-        else {
-            // while(!m_blockqueue.empty()) {
-            //     if(p.first != nullptr)
-            //         p.first->WriteLog(p.second);
-            // }
-
-            break;
+        //FIXME: 收到FATAL日志时到底该不该结束程序呢？
+        if(p.second->getLevel() == LogLevel::eFATAL) {
+            std::terminate();
         }
     }
 }
@@ -474,12 +467,19 @@ void LoggerManager::AsyncLogFlushThread()
 void LoggerManager::StopAsyncThread()
 {
     if(m_isRunning) {
-        // 等待将所有日志写完
+        // 阻止使用者写入新的日志
+        for (auto & p: m_loggers) {
+            if (const auto & logger = p.second) {
+                logger->Stop();
+            }
+        }
+
+        // 等待将已有日志写完
         while(!m_blockqueue.empty()) { /* spinning */ }
 
         // 发出信号让异步写线程结束
         m_isRunning = false;
-        m_blockqueue.push(std::pair{nullptr, nullptr});
+        // m_blockqueue.push(std::pair{nullptr, nullptr});
     }
 }
 

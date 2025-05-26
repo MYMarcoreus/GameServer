@@ -10,25 +10,27 @@ static_assert(sizeof(Timestamp) == sizeof(time_t),
 
 
 Timestamp Timestamp::Now() {
-    auto now = std::chrono::system_clock::now();
-    auto now_us = std::chrono::time_point_cast<std::chrono::microseconds>(now);
+    const auto now = std::chrono::high_resolution_clock::now();
+    const auto now_us = std::chrono::time_point_cast<std::chrono::microseconds>(now);
     return Timestamp{  now_us.time_since_epoch() };
 }
 
-Timestamp::Timestamp(Microseconds  microSecondSinceEpoch)
+Timestamp::Timestamp(const Microseconds  microSecondSinceEpoch)
     : us_SinceEpoch_{microSecondSinceEpoch.count()} {}
 
-Timestamp::Timestamp(timespec spec)
+Timestamp::Timestamp(const timespec spec)
     : us_SinceEpoch_(spec.tv_sec * (Microseconds::period::den / Seconds::period::den) + spec.tv_nsec / (std::nano::den / std::micro::den) )
 { }
 
-std::string Timestamp::ToString() {
+std::string Timestamp::ToString() const
+{
     char buf[64]{0};
     snprintf(buf, 63, "%lld.%lld", (long long)GetSecondPart().count(), (long long)GetMicroSecondPart().count());
     return buf;
 }
 
-std::string Timestamp::ToFormattedString(const std::string &fmt, bool is_UTC) {
+std::string Timestamp::ToFormattedString(const std::string &fmt, bool is_UTC) const
+{
 
     // 将始于epoch的秒数转换为年月日时分
     struct tm now_tm{};

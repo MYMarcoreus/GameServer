@@ -10,7 +10,7 @@
 #include "SFINAE.h"
 
 namespace yy::net {
-class Buffer;
+class NetBuffer;
 }
 
 namespace yy::core {
@@ -42,10 +42,10 @@ public:
     }
 
     /// @brief 接收时使用，从Buffer中读入未解密的数据，并解密
-    MessageParseErrorCode ParseFromBuffer(net::Buffer &buf, uint8_t xorCode);
+    MessageParseErrorCode ParseFromBuffer(net::NetBuffer &buf, uint8_t xorCode);
 
     /// @brief 将*this中的数据加密并序列化后写入Buffer中
-    bool AppendIntoBuffer(net::Buffer &buf, uint8_t xorCode);
+    bool AppendIntoBuffer(net::NetBuffer &buf, uint8_t xorCode);
 
     const auto & GetCheckCode() const { return m_CheckCode; }
 

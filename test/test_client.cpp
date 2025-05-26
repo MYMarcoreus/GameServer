@@ -3,7 +3,7 @@
 #include "EventLoop.h"
 #include "IPAddress.h"
 #include "log.h"
-#include "Buffer.h"
+#include "NetBuffer.h"
 #include <stdio.h>
 
 using namespace yy;

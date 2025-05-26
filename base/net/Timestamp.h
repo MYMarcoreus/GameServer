@@ -20,24 +20,24 @@ public:
 
     ///Region 转换函数
     ///@brief 返回`秒.微秒`的字符串格式
-    std::string ToString();
+    std::string ToString() const;
 
     /// @brief 返回格式化时间，默认格式为 2023-02-04 20:29:44.961172
-    std::string ToFormattedString(const std::string &fmt = "%Y-%m-%d %H:%M:%S.", bool is_UTC = false);
+    std::string ToFormattedString(const std::string &fmt = "%Y-%m-%d %H:%M:%S.", bool is_UTC = false) const;
 
     struct timespec ToTimespec();
     ///End 转换函数
 
     //Region GETTER
-    Microseconds GetMircoSecondSinceEpoch() { return us_SinceEpoch_; }
-    Seconds      GetSecondPart()            { return Seconds{us_SinceEpoch_ / k10_6}; }
-    Microseconds GetMicroSecondPart()       { return us_SinceEpoch_ % k10_6; }
-    bool   IsValid() { return us_SinceEpoch_ > 0us; }
+    Microseconds GetMircoSecondSinceEpoch() const { return us_SinceEpoch_; }
+    Seconds      GetSecondPart() const { return Seconds{us_SinceEpoch_ / k10_6}; }
+    Microseconds GetMicroSecondPart() const { return us_SinceEpoch_ % k10_6; }
+    bool   IsValid() const { return us_SinceEpoch_ > 0us; }
     //End GETTER
 
     //Region SETTER
     void SetNow() { us_SinceEpoch_ = Timestamp::Now().GetMircoSecondSinceEpoch(); }
-    void SetUnixTime(Seconds secondPart, Microseconds microSecondPart)
+    void SetUnixTime(const Seconds secondPart, const Microseconds microSecondPart)
     { us_SinceEpoch_ = FromUnixTime(secondPart, microSecondPart).GetMircoSecondSinceEpoch(); }
     //End SETTER
 
@@ -52,25 +52,25 @@ private:
 };
 
 ///@brief 求未来的时间点
-inline Timestamp operator+(Timestamp a, Microseconds b)
+inline Timestamp operator+(const Timestamp a, const Microseconds b)
 { return  Timestamp(a.GetMircoSecondSinceEpoch() + b); }
 
 ///@brief 求时间段
-inline Microseconds  operator-(Timestamp a, Timestamp b)
+inline Microseconds  operator-(const Timestamp a, const Timestamp b)
 { return a.GetMircoSecondSinceEpoch() - b.GetMircoSecondSinceEpoch(); }
 
 
 ///@brief 求过去的时间点
-inline Timestamp operator-(Timestamp a, Microseconds  b)
+inline Timestamp operator-(const Timestamp a, const Microseconds  b)
 { return  Timestamp(a.GetMircoSecondSinceEpoch() - b); }
 
-inline bool operator<(Timestamp a, Timestamp  b)
+inline bool operator<(const Timestamp a, const Timestamp  b)
 { return a.GetMircoSecondSinceEpoch() < b.GetMircoSecondSinceEpoch(); }
 
-inline bool operator>(Timestamp a, Timestamp  b)
+inline bool operator>(const Timestamp a, const Timestamp  b)
 { return a.GetMircoSecondSinceEpoch() > b.GetMircoSecondSinceEpoch(); }
 
-inline bool operator==(Timestamp a, Timestamp b)
+inline bool operator==(const Timestamp a, const Timestamp b)
 { return a.GetMircoSecondSinceEpoch() == b.GetMircoSecondSinceEpoch(); }
 
 

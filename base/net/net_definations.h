@@ -29,7 +29,7 @@ class Timer;
 class Socket;
 class EventLoop;
 class IPAddress;
-class Buffer;
+class NetBuffer;
 class Timestamp;
 class Connector;
 
@@ -53,8 +53,8 @@ using F_ConnectionCloseCallback         = std::function<void(const TcpConnection
 using F_ThreadInitCallback               = std::function<void(EventLoop *)>;
 using F_CloseShutdownConnectionsCallback = std::function<void()>;
 
-using F_TcpMessageCallback = std::function<void(const TcpConnectionPtr &, Buffer &)>;
-using F_UdpMessageCallback = std::function<void(const UdpSessionPtr &, Buffer &)>;
+using F_TcpMessageCallback = std::function<void(const TcpConnectionPtr &, NetBuffer &)>;
+using F_UdpMessageCallback = std::function<void(const UdpSessionPtr &, NetBuffer &)>;
 
 
 }

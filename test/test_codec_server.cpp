@@ -60,7 +60,7 @@ public:
             });
 
         server_.SetMessageCallback(
-            [this](const TcpConnectionPtr &conn, Buffer &buf) {
+            [this](const TcpConnectionPtr &conn, NetBuffer &buf) {
                 codec_.OnData(conn, buf);
             });
     }

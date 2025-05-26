@@ -1,5 +1,5 @@
 #include "ProtobufTcpCodec.h"
-#include "Buffer.h"
+#include "NetBuffer.h"
 #include "TcpConnection.h"
 #include "AppXmlConfig.h"
 #include "log.h"
@@ -8,7 +8,7 @@
 
 namespace yy::core {
 
-using ::yy::net::Buffer;
+using ::yy::net::NetBuffer;
 using ::yy::net::TcpConnectionPtr;
 
 
@@ -20,7 +20,7 @@ ProtobufTcpCodec::ProtobufTcpCodec(ProtobufTcpCodec::F_ProtobufMessageDispatchCa
 { }
 
 
-MessagePtr ProtobufTcpCodec::Parse(const TcpConnectionPtr &conn, Buffer &buf, MessageParseErrorCode & outErrCode) {
+MessagePtr ProtobufTcpCodec::Parse(const TcpConnectionPtr &conn, NetBuffer &buf, MessageParseErrorCode & outErrCode) {
     MessageHeader header;
 
     //! 解析消息头
@@ -49,7 +49,7 @@ MessagePtr ProtobufTcpCodec::Parse(const TcpConnectionPtr &conn, Buffer &buf, Me
 
 
 
-void ProtobufTcpCodec::OnData(const TcpConnectionPtr &conn, Buffer &buf) {
+void ProtobufTcpCodec::OnData(const TcpConnectionPtr &conn, NetBuffer &buf) {
     // 不断解析接收缓冲中的字节流，直到遇到不完整的信息或解析完毕
     while(buf.GetDataSize() >= MessageHeader::kMinHeaderLen)
     {
@@ -85,7 +85,7 @@ void ProtobufTcpCodec::SendTCP(const TcpConnectionPtr &conn, const google::proto
 
     /* 不用关心buffer空间不足，因为我们已经分配好了足够的空间 */
     //! 填充消息头
-    Buffer buffer{header.GetFullLength()+4};
+    NetBuffer buffer{header.GetFullLength()+4};
     header.AppendIntoBuffer(buffer, conn->GetXorCode());
 
     YLOG_TRACE("发送消息头<{}>：[{}][{}][{}][{}]", header.CalcHeaderLen(),
@@ -106,7 +106,7 @@ void ProtobufTcpCodec::SendTCP(const TcpConnectionPtr &conn, const google::proto
 
 
 
-void ProtobufTcpCodec::DefaultErrorCallback(const TcpConnectionPtr &conn, Buffer &buf, MessageParseErrorCode) {
+void ProtobufTcpCodec::DefaultErrorCallback(const TcpConnectionPtr &conn, NetBuffer &buf, MessageParseErrorCode) {
     if(conn and conn->IsConnected()) {
         conn->Shutdown();
     }

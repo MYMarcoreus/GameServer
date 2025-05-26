@@ -21,7 +21,7 @@ class EventLoop;
 
 
 class UdpTransport  {
-    using F_UdpRecievedCallback = std::function<void(Buffer &, IPAddressPtr)>;
+    using F_UdpRecievedCallback = std::function<void(NetBuffer &, IPAddressPtr)>;
 public:
     explicit UdpTransport(EventLoop * recvLoop, const uint16_t app_udp_port, const int32_t recv_bytes_one, const int32_t m_send_thread_num);
 
@@ -60,7 +60,7 @@ private:
     std::unique_ptr<class ThreadPool>               m_sendWorkThreadPool;
     F_UdpRecievedCallback                           m_UdpRecievedCallback;                 //! 需要及时响应，立即执行
 
-    std::unique_ptr<Buffer> m_recvBuf;
+    std::unique_ptr<NetBuffer> m_recvBuf;
 };
 
 }

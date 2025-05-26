@@ -37,7 +37,7 @@ public:
     UdpTransport & GetUdpTran() { return * m_udpTran; }
 
 private:
-    void HandleNewMessage(Buffer & recvBuf, IPAddressPtr peerAddr);
+    void HandleNewMessage(NetBuffer & recvBuf, IPAddressPtr peerAddr);
 private:
     uint16_t m_udp_port;
     int32_t  m_recv_bytes_one;

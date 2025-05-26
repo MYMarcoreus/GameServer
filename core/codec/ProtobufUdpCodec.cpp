@@ -1,15 +1,15 @@
 #include "ProtobufUdpCodec.h"
-#include "Buffer.h"
+#include "NetBuffer.h"
 #include "TcpConnection.h"
 #include "log.h"
 #include "UdpSession.h"
 #include "MessageHeader.h"
 #include <google/protobuf/message.h>
-#include <google/protobuf/message_lite.h>
+#include "Socket.h"
 
 namespace yy::core {
 
-using ::yy::net::Buffer;
+using ::yy::net::NetBuffer;
 using ::yy::net::UdpSessionPtr;
 
 
@@ -21,7 +21,7 @@ ProtobufUdpCodec::ProtobufUdpCodec(ProtobufUdpCodec::F_ProtobufMessageDispatchCa
 { }
 
 
-MessagePtr ProtobufUdpCodec::Parse(const UdpSessionPtr & udpSession, Buffer &buf, MessageParseErrorCode & outErrCode) {
+MessagePtr ProtobufUdpCodec::Parse(const UdpSessionPtr & udpSession, NetBuffer &buf, MessageParseErrorCode & outErrCode) {
     MessageHeader header;
 
     //! 解析消息头
@@ -53,7 +53,7 @@ MessagePtr ProtobufUdpCodec::Parse(const UdpSessionPtr & udpSession, Buffer &buf
 
 
 
-void ProtobufUdpCodec::OnData(const UdpSessionPtr & udpSession, Buffer & buf) {
+void ProtobufUdpCodec::OnData(const UdpSessionPtr & udpSession, NetBuffer & buf) {
     // 不断解析接收缓冲中的字节流，直到遇到不完整的信息或解析完毕
     while(buf.GetDataSize() >= MessageHeader::kMinHeaderLen)
     {
@@ -94,7 +94,7 @@ void ProtobufUdpCodec::SendUDP(const UdpSessionPtr &udpSession, const google::pr
 
     /* 不用关心buffer空间不足，因为我们已经分配好了足够的空间 */
     //! 填充消息头
-    Buffer buffer{header.GetFullLength()+4};
+    NetBuffer buffer{header.GetFullLength()+4};
     header.AppendIntoBuffer(buffer, udpSession->GetXorCode());
 
     YLOG_TRACE("发送消息头<{}>：[{}][{}][{}][{}]", header.CalcHeaderLen(),
@@ -114,7 +114,7 @@ void ProtobufUdpCodec::SendUDP(const UdpSessionPtr &udpSession, const google::pr
 
 
 
-void ProtobufUdpCodec::DefaultErrorCallback(const UdpSessionPtr &udpSession, Buffer &buf, MessageParseErrorCode) {
+void ProtobufUdpCodec::DefaultErrorCallback(const UdpSessionPtr &udpSession, NetBuffer &buf, MessageParseErrorCode) {
 
 }
 

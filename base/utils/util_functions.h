@@ -47,8 +47,8 @@ public:
     static ReturnType tick()
     {
         using namespace std::chrono;
-        time_point<Clock> epoch{};
-        time_point<Clock> now{Clock::now()};
+        constexpr time_point<Clock> epoch{};
+        const time_point<Clock> now{Clock::now()};
         return duration_cast<duration<ReturnType, Period>>(now - epoch).count();
     }
 };

@@ -1,7 +1,7 @@
 #ifndef ____OBJECTPOOL_H
 #define ____OBJECTPOOL_H
 
-#include "ThreadSafeQueue.hpp"
+#include "UnboundedLockedQueue.hpp"
 #include <memory>
 #include <atomic>
 #include <algorithm>
@@ -54,7 +54,7 @@ public:
 private:
     std::atomic_size_t       m_size;
     const int                m_maxsize;
-    util::ThreadSafeQueue<ObjectType> m_pool;
+    util::UnboundedLockedQueue<ObjectType> m_pool;
 };
 
 }

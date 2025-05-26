@@ -8,7 +8,7 @@ namespace yy::Ylog {
 
 
 /// @brief 日志输出至标准输出
-class StdoutLogApeender : public ILogAppender {
+class StdoutLogApeender final : public ILogAppender {
 public:
     StdoutLogApeender() = delete;
 

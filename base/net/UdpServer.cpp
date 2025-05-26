@@ -45,7 +45,7 @@ void UdpServer::Start(int ioThreadNum, const Milliseconds ioWaitTimeout, const F
             m_recv_bytes_one,
             m_send_thread_num
         );
-        m_udpTran->SetUdpRecievedCallback([this](Buffer & recvBuf, const IPAddressPtr& peerAddr){ this->HandleNewMessage(recvBuf, peerAddr); });
+        m_udpTran->SetUdpRecievedCallback([this](NetBuffer & recvBuf, const IPAddressPtr& peerAddr){ this->HandleNewMessage(recvBuf, peerAddr); });
     }
 }
 
@@ -53,7 +53,7 @@ void UdpServer::Start(int ioThreadNum, const Milliseconds ioWaitTimeout, const F
 void UdpServer::Stop() {
 }
 
-void UdpServer::HandleNewMessage(Buffer & recvBuf, IPAddressPtr peerAddr) {
+void UdpServer::HandleNewMessage(NetBuffer & recvBuf, IPAddressPtr peerAddr) {
     assert(m_udpTran);
     auto name = std::format("{}:{}", peerAddr->GetIPStr(), peerAddr->GetPortStr());
     UdpSessionPtr udpSession = std::make_shared<UdpSession>(name, *m_udpTran, peerAddr, m_init_xor_code);

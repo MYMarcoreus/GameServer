@@ -1,4 +1,5 @@
 #include "FileLogAppender.h"
+#include "cross_platform_defines.h"
 
 namespace yy::Ylog {
 
@@ -13,11 +14,11 @@ FileLogAppender::FileLogAppender(const std::string& logfilepath, const std::stri
     m_ofs.open(m_logfilepath, std::ios::out | std::ios::app);
     m_ofs << "---------------start---------------\n";
 #else
-    m_filefd = ::open(m_logfilepath.c_str(), O_CREAT | O_APPEND | O_WRONLY, 0644);
+    m_filefd = OPEN(m_logfilepath.c_str(), O_CREAT | O_APPEND | O_WRONLY);
     assert(m_filefd != -1);
 
-    auto start_info = "---------------start---------------\n";
-    auto ret  = ::write(m_filefd, start_info, strlen(start_info) );
+    const auto start_info = "---------------start---------------\n";
+    auto ret = WRITE(m_filefd, start_info, strlen(start_info) );
 #endif
 }
 
@@ -31,12 +32,10 @@ FileLogAppender::~FileLogAppender()
     }
 #else
     if(util::isOpenedFD(m_filefd)) {
-        auto start_info = "---------------finish---------------\n";
-        auto ret = ::write(m_filefd, start_info, strlen(start_info) );
-
+        const auto start_info = "---------------finish---------------\n";
+        auto ret = WRITE(m_filefd, start_info, strlen(start_info) );
         FLUSH(m_filefd);
-        ::close(m_filefd);
-        // assert( ::fclose(m_filep) != EOF);
+        CLOSE(m_filefd);
     }
 #endif
 }
@@ -46,19 +45,16 @@ void FileLogAppender::WriteLog(const LogMessage::ptr& msg)
 {
     assert(msg != nullptr);
 // TICK_START()
-#if USE_CPP_STREAM
     std::lock_guard lg{ILogAppender::m_mutex};
+#if USE_CPP_STREAM
     m_ofs <<  m_formatter->format(msg);
     m_ofs.flush(); // 必须的，否则多线程写的情况下，在线程切换时会让日志混杂
 #else
     // 保证写日志的原子性，使得日志按照生成的时间输出到文件
-    std::lock_guard lg{m_mutex};
     const std::string & msg_str = m_formatter->format(msg);
 
-    // 使用O_APPEND模式打开的文件的write()是原子操作：保证这一条信息写到内核缓冲队列中
-    auto ret = ::write(m_filefd, msg_str.c_str(), msg_str.size());
-    assert(ret != -1);
-    // assert(::fsync(m_filefd) != -1); //! bug所在，使得写入的数量减少了!!!
+    // 使用O_APPEND模式打开的文件的write()是原子操作：保证这一条信息写到内核缓冲队列中（缺点，来一条日志就写一条，频繁陷入内核态）
+    auto ret = WRITE(m_filefd, msg_str.c_str(), msg_str.size());
 #endif
 // TICK_END_CALCAVG()
 }

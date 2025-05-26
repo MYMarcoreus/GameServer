@@ -5,7 +5,7 @@
 #include "EventLoop.h"
 #include "log.h"
 #include "ErrnoSaver.h"
-#include "Buffer.h"
+#include "NetBuffer.h"
 
 #include <google/protobuf/message_lite.h>
 #include <google/protobuf/message.h>
@@ -32,8 +32,8 @@ TcpConnection::TcpConnection(std::string && name, EventLoop *loop, SocketApiWrap
       m_xorCode{xor_code},
       m_localAddr(localAddr),
       m_peerAddr(peerAddr),
-      m_sendBuf(std::make_unique<Buffer>(send_bytes_one)),
-      m_recvBuf(std::make_unique<Buffer>(recv_bytes_one))
+      m_sendBuf(std::make_unique<NetBuffer>(send_bytes_one)),
+      m_recvBuf(std::make_unique<NetBuffer>(recv_bytes_one))
 {
     assert(m_channel);
     assert(m_socket);

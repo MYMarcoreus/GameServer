@@ -63,7 +63,7 @@
 
     <log> good description
         <logger m_TypeName  = "default"
-                level = "info"
+                level = "trace"
                 is_async = "true" >
             <appender
                     type = "stdout"

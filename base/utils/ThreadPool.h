@@ -1,7 +1,7 @@
 #ifndef ____THREADPOOL_H
 #define ____THREADPOOL_H
 
-#include "BoundedQueue.hpp"
+#include "BoundedLockedQueue.hpp"
 #include "net_definations.h"
 #include <vector>
 #include <thread>
@@ -20,7 +20,7 @@ public:
 public:
     ///@param name 线程池的用途
     ///@param queueSize 任务队列的长度，默认为无限队列（其实为int的最大值）
-    explicit ThreadPool(const std::string&  name, int queueSize = util::BoundedQueue<Task>::NO_BOUND_SIZE);
+    explicit ThreadPool(const std::string&  name, int queueSize = util::BoundedLockedQueue<Task>::NO_BOUND_SIZE);
 
     ~ThreadPool();
 
@@ -54,7 +54,7 @@ private:
 
 private:
     std::string                m_name;
-    util::BoundedQueue<Task>   m_Queue;     // 任务队列
+    util::BoundedLockedQueue<Task>   m_Queue;     // 任务队列
     std::vector<std::thread>   m_Threads;   // 管理线程
     bool                       m_IsRunning;
     net::EventLoop *           m_TimerLoop;

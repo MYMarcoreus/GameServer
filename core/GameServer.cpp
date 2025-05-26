@@ -58,7 +58,7 @@ GameServer::GameServer(EventLoop *accpetorLoop, const IPAddressPtr& listenAddr) 
         });
 
     m_tcpServer.SetMessageCallback(
-        [this](const TcpConnectionPtr& conn, Buffer& buf) {
+        [this](const TcpConnectionPtr& conn, NetBuffer& buf) {
             m_tcpCodec.OnData(conn, buf);
         });
 
@@ -79,7 +79,7 @@ GameServer::GameServer(EventLoop *accpetorLoop, const IPAddressPtr& listenAddr) 
         });
 
     m_udpServer.SetMessageCallback(
-        [this](const UdpSessionPtr& conn, Buffer& buf) {
+        [this](const UdpSessionPtr& conn, NetBuffer& buf) {
             m_udpCodec.OnData(conn, buf);
         });
 }

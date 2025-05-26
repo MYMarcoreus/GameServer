@@ -7,7 +7,7 @@
 namespace yy::Ylog {
 
 /// @brief 日志输出至文件
-class FileLogAppender : public ILogAppender
+class FileLogAppender final : public ILogAppender
 {
 public:
     explicit FileLogAppender(const std::string& logfilepath, const std::string& format_pattern);

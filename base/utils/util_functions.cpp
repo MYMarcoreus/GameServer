@@ -55,8 +55,8 @@ std::string get_current_fmt_time(const std::string & fmt, bool need_us)
 //     struct timeval now{};
 //     ::gettimeofday(&now, nullptr); // 返回精确到微秒（10^{-6}s）的始于epoch的时间
 
-    auto now = std::chrono::system_clock::now();
-    auto now_us = std::chrono::time_point_cast<std::chrono::microseconds>(now);
+    const auto now = std::chrono::system_clock::now();
+    const auto now_us = std::chrono::time_point_cast<std::chrono::microseconds>(now);
     auto now_raw = std::chrono::system_clock::to_time_t(now);
 
     std::tm now_tm{};
@@ -124,11 +124,16 @@ bool isOpenedFD(int fd)
 
 #ifdef ____WINDOWS
     auto os_fd = _get_osfhandle(fd);
-    int flags = _setmode(os_fd, _O_BINARY); // 使用 _O_BINARY 标志来获取文件描述符标志
-    if (flags == -1) {
-        // 获取失败
+    if (os_fd == -1 || (void*)os_fd == INVALID_HANDLE_VALUE) {
         return false;
     }
+
+    // 可选：进一步判断句柄是否有效
+    DWORD flags = 0;
+    if (GetHandleInformation(reinterpret_cast<HANDLE>(os_fd), &flags) == 0) {
+        return false;
+    }
+
     return true;
 #endif
 }

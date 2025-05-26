@@ -127,9 +127,9 @@ private:
     F_ConnectionShutdownCallback         m_ConnectionShutdownCallback;
 
     //! 用户不会直接操作SendBuf，而是用Send间接操作，因此保证线程安全
-    std::unique_ptr<Buffer> m_sendBuf;
+    std::unique_ptr<NetBuffer> m_sendBuf;
     ///! 用户应保证只在MessageCallback回调的调用者线程（即本TcpConnection所在线程）中操作RecvBuf，请不要传递给其它线程，否则RecvBuf不是线程安全的。
-    std::unique_ptr<Buffer> m_recvBuf;
+    std::unique_ptr<NetBuffer> m_recvBuf;
 
     Timestamp m_connectedTime;
     Timestamp m_shudownTime;

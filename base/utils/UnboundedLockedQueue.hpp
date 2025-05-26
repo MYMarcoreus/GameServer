@@ -1,15 +1,10 @@
 #ifndef ____THREAD_SAFE_QUEUE_HPP
 #define ____THREAD_SAFE_QUEUE_HPP
 
-#include <iostream>
-#include <string>
 #include <condition_variable>
 #include <mutex>
 #include <queue>
 #include <memory>
-#include <vector>
-#include <atomic>
-#include <shared_mutex>
 
 
 
@@ -18,8 +13,9 @@
 namespace yy::util
 {
 
+// 《C++ Concurrency in Action》第二版的相关实现
 template<typename T>
-class ThreadSafeQueue
+class UnboundedLockedQueue
 {
 private:
     struct Node {
@@ -60,11 +56,11 @@ private:
 public:
     using value_type = T;
 
-    ThreadSafeQueue(): head(new Node), tail(head.get()) //, m_size{0}
+    UnboundedLockedQueue(): head(new Node), tail(head.get()) //, m_size{0}
     {}
 
-    ThreadSafeQueue(const ThreadSafeQueue & other) = delete;
-    ThreadSafeQueue & operator=(const ThreadSafeQueue & other) = delete;
+    UnboundedLockedQueue(const UnboundedLockedQueue & other) = delete;
+    UnboundedLockedQueue & operator=(const UnboundedLockedQueue & other) = delete;
 
     bool empty()
     {

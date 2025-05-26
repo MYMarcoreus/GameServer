@@ -8,7 +8,7 @@
 #include "ErrnoSaver.h"
 #include "IPAddress.h"
 #include "ThreadPool.h"
-#include "Buffer.h"
+#include "NetBuffer.h"
 
 namespace yy::net {
 
@@ -23,7 +23,7 @@ UdpTransport::UdpTransport(EventLoop * recvLoop, const uint16_t app_udp_port, co
     m_recvLoop(recvLoop),
     m_socket (std::make_unique<Socket>(Socket::Type::UDP, Socket::Family::IPv4, true)),
     m_sendWorkThreadPool(std::make_unique<ThreadPool>("UdpTransport Send")),
-    m_recvBuf(std::make_unique<Buffer>(recv_bytes_one))
+    m_recvBuf(std::make_unique<NetBuffer>(recv_bytes_one))
 {
     assert(recvLoop);
     assert(m_socket);

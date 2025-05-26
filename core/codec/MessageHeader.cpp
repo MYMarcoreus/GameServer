@@ -1,5 +1,5 @@
 #include "MessageHeader.h"
-#include "Buffer.h"
+#include "NetBuffer.h"
 #include "core_definations.h"
 #include "AppXmlConfig.h"
 #include "log.h"
@@ -57,7 +57,7 @@ MessageHeader::MessageHeader(const google::protobuf::Message & message) {
 }
 
 
-MessageParseErrorCode MessageHeader::ParseFromBuffer(net::Buffer &buf, uint8_t xorCode) {
+MessageParseErrorCode MessageHeader::ParseFromBuffer(net::NetBuffer &buf, uint8_t xorCode) {
     if(buf.GetDataSize() < kMinHeaderLen)
         return MessageParseErrorCode::eNotReceiveFullHeader;
 
@@ -110,7 +110,7 @@ MessageParseErrorCode MessageHeader::ParseFromBuffer(net::Buffer &buf, uint8_t x
     return MessageParseErrorCode::eNoError;
 }
 
-bool MessageHeader::AppendIntoBuffer(net::Buffer &buf, uint8_t xorCode) {
+bool MessageHeader::AppendIntoBuffer(net::NetBuffer &buf, uint8_t xorCode) {
     if(buf.GetFreeSize() < this->CalcHeaderLen()) {
         return false;
     }

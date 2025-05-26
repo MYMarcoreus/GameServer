@@ -11,27 +11,35 @@
 #include <google/protobuf/message.h>
 
 using namespace yy::net;
-using namespace yy::config;
 
 namespace yy::core {
 
-GameServer::GameServer(EventLoop *accpetorLoop, const IPAddressPtr& listenAddr)
-        : m_accpetorLoop{accpetorLoop},
-          m_tcpServer(accpetorLoop, listenAddr, true),
-          m_tcpDispatcher([this](const TcpConnectionPtr& conn, const MessagePtr& msg) {
-              this->OnUnknownTcpMessage(conn, msg);
-          }),
-          m_tcpCodec([this](const TcpConnectionPtr& conn, const MessagePtr& msg) {
-              m_tcpDispatcher.OnProtobufMessage(conn, msg);
-          }),
-          m_udpServer(accpetorLoop, true),
-          m_udpDispatcher([this](const UdpSessionPtr& conn, const MessagePtr& msg) {
-              this->OnUnknownUdpMessage(conn, msg);
-          }),
-          m_udpCodec([this](const UdpSessionPtr& conn, const MessagePtr& msg) {
-              m_udpDispatcher.OnProtobufMessage(conn, msg);
-          }),
-          m_appConfigvar(g_app_config)
+GameServer::GameServer(EventLoop *accpetorLoop, const IPAddressPtr& listenAddr) :
+    m_appConfigvar(yy::config::g_app_config),
+    m_accpetorLoop{accpetorLoop},
+    m_tcpServer(accpetorLoop, listenAddr, true,
+        m_appConfigvar->GetValue().send_bytes_one(),
+        m_appConfigvar->GetValue().send_bytes_max(),
+        m_appConfigvar->GetValue().recv_bytes_one(),
+        m_appConfigvar->GetValue().recv_bytes_max(),
+        m_appConfigvar->GetValue().app_xor_code()),
+    m_tcpDispatcher([this](const TcpConnectionPtr& conn, const MessagePtr& msg) {
+        this->OnUnknownTcpMessage(conn, msg);
+    }),
+    m_tcpCodec([this](const TcpConnectionPtr& conn, const MessagePtr& msg) {
+        m_tcpDispatcher.OnProtobufMessage(conn, msg);
+    }),
+    m_udpServer(accpetorLoop, true,
+        m_appConfigvar->GetValue().app_udp_port(),
+        m_appConfigvar->GetValue().recv_bytes_one(),
+        m_appConfigvar->GetValue().udp_io_thread_num(),
+        m_appConfigvar->GetValue().app_xor_code()),
+    m_udpDispatcher([this](const UdpSessionPtr& conn, const MessagePtr& msg) {
+        this->OnUnknownUdpMessage(conn, msg);
+    }),
+    m_udpCodec([this](const UdpSessionPtr& conn, const MessagePtr& msg) {
+        m_udpDispatcher.OnProtobufMessage(conn, msg);
+    })
 {
     //! TCP消息回调注册
     m_tcpDispatcher.RegisterMessageCallback<yy::protocol::core::HeartBody>(
@@ -142,7 +150,7 @@ void GameServer::AddCheckTimer(const TcpConnectionPtr & conn, const UserConnecti
 
 void GameServer::CheckHeart(const UserConnectionPtr & userdata) {
     const auto & conn = userdata->GetConnection();
-    if(!conn->IsConnected() or Timestamp::Now() - conn->GetHeartTime() > Seconds{g_app_config->GetValue().time_heart_max()}) {
+    if(!conn->IsConnected() or Timestamp::Now() - conn->GetHeartTime() > Seconds{m_appConfigvar->GetValue().time_heart_max()}) {
         YLOG_WARN("<{}>主线程Update_CheckDisconnetion: 用户心跳包超时，关闭用户连接！", conn->GetSocketFD());
         conn->Shutdown();
         // conn->GetLoop()->CancelTimer(this->m_heartTimerID); //! 不生效因为执行该函数时Timer不在列表中，执行完才加入列表
@@ -168,7 +176,7 @@ void GameServer::SendXorCode(const TcpConnectionPtr &conn) {
     conn->SetXorCode(gen_val); //! 必须在Send后面
 
     YLOG_TRACE("Thread_Accepter: 封包异或码<{},{}>给用户<{}>，<{},{}>异或标识头<{},{}>", gen_val, xorBody.xor_code(), conn->GetSocketFD(),
-               (int)(GetAppConfig().check_code()[0] ), (int)(GetAppConfig().check_code()[1] ),
+               static_cast<int>(GetAppConfig().check_code()[0]), static_cast<int>(GetAppConfig().check_code()[1]),
                (int)(GetAppConfig().check_code()[0] ^ gen_val), (int)(GetAppConfig().check_code()[1] ^ gen_val)
    );
 }
@@ -199,7 +207,7 @@ void GameServer::OnSecurity(const TcpConnectionPtr & conn, const SecurityPtr & m
     char md5Arr[35]{};
     char Arr[30]{};
     snprintf(Arr, sizeof(Arr), "%s_%d", m_appConfigvar->GetValue().security_code(), conn->GetXorCode());
-    ::md5::EncryptMD5str(md5Arr, (unsigned char *)(Arr), (int)strlen(Arr));
+    ::md5::EncryptMD5str(md5Arr, reinterpret_cast<unsigned char*>(Arr), static_cast<int>(strlen(Arr)));
 
     YLOG_DEBUG("服务器: {}, {}, {}", GetAppConfig().app_id(), GetAppConfig().app_version(), md5Arr)
     YLOG_DEBUG("客户端: {}, {}, {}", message->app_id(),message->app_version(), message->app_md5().c_str())
@@ -251,7 +259,7 @@ void GameServer::OnUdpPortRegisterRequest(const TcpConnectionPtr & conn, const U
     net::IPAddressPtr udpAddr = std::make_shared<net::IPv4Address>(client_ip, client_port);
     YLOG_INFO("<{}>客户端Udp地址[{}:{}]", conn->GetName(), client_ip, client_port);
 
-    UdpSessionPtr udpSession = std::make_unique<net::UdpSession>(conn->GetName(), m_udpServer.GetUdpTran(), udpAddr);
+    UdpSessionPtr udpSession = std::make_unique<net::UdpSession>(conn->GetName(), m_udpServer.GetUdpTran(), udpAddr, m_appConfigvar->GetValue().app_xor_code());
     FindUser(conn->GetName())->BindUdp(udpSession);
 
     yy::protocol::core::UdpPortRegisterResponse response;

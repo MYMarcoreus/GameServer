@@ -3,6 +3,7 @@
 #include "Timestamp.h"
 #include "log.h"
 #include "util_functions.h"
+#include "PollerEvent.h"
 #include <cassert>
 
 
@@ -24,13 +25,13 @@ public:
     void clear() { FD_ZERO(&fdset_); }
 
     // 将第fd号位置1：将文件描述符fd加入监视列表
-    void add_fd(int fd) { FD_SET(fd, &fdset_); }
+    void add_fd(const int fd) { FD_SET(fd, &fdset_); }
 
     // 将第fd号位归0：将文件描述符fd的从监视列表中清除
-    void del_fd(int fd) { FD_CLR(fd, &fdset_); }
+    void del_fd(const int fd) { FD_CLR(fd, &fdset_); }
 
     // 查询第fd号位：查询文件描述符fd是否在监视列表中
-    bool has_fd(int fd) { return FD_ISSET(fd, &fdset_); }
+    bool has_fd(const int fd) const { return FD_ISSET(fd, &fdset_); }
 
     fd_set & get_fdset() { return fdset_; }
 };
@@ -71,9 +72,9 @@ void SelectPoller::UpdateChannel(IOChannel* channel)
 void SelectPoller::RemoveChannel(IOChannel* channel)
 {
     assert(channel);
-    socket_t fd = channel->GetFD();
-    assert(m_ChannelMap.find(fd) != m_ChannelMap.end());
-    assert(fdSet_.find(fd) != fdSet_.end());
+    const socket_t fd = channel->GetFD();
+    assert(m_ChannelMap.contains(fd));
+    assert(fdSet_.contains(fd));
     FD_CLR(fd, &select_readfds_);
     FD_CLR(fd, &select_writefds_);
     FD_CLR(fd, &select_expectfds_);

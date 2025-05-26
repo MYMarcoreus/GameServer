@@ -45,22 +45,8 @@ void Socket::Listen(int backlog) {
     SocketApiWrapper::listen_or_die(m_socketfd, backlog);
 }
 
-SocketApiWrapper::socket_t Socket::Accept(IPAddressPtr & outPeerAddr, bool isNewSockNonBlock) {
-    switch (this->GetFamily()) {
-        case Socket::Family::IPv4:
-            outPeerAddr = std::make_shared<IPv4Address>();
-            break;
-        case Socket::Family::IPv6:
-            outPeerAddr = std::make_shared<IPv6Address>();
-            break;
-        default:
-            throw std::invalid_argument("wrong socket family of accept socket");
-    }
-    return SocketApiWrapper::accept(m_socketfd, outPeerAddr, isNewSockNonBlock);
-}
-
 std::unordered_map<SocketApiWrapper::socket_t, IPAddressPtr>
-Socket::AcceptAll(bool isNewSockNonBlock) {
+Socket::AcceptAll(const bool isNewSockNonBlock) {
     switch (this->GetFamily()) {
         case Socket::Family::IPv4:
             return SocketApiWrapper::acceptAll<IPv4Address>(m_socketfd, isNewSockNonBlock);
@@ -94,8 +80,8 @@ void Socket::SetOpt_Linger(bool onoff, int timeout) {
     SetOpt(m_socketfd, SO_LINGER, ling);
 }
 
-void Socket::SetOpt_KeepAlive(bool onoff) {
-    int opt_val = onoff;
+void Socket::SetOpt_KeepAlive(const bool onoff) {
+    const int opt_val = onoff;
     SetOpt(m_socketfd, SO_KEEPALIVE, opt_val);
 }
 
@@ -132,23 +118,23 @@ void Socket::Close() {
 
 SocketApiWrapper::SocketResult Socket::Recv(void *ptr, const size_t nbytes, const int flags)
 {
-    return SocketApiWrapper::recv(m_socketfd, (char *)ptr, nbytes, flags);
+    return SocketApiWrapper::recv(m_socketfd, ptr, nbytes, flags);
 }
 
 SocketApiWrapper::SocketResult Socket::Send(const void *ptr, const size_t nbytes, const int flags)
 {
-    return SocketApiWrapper::send(m_socketfd, (char *)ptr, nbytes, flags);
+    return SocketApiWrapper::send(m_socketfd, ptr, nbytes, flags);
 }
 
 SocketApiWrapper::SocketResult Socket::Sendto(const void *ptr, const size_t nbytes, const int flags, const IPAddress::ptr& peerAddr)
 {
-    return SocketApiWrapper::sendto(m_socketfd, (char *)ptr, nbytes, flags, peerAddr);
+    return SocketApiWrapper::sendto(m_socketfd, ptr, nbytes, flags, peerAddr);
 }
 
 
 SocketApiWrapper::SocketResult Socket::Recvfrom(void *ptr, const size_t nbytes, const int flags, const IPAddress::ptr& peerAddr)
 {
-    return SocketApiWrapper::recvfrom(m_socketfd, (char *)ptr, nbytes, flags, peerAddr);
+    return SocketApiWrapper::recvfrom(m_socketfd, ptr, nbytes, flags, peerAddr);
 }
 
 void Socket::SetNonblocking() {

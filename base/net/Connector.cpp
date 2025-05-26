@@ -18,7 +18,9 @@ Connector::Connector(EventLoop *loop, const IPAddressPtr & serverAddr)
     m_State{eDisconnected},
     m_NextRetryTimerID{-1},
     m_RetryDelay(kInitRetryDelay)
-{ }
+{
+
+}
 
 void Connector::Start() {
     m_IsStarted = true;
@@ -38,63 +40,52 @@ void Connector::Restart() {
 }
 
 void Connector::StartInLoop() {
-    m_Loop->AssertInLoopingThread(__FILE__, __LINE__);
+    m_Loop->AssertInLoopingThread();
 
     if(!m_IsStarted) {
         return;
     }
     //! 创建非阻塞套接字并开始非阻塞connect
     const SocketApiWrapper::socket_t sockfd = SocketApiWrapper::create_or_die();
-    int ret = SocketApiWrapper::connect(sockfd, m_ServerAddr);
-    YLOG_INFO("In Connector::StartInLoop(), 开始连接服务器<{}:{}>", m_ServerAddr->GetIPStr().c_str(), m_ServerAddr->GetPort())
+    const auto rst = SocketApiWrapper::connect(sockfd, m_ServerAddr);
+    YLOG_DEBUG("In Connector::StartInLoop(), 开始连接服务器<{}:{}>", m_ServerAddr->GetIPStr().c_str(), m_ServerAddr->GetPort())
 
-#ifdef ____WINDOWS
-    auto errnoSaver = ret==0 ? 0 : GetLastError();
-#endif
-#ifdef ____LINUX
-    auto errnoSaver = ret==0 ? 0 : errno;
-#endif
-    switch (errnoSaver) {
+    if (rst.HasError())
+    {
+        switch (rst.ErrorCode())
+        {
         //! 非阻塞connect立即返回，于是用Channel监听写/错误事件以等待连接完成
-        case 0:
-        case EINPROGRESS:
-        case EINTR:
-        case EISCONN:
+        case SocketApiWrapper::SocketError::eInterrupted: // 被中断时可能成功或失败，失败时套接字也为可写，因此需要在HandleWrite中判断
+        case SocketApiWrapper::SocketError::eIsConnected:
+        case SocketApiWrapper::SocketError::eInProgress:
+        case SocketApiWrapper::SocketError::eAgain:
             Connecting(sockfd);
             break;
         //! 非阻塞connect立即返回失败，等待一定延时之后再重试
-        case EAGAIN:
-        case EADDRINUSE:
-        case EADDRNOTAVAIL:
-        case ECONNREFUSED:
-        case ENETUNREACH:
+        case SocketApiWrapper::SocketError::eConnectionRefused:
+        case SocketApiWrapper::SocketError::eAddressInUse:
+        case SocketApiWrapper::SocketError::eAddressNotAvailable:
+        case SocketApiWrapper::SocketError::eNetUnreachable:
             //! 如果重试到最大等待时间，就停止
             if(m_RetryDelay == kMaxRetryDelay) {
                 if(m_ConnectFailedCallback)
                     m_ConnectFailedCallback();
                 StopInLoop();
-                break;
+            } else {
+                Retry(sockfd);
             }
 
-            Retry(sockfd);
             break;
         //! 连接错误！关闭连接
-        case EACCES:
-        case EPERM:
-        case EAFNOSUPPORT:
-        case EALREADY:
-        case EBADF:
-        case EFAULT:
-        case ENOTSOCK:
-            SocketApiWrapper::close(sockfd);
-            YLOG_FATAL("connect error in Connector::StartInLoop: {}", util::GetErrorInfo(errnoSaver));
-            break;
-
         default:
             SocketApiWrapper::close(sockfd);
-            YLOG_FATAL("Unexpected error in Connector::StartInLoop: {}", util::GetErrorInfo(errnoSaver));
+            YLOG_FATAL("Unexpected error in Connector::StartInLoop: {}", rst.GetErrorInfo());
             // connectErrorCallback_();
             break;
+        }
+    } else
+    {
+        Connecting(sockfd);
     }
 }
 
@@ -123,7 +114,9 @@ void Connector::HandleWrite() {
     if(m_State != eConnecting)
         return;
 
-    SocketApiWrapper::socket_t sockfd = RemoveAndResetChannel(); //! 连接已建立，删除连接监听Channel
+    const SocketApiWrapper::socket_t sockfd = RemoveAndResetChannel(); //! 连接已建立，删除连接监听Channel
+
+    //! connect独有：用getsockopt检查连接结果
     int err = SocketApiWrapper::get_socket_error(sockfd);
 
     //! socket可写时，并非一定是套接字连接完成，也可能是发生了错误
@@ -178,7 +171,6 @@ void Connector::Retry(SocketApiWrapper::socket_t sockfd) {
                    sockfd, m_RetryDelay.count() / 1000.0, m_ServerAddr->GetIPStr().c_str(), m_ServerAddr->GetPort())
 
         m_NextRetryTimerID = m_Loop->RunAfter(m_RetryDelay, [this](){ this->StartInLoop(); });
-
 
         m_RetryDelay = (m_RetryDelay * 2 < kMaxRetryDelay) ? m_RetryDelay * 2 : kMaxRetryDelay;
     }

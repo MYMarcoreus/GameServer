@@ -33,20 +33,18 @@ public:
 
 
     /*! GETTER !*/
-    SocketApiWrapper::socket_t GetFD() { return m_FD; }
-    IOChannel::State             GetState() { return m_State; }
-    EventLoop *                GetOwnerLoop() { return m_OwnerLoop; }
-    PollerEvent                GetInterestedEvent(){ return m_InterestedEvent; }
-    PollerEvent                GetHappenedEvent(){ return m_HappenedEvent; }
-    std::string                GetName() const { return m_Name; }
-
-
-    bool IsEnableReading  () { return m_InterestedEvent.HasEvent(PollerEvent::eReadEvent) ; };
-    bool IsEnableWriting  () { return m_InterestedEvent.HasEvent(PollerEvent::eWriteEvent); };
-    bool IsNoneEvent      () { return m_InterestedEvent.HasNoneEvent(); };
+    SocketApiWrapper::socket_t GetFD() const { return m_FD; }
+    IOChannel::State           GetState() const { return m_State; }
+    EventLoop *                GetOwnerLoop() const { return m_OwnerLoop; }
+    PollerEvent                GetInterestedEvent() const { return m_InterestedEvent; }
+    PollerEvent                GetHappenedEvent() const { return m_HappenedEvent; }
+    const std::string &        GetName() const { return m_Name; }
+    bool IsEnableReading () const { return m_InterestedEvent.HasEvent(PollerEvent::eReadEvent) ; };
+    bool IsEnableWriting () const { return m_InterestedEvent.HasEvent(PollerEvent::eWriteEvent); };
+    bool IsNoneEvent     () { return m_InterestedEvent.HasNoneEvent(); };
 
     /*! SETTER !*/
-    //! Set Interested Events：注意这些也需要在Channel所在Loop运行，即RunCallbackInLoop！
+    // Set Interested Events：注意这些也需要在Channel所在Loop运行，即RunCallbackInLoop！
     void  EnableReading()  { m_InterestedEvent.AddEvent(PollerEvent::eReadEvent ); UpdateFromPoller(); };
     void DisableReading()  { m_InterestedEvent.DelEvent(PollerEvent::eReadEvent ); UpdateFromPoller(); };
     void  EnableWriting()  { m_InterestedEvent.AddEvent(PollerEvent::eWriteEvent); UpdateFromPoller(); };
@@ -57,8 +55,8 @@ public:
     void SetCloseCallback(F_EventCallback cb) { m_CloseCallback = std::move(cb); }
     void SetErrorCallback(F_EventCallback cb) { m_ErrorCallback = std::move(cb); }
 
-    void SetState(IOChannel::State newState) { m_State = newState; }
-    void SetHappendedEvent(PollerEvent event) { m_HappenedEvent = event;  }
+    void SetState(const IOChannel::State newState) { m_State = newState; }
+    void SetHappendedEvent(const PollerEvent event) { m_HappenedEvent = event;  }
 
     /// @brief TcpConnection会有对应的一个Channel成员，m_tie用于绑定TcpConnection对象，
     ///        监控TcpConnection的生命周期，防止TcpConnection生命周期到时引用到失效对象。

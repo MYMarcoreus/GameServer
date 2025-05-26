@@ -3,6 +3,7 @@
 #include "EventLoop.h"
 #include "IPAddress.h"
 #include "log.h"
+#include "Buffer.h"
 #include <stdio.h>
 
 using namespace yy;
@@ -15,12 +16,12 @@ using std::string;
 class EchoClient
 {
 public:
-    EchoClient(EventLoop * loop, IPAddressPtr serverAddr, bool CanRetry = true)
+    EchoClient(EventLoop * loop, const IPAddressPtr& serverAddr, const bool CanRetry = true)
         : m_Client(loop, serverAddr)
     {
-        m_Client.SetMessageCallback(std::bind(&EchoClient::OnRecvMessage, this, _1, _2));
-        m_Client.SetConnectionEstablishedCallback(std::bind(&EchoClient::ConnectionEstablished, this, _1));
-        m_Client.SetConnectionWriteCompleteCallback(std::bind(&EchoClient::ConnectionWriteComplete, this, _1));
+        m_Client.SetMessageCallback([this](const TcpConnectionPtr & conn, Buffer & buf){ this->OnRecvMessage(conn, buf); });
+        m_Client.SetConnectionEstablishedCallback([this](const TcpConnectionPtr& conn){ this->ConnectionEstablished(conn); });
+        m_Client.SetConnectionWriteCompleteCallback([this](const TcpConnectionPtr &conn){ this->ConnectionWriteComplete(conn); });
         m_Client.SetCanAutoRetry(CanRetry);
     }
 
@@ -28,24 +29,24 @@ public:
         m_Client.Connect();
     }
 
-    void Send(std::string message)
+    void Send(const std::string& message)
     {
-        m_Client.GetConnection()->Send(message);
+        m_Client.GetConnection()->SendTCP(message);
     }
 
 private:
     void OnRecvMessage(const TcpConnectionPtr & conn, Buffer & buf)
     {
-        auto ret = buf.RetrieveAllDataAsString();
+        const auto ret = buf.PopAllDataAsString();
         YLOG_INFO("服务器发来：%s", ret.c_str())
     }
 
-    void ConnectionEstablished(TcpConnectionPtr conn) {
+    void ConnectionEstablished(const TcpConnectionPtr& conn) {
         YLOG_INFO("连接至<%s:%d>", conn->GetPeerAddr()->GetIPStr().c_str(), conn->GetPeerAddr()->GetPort())
-        m_Client.GetConnection()->Send("你好！");
+        m_Client.GetConnection()->SendTCP("你好！");
     }
 
-    void ConnectionWriteComplete(TcpConnectionPtr conn) {
+    void ConnectionWriteComplete(const TcpConnectionPtr& conn) {
         YLOG_INFO("数据已发送给服务器<%s:%d>", conn->GetPeerAddr()->GetIPStr().c_str(), conn->GetPeerAddr()->GetPort())
     }
 

@@ -78,6 +78,7 @@ private:
     void AfterShutdownConnection(const yy::net::TcpConnectionPtr &conn);
 
 private:
+    yy::config::ConfigVar<yy::config::AppXmlConfig>::ptr    m_appConfigvar; // 用于获取配置项
     yy::net::EventLoop *                                    m_accpetorLoop;
 
     yy::net::TcpServer                                      m_tcpServer;
@@ -88,7 +89,6 @@ private:
     ProtobufDispatcher<yy::net::UdpSessionPtr>              m_udpDispatcher; // 处理下层(net层)分发传来的无法处理的消息
     ProtobufUdpCodec                                        m_udpCodec;
 
-    yy::config::ConfigVar<yy::config::AppXmlConfig>::ptr    m_appConfigvar; // 用于获取配置项
     std::atomic<size_t>                                     m_numSecurity; //安全连接数
     /* 这几个回调函数由业务层实现，然后通过对应的set方法传入设置 */
     F_Notifier        m_NotifierSecurity;    // 用户安全验证通过后，执行业务层回调函数

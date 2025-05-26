@@ -4,8 +4,6 @@
 #include "Socket.h"
 #include "EventLoop.h"
 #include "log.h"
-#include "status/Status.h"
-#include "AppXmlConfig.h"
 #include "ErrnoSaver.h"
 #include "Buffer.h"
 
@@ -19,17 +17,23 @@ using namespace yy::config;
 using yy::SocketApiWrapper::SocketError;
 
 
-TcpConnection::TcpConnection(std::string name, EventLoop *loop, SocketApiWrapper::socket_t sockfd,
-                             const IPAddress::ptr& localAddr, const IPAddress::ptr& peerAddr)
-    : m_name(name),
+TcpConnection::TcpConnection(std::string && name, EventLoop *loop, SocketApiWrapper::socket_t sockfd,
+                             const IPAddress::ptr& localAddr, const IPAddress::ptr& peerAddr,
+                             const int32_t send_bytes_one, const int32_t send_bytes_max, const int32_t recv_bytes_one, const int32_t recv_bytes_max,
+                             const uint8_t xor_code)
+    : m_send_bytes_one(send_bytes_one),
+      m_send_bytes_max(send_bytes_max),
+      m_recv_bytes_one(recv_bytes_one),
+      m_recv_bytes_max(recv_bytes_max),
+      m_name(std::move(name)),
       m_ioLoop(loop),
-      m_channel(std::make_unique<IOChannel>(loop, sockfd, name)),
       m_socket (std::make_unique<Socket>(sockfd, Socket::Type::TCP, Socket::Family::IPv4)),
+      m_channel(std::make_unique<IOChannel>(loop, sockfd, name)),
+      m_xorCode{xor_code},
       m_localAddr(localAddr),
       m_peerAddr(peerAddr),
-      m_sendBuf(std::make_unique<Buffer>(g_app_config->GetValue().send_bytes_one())),
-      m_recvBuf(std::make_unique<Buffer>(g_app_config->GetValue().recv_bytes_one())),
-      m_xorCode{g_app_config->GetValue().app_xor_code()}
+      m_sendBuf(std::make_unique<Buffer>(send_bytes_one)),
+      m_recvBuf(std::make_unique<Buffer>(recv_bytes_one))
 {
     assert(m_channel);
     assert(m_socket);
@@ -94,7 +98,7 @@ void TcpConnection::SendTCP(const std::string_view & message) {
 }
 
 void TcpConnection::SendTCPInLoop(const std::string_view & buf) { //! const &延长临时对象生命周期
-    m_ioLoop->AssertInLoopingThread(__FILE__, __LINE__);
+    m_ioLoop->AssertInLoopingThread();
 
     if (not CanIO()) {
         YLOG_TRACE("<{}>In TcpConnection::SendTCPInLoop, Connection Already Closed", m_socket->GetFD())
@@ -164,7 +168,7 @@ void TcpConnection::SendTCPInLoop(const std::string_view & buf) { //! const &延
 }
 
 void TcpConnection::HandleWrite() {
-    m_ioLoop->AssertInLoopingThread(__FILE__, __LINE__);
+    m_ioLoop->AssertInLoopingThread();
 
     if(!m_channel->IsEnableWriting()) {
         YLOG_TRACE("未监听写事件，跳过")
@@ -215,7 +219,7 @@ void TcpConnection::Shutdown() {
     m_ioLoop->RunCallbackInLoop([self = shared_from_this()](){ self->ShutdownInLoop();});
 }
 void TcpConnection::ShutdownInLoop() {
-    m_ioLoop->AssertInLoopingThread(__FILE__, __LINE__);
+    m_ioLoop->AssertInLoopingThread();
 
     YLOG_TRACE("<{}>TcpConnection::ShutdownInLoop(): CanShutdown()=={}", m_socket->GetFD(), CanShutdown())
 
@@ -242,7 +246,7 @@ void TcpConnection::ShutdownInLoop() {
     }
 
     //FIXME：不要加这一段，套接字需要统一在某个时刻关闭，且不能和Accept连接同时运行，否则会造成严重的bug！！！！！！！！！
-    // m_Loop->RunTaskAfter(Seconds{g_app_config->GetValue().close_delay()}, [this](){
+    // m_Loop->RunTaskAfter(Seconds{m_app_config->GetValue().close_delay()}, [this](){
     //     this->Close();
     //     YLOG_INFO("TcpConnection::ShutdownInLoop(): 时辰已到，正式关闭用户连接，回收套接字<%d>资源！", this->GetSocketFD())
     // });
@@ -250,7 +254,7 @@ void TcpConnection::ShutdownInLoop() {
 
 // RemoveConnectionInLoop最后调佣
 void TcpConnection::ConnectionDestroyed() {
-    m_ioLoop->AssertInLoopingThread(__FILE__, __LINE__);
+    m_ioLoop->AssertInLoopingThread();
 
     YLOG_DEBUG("In TcpConnection::ConnectionDestroyed(), {}, {}", ::yy::util::CastThreadIDToStr(m_ioLoop->GetThreadID()), ::yy::util::GetStrThreadID())
 
@@ -266,7 +270,7 @@ void TcpConnection::ConnectionDestroyed() {
 
 
 void TcpConnection::ConnectionEstablished() {
-    m_ioLoop->AssertInLoopingThread(__FILE__, __LINE__);
+    m_ioLoop->AssertInLoopingThread();
     assert(IsConnecting());
 
     //! 设置状态和Channel
@@ -284,7 +288,7 @@ void TcpConnection::ConnectionEstablished() {
 
 
 void TcpConnection::HandleRead() {
-    m_ioLoop->AssertInLoopingThread(__FILE__, __LINE__);
+    m_ioLoop->AssertInLoopingThread();
 
     if(not CanIO()) {
         return;
@@ -292,18 +296,18 @@ void TcpConnection::HandleRead() {
 
     YLOG_TRACE("正在读取来自连接<{}>的数据！", m_socket->GetFD())
 
-    size_t out_nBytesRead = 0;
 
     // 返回值为是否有逻辑错误（而非socket错误）：用户是否发送过多数据
 #ifdef ____WINDOWS
-    //! ET读取数据到recvBuf中
-    // auto rst = HandleRead_ET();
+    //! ET模式为Linux的epoll专属：windows没有ET，虽然HandleRead_ET函数也能适应Windows
     auto rst = HandleRead_LT();
 #elif defined(____LINUX)
     auto rst = HandleRead_ET();
 #else
     #error Platform not supported
 #endif
+
+    const size_t out_nBytesRead = rst.Result();
 
     if(rst.HasNoError()) {
         YLOG_TRACE("<{}>TcpConnection::HandleRead(): 数据接收完毕 head-tail=={}-{}",
@@ -315,10 +319,10 @@ void TcpConnection::HandleRead() {
         m_MessageCallback(shared_from_this(), *m_recvBuf);
     } else {
         //! 允许适当扩容，但是用户发送的数据大于 recv_bytes_max，则连接异常，关闭之
-        if(m_recvBuf->GetMaxsize() > g_app_config->GetValue().recv_bytes_max()) {
+        if(m_recvBuf->GetMaxsize() > m_recv_bytes_max) {
             HandleClose();
             YLOG_WARN("<{}>TcpConnection::HandleRead(): 用户连接发送数据过多<{}+{}>{}>，关闭连接",
-                      m_recvBuf->GetDataSize(), (size_t) out_nBytesRead, m_recvBuf->GetMaxsize(), m_socket->GetFD())
+                      m_recvBuf->GetDataSize(), out_nBytesRead, m_recvBuf->GetMaxsize(), m_socket->GetFD())
         }
     }
 }
@@ -326,7 +330,7 @@ void TcpConnection::HandleRead() {
 
 
 void TcpConnection::HandleClose() {
-    m_ioLoop->AssertInLoopingThread(__FILE__, __LINE__);
+    m_ioLoop->AssertInLoopingThread();
 
     //! 用户要关闭连接时，并不直接Close，而是先Shundown，等到一定时间之后再统一Close
     switch (m_connectionState)
@@ -341,13 +345,13 @@ void TcpConnection::HandleClose() {
 }
 
 void TcpConnection::HandleError() {
-    m_ioLoop->AssertInLoopingThread(__FILE__, __LINE__);
+    m_ioLoop->AssertInLoopingThread();
 
     HandleClose();
 }
 
 SocketApiWrapper::SocketResult TcpConnection::HandleRead_ET() {
-    m_ioLoop->AssertInLoopingThread(__FILE__, __LINE__);
+    m_ioLoop->AssertInLoopingThread();
 
     SocketApiWrapper::SocketResult rst;
 
@@ -355,7 +359,7 @@ SocketApiWrapper::SocketResult TcpConnection::HandleRead_ET() {
     while(true)
     {
         //! ET读取
-        m_recvBuf->RecvFromSocket(m_socket, g_app_config->GetValue().recv_bytes_one(), rst, nullptr);
+        m_recvBuf->RecvFromSocket(m_socket, m_recv_bytes_one, rst, nullptr);
 
         YLOG_TRACE("<{}>TcpConnection::HandleRead_ET(): 读取<{}>字节", m_socket->GetFD(), rst.Result())
 
@@ -374,7 +378,7 @@ SocketApiWrapper::SocketResult TcpConnection::HandleRead_ET() {
                 case SocketError::eConnectionAborted:
                 case SocketError::eNotConnected:
                 case SocketError::eConnectionRefused:
-                    YLOG_INFO("<{}>TcpConnection::HandleRead_ET(): 用户连接关闭，关闭用户连接", m_socket->GetFD());
+                    YLOG_DEBUG("<{}>TcpConnection::HandleRead_ET(): 连接错误，关闭用户连接", m_socket->GetFD());
                     HandleClose();
                     break;
                 default:
@@ -392,13 +396,13 @@ SocketApiWrapper::SocketResult TcpConnection::HandleRead_ET() {
 
             // 连接关闭请求
             if (nBytesRecv == 0) {
-                YLOG_INFO("<{}>TcpConnection::HandleRead_ET(): 用户请求关闭，关闭用户连接", m_socket->GetFD());
+                YLOG_DEBUG("<{}>TcpConnection::HandleRead_ET(): 对端请求关闭，关闭用户连接", m_socket->GetFD());
                 HandleClose();
                 break; //! FIXED_BUG 不要漏了，因为断开连接会回收userdata，Reset之，如果再循环一次会导致bad fd错误
             }
 
             //! 接收正常结束：若本次接收的数据小于一次最多能接收的数据，说明本次接收是本批recv()的最后一份数据，可以直接结束本次HandleRead_ET，节省了一次调用recv的时间
-            if (static_cast<size_t>(nBytesRecv) < g_app_config->GetValue().recv_bytes_one()) {
+            if (static_cast<size_t>(nBytesRecv) < m_recv_bytes_one) {
                 break;
             }
         }
@@ -411,7 +415,6 @@ SocketApiWrapper::SocketResult TcpConnection::HandleRead_LT() {
     m_recvBuf->RecvAllFromSocket(m_socket, rst, nullptr);
 
     if (rst.HasError()) {
-        YLOG_ERROR("<{}>TcpConnection::HandleRead_:LT(): recv() error: {}", m_socket->GetFD(), rst.GetErrorInfo())
         switch (rst.ErrorCode()) {
             //! 接收正常结束： EAGAIN，表示已无数据可recv，即数据全部recv完毕
             case SocketError::eAgain:
@@ -429,7 +432,7 @@ SocketApiWrapper::SocketResult TcpConnection::HandleRead_LT() {
                 HandleClose();
                 break;
             default:
-                YLOG_INFO("发生错误<{}>", rst.GetErrorInfo());
+                YLOG_ERROR("<{}>TcpConnection::HandleRead_:LT(): recv() error: {}", m_socket->GetFD(), rst.GetErrorInfo())
                 HandleError();
                 break;
         }

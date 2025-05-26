@@ -11,18 +11,28 @@
 namespace yy::net {
 
 
-TcpClient::TcpClient(EventLoop *loop, IPAddressPtr serverAddr)
-    : m_IsStarted{false},
-      m_CanAutoRetry{true},
-      m_Loop(loop),
-      m_Connection(),
-      m_Connector(std::make_shared<Connector>(loop, serverAddr)),
-      m_ServerAddr{serverAddr},
-      m_NextConnID{0}
+TcpClient::TcpClient(EventLoop *loop, IPAddressPtr serverAddr,
+const int32_t send_bytes_one, const int32_t send_bytes_max,
+const int32_t recv_bytes_one, const int32_t recv_bytes_max, const uint8_t xor_code) :
+    m_send_bytes_one(send_bytes_one),
+    m_send_bytes_max(send_bytes_max),
+    m_recv_bytes_one(recv_bytes_one),
+    m_recv_bytes_max(recv_bytes_max),
+    m_xorCode(xor_code),
+    m_Loop(loop),
+    m_Connection{},
+    m_Connector(std::make_shared<Connector>(loop, serverAddr)),
+    m_CanAutoRetry{true},
+    m_IsStarted{false},
+    m_NextConnID{0},
+    m_ServerAddr{serverAddr}
 {
-    InitLog();
     m_Connector->SetNewConnectionCallback( [this](const SocketApiWrapper::socket_t sockfd){ this->NewConnection(sockfd); } );
     m_Connector->SetConnectFailedCallback( [this]() { YLOG_WARN("coonect to <{}:{}>", this->m_ServerAddr->GetIPStr().c_str(), m_ServerAddr->GetPort()) } );
+
+#ifdef ____LINUX
+    util::set_signal_ignore(SIGPIPE);
+#endif
 }
 
 TcpClient::~TcpClient() {
@@ -69,12 +79,18 @@ void TcpClient::NewConnection(SocketApiWrapper::socket_t sockfd) {
     auto name = std::format("{}:{}", Timestamp::Now().GetMircoSecondSinceEpoch().count(), m_NextConnID++);
 
     TcpConnectionPtr conn = std::make_shared<TcpConnection>(
-            name,
+            std::move(name),
             m_Loop,
             sockfd,
             localAddr,
-            peerAddr
+            peerAddr,
+            m_send_bytes_one,
+            m_send_bytes_max,
+            m_recv_bytes_one,
+            m_recv_bytes_max,
+            m_xorCode
     );
+
     {
         std::lock_guard lg{m_ConnectionMutex};
         m_Connection = conn;
@@ -83,7 +99,8 @@ void TcpClient::NewConnection(SocketApiWrapper::socket_t sockfd) {
     conn->SetMessageCallback(m_MessageCallback);
     conn->SetConnectionWriteCompleteCallback(m_ConnectionWriteCompleteCallback);
     conn->SetConnectionCloseCallback([this](const TcpConnectionPtr& tcpconn){ this->RemoveConnection(tcpconn); });
-    conn->ConnectionEstablished();
+
+    conn->GetIOLoop()->RunCallbackInLoop([conn](){ conn->ConnectionEstablished(); });
 }
 
 void TcpClient::RemoveConnection(TcpConnectionPtr conn) {
@@ -97,16 +114,6 @@ void TcpClient::RemoveConnection(TcpConnectionPtr conn) {
         m_Connector->Restart();
 }
 
-void TcpClient::InitLog() {
-    yy::Ylog::LoggerManager::getInstance().ReadConfigs();
-// #ifdef ____DEBUG
-//     yy::Ylog::LoggerManager::getInstance().getLogger()->setLevel(yy::Ylog::LogLevel::eTRACE);
-// #else
-//     yy::Ylog::LoggerManager::getInstance().getLogger()->setLevel(yy::Ylog::LogLevel::eINFO);
-// #endif
-//     yy::Ylog::LogAppender::ptr appender{new yy::Ylog::StdoutLogApeender{"[%t][%l]%c%n"}};
-//     yy::Ylog::LoggerManager::getInstance().getLogger()->addAppender(appender);
-}
 
 
 }

@@ -30,26 +30,13 @@ socket_t create_tcp_or_die(bool isNonblock);
 socket_t create_udp_or_die(bool isNonblock);
 void     listen_or_die(socket_t sockfd, int backlog = SOMAXCONN);
 void     bind_or_die(socket_t sockfd, const std::shared_ptr<IPAddress> & localAddr);
-int      connect(socket_t sockfd, const std::shared_ptr<IPAddress> & peerAddr);
-socket_t accept(socket_t sockfd, std::shared_ptr<IPAddress> outPeerAddr, bool isNewSockNonBlock);
-
-
+SocketApiWrapper::SocketResult connect(const socket_t sockfd, const std::shared_ptr<IPAddress> & peerAddr);
 
 void     close(socket_t sockfd);
 void     shutdown (socket_t sockfd, int how);
 void     set_nonblocking(socket_t sockfd);
 int      get_socket_error(socket_t sockfd);
 int64_t  get_last_socket_error();
-template<typename T>
-T  has_socket_error(T ret) {
-#ifdef ____WINDOWS
-    return ret == SOCKET_ERROR;
-#elif defined(____LINUX)
-    return ret < 0;
-#else
-    #error Platform not supported
-#endif
-}
 bool     is_self_connect(socket_t sockfd);
 
 
@@ -70,7 +57,8 @@ extern std::shared_ptr<IPAddress> GetPeerAddr (SocketApiWrapper::socket_t sockfd
 template<class IPADDR> requires requires {
     requires std::is_base_of_v<IPAddress, IPADDR>;
 }
-std::unordered_map<socket_t, std::shared_ptr<IPAddress>> acceptAll(socket_t sockfd, bool isNewSockNonBlock)
+std::unordered_map<socket_t, std::shared_ptr<IPAddress>>
+acceptAll(socket_t sockfd, bool isNewSockNonBlock)
 {
     std::unordered_map<socket_t, std::shared_ptr<IPAddress>> Connfd2Addrs;
 

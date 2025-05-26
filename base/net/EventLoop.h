@@ -28,7 +28,7 @@ public:
     using F_CloseSocketsCallback = std::function<void()>;
 
 public:
-    EventLoop(Milliseconds defaultPollwaitTimeout);
+    explicit EventLoop(Milliseconds defaultPollwaitTimeout);
     ~EventLoop();
 
     /*! 核心函数 */
@@ -48,7 +48,7 @@ public:
     //Region 调用Poller的对应函数
     void UpdateChannel(IOChannel * channel);
     void RemoveChannel(IOChannel * channel);
-    bool    HasChannel(IOChannel * channel);
+    bool    HasChannel(IOChannel * channel) const;
     //End 调用Poller的对应函数
 
     //Region 定时器相关函数
@@ -63,19 +63,19 @@ public:
     //End 定时器相关函数
 
     ///@brief 保证一定是EventLoop的创建者在执行
-    void AssertInLoopingThread(const std::string & filepath = __FILE__, int fileline = __LINE__);
+    void AssertInLoopingThread();
 
     ///@brief 判断是否运行在EventLoop所在线程
-    bool IsInLoopingThread() { return std::this_thread::get_id() == m_ThreadID; }
+    bool IsInLoopingThread() const { return std::this_thread::get_id() == m_ThreadID; }
 
-    std::thread::id GetThreadID() { return m_ThreadID; }
+    std::thread::id GetThreadID() const { return m_ThreadID; }
 
     ///@brief 获取当前线程的EventLoop
     static EventLoop * GetEventLoopOfThisThread();
 
     bool IsLooping() const { return m_IsLooping; }
 
-    void SetCloseSocketsCallback(F_CloseSocketsCallback cb) { m_CloseSocketsCallback = cb; }
+    void SetCloseSocketsCallback(const F_CloseSocketsCallback& cb) { m_CloseSocketsCallback = cb; }
 
     ///@brief 唤醒正在阻塞在PollWait的EventLoop线程，以处理代办函数
     // void Wakeup();

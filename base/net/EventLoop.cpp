@@ -29,7 +29,7 @@ struct WakeupFD {
     WakeupFD() {
     #ifdef ____LINUX
         //! 相比使用管道，::eventfd更加高效
-        int evtfd = ::eventfd(0, EFD_NONBLOCK | EFD_CLOEXEC);
+        const int evtfd = ::eventfd(0, EFD_NONBLOCK | EFD_CLOEXEC);
         if (evtfd < 0) {
             throw std::system_error(errno, std::system_category(), "eventfd");
         }
@@ -44,7 +44,7 @@ struct WakeupFD {
 
     void InitWakeUpWithUCP() {
         this->wait_fd =  SocketApiWrapper::create_tcp_or_die(false);
-        auto loopback_addr = std::make_shared<IPv4Address>("127.0.0.1");
+        const auto loopback_addr = std::make_shared<IPv4Address>("127.0.0.1");
         SocketApiWrapper::bind_or_die(this->wait_fd, loopback_addr);
         this->wait_addr = SocketApiWrapper::GetLocalAddr(this->wait_fd);
 
@@ -70,7 +70,7 @@ struct WakeupFD {
 class WakeupManager
 {
 public:
-    WakeupManager(EventLoop * loop);
+    explicit WakeupManager(EventLoop * loop);
 
     ~WakeupManager();
 
@@ -81,7 +81,7 @@ public:
         }
     }
 
-    void SetNeedWake(bool val) { isNeedWakeup = val; }
+    void SetNeedWake(const bool val) { isNeedWakeup = val; }
 
 private:
     void OnNotify();
@@ -153,15 +153,14 @@ void WakeupManager::Notify() {
 
 EventLoop::EventLoop(Milliseconds defaultPollwaitTimeout)
         // 跨平台I/O多路复用（Linux使用epoll，Windows使用select）
-        : m_Poller(Poller::NewDefaultPoller(this)) //* many channel fd
-        //
-        , m_TimerManager{TimerManager::NewDefaultTimerManager(this)} //* timerfd
-        , m_ThreadID(std::this_thread::get_id())
-        , m_IsLooping(false)
+        : m_ThreadID(std::this_thread::get_id()) //* many channel fd
+        , m_IsLooping(false) //* timerfd
         , m_IsQuit(false)
+        , m_Poller(Poller::NewDefaultPoller(this))
+        , m_TimerManager{TimerManager::NewDefaultTimerManager(this)}
+        , m_WakeupManager(std::make_unique<WakeupManager>(this))
+        , m_DefaultPollwaitTimeout(defaultPollwaitTimeout) //* wakefd
         , m_IsCallingPenddingFunctors(false)
-        , m_WakeupManager(std::make_unique<WakeupManager>(this)) //* wakefd
-        , m_DefaultPollwaitTimeout(defaultPollwaitTimeout)
 {
     if(____EventLoopInThisThread) {
         YLOG_FATAL("There is already a EventLoop Object in this thread<{}>!", ::yy::util::GetStrThreadID())
@@ -171,7 +170,7 @@ EventLoop::EventLoop(Milliseconds defaultPollwaitTimeout)
 }
 
 EventLoop::~EventLoop() {
-    AssertInLoopingThread(__FILE__, __LINE__);
+    AssertInLoopingThread();
 
     while(m_IsLooping) {
         QuitLoop();
@@ -184,26 +183,26 @@ void EventLoop::UpdateChannel(IOChannel * channel) {
 }
 
 void EventLoop::RemoveChannel(IOChannel *channel) {
-    AssertInLoopingThread(__FILE__, __LINE__);
+    AssertInLoopingThread();
     m_Poller->RemoveChannel(channel);
 }
 
-bool EventLoop::HasChannel(IOChannel *channel) {
+bool EventLoop::HasChannel(IOChannel *channel) const {
     return m_Poller->HasChannel(channel);
 }
 
 
-void EventLoop::AssertInLoopingThread(const std::string & filepath, int fileline) {
+void EventLoop::AssertInLoopingThread() {
     if(!IsInLoopingThread())
     {
         1+1;
-        YLOG_FATAL("[{}:{}]::EventLoop Created In thread<{}>, but now in {}", filepath, fileline,
+        YLOG_FATAL("EventLoop Created In thread<{}>, but now in {}",
             ::yy::util::CastThreadIDToStr(m_ThreadID), ::yy::util::GetStrThreadID())
     }
 }
 
 void EventLoop::Loop() {
-    AssertInLoopingThread(__FILE__, __LINE__);
+    AssertInLoopingThread();
 
     m_IsLooping = true;
 
@@ -276,14 +275,14 @@ void EventLoop::RunCallbackInLoop(F_PendingCallback cb) {
         YLOG_TRACE("直接执行代办函数<{}>", GetDemangleName(cb.target_type().name()).c_str())
         cb();
     } else {
-        EnqueueCallbackInLoop(cb);
+        EnqueueCallbackInLoop(std::move(cb));
     }
 }
 
 void EventLoop::EnqueueCallbackInLoop(F_PendingCallback cb) {
     {
         std::lock_guard lg{m_PenddingFunctorsMutex};
-        m_PenddingFunctors.emplace_back(cb);
+        m_PenddingFunctors.emplace_back(std::move(cb));
     }
 
     /* * ①：如果是其它线程调用的：那么必须调用Wakeup()才能使得PollWait()返回来执行CallPenddingFunctors()
@@ -322,19 +321,19 @@ void EventLoop::CallPenddingCallbacks() {
     m_IsCallingPenddingFunctors = false;
 }
 
-TimerID EventLoop::RunAt(Timestamp time, F_TaskCallback cb) {
+TimerID EventLoop::RunAt(const Timestamp time, F_TaskCallback cb) {
     return m_TimerManager->AddTimer(std::move(cb), time);
 }
 
-TimerID EventLoop::RunAfter(Microseconds delay, F_TaskCallback cb) {
+TimerID EventLoop::RunAfter(const Microseconds delay, F_TaskCallback cb) {
     return RunAt(Timestamp::Now() + delay, std::move(cb));
 }
 
-TimerID EventLoop::RunEvery(Microseconds interval, F_TaskCallback cb) {
+TimerID EventLoop::RunEvery(const Microseconds interval, F_TaskCallback cb) {
     return m_TimerManager->AddTimer(std::move(cb), Timestamp::Now() + interval, interval);
 }
 
-void EventLoop::CancelTimer(TimerID timerid) {
+void EventLoop::CancelTimer(const TimerID timerid) {
     m_TimerManager->CancelTimer(timerid);
 }
 
@@ -343,9 +342,9 @@ Milliseconds EventLoop::GetPollwaitTimeout() {
 
     Milliseconds timeout = m_DefaultPollwaitTimeout;
     if(expiretime.IsValid()) {
-        Microseconds difftime = expiretime - Timestamp::Now();
-        auto a = Milliseconds{difftime.count()/1000};
-        auto b = m_DefaultPollwaitTimeout;
+        const Microseconds difftime = expiretime - Timestamp::Now();
+        const auto a = Milliseconds{difftime.count()/1000};
+        const auto b = m_DefaultPollwaitTimeout;
         timeout = (a<b)?a:b;
     }
 

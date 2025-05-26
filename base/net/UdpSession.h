@@ -11,7 +11,7 @@ namespace yy::net {
 
 class UdpSession {
 public:
-    UdpSession(std::string name, UdpTransport &udpTran, IPAddressPtr peerAddr);
+    UdpSession(std::string name, UdpTransport &udpTran, const IPAddressPtr& peerAddr, uint8_t xor_code);
 
     virtual ~UdpSession();
 

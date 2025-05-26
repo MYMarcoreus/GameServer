@@ -7,6 +7,7 @@
 
 #include <memory>
 #include <atomic>
+#include <any>
 
 namespace yy::net {
 
@@ -31,8 +32,10 @@ class TcpConnection: public std::enable_shared_from_this<TcpConnection> {
 
 public:
     ///@brief Acceptor接受用户连接后，在NewConnection回调函数（由TcpServer定义）中创建的数据结构
-    TcpConnection(std::string name, EventLoop *loop, SocketApiWrapper::socket_t sockfd,
-                  const IPAddress::ptr& localAddr, const IPAddress::ptr& peerAddr);
+    TcpConnection(std::string && name, EventLoop *loop, SocketApiWrapper::socket_t sockfd,
+                  const IPAddress::ptr& localAddr, const IPAddress::ptr& peerAddr,
+                  int32_t send_bytes_one, int32_t send_bytes_max, int32_t recv_bytes_one, int32_t recv_bytes_max,
+                  uint8_t xor_code);
 
     ~TcpConnection();
 
@@ -78,6 +81,11 @@ public:
     void SetXorCode(const uint8_t xorCode) { m_xorCode = xorCode; }
     ///End
 
+    ///Region 存储上层对TcpConnection的封装
+    template<typename T> void SetContext(T&& value) { m_context = std::forward<T>(value); }
+    template<typename T> T& GetContext() { return std::any_cast<T&>(m_context); }
+    template<typename T> const T& GetContext() const { return std::any_cast<const T&>(m_context); }
+    template<typename T> bool HasContext() const { return m_context.has_value() && m_context.type() == typeid(T); }
 private:
     void SetState(const E_ConnectionState state) { m_connectionState = state; }
 
@@ -96,6 +104,11 @@ private:
     bool CanIO() const { return IsConnected(); }
 
 private:
+    int32_t m_send_bytes_one;
+    int32_t m_send_bytes_max;
+    int32_t m_recv_bytes_one;
+    int32_t m_recv_bytes_max;
+
     std::string                      m_name;
     EventLoop *                      m_ioLoop;
     std::unique_ptr<Socket>          m_socket;
@@ -121,6 +134,9 @@ private:
     Timestamp m_connectedTime;
     Timestamp m_shudownTime;
     Timestamp m_heartTime;
+
+    // TcpServer上层对TcpConnection的封装
+    std::any m_context;
 };
 
 }

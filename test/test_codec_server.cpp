@@ -28,21 +28,52 @@ class QueryServer
     using AnswerPtr = std::shared_ptr<yy::protobuf::Answer> ;
 
 public:
-    QueryServer(EventLoop* loop, IPAddressPtr listenAddr)
-        : loop_{loop},
-        server_(loop, listenAddr, true),
-        dispatcher_( std::bind(&QueryServer::OnUnknownMessage, this, _1, _2) ),
-        codec_(std::bind(&ProtobufDispatcher<TcpConnectionPtr>::OnProtobufMessage, &dispatcher_, _1, _2))
+    QueryServer(EventLoop* loop, const IPAddressPtr& listenAddr) :
+    loop_{loop},
+    server_(loop, listenAddr, true,
+            yy::config::g_app_config->GetValue().send_bytes_one(),
+            yy::config::g_app_config->GetValue().send_bytes_max(),
+            yy::config::g_app_config->GetValue().recv_bytes_one(),
+            yy::config::g_app_config->GetValue().recv_bytes_max(),
+            yy::config::g_app_config->GetValue().app_xor_code()
+    ),
+    dispatcher_([this](const TcpConnectionPtr& conn, const MessagePtr& msg) {
+        OnUnknownMessage(conn, msg);
+    }),
+    codec_([this](const TcpConnectionPtr& conn, const MessagePtr& buf) {
+        dispatcher_.OnProtobufMessage(conn, buf);
+    })
     {
-        dispatcher_.RegisterMessageCallback<Query>(std::bind(&QueryServer::OnQuery, this, _1, _2));
-        dispatcher_.RegisterMessageCallback<Answer>(std::bind(&QueryServer::OnAnswer, this, _1, _2));
-        server_.SetConnectionEstablishedCallback( std::bind(&QueryServer::OnConnectionEstablished, this, _1));
-        server_.SetMessageCallback( std::bind(&ProtobufTcpCodec::OnData, &codec_, _1, _2));
+        dispatcher_.RegisterMessageCallback<Query>(
+            [this](const TcpConnectionPtr& conn, const std::shared_ptr<Query>& msg) {
+                OnQuery(conn, msg);
+            });
+
+        dispatcher_.RegisterMessageCallback<Answer>(
+            [this](const TcpConnectionPtr& conn, const std::shared_ptr<Answer>& msg) {
+                OnAnswer(conn, msg);
+            });
+
+        server_.SetConnectionEstablishedCallback(
+            [this](const TcpConnectionPtr& conn) {
+                OnConnectionEstablished(conn);
+            });
+
+        server_.SetMessageCallback(
+            [this](const TcpConnectionPtr &conn, Buffer &buf) {
+                codec_.OnData(conn, buf);
+            });
     }
+
 
     void Start()
     {
         server_.Start(2, 500ms);      // IO线程
+
+        loop_->RunEvery(1000ms, [this]()
+        {
+            YLOG_INFO("服务器定时器");
+        });
     }
 
     void SendAnswer(const TcpConnectionPtr& conn, const QueryPtr& query)
@@ -60,7 +91,7 @@ public:
     }
 
 private:
-    void OnConnectionEstablished(TcpConnectionPtr conn)
+    void OnConnectionEstablished(const TcpConnectionPtr& conn)
     {
         YLOG_INFO("██████████████████████████████████████████████████████连接成功<%s:%d, %d>！", conn->GetPeerAddr()->GetIPStr().c_str(), conn->GetPeerAddr()->GetPort(), conn->GetSocketFD())
     }
@@ -96,8 +127,8 @@ private:
 
     EventLoop *         loop_;
     TcpServer           server_;
-    ProtobufTcpCodec       codec_;
     ProtobufDispatcher<TcpConnectionPtr>  dispatcher_;
+    ProtobufTcpCodec       codec_;
 };
 
 
@@ -107,9 +138,14 @@ private:
 
 int main()
 {
-    config::ConfigManager::LoadXmlConfigs();
+
+    config::ConfigManager::AddFilePath("./configs.xml");
+    config::ConfigManager::AddFilePath("../configs.xml");
+    yy::config::ConfigManager::LoadXmlConfigs();
+    yy::Ylog::LoggerManager::getInstance().ReadConfigs();
+
     EventLoop loop{500ms};
-    IPAddressPtr listenAddr = std::make_shared<IPv4Address>(config::g_app_config->GetValue().app_tcp_port());
+    const IPAddressPtr listenAddr = std::make_shared<IPv4Address>(config::g_app_config->GetValue().app_tcp_port());
     QueryServer server(&loop, listenAddr);
     server.Start();
     loop.Loop();

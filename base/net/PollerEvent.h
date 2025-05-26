@@ -34,9 +34,9 @@ public:
 
 
     //! epoll的事件是uint32_t，poll的事件是short
-    PollerEvent(int val): m_Events(val) {}
-    PollerEvent(uint32_t val): m_Events(val) {}
-    PollerEvent(short val): m_Events(val) {}
+    PollerEvent(const int val): m_Events(val) {}
+    PollerEvent(const uint32_t val): m_Events(val) {}
+    PollerEvent(const short val): m_Events(val) {}
     operator int()      const { return m_Events; }
     operator uint32_t() const { return m_Events; }
     operator short()    const { return m_Events; }

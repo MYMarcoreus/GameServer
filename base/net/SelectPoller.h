@@ -3,20 +3,18 @@
 
 
 #include <set>
-#include <map>
 #include "net_definations.h"
 #include "socket_definations.h"
 #include "Poller.h"
-#include "PollerEvent.h"
 
 
 namespace yy::net {
 
 
-class SelectPoller: public Poller {
+class SelectPoller final : public Poller {
 public:
-    SelectPoller(EventLoop *loop);
-    ~SelectPoller() = default;
+    explicit SelectPoller(EventLoop *loop);
+    ~SelectPoller() override = default;
 
     ///@brief 执行epoll_wait，并将发生的事件channel填入`activeChannel`
     virtual void PollWait(ChannelList &activeChannel, Milliseconds timeout/* = std::chrono::milliseconds::max()*/) override;

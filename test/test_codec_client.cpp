@@ -26,52 +26,86 @@ class QueryClient
     using AnswerPtr = std::shared_ptr<yy::protobuf::Answer> ;
     using EmptyPtr = std::shared_ptr<yy::protobuf::Empty> ;
 public:
-    QueryClient(EventLoop * loop, IPAddressPtr serverAddr, bool CanRetry = true)
-        : client_(loop, serverAddr),
-          loop_{loop},
-          dispatcher_( std::bind(&QueryClient::OnUnknownMessage, this, _1, _2) ),
-          codec_(std::bind(&decltype(dispatcher_)::OnProtobufMessage, &dispatcher_, _1, _2))
+    QueryClient(EventLoop * loop, const IPAddressPtr& serverAddr, const bool CanRetry = true) :
+        loop_{loop},
+        client_(loop, serverAddr,
+            yy::config::g_remote_config->GetValue().sendBytesOne,
+            yy::config::g_remote_config->GetValue().sendBytesMax,
+            yy::config::g_remote_config->GetValue().recvBytesOne,
+            yy::config::g_remote_config->GetValue().recvBytesMax,
+            yy::config::g_remote_config->GetValue().appXorCode
+        ),
+          dispatcher_([this](const TcpConnectionPtr& conn, const MessagePtr& msg) {
+              OnUnknownMessage(conn, msg);
+          }),
+          codec_([this](const TcpConnectionPtr& conn, const MessagePtr & buf) {
+              dispatcher_.OnProtobufMessage(conn, buf);
+          })
     {
-        dispatcher_.RegisterMessageCallback<Empty>(std::bind(&QueryClient::OnEmpty, this, _1, _2));
-        dispatcher_.RegisterMessageCallback<Answer>(std::bind(&QueryClient::OnAnswer, this, _1, _2));
-        client_.SetMessageCallback(std::bind(&ProtobufTcpCodec::OnData, &codec_, _1, _2));
-        client_.SetConnectionEstablishedCallback(std::bind(&QueryClient::ConnectionEstablished, this, _1));
-        client_.SetConnectionWriteCompleteCallback(std::bind(&QueryClient::ConnectionWriteComplete, this, _1));
+        dispatcher_.RegisterMessageCallback<Empty>(
+            [this](const TcpConnectionPtr& conn, const EmptyPtr& msg) {
+                OnEmpty(conn, msg);
+            });
+
+        dispatcher_.RegisterMessageCallback<Answer>(
+            [this](const TcpConnectionPtr& conn, const AnswerPtr& msg) {
+                OnAnswer(conn, msg);
+            });
+
+        client_.SetMessageCallback(
+            [this](const TcpConnectionPtr& conn,  Buffer & buf) {
+                codec_.OnData(conn, buf);
+            });
+
+        client_.SetConnectionEstablishedCallback(
+            [this](const TcpConnectionPtr& conn) {
+                ConnectionEstablished(conn);
+            });
+
+        client_.SetConnectionWriteCompleteCallback(
+            [this](const TcpConnectionPtr& conn) {
+                ConnectionWriteComplete(conn);
+            });
+
         client_.SetCanAutoRetry(CanRetry);
     }
+
 
     void Start()
     {
         client_.Connect();
     }
 
-    void Send(std::string message)
+    void Send(const std::string& message)
     {
         client_.GetConnection()->SendTCP(message);
     }
 
 private:
-    void ConnectionEstablished(TcpConnectionPtr conn) {
+    void ConnectionEstablished(const TcpConnectionPtr& conn) {
         YLOG_INFO("连接至<{}:{}>，我方地址为<{}:{}>", conn->GetPeerAddr()->GetIPStr().c_str(), conn->GetPeerAddr()->GetPort()
                                                  , conn->GetLocalAddr()->GetIPStr().c_str(), conn->GetLocalAddr()->GetPort());
 
-        SendQuery(conn);
-        loop_->RunAfter(500ms, [conn, this]() { SendQuery(conn); });
+        // SendQuery(conn);
+        loop_->RunEvery(1000ms, [conn, this]()
+        {
+            SendQuery(conn);
+        });
     }
 
-    void ConnectionWriteComplete(TcpConnectionPtr conn) {
+    void ConnectionWriteComplete(const TcpConnectionPtr& conn) {
         YLOG_INFO("数据已发送给服务器<{}:{}>", conn->GetPeerAddr()->GetIPStr().c_str(), conn->GetPeerAddr()->GetPort())
     }
 
-    void SendQuery(TcpConnectionPtr conn)
+    void SendQuery(const TcpConnectionPtr& conn)
     {
         Query query;
         query.set_id(Timestamp::Now().GetMircoSecondSinceEpoch().count());
         query.set_questioner("Client");
         query.add_question("What time?");
         // Empty empty;
-        google::protobuf::Message* messageToSend = &query;
-        YLOG_INFO("即将向<{}: {}>发送Query：\n{}", conn->GetSocketFD(), conn->GetName().c_str(), query.DebugString().c_str())
+        const google::protobuf::Message* messageToSend = &query;
+        YLOG_INFO("即将向<{}: {}>发送Query[{} Byte]：\n{}", conn->GetSocketFD(), conn->GetName().c_str(), query.ByteSizeLong(), query.DebugString().c_str());
         codec_.SendTCP(conn, *messageToSend);
     }
 
@@ -93,14 +127,13 @@ private:
         }
 
         YLOG_INFO("OnAnswer: {}\n{}\n", message->GetTypeName(), message->DebugString())
-        // loop_->QuitLoop();
-        loop_->RunAfter(100ms, [l = loop_](){ l->QuitLoop();} );
+        // loop_->RunAfter(100ms, [l = loop_](){ l->QuitLoop();} );
     }
 
-    EventLoop *         loop_;
-    TcpClient           client_;
-    ProtobufTcpCodec       codec_;
-    ProtobufDispatcher<TcpConnectionPtr>  dispatcher_;
+    EventLoop *                             loop_;
+    TcpClient                               client_;
+    ProtobufDispatcher<TcpConnectionPtr>    dispatcher_;
+    ProtobufTcpCodec                        codec_;
 };
 
 
@@ -109,7 +142,11 @@ private:
 
 int main()
 {
-    config::ConfigManager::LoadXmlConfigs();
+    config::ConfigManager::AddFilePath("./configs_client.xml");
+    config::ConfigManager::AddFilePath("../configs_client.xml");
+    yy::config::ConfigManager::LoadXmlConfigs();
+    yy::Ylog::LoggerManager::getInstance().ReadConfigs();
+
     EventLoop loop{500ms};
     auto serverNode = config::g_remote_config->GetValue().m_remote_nodes[0];
     IPAddressPtr serverAddr = std::make_shared<IPv4Address>(serverNode.m_ip, serverNode.m_port);

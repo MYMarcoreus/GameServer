@@ -5,7 +5,7 @@
 #include "Acceptor.h"
 #include "EventLoopThreadPool.h"
 #include "EventLoop.h"
-#include "ConfigManager.h"
+// #include "ConfigManager.h"
 #include "TcpConnection.h"
 #include "log.h"
 #include "SocketApiWrapper.h"
@@ -65,13 +65,19 @@ FullDuplexPipe SignalManager::pipe_{};
 
 
 
-TcpServer::TcpServer(EventLoop *acceptorLoop, IPAddress::ptr listenAddr, bool reusePort) noexcept
-    : m_AcceptorLoop(acceptorLoop)
-    , m_Acceptor(std::make_unique<Acceptor>(m_AcceptorLoop, Socket::Type::TCP, listenAddr, reusePort))
-    , m_IOThreadPool(std::make_unique<EventLoopThreadPool>(acceptorLoop))
-    , m_AppConfigVar{config::g_app_config}
+TcpServer::TcpServer(EventLoop *acceptorLoop, IPAddress::ptr listenAddr, bool reusePort,
+const int32_t send_bytes_one, const int32_t send_bytes_max,
+const int32_t recv_bytes_one, const int32_t recv_bytes_max, const uint8_t xor_code) noexcept:
+    m_send_bytes_one(send_bytes_one),
+    m_send_bytes_max(send_bytes_max),
+    m_recv_bytes_one(recv_bytes_one),
+    m_recv_bytes_max(recv_bytes_max),
+    m_xorCode(xor_code),
+    m_AcceptorLoop(acceptorLoop) ,
+    m_Acceptor(std::make_unique<Acceptor>(m_AcceptorLoop, Socket::Type::TCP, listenAddr, reusePort)),
+    m_IOThreadPool(std::make_unique<EventLoopThreadPool>(acceptorLoop))
 #ifdef ____LINUX
-    , m_SignalManager{std::make_unique<SignalManager>(acceptorLoop, [this](){ this->HandleSignal(); })}
+     ,m_SignalManager{std::make_unique<SignalManager>(acceptorLoop, [this](){ this->HandleSignal(); })}
 #endif
 {
 #ifdef ____LINUX
@@ -80,7 +86,7 @@ TcpServer::TcpServer(EventLoop *acceptorLoop, IPAddress::ptr listenAddr, bool re
 }
 
 TcpServer::~TcpServer() {
-    m_AcceptorLoop->AssertInLoopingThread(__FILE__, __LINE__);
+    m_AcceptorLoop->AssertInLoopingThread();
 
     for(auto& conn : m_ConnectionMap | std::views::values) {
         conn->GetIOLoop()->RunCallbackInLoop([conn](){ conn->ConnectionDestroyed(); } );
@@ -99,13 +105,14 @@ void TcpServer::Start(const int ioThreadNum, const Milliseconds ioWaitTimeout, c
 }
 
 
-void TcpServer::Stop() {
+void TcpServer::Stop() const
+{
     m_Acceptor->StopListen();
 }
 
 
 void TcpServer::HandleNewConnection(SocketApiWrapper::socket_t sockfd, IPAddressPtr peerAddr) {
-    m_AcceptorLoop->AssertInLoopingThread(__FILE__, __LINE__);
+    m_AcceptorLoop->AssertInLoopingThread();
 
     EventLoop * ioLoop = m_IOThreadPool->GetNextLoop();
     IPAddressPtr localAddr = SocketApiWrapper::GetLocalAddr(sockfd);
@@ -114,13 +121,18 @@ void TcpServer::HandleNewConnection(SocketApiWrapper::socket_t sockfd, IPAddress
     auto name = std::format("{:020}-{:011}", Timestamp::Now().GetMircoSecondSinceEpoch().count(), m_NextConnID++);
 
     TcpConnectionPtr conn = std::make_shared<TcpConnection>(
-            name,
+            std::move(name),
             ioLoop,
             sockfd,
             localAddr,
-            peerAddr
+            peerAddr,
+            m_send_bytes_one,
+            m_send_bytes_max,
+            m_recv_bytes_one,
+            m_recv_bytes_max,
+            m_xorCode
     );
-    m_ConnectionMap[name] = conn;
+    m_ConnectionMap[conn->GetName()] = conn;
 
     // YLOG_INFO("连接[{}], {}", name, name.size());
 
@@ -147,7 +159,7 @@ void TcpServer::RemoveConnection(const TcpConnectionPtr &conn) {
 }
 
 void TcpServer::RemoveConnectionInLoop(TcpConnectionPtr conn) {
-    m_AcceptorLoop->AssertInLoopingThread(__FILE__, __LINE__);
+    m_AcceptorLoop->AssertInLoopingThread();
 
     m_ConnectionMap.erase(conn->GetName());
     --m_NumConnect;

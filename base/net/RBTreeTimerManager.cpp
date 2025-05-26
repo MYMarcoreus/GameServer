@@ -26,7 +26,7 @@ struct __TimerfdManager
     // friend class ::yy::net::TimerManager;
 public:
     ///@param cb 定时器到期回调
-    __TimerfdManager(EventLoop * owner_loop, std::function<void()> cb);
+    __TimerfdManager(EventLoop * owner_loop, const std::function<void()>& cb);
     ~__TimerfdManager();
 
     void ReadTimerfd();
@@ -46,7 +46,7 @@ private:
 
 
 ///@brief 创建Linux定时器文件描述符
-__TimerfdManager::__TimerfdManager(EventLoop * owner_loop, std::function<void()> cb):
+__TimerfdManager::__TimerfdManager(EventLoop * owner_loop, const std::function<void()>& cb):
         m_LinuxTimerFD(CreateTimerfd()),
         m_LinuxTimerChannel(owner_loop, m_LinuxTimerFD, "Linux Timerfd Channel")
 {
@@ -163,7 +163,7 @@ RBTreeTimerManager::~RBTreeTimerManager() {
 }
 
 Timestamp RBTreeTimerManager::GetEarliestExpiredTimeInLoop() {
-    m_OwnerLoop->AssertInLoopingThread(__FILE__, __LINE__);
+    m_OwnerLoop->AssertInLoopingThread();
     if(m_TimerList.empty()) {
         return Timestamp{};
     }
@@ -178,7 +178,7 @@ TimerID RBTreeTimerManager::AddTimer(F_TaskCallback cb, Timestamp expiredTime, M
 }
 
 void RBTreeTimerManager::AddTimerInLoop(TimerPtr timer) {
-    m_OwnerLoop->AssertInLoopingThread(__FILE__, __LINE__);
+    m_OwnerLoop->AssertInLoopingThread();
 
     auto isEarliestExpiredTimerChanged = InsertTimer(timer);
 
@@ -252,7 +252,7 @@ void RBTreeTimerManager::CancelTimerInLoop(TimerID timerid) {
   ! 不会有未处理的已cancel timer
   ! */
 int RBTreeTimerManager::HandleExpiredTimersInLoop() {
-    m_OwnerLoop->AssertInLoopingThread(__FILE__, __LINE__);
+    m_OwnerLoop->AssertInLoopingThread();
     YLOG_TRACE("定时器到期，处理定时器！")
 
     //! 获取到期的timer，将这些timer从定时器列表中删除

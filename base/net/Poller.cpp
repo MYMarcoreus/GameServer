@@ -14,7 +14,7 @@ bool Poller::HasChannel(IOChannel *channel) {
 
 
 void Poller::AssertInLoopingThread() const {
-    m_OwnerLoop->AssertInLoopingThread(__FILE__, __LINE__);
+    m_OwnerLoop->AssertInLoopingThread();
 }
 
 

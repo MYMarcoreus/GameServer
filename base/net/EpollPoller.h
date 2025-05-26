@@ -14,10 +14,10 @@
 
 namespace yy::net {
 
-class EpollPoller: public Poller {
+class EpollPoller final : public Poller {
 public:
-    EpollPoller(EventLoop *loop);
-    ~EpollPoller();
+    explicit EpollPoller(EventLoop *loop);
+    ~EpollPoller() override;
 
     ///@brief 执行epoll_wait，并将发生的事件channel填入`activeChannel`
     virtual void PollWait(ChannelList &activeChannel, std::chrono::milliseconds timeout) override;
@@ -38,8 +38,7 @@ private:
 private:
     int                             m_EpollFD;
     std::vector<struct epoll_event> m_EpollEventList; // 在epoll_wait中使用，存放发生的事件
-    bool                            m_useET;
-    static const int                kEpollMaxSize = 16;
+    static constexpr int            kEpollMaxSize = 16;
 };
 
 }

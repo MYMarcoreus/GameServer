@@ -23,8 +23,7 @@ class EventLoop;
 class UdpTransport  {
     using F_UdpRecievedCallback = std::function<void(Buffer &, IPAddressPtr)>;
 public:
-
-    UdpTransport(EventLoop * recvLoop);
+    explicit UdpTransport(EventLoop * recvLoop, const uint16_t app_udp_port, const int32_t recv_bytes_one, const int32_t m_send_thread_num);
 
     ~UdpTransport();
 
@@ -43,6 +42,9 @@ public:
     ///End
 
 private:
+    uint16_t m_udp_port;
+    int32_t  m_recv_bytes_one;
+    int32_t  m_send_thread_num;
 
     void HandleRead();     // 将套接字的数据接收到RecvBuf中
     SocketApiWrapper::SocketResult HandleRead_ET(IPAddressPtr & peerAddr);  // 将套接字的数据接收到RecvBuf中

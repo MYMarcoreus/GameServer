@@ -38,6 +38,11 @@ enum class SocketError {
     eConnectionAborted,
     eConnectionRefused,
     eMsgSize,
+    eIsConnected,
+    eInProgress,
+    eNetUnreachable,
+    eAddressInUse,
+    eAddressNotAvailable,
     eUnknown,
 };
 
@@ -52,7 +57,7 @@ using socket_t = int;
 
 struct SocketResult {
 public:
-    SocketResult(int64_t rst = 0, int64_t err = 0) : result(rst), errorCode(err) { }
+    SocketResult(const int64_t rst = 0, const int64_t err = 0) : result(rst), errorCode(err) { }
     [[nodiscard]] int64_t & Result() {
         assert(HasNoError());
         return result;
@@ -67,6 +72,11 @@ public:
             case WSAECONNABORTED:   return SocketError::eConnectionAborted;
             case WSAECONNREFUSED:   return SocketError::eConnectionRefused;
             case WSAEMSGSIZE:       return SocketError::eMsgSize;
+            case WSAEISCONN:        return SocketError::eIsConnected;
+            case WSAEINPROGRESS:    return SocketError::eInProgress;
+            case WSAENETUNREACH:    return SocketError::eNetUnreachable;
+            case WSAEADDRINUSE:     return SocketError::eAddressInUse;
+            case WSAEADDRNOTAVAIL:  return SocketError::eAddressNotAvailable;
             default:                return SocketError::eUnknown;
         }
     #elif defined(____LINUX)
@@ -80,6 +90,11 @@ public:
             case ECONNABORTED:      return SocketError::eConnectionAborted;
             case ECONNREFUSED:      return SocketError::eConnectionRefused;
             case EMSGSIZE:          return SocketError::eMsgSize;
+            case EISCONN:           return SocketError::eIsConnected;
+            case EINPROGRESS:       return SocketError::eInProgress;
+            case ENETUNREACH:       return SocketError::eNetUnreachable;
+            case EADDRINUSE:        return SocketError::eAddressInUse;
+            case EADDRNOTAVAIL:     return SocketError::eAddressNotAvailable;
             default:                return SocketError::eUnknown;
         }
     #endif

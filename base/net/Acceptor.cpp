@@ -9,15 +9,15 @@ namespace yy::net {
 
 using namespace yy::util;
 
-Acceptor::Acceptor(EventLoop *loop, Socket::Type socketType, const IPAddressPtr listenAddr, bool reusePort)
+Acceptor::Acceptor(EventLoop *loop, const Socket::Type socketType, const IPAddressPtr& listenAddr, const bool reusePort)
         : m_AcceptorLoop(loop),
+          m_AcceptSocket(socketType, static_cast<Socket::Family>(listenAddr->GetFamily()), true),
+          m_AcceptChannel(loop, m_AcceptSocket.GetFD(), "Acceptor Channel"), //! 非阻塞监听套接字
           m_IsListening(false),
-          m_AcceptSocket(socketType, (Socket::Family)listenAddr->GetFamily(), true), //! 非阻塞监听套接字
-          m_AcceptChannel(loop, m_AcceptSocket.GetFD(), "Acceptor Channel"),
           m_ListenAddr(listenAddr)
 {
     //! 初始化监听套接字（尚未开始监听）
-    m_AcceptSocket.SetOpt_ReuseAddr(true);
+    m_AcceptSocket.SetOpt_ReuseAddr(reusePort);
     //m_AcceptSocket.SetOpt_ReusePort(reusePort);
     m_AcceptSocket.SetOpt_Linger(true);
     m_AcceptSocket.Bind(listenAddr);
@@ -34,7 +34,7 @@ void Acceptor::StartListen() {
 }
 
 void Acceptor::StartListenInLoop() {
-    m_AcceptorLoop->AssertInLoopingThread(__FILE__, __LINE__);
+    m_AcceptorLoop->AssertInLoopingThread();
 
     m_IsListening = true;
     m_AcceptChannel.SetReadCallback([this](){ this->HandleAcceptAll(); });
@@ -45,14 +45,11 @@ void Acceptor::StartListenInLoop() {
 }
 
 void Acceptor::HandleAcceptAll() {
-    m_AcceptorLoop->AssertInLoopingThread(__FILE__, __LINE__);
+    m_AcceptorLoop->AssertInLoopingThread();
 
-    auto allConnfd = m_AcceptSocket.AcceptAll(true); //! 非阻塞连接套接字
+    const auto allConnfd = m_AcceptSocket.AcceptAll(true); //! 非阻塞连接套接字
 
-    for (auto & conn: allConnfd) {
-        auto & conn_fd = conn.first;
-        auto & coon_addr = conn.second;
-
+    for (const auto & [conn_fd, coon_addr]: allConnfd) {
         YLOG_DEBUG("In Acceptor::HandleAccept，套接字<{}>被Accept", conn_fd)
         if(m_NewConnectionCallback) {
             m_NewConnectionCallback(conn_fd, coon_addr); // TcpServer::HandleNewConnection
@@ -66,20 +63,6 @@ void Acceptor::HandleAcceptAll() {
 void Acceptor::StopListen() {
     m_AcceptorLoop->QuitLoop();
     m_IsListening = false;
-}
-
-void Acceptor::HandleAccept() {
-    m_AcceptorLoop->AssertInLoopingThread(__FILE__, __LINE__);
-
-    IPAddressPtr outPeerAddr = nullptr;
-    SocketApiWrapper::socket_t connfd = m_AcceptSocket.Accept(outPeerAddr, true); //! 非阻塞连接套接字
-
-    YLOG_DEBUG("In Acceptor::HandleAccept，套接字<{}>被Accept", connfd)
-    if(m_NewConnectionCallback) {
-        m_NewConnectionCallback(connfd, outPeerAddr); // TcpServer定义
-    } else {
-        SocketApiWrapper::close(connfd);
-    }
 }
 
 

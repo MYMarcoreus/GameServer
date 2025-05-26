@@ -91,9 +91,11 @@ void bind_or_die(socket_t sockfd, const std::shared_ptr<IPAddress> &localAddr) {
     }
 }
 
-int connect(socket_t sockfd, const std::shared_ptr<IPAddress> &peerAddr) {
-    return ::connect(sockfd, peerAddr->GetRawAddr(), peerAddr->GetRawAddrLen());
-}
+SocketResult  connect(const socket_t sockfd, const std::shared_ptr<IPAddress>& peerAddr)
+{
+    const auto ret = ::connect(sockfd, peerAddr->GetRawAddr(), peerAddr->GetRawAddrLen());
+    return SocketResult{ret, get_last_socket_error()};
+ }
 
 void close(socket_t sockfd) {
 #ifdef ____LINUX
@@ -122,71 +124,7 @@ void set_nonblocking(socket_t sockfd) {
 }
 
 
-SocketApiWrapper::socket_t
-accept(socket_t sockfd, std::shared_ptr<IPAddress> outPeerAddr, bool isNewSockNonBlock) {
-    int connfd;
-
-    //FIXME 非阻塞Accept应该不断loop
-#ifdef ____LINUX
-    int flags = isNewSockNonBlock ? SOCK_CLOEXEC | SOCK_NONBLOCK : 0;
-    if (outPeerAddr) {
-        auto addrLen = outPeerAddr->GetRawAddrLen();
-        connfd = ::accept4(sockfd, outPeerAddr->GetRawAddr(), &addrLen, flags);
-    } else {
-        connfd = ::accept4(sockfd, nullptr, nullptr, flags);
-    }
-#endif
-
-#ifdef ____WINDOWS
-    if (outPeerAddr) {
-        auto addrLen = outPeerAddr->GetRawAddrLen();
-        connfd = ::accept(sockfd, outPeerAddr->GetRawAddr(), &addrLen);
-    } else {
-        connfd = ::accept(sockfd, nullptr, nullptr);
-    }
-
-    if (connfd >= 0 and isNewSockNonBlock) {
-        set_nonblocking(connfd);
-    }
-#endif
-
-    if (has_socket_error(connfd)) {
-        yy::util::ErrnoSaver errnoSaver;
-        //! 因为accept需要被调用无数次，为保证程序的正常运行，所以需要区分暂时错误和致命错误
-        switch (errnoSaver) {
-            //! 暂时错误：忽略之
-            case EAGAIN:
-            case ECONNABORTED:
-            case EINTR:
-            case EPROTO:
-            case EPERM:
-            case EMFILE: {
-                errno = errnoSaver;
-                break;
-            }
-                //! 致命错误：终止错误
-            case EBADF:
-            case EFAULT:
-            case EINVAL:
-            case ENFILE:
-            case ENOBUFS:
-            case ENOMEM:
-            case ENOTSOCK:
-            case EOPNOTSUPP: {
-                YLOG_FATAL("In Socket::Accept(), accpet() unexcepted error: {}", yy::util::GetErrorInfo(errnoSaver))
-                break;
-            }
-            default: {
-                YLOG_FATAL("In Socket::Accept(), accpet() unknown error: {}", yy::util::GetErrorInfo(errnoSaver))
-                break;
-            }
-        }
-    }
-    return connfd;
-}
-
-
-void shutdown(socket_t sockfd, int how) {
+void shutdown(const socket_t sockfd, const int how) {
     int ret = ::shutdown(sockfd, how);
     if (ret < 0) {
         // 用户连接reset后，再调用shutdown，则会造成该情况
@@ -202,7 +140,7 @@ int get_socket_error(socket_t sockfd) {
     int optval;
     socklen_t optlen = static_cast<socklen_t>(sizeof optval);
 
-    if (::getsockopt(sockfd, SOL_SOCKET, SO_ERROR, (char *) &optval, &optlen) < 0) {
+    if (::getsockopt(sockfd, SOL_SOCKET, SO_ERROR, reinterpret_cast<char*>(&optval), &optlen) < 0) {
         return get_last_socket_error();
     } else {
         return optval;

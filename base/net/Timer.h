@@ -34,7 +34,7 @@ public:
     //End GETTER
 
     void SetCanceled() { m_IsCanceled = true; }
-    bool IsCanceled() { return m_IsCanceled; }
+    bool IsCanceled() const { return m_IsCanceled; }
 
 private:
 

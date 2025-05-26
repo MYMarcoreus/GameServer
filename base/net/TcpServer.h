@@ -21,26 +21,26 @@ public:
     ///@param
     ///@note 注意其实不要将线程数量作为构造函数的参数，不要在构造函数里构造Loop线程池，因为我们需要再Start中才一个一个创建线程，
     /// 而非在构造函数中（即使在构造函数中没有创建线程，但为了语义上歧义少点，请不要这么做）
-    TcpServer(EventLoop *acceptorLoop, IPAddress::ptr listenAddr, bool reusePort) noexcept;
+    TcpServer(EventLoop *acceptorLoop, IPAddress::ptr listenAddr, bool reusePort,
+        const int32_t send_bytes_one, const int32_t send_bytes_max,
+        const int32_t recv_bytes_one, const int32_t recv_bytes_max, const uint8_t xor_code) noexcept;
     ~TcpServer();
 
     ///@brief 启动连接池并开启监听套接字
     void Start(int ioThreadNum, Milliseconds ioWaitTimeout, const F_ThreadInitCallback& cb = F_ThreadInitCallback());
 
-    void Stop();
+    void Stop() const;
 
     //! TcpConnection回调，由TcpServer的上层定义并实现
-    void SetConnectionEstablishedCallback(F_ConnectionEstablishedCallback cb) { m_ConnectionEstablishedCallback = cb; };
-    void SetConnectionDestroyedCallback(F_ConnectionDestroyedCallback cb) { m_ConnectionDestroyedCallback = cb; };
-    void SetConnectionWriteCompleteCallback(F_ConnectionWriteCompleteCallback cb) { m_ConnectionWriteCompleteCallback = cb; };
-    void SetConnectionShutdownCallback     (F_ConnectionShutdownCallback cb)      { m_ConnectionShutdownCallback = cb; }
-    void SetCloseSocketsCallback(const F_CloseShutdownConnectionsCallback& cb);
-
-
+    void SetConnectionEstablishedCallback  (const F_ConnectionEstablishedCallback& cb)   { m_ConnectionEstablishedCallback = cb; };
+    void SetConnectionDestroyedCallback    (const F_ConnectionDestroyedCallback& cb)     { m_ConnectionDestroyedCallback = cb; };
+    void SetConnectionWriteCompleteCallback(const F_ConnectionWriteCompleteCallback& cb) { m_ConnectionWriteCompleteCallback = cb; };
+    void SetConnectionShutdownCallback     (const F_ConnectionShutdownCallback& cb)      { m_ConnectionShutdownCallback = cb; }
+    void SetCloseSocketsCallback           (const F_CloseShutdownConnectionsCallback& cb);
     /* ! 注意：当使用线程池时，不要把recvBuf的引用或指针作为参数传递给另一线程（如线程池中的线程），
        ! MessageCallback需在的调用者线程中（即TcpConnection对象所在线程，即在onMessage中）完成对recvBuf数据的拷贝，
        ! 否则可能在成recvBuf的线程不安全 */
-    void SetMessageCallback(F_TcpMessageCallback cb) { m_MessageCallback = cb; };
+    void SetMessageCallback(const F_TcpMessageCallback& cb) { m_MessageCallback = cb; };
 
     size_t GetConnectionsCount() { return m_NumConnect; }
 
@@ -57,6 +57,11 @@ private:
 
     void HandleSignal();
 private:
+    int32_t m_send_bytes_one;
+    int32_t m_send_bytes_max;
+    int32_t m_recv_bytes_one;
+    int32_t m_recv_bytes_max;
+    uint8_t m_xorCode;
 
     EventLoop *                          m_AcceptorLoop;
     std::unique_ptr<Acceptor>            m_Acceptor;
@@ -75,7 +80,6 @@ private:
  // F_ConnectionCloseCallback            m_ConnectionCloseCallback;  // 不允许让用户指定close回调
     F_ConnectionShutdownCallback         m_ConnectionShutdownCallback;
 
-    config::ConfigVar<config::AppXmlConfig>::ptr m_AppConfigVar; // 用于获取配置项
     std::unordered_map<std::string , TcpConnectionPtr> m_ConnectionMap;
 
 #ifdef ____LINUX

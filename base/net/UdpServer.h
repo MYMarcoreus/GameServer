@@ -18,7 +18,7 @@ public:
     ///@param
     ///@note 注意其实不要将线程数量作为构造函数的参数，不要在构造函数里构造Loop线程池，因为我们需要再Start中才一个一个创建线程，
     /// 而非在构造函数中（即使在构造函数中没有创建线程，但为了语义上歧义少点，请不要这么做）
-    UdpServer(EventLoop * mainLoop, bool reusePort) noexcept;
+    UdpServer(EventLoop * mainLoop, bool reusePort, const uint16_t app_udp_port, const int32_t recv_bytes_one, const int32_t m_send_thread_num, uint8_t init_xor_code) noexcept;
     ~UdpServer();
 
     void Start(int ioThreadNum, Milliseconds ioWaitTimeout, const F_ThreadInitCallback& cb = F_ThreadInitCallback());
@@ -39,12 +39,18 @@ public:
 private:
     void HandleNewMessage(Buffer & recvBuf, IPAddressPtr peerAddr);
 private:
+    uint16_t m_udp_port;
+    int32_t  m_recv_bytes_one;
+    int32_t  m_send_thread_num;
+    uint8_t  m_init_xor_code;
+
     EventLoop *                                   m_mainLoop;
     F_UdpMessageCallback                          m_MessageCallback;
     std::unique_ptr<EventLoopThreadPool>    m_recvEventThreadPool;
     std::unique_ptr<UdpTransport>           m_udpTran;
 
     std::atomic<bool>   m_IsStarted{false};
+
 };
 
 

@@ -5,12 +5,10 @@
 #include "EventLoop.h"
 #include "log.h"
 #include "status/Status.h"
-#include "AppXmlConfig.h"
 #include "ErrnoSaver.h"
 #include "IPAddress.h"
 #include "ThreadPool.h"
 #include "Buffer.h"
-#include "EventLoopThreadPool.h"
 
 namespace yy::net {
 
@@ -18,20 +16,24 @@ using namespace yy::util;
 using namespace yy::config;
 using yy::SocketApiWrapper::SocketError;
 
-UdpTransport::UdpTransport(EventLoop * recvLoop)
-    : m_recvLoop(recvLoop),
-      m_socket (std::make_unique<Socket>(Socket::Type::UDP, Socket::Family::IPv4, true)),
-      m_recvBuf(std::make_unique<Buffer>(g_app_config->GetValue().recv_bytes_one())),
-      m_sendWorkThreadPool(std::make_unique<ThreadPool>("UdpTransport Send"))
+UdpTransport::UdpTransport(EventLoop * recvLoop, const uint16_t app_udp_port, const int32_t recv_bytes_one, const int32_t m_send_thread_num):
+    m_udp_port(app_udp_port),
+    m_recv_bytes_one(recv_bytes_one),
+    m_send_thread_num(m_send_thread_num),
+    m_recvLoop(recvLoop),
+    m_socket (std::make_unique<Socket>(Socket::Type::UDP, Socket::Family::IPv4, true)),
+    m_sendWorkThreadPool(std::make_unique<ThreadPool>("UdpTransport Send")),
+    m_recvBuf(std::make_unique<Buffer>(recv_bytes_one))
 {
     assert(recvLoop);
     assert(m_socket);
     assert(m_recvBuf);
     assert(m_sendWorkThreadPool);
 
-    m_sendWorkThreadPool->Start(recvLoop, g_app_config->GetValue().udp_io_thread_num());
+    m_sendWorkThreadPool->Start(recvLoop, m_send_thread_num);
 
-    yy::net::IPAddressPtr recvAddr = std::make_shared<net::IPv4Address>(config::g_app_config->GetValue().app_udp_port());
+    const yy::net::IPAddressPtr recvAddr = std::make_shared<net::IPv4Address>(app_udp_port);
+    m_socket->SetOpt_ReuseAddr(true);
     m_socket->Bind(recvAddr);
     m_socket->SetOpt_KeepAlive(true);
 
@@ -113,13 +115,13 @@ void UdpTransport::SendUDPWorker(const std::string_view & buf, IPAddressPtr peer
 }
 
 void UdpTransport::HandleError() {
-    m_recvLoop->AssertInLoopingThread(__FILE__, __LINE__);
+    m_recvLoop->AssertInLoopingThread();
 }
 
 
 
 void UdpTransport::HandleRead() {
-    m_recvLoop->AssertInLoopingThread(__FILE__, __LINE__);
+    m_recvLoop->AssertInLoopingThread();
 
     YLOG_TRACE("正在读取来自连接<{}>的数据！", m_socket->GetFD())
 
@@ -149,7 +151,7 @@ void UdpTransport::HandleRead() {
 
 
 SocketApiWrapper::SocketResult UdpTransport::HandleRead_ET(IPAddressPtr & peerAddr) {
-    m_recvLoop->AssertInLoopingThread(__FILE__, __LINE__);
+    m_recvLoop->AssertInLoopingThread();
 
     SocketApiWrapper::SocketResult rst;
 
@@ -157,7 +159,7 @@ SocketApiWrapper::SocketResult UdpTransport::HandleRead_ET(IPAddressPtr & peerAd
     while(true)
     {
         //! ET读取
-        m_recvBuf->RecvFromSocket(m_socket, g_app_config->GetValue().recv_bytes_one(), rst, peerAddr);
+        m_recvBuf->RecvFromSocket(m_socket, m_recv_bytes_one, rst, peerAddr);
 
         YLOG_TRACE("<{}>UdpSession::HandleRead_ET(): 读取<{}>字节", m_socket->GetFD(), rst.Result())
 

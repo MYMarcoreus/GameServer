@@ -9,7 +9,9 @@ namespace yy::net {
 
 class TcpClient {
 public:
-    TcpClient(EventLoop * loop, IPAddressPtr serverAddr);
+    TcpClient(EventLoop * loop, IPAddressPtr serverAddr,
+        const int32_t send_bytes_one, const int32_t send_bytes_max,
+        const int32_t recv_bytes_one, const int32_t recv_bytes_max, const uint8_t xor_code);
     ~TcpClient();
 
     void Connect();
@@ -38,7 +40,12 @@ private:
 
     void RemoveConnection(TcpConnectionPtr conn);
 
-    void InitLog();
+private:
+    int32_t m_send_bytes_one;
+    int32_t m_send_bytes_max;
+    int32_t m_recv_bytes_one;
+    int32_t m_recv_bytes_max;
+    uint8_t m_xorCode;
 
     EventLoop *      m_Loop;
     TcpConnectionPtr m_Connection;

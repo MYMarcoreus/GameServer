@@ -15,7 +15,7 @@ EventLoopThreadPool::~EventLoopThreadPool() {
 }
 
 void EventLoopThreadPool::Start(int threadNum, Milliseconds pollwaitTimeout, F_ThreadInitCallback cb) {
-    m_BaseLoop->AssertInLoopingThread(__FILE__, __LINE__);
+    m_BaseLoop->AssertInLoopingThread();
 
     for (int i = 0; i < threadNum; ++i) {
         auto t = new EventLoopThread(cb, pollwaitTimeout);
@@ -32,7 +32,7 @@ void EventLoopThreadPool::Start(int threadNum, Milliseconds pollwaitTimeout, F_T
 }
 
 EventLoop *EventLoopThreadPool::GetNextLoop() {
-    m_BaseLoop->AssertInLoopingThread(__FILE__, __LINE__);
+    m_BaseLoop->AssertInLoopingThread();
 
     EventLoop * loop = nullptr;
     if(!m_ioLoops.empty()) {

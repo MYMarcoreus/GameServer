@@ -1,13 +1,12 @@
 #include "UdpSession.h"
-#include "Buffer.h"
 #include "UdpTransport.h"
-#include "AppXmlConfig.h"
+#include "Buffer.h"
 
 namespace yy::net {
 
-UdpSession::UdpSession(std::string name, UdpTransport &udpTran, IPAddressPtr peerAddr)
-        : m_name(name),
-        m_xorCode{config::g_app_config->GetValue().app_xor_code()},
+UdpSession::UdpSession(std::string name, UdpTransport &udpTran, const IPAddressPtr& peerAddr, const uint8_t xor_code)
+        : m_name(std::move(name)),
+        m_xorCode{xor_code},
         m_udpTran(udpTran),
         m_peerAddr(peerAddr)
 {

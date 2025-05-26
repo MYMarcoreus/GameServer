@@ -9,7 +9,6 @@
 #include "RWLock.h"
 #include "util_functions.h"
 
-#include <tuple>
 #include <string>
 #include <unordered_map>
 #include <algorithm>
@@ -19,7 +18,6 @@
 #include <sstream>
 #include <mutex>
 #include <set>
-#include <map>
 #include <utility>
 #include <filesystem>
 #include <functional>
@@ -79,7 +77,7 @@ T XmlAttributeTo(const XMLAttribute* xml_attr)
         //! 无符号整数
         if constexpr (std::is_unsigned_v<T>) {
             unsigned int attr_val;
-            int ret = xml_attr->QueryUnsignedValue(&attr_val);
+            const int ret = xml_attr->QueryUnsignedValue(&attr_val);
             if (ret == XML_WRONG_ATTRIBUTE_TYPE) {
                 std::cerr << "属性[" << xml_attr->Name() << "]属性不为无符号整型！\n";
                 throw std::bad_cast();
@@ -100,6 +98,8 @@ T XmlAttributeTo(const XMLAttribute* xml_attr)
     } else {
         static_assert(sizeof(T) == 0, "XmlAttributeTo 不支持该类型");
     }
+
+    throw std::bad_cast();
 }
 
 
@@ -419,7 +419,7 @@ public:
     LookUp(const std::string & name)
     {
         util::ReadLockGuard lock(getMutex());
-        auto it = GetConfigVarMap().find(name);
+        const auto it = GetConfigVarMap().find(name);
         return it == GetConfigVarMap().end() ? nullptr : std::dynamic_pointer_cast<ConfigVar<T>>(it->second);
     }
 
@@ -431,18 +431,24 @@ public:
     }
 
     static void
-    SetIsLoaded(bool val) { GetIsLoaded() = val; }
+    SetIsLoaded(const bool val) { GetIsLoaded() = val; }
 
     ///@brief 获取配置文件的路径
     ///@return 返回局部静态变量的引用
-    static std::filesystem::path &
-    GetFilePath() {
-        static std::filesystem::path s_config_file_path;
-        return s_config_file_path;
+    static std::vector<std::filesystem::path> &
+    GetAllFilePath() {
+        static std::vector<std::filesystem::path>  s_config_file_paths {
+                "./configs.xml",
+                "./config/configs.xml",
+                "../configs.xml",
+                "../config/configs.xml"
+        };;
+
+        return s_config_file_paths;
     }
 
     static void
-    SetFilePath(std::filesystem::path config_file_path) { GetFilePath() = config_file_path; }
+    AddFilePath(const std::filesystem::path& config_file_path) { GetAllFilePath().emplace(GetAllFilePath().begin(), config_file_path); }
 
     ///@brief 读取配置文件，若已读取，则再次读取
     static void
@@ -498,33 +504,31 @@ private:
     static XMLElement *
     read_root(tinyxml2::XMLDocument & xml_doc)
     {
-        XMLElement * root_elem;
-
         // 若已读取，则清空再读取
         if(!xml_doc.RootElement()) {
             xml_doc.Clear();
         }
 
         // 读取路径为GetConfigFilePath()的配置文件，若读取失败，则查找默认路径的xml文件
-        XMLError ret = xml_doc.LoadFile(GetFilePath().string().c_str());
-        if(ret != XML_SUCCESS ) {
-            for (auto path: kConfigPaths) {
-                if (xml_doc.LoadFile(path) == XML_SUCCESS) {
-                    SetFilePath(std::filesystem::absolute(path));
-                    break;
-                }
+        std::filesystem::path xml_file_path{};
+        for (auto file_path : GetAllFilePath())
+        {
+            const XMLError ret = xml_doc.LoadFile(file_path.string().c_str());
+            if (ret == XML_SUCCESS) {
+                xml_file_path = file_path;
+                break;
             }
         }
 
         // 没有配置文件：结束程序
-        if(GetFilePath().empty()) {
+        if(xml_file_path.empty()) {
             std::cerr << "未找到Xml配置文件，请在程序所在目录创建configs.xml配置文件\n";
             std::terminate();
         }
-        std::cout << "读取到xml文件：" << GetFilePath() << std::endl;
+        std::cout << "读取到xml文件：" << xml_file_path << std::endl;
 
         // 读取root元素
-        root_elem = xml_doc.RootElement();
+        XMLElement* root_elem = xml_doc.RootElement();
         if (!root_elem) {
             std::cerr << "未找到Xml文件的root元素\n";
             std::terminate();
@@ -602,9 +606,6 @@ private:
             }
         }
     }
-
-    // 配置文件默认路径：通过可执行文件的相对路径寻找
-    static const char kConfigPaths[4][128];
 };
 
 

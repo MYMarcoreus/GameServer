@@ -103,7 +103,7 @@ bool Buffer::RecvAllFromSocket(const std::unique_ptr<Socket> &sock, SocketApiWra
             //! 处理第一个缓冲区
             MoveTail(writable);
             //! 将第二个缓冲区的数据加入第一个缓冲区(第一个缓冲区有自动扩容机制)
-            auto tempBufSize = n - writable;
+            const auto tempBufSize = n - writable;
             isOk = AppendDataFromCBuffer(tempBuf, tempBufSize); //! 若有限制扩容机制，则需要处理返回值
         }
     }

@@ -19,6 +19,7 @@
 #include <thread>
 #include <cstdarg>
 #include <atomic>
+#include <ranges>
 
 #define MAKE_LOG_MESSAGE(level, content) std::make_shared<yy::Ylog::LogMessage>(level, /*yy::util::get_current_fmt_time(),*/ __FILE__, __LINE__, std::this_thread::get_id(), content)
 
@@ -61,7 +62,7 @@
 
 #define CLOSE_YLOG() Ylog::LoggerManager::getInstance().StopAsyncThread();
 
-#define USE_CPP_STREAM true
+#define USE_CPP_STREAM false
 
 
 
@@ -158,44 +159,7 @@ private:
 
 
 
-class LogFormatter
-{
-public:
-    using ptr = std::shared_ptr<LogFormatter>;
-    class IFormatItem
-    {
-    public:
-        virtual ~IFormatItem() = default;
-        using ptr = std::shared_ptr<IFormatItem>;
 
-        virtual void format(std::ostream & out, const LogMessage::ptr& msg) = 0;
-    };
-
-    ///@param format_pattern 自定义日志格式
-    explicit LogFormatter(std::string format_pattern)
-        : m_format_pattern(std::move(format_pattern)) { init(); }
-
-    [[nodiscard]] auto GetFormatPattern() const { return m_format_pattern; }
-
-    /// @brief 配置文件中的日志格式能够指定时间项的格式
-    void SetTimeFormat(const std::string&  timeFmtPattern = "%Y-%m-%d %H:%M:%S.",  bool need_us = true);
-
-    std::string format(const LogMessage::ptr& msg) const
-    {
-        // 遍历每一项，将其转换为最终被输出的字符串
-        std::stringstream ss;
-        for(const auto & item: m_format_items) {
-            item->format(ss, msg);
-        }
-        return ss.str();
-    }
-private:
-    void init();
-
-private:
-    std::string                   m_format_pattern; // 支持自定义日志格式
-    std::vector<IFormatItem::ptr> m_format_items;   // 解析pattern后，格式化后的日志格式项
-};
 
 
 class Logger
@@ -228,7 +192,7 @@ public:
     void clearAppenders();
 
     /// @brief 支持运行时改变日志器的级别
-    void setLevel(LogLevel level) { m_level = level; }
+    void setLevel(const LogLevel level) { m_level = level; }
 
 private:
     /// @brief 同步写日志，直接将日志写到文件/标准输出中
@@ -241,7 +205,7 @@ private:
     std::string                                 m_name;      // 日志器名称
     LogLevel                                    m_level;     // 日志器级别
     std::vector<std::shared_ptr<ILogAppender>>  m_appenders; // 日志添加器
-    mutable std::mutex                          m_mutex;     // 管理appenders的互斥锁
+    mutable std::mutex                          m_appenderMutex;     // 管理appenders的互斥锁
     std::atomic<bool>                           m_isStop;
 
     /* 异步 */
@@ -266,11 +230,7 @@ public:
     /// @brief 获取指定名称的日志器，若不存在则按照default日志器的规格创建一个名为name的日志器
     Logger::ptr getLogger(const std::string& name = "default");
 
-    bool delLogger(const std::string& name)
-    {
-        auto ret = m_loggers.erase(name);
-        return ret != 0;
-    }
+    bool delLogger(const std::string& name);
 
 private:
     LoggerManager();
@@ -291,17 +251,17 @@ private:
     // 关闭异步写日志线程：等待异步写线程将日志信息队列都读空并写到文件中
     void StopAsyncThread();
 
-    static void addListener();
+    // static void addListener();
 
 private:
     std::unordered_map<std::string, Logger::ptr> m_loggers;
-    std::mutex m_mutex;
+    util::RWLock m_loggerMutex;
 
     /* 所有日志器共用一个阻塞队列，并用m_isRun控制异步写日志线程的运行 */
     yy::util::UnboundedLockedQueue<std::pair<std::shared_ptr<ILogAppender>, LogMessage::ptr>> m_blockqueue;
     // 某线程因遇到错误结束程序，为使得detach的线程也能够关闭，故使用原子变量isRun进行同步
     std::atomic<bool>       m_isRunning;
-    std::condition_variable m_isAsyncStart;
+    std::atomic<bool>       m_isConfigLoad;
     std::thread             m_async_thread;
 };
 

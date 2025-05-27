@@ -140,6 +140,8 @@ include_directories(
 set(COMMON_SOURCES
         base/net/PriorityQueueTimerManager.cpp
         base/net/NewDefaultTimerManager.cpp
+        base/log/LogFormatter.cpp
+        base/log/LogBufferManager.cpp
         base/log/StdoutLogApeender.h
         base/log/FileLogAppender.h
         base/log/StdoutLogApeender.cpp
@@ -159,7 +161,6 @@ set(COMMON_SOURCES
         base/net/UdpSession.cpp
         base/net/UdpSession.h
         base/net/NetBuffer.cpp
-        base/net/NetBuffer.h
 )
 # 调用子目录下的cmake
 add_subdirectory(base)

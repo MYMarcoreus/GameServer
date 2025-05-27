@@ -5,8 +5,9 @@
 #include <mutex>
 #include <queue>
 #include <memory>
+#include <chrono>
 
-
+using namespace std::chrono_literals;
 
 
 
@@ -119,6 +120,24 @@ public:
         value = std::move(*head->data); //! 将要pop结点的数据移入value中返回
         pop_head();
     }
+
+    bool wait_pop_for(T & value, std::chrono::milliseconds interval)
+    {
+        std::unique_lock<std::mutex> head_lock(head_mutex);
+
+        // 使用 wait_for + 谓词版本，返回 true 表示条件满足（有数据）
+        const bool has_data = data_cv.wait_for(head_lock, interval, [&]{
+            return head.get() != get_tail();
+        });
+
+        if (not has_data)
+            return false;
+
+        value = std::move(*head->data); // 将数据移入 value
+        pop_head(); // 弹出队列头
+        return true;
+    }
+
 
     void push(T new_value)
     {

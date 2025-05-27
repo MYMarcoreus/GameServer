@@ -124,6 +124,7 @@ public:
     void PopData(const size_t offset) { m_Head += offset; }
     /// End
 
+    void Reset() { m_Head = m_Tail = 0; }
 protected:
     // 整体缓冲区：可读写
     char*       GetBufBegin()       { return m_Buf.data(); }
@@ -146,11 +147,6 @@ protected:
     void BackHead(const size_t offset) { m_Head -= offset; }
     void MoveTail(const size_t offset) { m_Tail += offset; }
     void BackTail(const size_t offset) { m_Tail -= offset; }
-
-
-    void Reset() {
-        m_Head = m_Tail = 0;
-    }
 
     void Print() const;
 

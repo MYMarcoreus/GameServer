@@ -1,8 +1,11 @@
 #ifndef GAMESERVER_FILELOGAPPENDER_H
 #define GAMESERVER_FILELOGAPPENDER_H
 
-#include "log.h"
+#include <condition_variable>
+
 #include "ILogAppender.h"
+#include "LogFormatter.h"
+#include "cross_platform_defines.h"
 
 namespace yy::Ylog {
 
@@ -10,27 +13,24 @@ namespace yy::Ylog {
 class FileLogAppender final : public ILogAppender
 {
 public:
-    explicit FileLogAppender(const std::string& logfilepath, const std::string& format_pattern);
+    explicit FileLogAppender(std::string logfilepath, const std::string& format_pattern,
+        int buffer_size = 40 * 1024, std::chrono::milliseconds flush_interval = 5s);
 
     ~FileLogAppender() override;
 
     /// @brief 将日志信息msg写到文件
-    void WriteLog(const LogMessage::ptr& msg) override;
+    void WriteLog(const std::shared_ptr<LogMessage> & msg) override;
 
-    void SetTimeFormat(const std::string &timeFmtPattern, bool need_us) override {
-        m_formatter->SetTimeFormat(timeFmtPattern, need_us);
-    }
+    void AppendBuffer(const std::shared_ptr<LogMessage> & msg) override;
+
+    void FlushBuffer() override;
 
 private:
-    LogFormatter::ptr m_formatter;
-
     std::string m_logfilepath; // 完整的文件路径
-#if USE_CPP_STREAM
-    std::ofstream m_ofs;  // 文件流
-#else
-    int m_filefd{};
-    // FILE * m_filep;
-#endif
+    int m_filefd;
+    LogBufferManager::BufferPtr m_newBuffer1;
+    LogBufferManager::BufferPtr m_newBuffer2;
+    LogBufferManager::BufferVector m_buffersToWrite;
 };
 
 } // namespace yy::Ylog

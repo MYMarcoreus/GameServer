@@ -150,8 +150,8 @@ set(COMMON_SOURCES
         base/log/FileLogAppender.h
         base/utils/FactoryX.h
         base/utils/ClassRegister.h
-        base/utils/Buffer.cpp
-        base/utils/Buffer.h
+        base/utils/SequentialBuffer.cpp
+        base/utils/SequentialBuffer.h
         base/log/ILogAppender.h
         base/net/socket_definations.cpp
         base/net/UdpTransport.cpp
@@ -161,6 +161,8 @@ set(COMMON_SOURCES
         base/net/UdpSession.cpp
         base/net/UdpSession.h
         base/net/NetBuffer.cpp
+        base/utils/RingBuffer.cpp
+        base/utils/RingBuffer.h
 )
 # 调用子目录下的cmake
 add_subdirectory(base)

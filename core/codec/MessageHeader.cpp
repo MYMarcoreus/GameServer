@@ -7,6 +7,8 @@
 #include <google/protobuf/message.h>
 #include <array>
 
+#include "SFINAE.h"
+
 namespace yy::core {
 
 
@@ -110,7 +112,7 @@ MessageParseErrorCode MessageHeader::ParseFromBuffer(net::NetBuffer &buf, uint8_
     return MessageParseErrorCode::eNoError;
 }
 
-bool MessageHeader::AppendIntoBuffer(net::NetBuffer &buf, uint8_t xorCode) {
+bool MessageHeader::AppendIntoBuffer(util::SequentialBuffer& buf, uint8_t xorCode) {
     if(buf.GetFreeSize() < this->CalcHeaderLen()) {
         return false;
     }

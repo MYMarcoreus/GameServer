@@ -3,7 +3,7 @@
 
 #include "net_definations.h"
 #include "socket_definations.h"
-#include "Buffer.h"
+#include "SequentialBuffer.h"
 
 
 namespace yy::net
@@ -11,9 +11,9 @@ namespace yy::net
 
 class Socket;
 
-class NetBuffer : public util::Buffer {
+class NetBuffer : public util::SequentialBuffer {
 public:
-    explicit NetBuffer(size_t _maxsize);
+    explicit NetBuffer(size_t _maxsize): SequentialBuffer(_maxsize) {}
 
     /*! Buffer不实现来自套接字Socket的recv任务，因为对于recv任务，存在ET和LT的区别，因此原样recv的错误，让其所有者TcpConnection实现 !*/
     // ET

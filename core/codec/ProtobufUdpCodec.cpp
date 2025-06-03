@@ -94,7 +94,7 @@ void ProtobufUdpCodec::SendUDP(const UdpSessionPtr &udpSession, const google::pr
 
     /* 不用关心buffer空间不足，因为我们已经分配好了足够的空间 */
     //! 填充消息头
-    NetBuffer buffer{header.GetFullLength()+4};
+    util::SequentialBuffer buffer{header.GetFullLength()+4};
     header.AppendIntoBuffer(buffer, udpSession->GetXorCode());
 
     YLOG_TRACE("发送消息头<{}>：[{}][{}][{}][{}]", header.CalcHeaderLen(),

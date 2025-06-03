@@ -14,7 +14,7 @@ set(LocalSrc
         utils/BoundedLockedQueue.hpp
         utils/ThreadPool.cpp
         utils/status/Status.cpp
-        utils/Buffer.cpp
+        utils/SequentialBuffer.cpp
         net/IPAddress.cpp
         net/IOChannel.cpp
         net/EpollPoller.cpp

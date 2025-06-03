@@ -4,7 +4,7 @@
 
 #include <cassert>
 
-using yy::util::Buffer;
+using yy::util::SequentialBuffer;
 
 namespace yy::Ylog
 {
@@ -12,8 +12,8 @@ class ILogAppender;
 
 LogBufferManager::LogBufferManager(int bufferSize)
     : m_bufferSize(bufferSize),
-      m_current(std::make_unique<Buffer>(bufferSize)),
-      m_next(std::make_unique<Buffer>(bufferSize))
+      m_current(std::make_unique<SequentialBuffer>(bufferSize)),
+      m_next(std::make_unique<SequentialBuffer>(bufferSize))
 {
     m_buffersToWrite.reserve(16);
 }
@@ -35,7 +35,7 @@ void LogBufferManager::Append(const std::string & logstr) {
         if (m_next) {
             m_current = std::move(m_next);
         } else {
-            m_current = std::make_unique<Buffer>(m_bufferSize);
+            m_current = std::make_unique<SequentialBuffer>(m_bufferSize);
         }
 
         m_current->AppendDataFromArray(logstr);

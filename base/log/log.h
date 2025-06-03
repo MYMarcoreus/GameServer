@@ -258,7 +258,7 @@ private:
     util::RWLock m_loggerMutex;
 
     /* 所有日志器共用一个阻塞队列，并用m_isRun控制异步写日志线程的运行 */
-    yy::util::UnboundedLockedQueue<std::pair<std::shared_ptr<ILogAppender>, LogMessage::ptr>> m_blockqueue;
+    // yy::util::UnboundedLockedQueue<std::pair<std::shared_ptr<ILogAppender>, LogMessage::ptr>> m_blockqueue;
     // 某线程因遇到错误结束程序，为使得detach的线程也能够关闭，故使用原子变量isRun进行同步
     std::atomic<bool>       m_isRunning;
     std::atomic<bool>       m_isConfigLoad;

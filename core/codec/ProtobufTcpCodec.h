@@ -51,7 +51,7 @@ class ProtobufTcpCodec: public util::noncopyable {
     using F_ProtobufErrorMessageCallback = std::function<void(const net::TcpConnectionPtr &, yy::net::NetBuffer &, MessageParseErrorCode)>;
 
 public:
-    ProtobufTcpCodec(F_ProtobufMessageDispatchCallback msgCb, F_ProtobufErrorMessageCallback errCb = DefaultErrorCallback);
+    ProtobufTcpCodec(const F_ProtobufMessageDispatchCallback& msgCb, const F_ProtobufErrorMessageCallback& errCb = DefaultErrorCallback);
 
     ///@brief TcpConnection接收字节流到输入缓冲以后调用的回调函数，该函数用于处理字节流，解析并创建出消息，然后传递消息给ProtobufDispatcher
     void OnData(const yy::net::TcpConnectionPtr &conn, yy::net::NetBuffer &buf);

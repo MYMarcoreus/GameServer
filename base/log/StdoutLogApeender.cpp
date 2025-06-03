@@ -10,8 +10,8 @@ namespace yy::Ylog {
 /******************************* StdoutLogApeender *******************************/
 StdoutLogApeender::StdoutLogApeender(const std::string &format_pattern, const int buffer_size, const std::chrono::milliseconds flush_interval):
     ILogAppender(format_pattern, buffer_size, flush_interval),
-    m_newBuffer1(std::make_unique<util::Buffer>(m_BuffferSize)),
-    m_newBuffer2(std::make_unique<util::Buffer>(m_BuffferSize)),
+    m_newBuffer1(std::make_unique<util::SequentialBuffer>(m_BuffferSize)),
+    m_newBuffer2(std::make_unique<util::SequentialBuffer>(m_BuffferSize)),
     m_buffersToWrite{}
 {}
 

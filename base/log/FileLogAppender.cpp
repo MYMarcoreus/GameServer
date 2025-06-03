@@ -16,8 +16,8 @@ const int buffer_size, const std::chrono::milliseconds flush_interval) :
     ILogAppender(format_pattern, buffer_size, flush_interval),
     m_logfilepath{std::move(logfilepath)},
     m_filefd(-1),
-    m_newBuffer1(std::make_unique<util::Buffer>(m_BuffferSize)),
-    m_newBuffer2(std::make_unique<util::Buffer>(m_BuffferSize)),
+    m_newBuffer1(std::make_unique<util::SequentialBuffer>(m_BuffferSize)),
+    m_newBuffer2(std::make_unique<util::SequentialBuffer>(m_BuffferSize)),
     m_buffersToWrite{}
 {
     m_buffersToWrite.reserve(16);
@@ -81,9 +81,6 @@ void FileLogAppender::FlushBuffer()
 #else
 #error Platform not supported
 #endif
-
-
-
 
     // 修改缓冲区截断逻辑
     if (m_buffersToWrite.size() > 2) {

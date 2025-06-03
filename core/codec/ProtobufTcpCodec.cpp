@@ -13,8 +13,8 @@ using ::yy::net::TcpConnectionPtr;
 
 
 
-ProtobufTcpCodec::ProtobufTcpCodec(ProtobufTcpCodec::F_ProtobufMessageDispatchCallback  msgCb,
-                                   ProtobufTcpCodec::F_ProtobufErrorMessageCallback     errCb)
+ProtobufTcpCodec::ProtobufTcpCodec(const ProtobufTcpCodec::F_ProtobufMessageDispatchCallback& msgCb,
+                                   const ProtobufTcpCodec::F_ProtobufErrorMessageCallback& errCb)
     : m_ProtobufMessageDispatchCallback{msgCb},
       m_ProtobufErrorMessageCallback{errCb}
 { }
@@ -85,7 +85,7 @@ void ProtobufTcpCodec::SendTCP(const TcpConnectionPtr &conn, const google::proto
 
     /* 不用关心buffer空间不足，因为我们已经分配好了足够的空间 */
     //! 填充消息头
-    NetBuffer buffer{header.GetFullLength()+4};
+    util::SequentialBuffer buffer{header.GetFullLength()+4};
     header.AppendIntoBuffer(buffer, conn->GetXorCode());
 
     YLOG_TRACE("发送消息头<{}>：[{}][{}][{}][{}]", header.CalcHeaderLen(),

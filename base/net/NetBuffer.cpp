@@ -1,16 +1,12 @@
 #include "NetBuffer.h"
-#include "Buffer.h"
 #include "Socket.h"
 #include "SocketApiWrapper.h"
 
 namespace yy::net
 {
-NetBuffer::NetBuffer(const size_t _maxsize): Buffer(_maxsize)
-{
-}
 
 bool NetBuffer::RecvFromSocket(const std::unique_ptr<Socket> &sock, const size_t nBytesRecvOnce, SocketApiWrapper::SocketResult &rst, const std::shared_ptr<IPAddress>& peerAddr) {
-    Compact(GetMaxsize());
+    Compact(GetCapacity());
 
     switch (sock->GetType()) {
 
@@ -28,7 +24,7 @@ bool NetBuffer::RecvFromSocket(const std::unique_ptr<Socket> &sock, const size_t
 }
 
 bool NetBuffer::RecvAllFromSocket(const std::unique_ptr<Socket> &sock, SocketApiWrapper::SocketResult & rst, const std::shared_ptr<IPAddress>& peerAddr) {
-    Compact(GetMaxsize());
+    Compact(GetCapacity());
     const uint32_t writable =  static_cast<uint32_t>(GetFreeSize());
 
     // 应该的写法：执行系统调用 ioctl(fd, FIONREAD, out datasize) 来获取可读字节数，以此来精确分配缓冲区空间(需要malloc动态分配)并选择是否需要创建第二缓冲区。

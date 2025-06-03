@@ -300,7 +300,7 @@ void LoggerManager::StopAsyncThread()
         }
 
         // 等待将已有日志写完
-        while(!m_blockqueue.empty()) { /* spinning */ }
+        // while(!m_blockqueue.empty()) { /* spinning */ }
 
         // 发出信号让异步写线程结束
         m_isRunning = false;

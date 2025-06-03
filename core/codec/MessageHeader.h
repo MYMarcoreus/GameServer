@@ -6,8 +6,17 @@
 #include <cstddef>
 #include <random>
 #include <array>
-#include "ProtobufTcpCodec.h"
-#include "SFINAE.h"
+
+#include "core_definations.h"
+
+namespace google::protobuf
+{
+class Message;
+}
+
+namespace yy::util {
+class SequentialBuffer;
+}
 
 namespace yy::net {
 class NetBuffer;
@@ -45,7 +54,7 @@ public:
     MessageParseErrorCode ParseFromBuffer(net::NetBuffer &buf, uint8_t xorCode);
 
     /// @brief 将*this中的数据加密并序列化后写入Buffer中
-    bool AppendIntoBuffer(net::NetBuffer &buf, uint8_t xorCode);
+    bool AppendIntoBuffer(util::SequentialBuffer& buf, uint8_t xorCode);
 
     const auto & GetCheckCode() const { return m_CheckCode; }
 
@@ -71,7 +80,7 @@ private:
     void SetAllFieldsFromMessage(const google::protobuf::Message &message);
     void SetFullLength    (uint32_t     value) { m_FullLength = value; }
     void SetTypeNameLength(uint16_t     value) { m_TypeNameLength = value; }
-    void SetTypeName(std::string typeName) { m_TypeName = typeName; }
+    void SetTypeName(const std::string& typeName) { m_TypeName = typeName; }
 
     std::array<char, kCheckCodeSize> XorCheckCode(uint8_t xorCode) const;
     uint32_t    XorFullLength(uint8_t xorCode) const;

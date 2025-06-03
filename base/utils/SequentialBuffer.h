@@ -15,17 +15,18 @@ class Message;
 namespace yy::util {
 
 // 每一个TcpConnection对应一个recvbuf和sendbuf，而每一个TcpConnection仅仅会被一个ioloop线程操作io，因此Buffer在此场景下线程安全
-class Buffer: copyable {
+class SequentialBuffer: copyable {
 public:
-    explicit Buffer(size_t _maxsize);
-    Buffer(Buffer &&) = default;
-    Buffer &operator=(Buffer &&) = default;
-    Buffer(const Buffer &) = default;
-    Buffer &operator=(const Buffer &) = default;
-    ~Buffer() = default;
+    explicit SequentialBuffer(size_t _capacity);
+    SequentialBuffer(SequentialBuffer &&) = default;
+    SequentialBuffer &operator=(SequentialBuffer &&) = default;
+    SequentialBuffer(const SequentialBuffer &) = default;
+    SequentialBuffer &operator=(const SequentialBuffer &) = default;
+    ~SequentialBuffer() = default;
 
     size_t GetHead()   const { return m_Head; }
     size_t GetTail()   const { return m_Tail; }
+    size_t GetCapacity() const { return m_Capacity; }
 
     ///@brief 已填充的字节数
     size_t GetDataSize() const {
@@ -34,12 +35,10 @@ public:
 
     ///@brief 未填充的字节数
     size_t GetFreeSize() const {
-        const auto rst = GetMaxsize() - GetTail();
+        const auto rst = GetCapacity() - GetTail();
         return rst;
     }
 
-    ///@brief
-    size_t GetMaxsize() const { return m_Maxsize; }
 
     ///@brief
     bool IsDataEmpty() const { return GetDataSize() == 0; }
@@ -50,6 +49,13 @@ public:
     bool HaveEnoughFreeSpace(const int len) const { return GetFreeSize() >= len; }
     bool HaveEnoughDataSpace(const int len) const { return GetDataSize() >= len; }
 
+    void Reset() { m_Head = m_Tail = 0; }
+
+    ///Region 观察数据
+    const char * Peek(const int start = 0) const { return GetBufBegin() + m_Head + start; }
+    bool PeekToCBuffer(int start_index, void *dest, size_t len) const;
+
+    bool PeekToString(int start_index, std::string & dest, size_t len) const;
     /*
      * concept and requires：
      * 第一个requires是约束，后面跟着concept，
@@ -63,17 +69,10 @@ public:
     }
     bool PeekToPodStruct(const int start_index, T &dest) const
     {
-        if(GetDataSize() < sizeof(T))
-            return false;
-        std::memcpy(&dest, GetDataBegin()+start_index, sizeof(dest));
-        return true;
+        return PeekToCBuffer(start_index, &dest, sizeof(dest));
     }
+    /// End
 
-    bool PeekToCBuffer(int start_index, void *dest, int len) const;
-
-    bool PeekToString(int start_index, std::string & dest, int len) const;
-
-    const char * Peek(const int start = 0) const { return GetBufBegin() + m_Head + start; }
 
 
     ///Region 填充数据（生产数据）
@@ -94,6 +93,7 @@ public:
 
     ///@brief 读取protobuf对象到缓冲区中 ———— sendBuf封装消息体
     bool AppendDataFromProtobuf(const google::protobuf::Message & message);
+    /// End
 
 
 
@@ -116,7 +116,7 @@ public:
 
 
     ///@brief 读取len长度的数据到string中并返回
-    std::string PopDataAsString(int len);
+    std::string PopDataAsString(size_t len);
 
     ///@brief 将所有数据读入string中并返回
     std::string PopAllDataAsString();
@@ -124,7 +124,6 @@ public:
     void PopData(const size_t offset) { m_Head += offset; }
     /// End
 
-    void Reset() { m_Head = m_Tail = 0; }
 protected:
     // 整体缓冲区：可读写
     char*       GetBufBegin()       { return m_Buf.data(); }
@@ -141,17 +140,13 @@ protected:
     bool TryMakeEnoughSpace(int needLen);
     bool Compact(int needLen);
 
-
     void MoveHeadAndTryReset(size_t offset);
 
-    void BackHead(const size_t offset) { m_Head -= offset; }
     void MoveTail(const size_t offset) { m_Tail += offset; }
-    void BackTail(const size_t offset) { m_Tail -= offset; }
 
     void Print() const;
 
 
-protected:
 /// +-------------------+------------------+------------------+
 /// | prependable bytes |       数据区      |       空闲区       |
 /// |                   |  (GetDataSize)   |  (GetFreeSize)   |
@@ -159,7 +154,7 @@ protected:
 /// |                   |                  |                  |
 /// 0      <=        m_Head      <=     m_Tail    <=       GetMaxsize
     std::vector<char> m_Buf{ };
-    size_t            m_Maxsize{ };
+    size_t            m_Capacity{ };
     size_t            m_Head{ }; // 消费者指针：用于读取，head是数据区的第一个字节
     size_t            m_Tail{ }; // 生产者指针：用于接收，tail是空闲区的第一个字节
 };

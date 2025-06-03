@@ -180,7 +180,7 @@ void TcpConnection::HandleWrite() {
     }
 
     //! 该函数专门将写缓冲的数据写入socket
-    auto rst = m_sendBuf->SendToSocket(m_socket, nullptr);
+    auto rst = m_sendBuf->SendAllToSocket(m_socket, nullptr);
 
     if(rst.HasNoError())
     {
@@ -359,7 +359,8 @@ SocketApiWrapper::SocketResult TcpConnection::HandleRead_ET() {
     while(true)
     {
         //! ET读取
-        m_recvBuf->RecvFromSocket(m_socket, m_recv_bytes_one, rst, nullptr);
+        // m_recvBuf->RecvFromSocket(m_socket, m_recv_bytes_one, rst, nullptr);
+        m_recvBuf->RecvAllFromSocket(m_socket, rst, nullptr);
 
         YLOG_TRACE("<{}>TcpConnection::HandleRead_ET(): 读取<{}>字节", m_socket->GetFD(), rst.Result())
 

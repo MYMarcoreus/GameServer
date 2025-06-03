@@ -146,10 +146,18 @@ SocketApiWrapper::SocketResult Socket::Readv(IOV_TYPE *iov, int iovcnt) {
 }
 
 SocketApiWrapper::SocketResult Socket::Readmsg(IOV_TYPE *iov, int iovcnt, IPAddress::ptr peerAddr) {
-    return SocketApiWrapper::readmsg(m_socketfd, iov, iovcnt, peerAddr);
+    return SocketApiWrapper::recvmsg(m_socketfd, iov, iovcnt, peerAddr);
 }
 
+SocketApiWrapper::SocketResult Socket::Writev(IOV_TYPE* iov, int iovcnt)
+{
+    return SocketApiWrapper::writev(m_socketfd, iov, iovcnt);
+}
 
+SocketApiWrapper::SocketResult Socket::Sendmsg(IOV_TYPE* iov, int iovcnt, IPAddress::ptr peerAddr)
+{
+    return SocketApiWrapper::sendmsg(m_socketfd, iov, iovcnt, peerAddr);
+}
 } // yy::net
 
 

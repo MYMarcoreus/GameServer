@@ -3,7 +3,7 @@
 
 #include "net_definations.h"
 #include "socket_definations.h"
-#include "SequentialBuffer.h"
+#include "RingBuffer.h"
 
 
 namespace yy::net
@@ -11,17 +11,14 @@ namespace yy::net
 
 class Socket;
 
-class NetBuffer : public util::SequentialBuffer {
+class NetBuffer : public util::RingBuffer {
 public:
-    explicit NetBuffer(size_t _maxsize): SequentialBuffer(_maxsize) {}
+    explicit NetBuffer(size_t _maxsize): RingBuffer(_maxsize) {}
 
     /*! Buffer不实现来自套接字Socket的recv任务，因为对于recv任务，存在ET和LT的区别，因此原样recv的错误，让其所有者TcpConnection实现 !*/
-    // ET
-    bool RecvFromSocket(const std::unique_ptr<Socket> &sock, size_t nBytesRecvOnce, SocketApiWrapper::SocketResult &rst, const std::shared_ptr<IPAddress>& peerAddr);
-    // LT
     bool RecvAllFromSocket(const std::unique_ptr<Socket> & sock, SocketApiWrapper::SocketResult & rst, const std::shared_ptr<IPAddress>& peerAddr);
 
-    SocketApiWrapper::SocketResult SendToSocket(const std::unique_ptr<Socket> & sock, std::shared_ptr<IPAddress> peerAddr);
+    SocketApiWrapper::SocketResult SendAllToSocket(const std::unique_ptr<Socket> & sock, std::shared_ptr<IPAddress> peerAddr);
 };
 
 }

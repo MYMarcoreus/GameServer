@@ -130,6 +130,7 @@ protected:
     const char* GetBufBegin() const { return m_Buf.data(); }
 
     // 数据区：只读
+    // char*       GetDataBegin()       { return GetBufBegin() + m_Head; }
     const char* GetDataBegin() const { return GetBufBegin() + m_Head; }
     const char* GetDataEnd()   const { return GetBufBegin() + m_Tail; }  // 与 GetFreeBegin 一致
 
@@ -137,8 +138,8 @@ protected:
     char* GetFreeBegin() { return GetBufBegin() + m_Tail; }
 
 
-    bool TryMakeEnoughSpace(int needLen);
-    bool Compact(int needLen);
+    bool TryMakeEnoughFreeSpace(size_t needLen);
+    bool Compact(size_t needLen);
 
     void MoveHeadAndTryReset(size_t offset);
 

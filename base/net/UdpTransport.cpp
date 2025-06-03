@@ -159,7 +159,8 @@ SocketApiWrapper::SocketResult UdpTransport::HandleRead_ET(IPAddressPtr & peerAd
     while(true)
     {
         //! ET读取
-        m_recvBuf->RecvFromSocket(m_socket, m_recv_bytes_one, rst, peerAddr);
+        // m_recvBuf->RecvFromSocket(m_socket, m_recv_bytes_one, rst, peerAddr);
+        m_recvBuf->RecvAllFromSocket(m_socket, rst, peerAddr);
 
         YLOG_TRACE("<{}>UdpSession::HandleRead_ET(): 读取<{}>字节", m_socket->GetFD(), rst.Result())
 

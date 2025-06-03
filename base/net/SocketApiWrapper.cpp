@@ -245,7 +245,27 @@ SocketApiWrapper::SocketResult readv(socket_t sockfd, IOV_TYPE *iov, int iovcnt)
 #endif
 }
 
-SocketApiWrapper::SocketResult readmsg(socket_t sockfd, IOV_TYPE *iov, int iovcnt, std::shared_ptr<IPAddress> peerAddr) {
+SocketApiWrapper::SocketResult writev(socket_t sockfd, IOV_TYPE *iov, int iovcnt) {
+#ifdef ____WINDOWS
+    DWORD bytesSent;
+    auto ret = WSASend(sockfd, iov, iovcnt, &bytesSent, 0, NULL, NULL);
+    if (ret == SOCKET_ERROR) {
+        return {-1, get_last_socket_error()};
+    } else {
+        return { static_cast<ssize_t>(bytesSent), 0 };
+    }
+#elif defined(____LINUX)
+    auto ret = ::writev(sockfd, iov, iovcnt);
+    return {ret, get_last_socket_error()};
+#else
+#error Platform not supported
+#endif
+}
+
+
+
+
+SocketApiWrapper::SocketResult recvmsg(socket_t sockfd, IOV_TYPE *iov, int iovcnt, std::shared_ptr<IPAddress> peerAddr) {
     assert(peerAddr);
 
 #ifdef ____WINDOWS
@@ -269,6 +289,35 @@ SocketApiWrapper::SocketResult readmsg(socket_t sockfd, IOV_TYPE *iov, int iovcn
     return {ret, get_last_socket_error()};
 #else
     #error Platform not supported
+#endif
+}
+
+
+
+SocketApiWrapper::SocketResult sendmsg(socket_t sockfd, IOV_TYPE* iov, int iovcnt, std::shared_ptr<IPAddress> peerAddr)
+{
+    assert(peerAddr);
+
+#ifdef ____WINDOWS
+    DWORD bytesSent;
+    auto addrLen = peerAddr->GetRawAddrLen();
+    auto ret = WSASendTo(sockfd, iov, iovcnt, &bytesSent, 0, peerAddr->GetRawAddr(), addrLen, NULL, NULL);
+    if (ret == SOCKET_ERROR) {
+        return {-1, get_last_socket_error()};
+    } else {
+        return { static_cast<ssize_t>(bytesSent), 0 };
+    }
+#elif defined(____LINUX)
+    struct msghdr msg = {};
+    msg.msg_name = peerAddr->GetRawAddr();
+    msg.msg_namelen = peerAddr->GetRawAddrLen();
+    msg.msg_iov = iov;
+    msg.msg_iovlen = iovcnt;
+
+    auto ret = ::sendmsg(sockfd, &msg, 0);
+    return {ret, get_last_socket_error()};
+#else
+#error Platform not supported
 #endif
 }
 

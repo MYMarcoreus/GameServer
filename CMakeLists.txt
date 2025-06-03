@@ -23,6 +23,7 @@ if(CMAKE_HOST_SYSTEM_NAME MATCHES "Windows")
     message(STATUS "Platform: Windows")
     add_definitions(-D____WINDOWS)
     add_definitions(-DFD_SETSIZE=1024) # Windows下select最多处理64个套接字
+    add_definitions(-DNOMINMAX) # Windows下select最多处理64个套接字
 elseif(CMAKE_HOST_SYSTEM_NAME MATCHES "Linux")
     message(STATUS "Platform: Linux")
     add_definitions(-D____LINUX)

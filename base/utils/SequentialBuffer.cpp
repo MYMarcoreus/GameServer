@@ -12,7 +12,7 @@ SequentialBuffer::SequentialBuffer(const size_t _capacity)
 
 
 bool SequentialBuffer::AppendDataFromCBuffer(const void *src_buf, size_t data_len) {
-    bool isEnsured = TryMakeEnoughSpace(data_len);
+    bool isEnsured = TryMakeEnoughFreeSpace(data_len);
     std::memcpy(GetFreeBegin(), src_buf, data_len);
     MoveTail(data_len);
     return isEnsured;
@@ -20,7 +20,7 @@ bool SequentialBuffer::AppendDataFromCBuffer(const void *src_buf, size_t data_le
 
 
 bool SequentialBuffer::AppendDataFromArray(const std::string_view &message) {
-    bool isEnsured = TryMakeEnoughSpace(message.size());
+    bool isEnsured = TryMakeEnoughFreeSpace(message.size());
     std::memcpy(GetFreeBegin(), message.data(), message.size());
     MoveTail(message.size());
     return isEnsured;
@@ -29,26 +29,26 @@ bool SequentialBuffer::AppendDataFromArray(const std::string_view &message) {
 
 
 bool SequentialBuffer::AppendDataFromProtobuf(const google::protobuf::Message & src_msg) {
-    bool isEnsured = TryMakeEnoughSpace(src_msg.ByteSizeLong());
+    bool isEnsured = TryMakeEnoughFreeSpace(src_msg.ByteSizeLong());
     if (!src_msg.SerializeToArray(GetFreeBegin(), static_cast<int>(src_msg.ByteSizeLong())))
         return false;
     MoveTail(src_msg.ByteSizeLong());
     return isEnsured;
 }
 
-bool SequentialBuffer::TryMakeEnoughSpace(const int needLen) {
+bool SequentialBuffer::TryMakeEnoughFreeSpace(size_t needLen) {
     // 空闲空间不足，尝试释放空间
     if(not Compact(needLen)) {
         // 若释放空间后仍无法放入数据，则需要扩容buf
         //todo 扩容是否存在上限？若无上限，则是否考虑缩容？
-        m_Capacity = GetDataSize() + needLen;
+        m_Capacity = m_Capacity + (needLen - GetFreeSize());
         m_Buf.resize(m_Capacity);
     }
 
     return true; //! 无上限扩容
 }
 
-bool SequentialBuffer::Compact(const int needLen) {
+bool SequentialBuffer::Compact(size_t needLen) {
     int dataSize = GetDataSize();
     // 将数据区移到缓冲区最前，回收DataBegin()前的空间（如果数据区已在最前，则不移动）
     if(dataSize > 0 and m_Head != 0) {

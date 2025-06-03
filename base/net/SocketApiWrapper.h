@@ -47,8 +47,10 @@ SocketApiWrapper::SocketResult sendto(socket_t sockfd, const void *ptr, size_t n
 SocketApiWrapper::SocketResult recvfrom(socket_t sockfd, void *ptr, size_t nbytes, int flags, std::shared_ptr<IPAddress> peerAddr);
 
 SocketApiWrapper::SocketResult readv(socket_t sockfd, IOV_TYPE *iov, int iovcnt);
-SocketApiWrapper::SocketResult readmsg(socket_t sockfd, IOV_TYPE *iov, int iovcnt, std::shared_ptr<IPAddress> peerAddr);
+SocketApiWrapper::SocketResult recvmsg(socket_t sockfd, IOV_TYPE *iov, int iovcnt, std::shared_ptr<IPAddress> peerAddr);
 
+SocketApiWrapper::SocketResult writev(socket_t sockfd, IOV_TYPE *iov, int iovcnt);
+SocketApiWrapper::SocketResult sendmsg(socket_t sockfd, IOV_TYPE *iov, int iovcnt, std::shared_ptr<IPAddress> peerAddr);
 
 
 extern std::shared_ptr<IPAddress> GetLocalAddr(SocketApiWrapper::socket_t sockfd);

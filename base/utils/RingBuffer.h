@@ -1,12 +1,12 @@
 #ifndef RINGBUFFER_H
 #define RINGBUFFER_H
 
-#include <cstring>
+#include "copyable.h"
+
 #include <string>
 #include <string_view>
 #include <memory>
 #include <vector>
-#include "copyable.h"
 
 namespace google::protobuf {
 class Message;
@@ -76,49 +76,9 @@ public:
 
 
     ///Region 观察数据
-    bool PeekToCBuffer(int start_index, void *dest, size_t need_len) const
-    {
-        if (start_index < 0)
-            return false;
-        if (need_len == 0)
-            return false;
-        if (GetDataSize() < (start_index + need_len) or dest == nullptr)
-            return false;
+    bool PeekToCBuffer(int start_index, void *dest, size_t need_len) const;
 
-        size_t peek_head = Mask(m_Head + start_index);
-
-        // 如果缓冲区末尾剩余空间不够一次性读取，则只复制到缓冲区末尾（巧妙避开环的判定）。
-        const size_t firstCopyLen = std::min(m_Capacity - peek_head, need_len);
-        std::memcpy(dest, &m_Buf[peek_head], firstCopyLen);
-        const size_t secondCopyLen = need_len - firstCopyLen;
-        if (secondCopyLen > 0)
-            std::memcpy(static_cast<char*>(dest) + firstCopyLen, &m_Buf[0], secondCopyLen);
-
-        return true;
-    }
-
-    bool PeekToString(int start_index, std::string & dest, size_t need_len) const
-    {
-        if (start_index < 0)
-            return false;
-        if (need_len == 0)
-            return false;
-        if (GetDataSize() < (start_index + need_len))
-            return false;
-
-        dest.resize(need_len);
-
-        size_t peek_head = Mask(m_Head + start_index);
-
-        // 如果缓冲区末尾剩余空间不够一次性读取，则只复制到缓冲区末尾（巧妙避开环的判定）。
-        const size_t firstCopyLen = std::min(m_Capacity - peek_head, need_len);
-        std::memcpy(dest.data(), &m_Buf[peek_head], firstCopyLen);
-        const size_t secondCopyLen = need_len - firstCopyLen;
-        if (secondCopyLen > 0)
-            std::memcpy(dest.data() + firstCopyLen, &m_Buf[0], secondCopyLen);
-
-        return true;
-    }
+    bool PeekToString(int start_index, std::string & dest, size_t need_len) const;
 
     /*
      * concept and requires：
@@ -140,24 +100,7 @@ public:
 
     ///Region 填充数据（生产数据）
     ///@brief 从C语言的缓冲区`src_buf`中读入`data_len`长度的数据
-    bool AppendDataFromCBuffer(const void* src_buf, size_t need_len)
-    {
-        if (need_len <= 0)
-            return false;
-        if (GetFreeSize() < need_len or src_buf == nullptr)
-            return false;
-
-        // 如果缓冲区末尾剩余空间不够一次性读取，则只复制到缓冲区末尾（巧妙避开环的判定）。
-        const size_t firstCopyLen = std::min(m_Capacity - m_Tail, need_len);
-        std::memcpy(GetFreeBegin(), src_buf, firstCopyLen);
-        const size_t secondCopyLen = need_len - firstCopyLen;
-        if (secondCopyLen > 0)
-            std::memcpy(GetBufBegin(), static_cast<const char*>(src_buf) + firstCopyLen, secondCopyLen);
-
-        MoveTail(need_len);
-
-        return true;
-    }
+    bool AppendDataFromCBuffer(const void* src_buf, size_t data_len);
 
     bool AppendDataFromArray(const std::string_view &message)
     {
@@ -182,24 +125,7 @@ public:
 
     /// Region 取出数据（消费数据）
     ///@brief 将`data_len`长度的数据写入C语言的缓冲区`src_buf`中
-    bool PopDataToCBuffer(void* dest, size_t need_len)
-    {
-        if (need_len <= 0)
-            return false;
-        if (GetDataSize() < need_len or dest == nullptr)
-            return false;
-
-        // 如果缓冲区末尾剩余空间不够一次性读取，则只复制到缓冲区末尾（巧妙避开环的判定）。
-        const size_t firstCopyLen = std::min(m_Capacity - m_Head, need_len);
-        std::memcpy(dest, GetDataBegin(), firstCopyLen);
-        const size_t secondCopyLen = need_len - firstCopyLen;
-        if (secondCopyLen > 0)
-            std::memcpy(static_cast<char*>(dest) + firstCopyLen, GetBufBegin(), secondCopyLen);
-
-        MoveHeadAndTryReset(need_len);
-
-        return true;
-    }
+    bool PopDataToCBuffer(void* dest, size_t need_len);
 
     ///@brief 将大小为类型T的数据写入类型`T`的结构  ———— 从recvBuf读取数据到消息头结构体中
     template<class T>
@@ -238,17 +164,10 @@ protected:
     // 空闲区：只写
     char* GetFreeBegin() { return GetBufBegin() + m_Tail; }
 
-
-    bool TryMakeEnoughSpace(int needLen) { return true; }
+    bool TryMakeEnoughFreeSpace(size_t needLen);
     bool Compact(int needLen) { return true; }
-    void MoveHeadAndTryReset(size_t offset)
-    {
-        m_Head = Mask(m_Head + offset);
-        // 下面的不是必须的
-        // if(GetDataSize() == 0) {
-        //     Reset();
-        // }
-    }
+    void MoveHeadAndTryReset(size_t offset);
+
     void MoveTail(const size_t offset)
     {
         m_Tail = Mask(m_Tail + offset);

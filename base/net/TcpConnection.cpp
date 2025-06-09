@@ -62,7 +62,6 @@ TcpConnection::~TcpConnection() {
     YLOG_DEBUG("连接<{}: {}>已被析构！", this->GetSocketFD(), m_name.c_str())
 }
 
-
 SocketApiWrapper::socket_t TcpConnection::GetSocketFD() const {
     return m_socket->GetFD();
 }
@@ -92,125 +91,15 @@ void TcpConnection::SendTCP(const std::string_view & message) {
         m_ioLoop->RunCallbackInLoop([conn = shared_from_this(), message](){ conn->SendTCPInLoop(message); });
     } else {
         //! 需要将数据从业务线程拷贝到IO线程中（否则线程不安全），这里SendInLoop使用const &延长临时对象生命周期
+        //! 其实代办Callback列表隐式构成了一个SendBuffers列表
+        //todo 这里可以优化不拷贝，用堆存储待发送的数据，传入指针
         m_ioLoop->RunCallbackInLoop([conn = shared_from_this(), msg = std::string(message)](){
             conn->SendTCPInLoop(std::string_view{msg}); });
     }
 }
 
-void TcpConnection::SendTCPInLoop(const std::string_view & buf) { //! const &延长临时对象生命周期
-    m_ioLoop->AssertInLoopingThread();
 
-    if (not CanIO()) {
-        YLOG_TRACE("<{}>In TcpConnection::SendTCPInLoop, Connection Already Closed", m_socket->GetFD())
-        return;
-    }
 
-    //! 发送缓冲区仍有数据（实际上也伴随着注册了写事件），不执行SendInLoop()，而是等待写事件发生执行HandleWrite()
-    if(m_channel->IsEnableWriting() or m_sendBuf->GetDataSize() != 0)
-        return;
-
-    //! 输出缓冲中目前没有任何的未发送数据，便直接向套接字发送数据（不借助输出缓冲）
-    SocketApiWrapper::SocketResult rst = m_socket->Send(buf.data(), buf.size());
-    if(rst.HasNoError()) {
-        YLOG_TRACE("<{}>TcpConnection::SendTCPInLoop：直接将长{}B数据包发送给用户, head-tail=={}-{}",
-                   m_socket->GetFD(), rst.Result(), m_sendBuf->GetHead(), m_sendBuf->GetTail())
-
-        auto nByteRemained = buf.size() - rst.Result();
-        assert(nByteRemained >= 0);
-        if(nByteRemained == 0) {
-            //! 本次Send发送完了所有数据，执行写完毕回调
-            // 捕获shared_from_this()以延长生命周期
-            if(m_ConnectionWriteCompleteCallback)
-                m_ioLoop->EnqueueCallbackInLoop([this, self = shared_from_this()](){this->m_ConnectionWriteCompleteCallback(self);});
-        }
-        else {
-            //! Send无法一次发送完，仍有剩余的数据未发送，故将剩余的数据放入SendBuf中，注册写事件，让其在写事件发生时执行HandleWrite()
-            bool isOk = m_sendBuf->AppendDataFromCBuffer(buf.data() + rst.Result(), nByteRemained);
-
-            if(isOk) {
-                if(not m_channel->IsEnableWriting())
-                    m_channel->EnableWriting();
-            } else {
-                //todo 需要Send的数据太多，Send一次之后剩余的数据竟然不能放入SendBuf，是否应该关闭连接？
-            }
-        }
-
-    } else {
-        YLOG_ERROR("<{}>TcpConnection::SendTCPInLoop, send error: {}", m_socket->GetFD(), rst.GetErrorInfo())
-
-        switch (rst.ErrorCode()) {
-            case SocketError::eAgain:
-            case SocketError::eInterrupted: {
-                // 将数据放入缓冲区，注册可写事件，等到套接字可写后重新发送
-                bool isOk = m_sendBuf->AppendDataFromCBuffer(buf.data(), buf.size());
-                if (isOk) {
-                    if (not m_channel->IsEnableWriting())
-                        m_channel->EnableWriting();
-                } else {
-                    //todo 需要Send的数据太多，Send一次之后剩余的数据竟然不能放入SendBuf，是否应该关闭连接？
-                }
-
-                break;
-            }
-            case SocketError::eConnectionReset:
-            case SocketError::eNotConnected:
-            case SocketError::eConnectionAborted:
-            case SocketError::eConnectionRefused:
-                // 连接异常，关闭连接
-                HandleClose();
-                break;
-            default:
-                // 其他错误，记录日志，关闭连接
-                HandleError();
-                break;
-        }
-    }
-}
-
-void TcpConnection::HandleWrite() {
-    m_ioLoop->AssertInLoopingThread();
-
-    if(!m_channel->IsEnableWriting()) {
-        YLOG_TRACE("未监听写事件，跳过")
-        return;
-    }
-
-    if(not CanIO()) {
-        return;
-    }
-
-    //! 该函数专门将写缓冲的数据写入socket
-    auto rst = m_sendBuf->SendAllToSocket(m_socket, nullptr);
-
-    if(rst.HasNoError())
-    {
-        auto nByteSend = rst.Result();
-        if (nByteSend > 0) // 缓冲区有可发送的数据
-        {
-            //! 数据全部发送完毕
-            if (m_sendBuf->GetDataSize() == 0) {
-                YLOG_TRACE("<{}>TcpConnection::HandleWrite：长{}B数据包发送给用户, head-tail=={}-{}",
-                           m_socket->GetFD(), nByteSend, m_sendBuf->GetHead(), m_sendBuf->GetTail())
-
-                //! 禁止监听写事件
-                m_channel->DisableWriting();
-            }
-        }
-
-        //! 执行写回调
-        if (m_ConnectionWriteCompleteCallback) {
-            m_ioLoop->EnqueueCallbackInLoop([this, self = shared_from_this()](){this->m_ConnectionWriteCompleteCallback(self);});
-        }
-    }
-    else
-    {
-        YLOG_ERROR("<{}>TcpConnection::HandleWrite, send() error: {}", m_socket->GetFD(), rst.GetErrorInfo())
-
-        ShutdownInLoop();
-    }
-
-    // m_SendBuf.Reset();
-}
 
 void TcpConnection::Shutdown() {
     if(not CanShutdown())
@@ -218,6 +107,7 @@ void TcpConnection::Shutdown() {
 
     m_ioLoop->RunCallbackInLoop([self = shared_from_this()](){ self->ShutdownInLoop();});
 }
+
 void TcpConnection::ShutdownInLoop() {
     m_ioLoop->AssertInLoopingThread();
 
@@ -252,7 +142,7 @@ void TcpConnection::ShutdownInLoop() {
     // });
 }
 
-// RemoveConnectionInLoop最后调佣
+// RemoveConnectionInLoop最后调用
 void TcpConnection::ConnectionDestroyed() {
     m_ioLoop->AssertInLoopingThread();
 
@@ -267,7 +157,6 @@ void TcpConnection::ConnectionDestroyed() {
         m_ConnectionDestroyedCallback(shared_from_this());
     }
 }
-
 
 void TcpConnection::ConnectionEstablished() {
     m_ioLoop->AssertInLoopingThread();
@@ -284,8 +173,180 @@ void TcpConnection::ConnectionEstablished() {
     }
 }
 
+void TcpConnection::HandleClose() {
+    m_ioLoop->AssertInLoopingThread();
+
+    //! 用户要关闭连接时，并不直接Close，而是先Shundown，等到一定时间之后再统一Close
+    switch (m_connectionState)
+    {
+    case eConnected:
+    case eShutdown:
+        ShutdownInLoop();
+        break;
+    default:
+        break;
+    }
+}
+
+void TcpConnection::HandleError() {
+    m_ioLoop->AssertInLoopingThread();
+
+    HandleClose();
+}
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+#ifdef ____WIN_USE_IOCP
+void TcpConnection::HandleWrite()
+{
+    //todo
+}
+
+void TcpConnection::HandleRead()
+{
+    //todo
+}
+
+void TcpConnection::SendTCPInLoop(const std::string_view & buf)
+{
+    //todo
+}
+
+
+
+
+
+#else
+
+
+
+void TcpConnection::SendTCPInLoop(const std::string_view & buf) { //! const &延长临时对象生命周期
+    m_ioLoop->AssertInLoopingThread();
+
+    if (not CanIO()) {
+        YLOG_TRACE("<{}>In TcpConnection::SendTCPInLoop, Connection Already Closed", m_socket->GetFD())
+        return;
+    }
+    size_t nByteRemained = buf.size();
+    size_t nByteSent = 0;
+    bool needCopySend = true; // 一定要初始化为true，因为SendTCPInLoop调用时可能发送区仍有数据，不能直接发送
+
+    //! 发送缓冲区仍有数据（实际上也伴随着注册了写事件），不执行SendInLoop()，而是等待写事件发生执行HandleWrite()
+    // if(m_channel->IsEnableWriting() or m_sendBuf->GetDataSize() != 0)
+
+    if(not m_channel->IsEnableWriting() and m_sendBuf->GetDataSize() == 0) {
+        //! 输出缓冲中目前没有任何的未发送数据，便直接向套接字发送数据（不借助输出缓冲）
+        SocketApiWrapper::SocketResult rst = m_socket->Send(buf.data(), buf.size());
+        if(rst.HasNoError()) {
+            YLOG_TRACE("<{}>TcpConnection::SendTCPInLoop：直接将长{}B数据包发送给用户, head-tail=={}-{}",
+                       m_socket->GetFD(), rst.Result(), m_sendBuf->GetHead(), m_sendBuf->GetTail())
+
+            nByteSent = rst.Result();
+            nByteRemained = buf.size() - nByteSent;
+            assert(nByteRemained >= 0);
+            if(nByteRemained == 0) {
+                //! 本次Send发送完了所有数据，执行写完毕回调
+                // 捕获shared_from_this()以延长生命周期
+                if(m_ConnectionWriteCompleteCallback)
+                    m_ioLoop->EnqueueCallbackInLoop([this, self = shared_from_this()](){this->m_ConnectionWriteCompleteCallback(self);});
+                needCopySend = false;
+            }
+            else {
+                needCopySend = true;
+            }
+
+        } else {
+            YLOG_ERROR("<{}>TcpConnection::SendTCPInLoop, send error: {}", m_socket->GetFD(), rst.GetErrorInfo())
+            switch (rst.ErrorCode()) {
+                case SocketError::eAgain:
+                case SocketError::eInterrupted: {
+                    needCopySend = true;
+                    break;
+                }
+                case SocketError::eConnectionReset:
+                case SocketError::eNotConnected:
+                case SocketError::eConnectionAborted:
+                case SocketError::eConnectionRefused: {
+                    // 连接异常，关闭连接
+                    needCopySend = false;
+                    HandleClose();
+                    break;
+                }
+                default: {
+                    // 其他错误，记录日志，关闭连接
+                    needCopySend = false;
+                    HandleError();
+                    break;
+                }
+            }
+        }
+    }
+
+    if (needCopySend and nByteRemained > 0) {
+        //! Send无法一次发送完，仍有剩余的数据未发送，故将剩余的数据放入SendBuf中，注册写事件，让其在写事件发生时执行HandleWrite()
+        // 将数据放入缓冲区，注册可写事件，等到套接字可写后重新发送
+        bool isOk = m_sendBuf->AppendDataFromCBuffer(buf.data() + nByteSent, nByteRemained);
+
+        if(isOk) {
+            if(not m_channel->IsEnableWriting())
+                m_channel->EnableWriting();
+        } else {
+            //todo 需要Send的数据太多，Send一次之后剩余的数据竟然不能放入SendBuf，是否应该关闭连接？
+        }
+    }
+}
+
+
+void TcpConnection::HandleWrite() {
+    m_ioLoop->AssertInLoopingThread();
+
+    if(!m_channel->IsEnableWriting()) {
+        YLOG_TRACE("未监听写事件，跳过")
+        return;
+    }
+
+    if(not CanIO()) {
+        return;
+    }
+
+    //! 该函数专门将写缓冲的数据写入socket（Proactor这步是处理发送完成的回调即可）
+    auto rst = m_sendBuf->SendAllToSocket(m_socket, nullptr);
+    if(rst.HasNoError())
+    {
+        auto nByteSend = rst.Result();
+        if (nByteSend > 0) // 缓冲区有可发送的数据
+        {
+            //! 数据全部发送完毕
+            if (m_sendBuf->GetDataSize() == 0) {
+                YLOG_TRACE("<{}>TcpConnection::HandleWrite：长{}B数据包发送给用户, head-tail=={}-{}",
+                           m_socket->GetFD(), nByteSend, m_sendBuf->GetHead(), m_sendBuf->GetTail())
+
+                //! 禁止监听写事件
+                m_channel->DisableWriting();
+            }
+        }
+        //! 执行写回调
+        if (m_ConnectionWriteCompleteCallback) {
+            m_ioLoop->EnqueueCallbackInLoop([this, self = shared_from_this()](){this->m_ConnectionWriteCompleteCallback(self);});
+        }
+    }
+    else
+    {
+        YLOG_ERROR("<{}>TcpConnection::HandleWrite, send() error: {}", m_socket->GetFD(), rst.GetErrorInfo())
+        ShutdownInLoop();
+    }
+}
 
 void TcpConnection::HandleRead() {
     m_ioLoop->AssertInLoopingThread();
@@ -328,27 +389,6 @@ void TcpConnection::HandleRead() {
 }
 
 
-
-void TcpConnection::HandleClose() {
-    m_ioLoop->AssertInLoopingThread();
-
-    //! 用户要关闭连接时，并不直接Close，而是先Shundown，等到一定时间之后再统一Close
-    switch (m_connectionState)
-    {
-        case eConnected:
-        case eShutdown:
-            ShutdownInLoop();
-            break;
-        default:
-            break;
-    }
-}
-
-void TcpConnection::HandleError() {
-    m_ioLoop->AssertInLoopingThread();
-
-    HandleClose();
-}
 
 SocketApiWrapper::SocketResult TcpConnection::HandleRead_ET() {
     m_ioLoop->AssertInLoopingThread();
@@ -452,7 +492,7 @@ SocketApiWrapper::SocketResult TcpConnection::HandleRead_LT() {
 }
 
 
-
+#endif
 
 
 

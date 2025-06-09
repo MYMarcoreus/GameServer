@@ -145,10 +145,10 @@ void SelectPoller::FillActiveChannel(ChannelList& activeChannels, int numEvents)
 
     for (socket_t fd : fdSet_) {
 
-        PollerEvent readyEvent = 0;
-        if (FD_ISSET(fd, &happended_readfds_))   readyEvent.AddEvent(PollerEvent::eReadEvent);
-        if (FD_ISSET(fd, &happended_writefds_))  readyEvent.AddEvent(PollerEvent::eWriteEvent);
-        if (FD_ISSET(fd, &happended_expectfds_)) readyEvent.AddEvent(PollerEvent::eErrorEvent);
+        PollerEvent readyEvent{};
+        if (FD_ISSET(fd, &happended_readfds_))   readyEvent.AddReadEvent();
+        if (FD_ISSET(fd, &happended_writefds_))  readyEvent.AddWriteEvent();
+        if (FD_ISSET(fd, &happended_expectfds_)) readyEvent.AddErrorEvent();
 
         if (!readyEvent.HasNoneEvent()) {
             if (auto it = m_ChannelMap.find(fd); it != m_ChannelMap.end()) {

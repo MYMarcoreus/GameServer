@@ -17,7 +17,7 @@ class Poller {
 public:
     using ChannelList = std::vector<IOChannel *>;
 
-    Poller(EventLoop * loop);
+    explicit Poller(EventLoop * loop);
     virtual ~Poller();
 
     ///@brief 执行epoll或poll，将发生的事件填充至activeChannel，可设置超时时间timeout

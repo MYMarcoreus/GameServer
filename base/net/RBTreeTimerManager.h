@@ -26,9 +26,9 @@ struct __TimerfdManager;
 
 class EventLoop;
 
-class RBTreeTimerManager: public TimerManager {
+class RBTreeTimerManager final : public TimerManager {
 public:
-    RBTreeTimerManager(EventLoop * owner_loop);
+    explicit RBTreeTimerManager(EventLoop * owner_loop);
     virtual ~RBTreeTimerManager() override;
 
     ///@brief 在定时器列表中新建一个定时器
@@ -74,10 +74,6 @@ private:
 private:
     EventLoop *  m_OwnerLoop;
 
-#ifdef ____LINUX
-    std::unique_ptr<detail::__TimerfdManager>   m_TimerfdManager;
-#endif
-
     //! 无需考虑以下三个容器的互斥操作，因为cancelTimer和addTimer操作都被放入了EventLoop中，是单线程操作！
     std::set<TimerPtr, TimerComparator> m_TimerList;  // 只有key
     std::unordered_map<TimerID, TimerPtr>         m_TimeridMap;
@@ -86,6 +82,10 @@ private:
     //! 用于解决在timer回调函数执行时自我cancel的行为带来的错误
     std::unordered_map<TimerID, TimerPtr> m_CancelingTimerList; //! 逻辑上是expired列表的子集
     std::atomic_bool            m_IsCallingExpiredTimers;
+
+#ifdef ____LINUX
+    std::unique_ptr<detail::__TimerfdManager>   m_TimerfdManager;
+#endif
 };
 
 }

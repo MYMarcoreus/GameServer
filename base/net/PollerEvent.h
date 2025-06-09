@@ -34,45 +34,40 @@ public:
 
 
     //! epoll的事件是uint32_t，poll的事件是short
-    PollerEvent(const int val): m_Events(val) {}
-    PollerEvent(const uint32_t val): m_Events(val) {}
-    PollerEvent(const short val): m_Events(val) {}
-    operator int()      const { return m_Events; }
-    operator uint32_t() const { return m_Events; }
-    operator short()    const { return m_Events; }
+    // explicit PollerEvent(const int val): m_Events(val) {}
+    // explicit PollerEvent(const uint32_t val): m_Events(val) {}
+    // explicit PollerEvent(const short val): m_Events(val) {}
+    // operator int()      const { return m_Events; }
+    // operator uint32_t() const { return m_Events; }
+    // operator short()    const { return m_Events; }
 
     enum EventType {
-        eNoneEvent = 0,
-        eIN    = POLLIN,
-        ePRI   = POLLPRI,
-        eOUT   = POLLOUT,
-        eWriteEvent = eOUT,
-        // eRDHUP = POLLRDHUP,
-        eReadEvent = eIN | ePRI /*| eRDHUP*/,
-        eERR   = POLLERR,
-        eHUP   = POLLHUP,
-        eRDNORM = POLLRDNORM,
-        eRDBAND = POLLRDBAND,
-        eWRNORM = POLLWRNORM,
-        eWRBAND = POLLWRBAND,
-        eNVAL   = POLLNVAL,
-        eErrorEvent = eNVAL | eERR,
+        eNoneEvent  = 0,
+        eReadEvent  = 1 << 0,
+        eWriteEvent = 1 << 1,
+        eErrorEvent = 1 << 2,
+        eCloseEvent = 1 << 3,
     };
 
-    /*! 添加感兴趣的事件 !*/
+    /*! 添加感兴趣/发生的事件 !*/
     void AddEvent(const EventType event) { m_Events |= event; };
+    void AddReadEvent () { m_Events |= eReadEvent; };
+    void AddWriteEvent() { m_Events |= eWriteEvent; };
+    void AddErrorEvent() { m_Events |= eWriteEvent; };
+    void AddCloseEvent() { m_Events |= eCloseEvent; };
+
     void DelEvent(const EventType event) { m_Events &= ~event; };
     void ClrEvent() { m_Events = eNoneEvent; };
     void SetEvent(const EventType event)  { m_Events = event; };
     int  GetEvent() const { return m_Events; };
-    bool HasEvent(const EventType event) const { return m_Events & event; };
-    bool HasNoneEvent() { return m_Events == eNoneEvent; }
 
     /*! HandleEvent中用来判断事件的类型 !*/
-    bool IsCloseEvent() const { return HasEvent(eHUP) && !HasEvent(eIN); }
-    bool IsErrorEvent() const { return HasEvent(eErrorEvent) ; }
-    bool IsReadEvent()  const { return HasEvent(eReadEvent); }
-    bool IsWriteEvent() const { return HasEvent(eWriteEvent); }
+    bool HasNoneEvent() const { return m_Events == eNoneEvent; }
+    bool HasEvent(const EventType event) const { return m_Events & event; };
+    bool HasCloseEvent() const { return HasEvent(eCloseEvent); }
+    bool HasErrorEvent() const { return HasEvent(eErrorEvent) ; }
+    bool HasReadEvent()  const { return HasEvent(eReadEvent); }
+    bool HasWriteEvent() const { return HasEvent(eWriteEvent); }
 
 private:
     int m_Events;

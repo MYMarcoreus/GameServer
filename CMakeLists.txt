@@ -164,6 +164,8 @@ set(COMMON_SOURCES
         base/net/NetBuffer.cpp
         base/utils/RingBuffer.cpp
         base/utils/RingBuffer.h
+        base/net/IOCPPoller.cpp
+        base/net/IOCPPoller.h
 )
 # 调用子目录下的cmake
 add_subdirectory(base)

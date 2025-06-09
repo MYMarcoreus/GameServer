@@ -15,7 +15,8 @@ namespace yy::SocketApiWrapper {
 
 int64_t get_last_socket_error() {
 #ifdef ____WINDOWS
-    return GetLastError();
+    // return GetLastError();
+    return WSAGetLastError();
 #elif defined(____LINUX)
     return errno;
 #else

@@ -41,7 +41,7 @@ public:
     const std::string &        GetName() const { return m_Name; }
     bool IsEnableReading () const { return m_InterestedEvent.HasEvent(PollerEvent::eReadEvent) ; };
     bool IsEnableWriting () const { return m_InterestedEvent.HasEvent(PollerEvent::eWriteEvent); };
-    bool IsNoneEvent     () { return m_InterestedEvent.HasNoneEvent(); };
+    bool IsNoneEvent     () const { return m_InterestedEvent.HasNoneEvent(); };
 
     /*! SETTER !*/
     // Set Interested Events：注意这些也需要在Channel所在Loop运行，即RunCallbackInLoop！
@@ -73,11 +73,11 @@ private:
 
 
 private:
-    EventLoop *         m_OwnerLoop; // Channel的间接所有者（Channel的直接所有者是Poller）
-    IOChannel::State      m_State;     // Channel在底层数据结构的状态（未加入，已加入，被删除）
+    EventLoop *                     m_OwnerLoop; // Channel的间接所有者（Channel的直接所有者是Poller）
+    IOChannel::State                m_State;     // Channel在底层数据结构的状态（未加入，已加入，被删除）
     /*! 一个Channel只能负责一个文件描述符fd的的IO事件分发（但它并不拥有并管理这个fd的生命周期），它会将该fd上的不同IO事件分发至不同的回调函数 */
-    SocketApiWrapper::socket_t   m_FD;        // Channel对应的文件描述符（套接字）
-    std::string         m_Name;
+    SocketApiWrapper::socket_t      m_FD;        // Channel对应的文件描述符（套接字）
+    std::string                     m_Name;
 
     PollerEvent m_InterestedEvent{}; // 要监视的事件
     PollerEvent m_HappenedEvent{};   // Poller::PollWait返回后填入的已发生的事件

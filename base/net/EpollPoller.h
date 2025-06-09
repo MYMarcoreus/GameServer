@@ -1,10 +1,6 @@
-#ifdef ____LINUX
-
-
-
-
 #ifndef LINUXGAMESERVER_EPOLLPOLLER_H
 #define LINUXGAMESERVER_EPOLLPOLLER_H
+#ifdef ____LINUX
 
 
 #include "Poller.h"
@@ -33,7 +29,7 @@ private:
     void FillActiveChannels(ChannelList & activeChannel, int numEvents);
 
     ///@brief epoll_ctl的接口函数，修改epoll监视列表
-    void SetEpollOperation(IOChannel * channel, int EPOLL_CTL_XXX);
+    void UpdateEpollOperation(IOChannel * channel, int EPOLL_CTL_XXX);
 
 private:
     int                             m_EpollFD;
@@ -43,11 +39,6 @@ private:
 
 }
 
-#endif //LINUXGAMESERVER_EPOLLPOLLER_H
-
-
-
-
-
+#endif
 #endif
 

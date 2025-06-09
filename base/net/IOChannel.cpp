@@ -59,25 +59,25 @@ void IOChannel::HandleHappenedEvent() {
 
 
 void IOChannel::HandleEventWithTie() {
-    if(m_HappenedEvent.IsCloseEvent() && m_CloseCallback)
+    if(m_HappenedEvent.HasCloseEvent() && m_CloseCallback)
     {
         YLOG_TRACE("▓▓▓▓▓▓▓▓▓▓▓▓文件描述符<{}>发生关闭事件，进行处理！▓▓▓▓▓▓▓▓▓▓▓▓" , m_FD)
         m_CloseCallback();
     }
 
-    if(m_HappenedEvent.IsErrorEvent() && m_ErrorCallback)
+    if(m_HappenedEvent.HasErrorEvent() && m_ErrorCallback)
     {
         YLOG_TRACE("▓▓▓▓▓▓▓▓▓▓▓▓文件描述符<{}>发生错误事件，进行处理！▓▓▓▓▓▓▓▓▓▓▓▓", m_FD)
         m_ErrorCallback();
     }
 
-    if(m_HappenedEvent.IsReadEvent() && m_ReadCallback)
+    if(m_HappenedEvent.HasReadEvent() && m_ReadCallback)
     {
         YLOG_TRACE("▓▓▓▓▓▓▓▓▓▓▓▓文件描述符<{}>发生读事件，进行处理！▓▓▓▓▓▓▓▓▓▓▓▓", m_FD)
         m_ReadCallback();
     }
 
-    if(m_HappenedEvent.IsWriteEvent() && m_WriteCallback)
+    if(m_HappenedEvent.HasWriteEvent() && m_WriteCallback)
     {
         YLOG_TRACE("▓▓▓▓▓▓▓▓▓▓▓▓文件描述符<{}>发生写事件，进行处理！▓▓▓▓▓▓▓▓▓▓▓▓", m_FD)
         m_WriteCallback();

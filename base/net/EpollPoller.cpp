@@ -38,19 +38,26 @@ public:
     //End GETTER
 
     //Region SETTER
+    // void SetInterestedEvents(const uint32_t ev) { epoll_event_.events = ev; }
     void SetInterestedPtr(void * p) { epoll_event_.data.ptr = p; }
-    void SetInterestedEvents(const uint32_t ev) { epoll_event_.events = ev; }
     void SetInterestedFD(const int fd) { epoll_event_.data.fd = fd; }
     //End SETTER
 
     // 增加一个监视事件
-    void AddEvent(const EPOLL_EVENTS EPOLLXXXX) { epoll_event_.events |=  EPOLLXXXX; }
+    // void AddEvent(const EPOLL_EVENTS EPOLLXXXX) { epoll_event_.events |=  EPOLLXXXX; }
+    void AddWriteEvent() { epoll_event_.events |=  EPOLLOUT; }
+    void AddReadEvent () { epoll_event_.events |=  (EPOLLIN | EPOLLRDHUP); }
+    void SetET() { epoll_event_.events |=  EPOLLET; }
 
     // 删除一个监视事件
     void DelEvent(const EPOLL_EVENTS EPOLLXXXX) { epoll_event_.events &= ~EPOLLXXXX; }
 
     // 在`epoll()`返回后，使用该函数查看事件是否发生
-    bool IsOccured(const EPOLL_EVENTS EPOLLXXXX) const { return (epoll_event_.events & EPOLLXXXX); }
+    // bool IsOccured(const EPOLL_EVENTS EPOLLXXXX) const { return (epoll_event_.events & EPOLLXXXX); }
+    bool IsOccuredWrite() const { return (epoll_event_.events  &  EPOLLOUT); }
+    bool IsOccuredRead () const { return (epoll_event_.events  & (EPOLLIN | EPOLLPRI | EPOLLRDHUP)); }
+    bool IsOccuredClose() const { return !(epoll_event_.events &  EPOLLIN) && (epoll_event_.events & (EPOLLHUP)); }
+    bool IsOccuredError() const { return (epoll_event_.events  & (EPOLLERR)); }
 
 private:
     struct epoll_event epoll_event_;
@@ -74,7 +81,7 @@ EpollPoller::~EpollPoller() {
     ::close(m_EpollFD);
 }
 
-void EpollPoller::PollWait(ChannelList &activeChannel, std::chrono::milliseconds timeout) {
+void EpollPoller::PollWait(ChannelList &activeChannel, const std::chrono::milliseconds timeout) {
     int numEvents = epoll_wait(m_EpollFD, &*m_EpollEventList.begin(),
                                static_cast<int>(m_EpollEventList.size()),
                                timeout == std::chrono::milliseconds::max() ? -1 : timeout.count());
@@ -110,19 +117,19 @@ void EpollPoller::UpdateChannel(IOChannel * channel) {
             m_ChannelMap[channel->GetFD()] = channel;
         case IOChannel::State::eDeleted: {
             //! 加入epoll监视列表
-            SetEpollOperation(channel, EPOLL_CTL_ADD);
+            UpdateEpollOperation(channel, EPOLL_CTL_ADD);
             channel->SetState(IOChannel::State::eAdded); //* 状态转换: eNew/eDeleted -> eAdded
             break;
         }
         case IOChannel::State::eAdded: {
             if(channel->IsNoneEvent()) {
                 //! 只是从epoll底层数据结构中删除，并不从channel映射表中删除
-                SetEpollOperation(channel, EPOLL_CTL_DEL);
+                UpdateEpollOperation(channel, EPOLL_CTL_DEL);
                 channel->SetState(IOChannel::State::eDeleted); //* 状态转换: eAdded -> eDeleted
                 YLOG_TRACE("已将Channel<{}>从epoll底层删除，但是仍在channel映射表中", channel->GetFD())
             } else {
                 //! 覆盖原来的事件
-                SetEpollOperation(channel, EPOLL_CTL_MOD);
+                UpdateEpollOperation(channel, EPOLL_CTL_MOD);
             }
 
             break;
@@ -135,7 +142,7 @@ void EpollPoller::RemoveChannel(IOChannel * channel) {
 
     //! 完全删除channel（不仅从epoll底层数据结构中删除，也从channel映射表中删除）
     if(channel->GetState() == IOChannel::State::eAdded) {
-        SetEpollOperation(channel, EPOLL_CTL_DEL);
+        UpdateEpollOperation(channel, EPOLL_CTL_DEL);
     }
     channel->SetState(IOChannel::State::eNew); //* 状态转换: eAdded -> eNew
     m_ChannelMap.erase(channel->GetFD());
@@ -144,23 +151,35 @@ void EpollPoller::RemoveChannel(IOChannel * channel) {
 
 void EpollPoller::FillActiveChannels(ChannelList & activeChannel, int numEvents) {
     for (int i = 0; i < numEvents; ++i) {
-        EpollPollerEvent happend_event{m_EpollEventList[i]};
+        EpollPollerEvent happend_events{m_EpollEventList[i]};
 
         /*! 找到发生了事件的event，找到跟它对应的channel，设置channel发生的事件并将该channel加入activeChannel
          慢一点的方法：使用m_ChannelMap::find()按照happend_event.GetFD()查找m_EpollList， */
-        IOChannel * channel = static_cast<IOChannel*>(happend_event.GetHanppededPtr()); //
-        channel->SetHappendedEvent(happend_event.GetHanppendEvents());
+        IOChannel * channel = static_cast<IOChannel*>(happend_events.GetHanppededPtr()); //
+
+        // 设置发生了的事件
+        PollerEvent events{};
+        if (happend_events.IsOccuredRead ()) events.AddReadEvent();
+        if (happend_events.IsOccuredWrite()) events.AddWriteEvent();
+        if (happend_events.IsOccuredError()) events.AddErrorEvent();
+        if (happend_events.IsOccuredClose()) events.AddCloseEvent();
+
+        channel->SetHappendedEvent(events);
         activeChannel.push_back(channel);
     }
 }
 
-void EpollPoller::SetEpollOperation(IOChannel * channel, const int EPOLL_CTL_XXX) {
-    EpollPollerEvent new_event;
-    new_event.SetInterestedEvents(channel->GetInterestedEvent());
-    new_event.SetInterestedPtr(channel); // 将和fd相关联的channel保存至data.ptr中
-    new_event.AddEvent(EPOLLET); //! ET
+void EpollPoller::UpdateEpollOperation(IOChannel * channel, const int EPOLL_CTL_XXX) {
+    EpollPollerEvent interested_events;
 
-    ::epoll_ctl(m_EpollFD, EPOLL_CTL_XXX, channel->GetFD(), new_event.GetRawEvent());
+    //! 设置要监听的事件
+    PollerEvent events = channel->GetInterestedEvent();
+    if (events.HasReadEvent ()) { interested_events.AddReadEvent(); interested_events.SetET(); }
+    if (events.HasWriteEvent()) { interested_events.AddWriteEvent(); }
+
+    interested_events.SetInterestedPtr(channel); // 将和fd相关联的channel保存至data.ptr中
+
+    ::epoll_ctl(m_EpollFD, EPOLL_CTL_XXX, channel->GetFD(), interested_events.GetRawEvent());
 }
 
 

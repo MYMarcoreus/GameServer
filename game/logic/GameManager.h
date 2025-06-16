@@ -4,7 +4,7 @@
 #include "IServer.h"
 #include "GameData.h"
 #include "IGameBase.h"
-#include "codec/ProtobufDispatcher.h"
+#include "ProtobufDispatcher.h"
 #include "ThreadPool.h"
 
 using yy::core::IServer;

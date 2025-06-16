@@ -3,7 +3,7 @@
 #include "GameTestManager.h"
 #include "log.h"
 #include "EventLoop.h"
-#include "GameServer.h"
+#include "LogicServer.h"
 #include "future"
 #include <functional>
 
@@ -87,7 +87,7 @@ void GameManager::Init()
             config::g_app_config->GetValue().app_tcp_port());
 
     //! ⑤、初始化服务器对象（③和④）
-    m_server = new core::GameServer(m_accpetorLoop, listenAddr);
+    m_server = new core::LogicServer(m_accpetorLoop, listenAddr);
     m_server->SetNotifier_Security(
         [this](const core::UserConnectionPtr& userdata) {
             this->AppNotifier_Secutiry(userdata);

@@ -4,9 +4,9 @@
 #include "IServer.h"
 #include "TcpServer.h"
 #include "UdpServer.h"
-#include "codec/ProtobufTcpCodec.h"
-#include "codec/ProtobufUdpCodec.h"
-#include "codec/ProtobufDispatcher.h"
+#include "ProtobufTcpCodec.h"
+#include "ProtobufUdpCodec.h"
+#include "ProtobufDispatcher.h"
 #include "net_definations.h"
 #include "ThreadPool.h"
 #include <future>
@@ -22,14 +22,14 @@ class UdpPortRegisterRequest;
 namespace yy::core {
 
 
-class GameServer final: public IServer{
+class LogicServer final: public IServer{
     using HeartPtr    = std::shared_ptr<yy::protocol::core::HeartBody> ;
     using SecurityPtr = std::shared_ptr<yy::protocol::core::SecurityBody> ;
     using UdpPortRegisterRequestPtr = std::shared_ptr<yy::protocol::core::UdpPortRegisterRequest> ;
 
 public:
-    GameServer(yy::net::EventLoop* accpetorLoop, const yy::net::IPAddressPtr& listenAddr);
-    ~GameServer() override;
+    LogicServer(yy::net::EventLoop* accpetorLoop, const yy::net::IPAddressPtr& listenAddr);
+    ~LogicServer() override;
 
     /// @brief Start Listen & IOLoop
     virtual void Start() override;
@@ -38,9 +38,9 @@ public:
     virtual void Stop() override;
 
     /* * 根据用户连接名称来寻找用户基础数据 * */
-    virtual UserConnectionPtr FindUser(const std::string & conn_name) override;
-    virtual void            DelUser (const std::string & conn_name) override;
-    virtual void            AddUser (const std::string & conn_name, const UserConnectionPtr & userdata) override;
+    virtual UserConnectionPtr   FindUser(const std::string & conn_name) override;
+    virtual void                DelUser (const std::string & conn_name) override;
+    virtual void                AddUser (const std::string & conn_name, const UserConnectionPtr & userdata) override;
 
     virtual bool IsRunning() const override { return m_tcpServer.IsRunning(); }
     virtual const config::AppXmlConfig & GetAppConfig() override { return m_appConfigvar->GetValue(); }

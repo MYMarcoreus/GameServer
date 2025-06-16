@@ -1,6 +1,7 @@
 #ifndef ____GAMEPLAYERMANAGER_H
 #define ____GAMEPLAYERMANAGER_H
 
+#include <unordered_map>
 #include "IGameBase.h"
 #include "Singleton.h"
 #include "GameData.h"
@@ -8,7 +9,6 @@
 #include "IServer.h"
 #include "ObjectPool.h"
 #include "core_definations.h"
-#include <unordered_map>
 
 using yy::core::UserConnectionPtr;
 

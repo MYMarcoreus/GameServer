@@ -29,30 +29,11 @@ GamePlayerManager::GamePlayerManager()
     : m_server{GameManager::getInstance().GetServer()}, m_player_pool{m_server->GetAppConfig().app_player_max()},
       m_global_id{10000}
 {
-    GameManager::getInstance().RegisterMessageCallback<LoginRequest>(
-        [this](const UserConnectionPtr& user, const Ptr<LoginRequest>& msg) {
-            this->OnLogin(user, msg);
-        });
-
-    GameManager::getInstance().RegisterMessageCallback<OtherPlayerDataRequest>(
-        [this](const UserConnectionPtr& user, const Ptr<OtherPlayerDataRequest>& msg) {
-            this->OnOtherPlayerDataRequest(user, msg);
-        });
-
-    GameManager::getInstance().RegisterMessageCallback<SelfMovement>(
-        [this](const UserConnectionPtr& user, const Ptr<SelfMovement>& msg) {
-            this->OnSelfMovement(user, msg);
-        });
-
-    GameManager::getInstance().RegisterMessageCallback<SelfJumpAndGravity>(
-        [this](const UserConnectionPtr& user, const Ptr<SelfJumpAndGravity>& msg) {
-            this->OnSelfJumpAndGravity(user, msg);
-        });
-
-    GameManager::getInstance().RegisterMessageCallback<PlayerLeave>(
-        [this](const UserConnectionPtr& user, const Ptr<PlayerLeave>& msg) {
-            this->OnLeave(user, msg);
-        });
+    GameManager::getInstance().RegisterMessageCallback<LoginRequest>( [this](const UserConnectionPtr& user, const Ptr<LoginRequest>& msg) { this->OnLogin(user, msg); });
+    GameManager::getInstance().RegisterMessageCallback<OtherPlayerDataRequest>( [this](const UserConnectionPtr& user, const Ptr<OtherPlayerDataRequest>& msg) { this->OnOtherPlayerDataRequest(user, msg); });
+    GameManager::getInstance().RegisterMessageCallback<SelfMovement>( [this](const UserConnectionPtr& user, const Ptr<SelfMovement>& msg) { this->OnSelfMovement(user, msg); });
+    GameManager::getInstance().RegisterMessageCallback<SelfJumpAndGravity>( [this](const UserConnectionPtr& user, const Ptr<SelfJumpAndGravity>& msg) { this->OnSelfJumpAndGravity(user, msg); });
+    GameManager::getInstance().RegisterMessageCallback<PlayerLeave>( [this](const UserConnectionPtr& user, const Ptr<PlayerLeave>& msg) { this->OnLeave(user, msg); });
 
 
     // m_server->RunTaskEvery(1s, [this]() {

@@ -13,7 +13,7 @@ class EventLoopThread;
 
 class EventLoopThreadPool {
 public:
-    EventLoopThreadPool(EventLoop *baseLoop);
+    explicit EventLoopThreadPool(EventLoop *baseLoop);
     ~EventLoopThreadPool();
 
     void Start(int threadNum, Milliseconds pollwaitTimeout, F_ThreadInitCallback cb = F_ThreadInitCallback());

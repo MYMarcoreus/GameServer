@@ -1,4 +1,4 @@
-#include "GameServer.h"
+#include "LogicServer.h"
 #include "TcpConnection.h"
 #include "UdpSession.h"
 #include "log.h"
@@ -14,7 +14,7 @@ using namespace yy::net;
 
 namespace yy::core {
 
-GameServer::GameServer(EventLoop *accpetorLoop, const IPAddressPtr& listenAddr) :
+LogicServer::LogicServer(EventLoop *accpetorLoop, const IPAddressPtr& listenAddr) :
     m_appConfigvar(yy::config::g_app_config),
     m_accpetorLoop{accpetorLoop},
     m_tcpServer(accpetorLoop, listenAddr, true,
@@ -85,36 +85,36 @@ GameServer::GameServer(EventLoop *accpetorLoop, const IPAddressPtr& listenAddr) 
 }
 
 
-GameServer::~GameServer() {
+LogicServer::~LogicServer() {
     Stop();
 }
 
-void GameServer::Start() {
+void LogicServer::Start() {
     m_tcpServer.Start(config::g_app_config->GetValue().tcp_io_thread_num(), 500ms);
     m_udpServer.Start(1, 500ms);
-    // m_accpetorLoop->RunEvery(1s, [](){ YLOG_INFO("测试！！！"); });
+    m_accpetorLoop->RunEvery(1s, [](){ YLOG_INFO("测试！！！"); });
 }
 
-void GameServer::Stop() {
+void LogicServer::Stop() {
     m_accpetorLoop->QuitLoop();
 }
 
 
-void GameServer::OnUnknownTcpMessage(const TcpConnectionPtr & conn, const MessagePtr &message) {
+void LogicServer::OnUnknownTcpMessage(const TcpConnectionPtr & conn, const MessagePtr &message) {
     YLOG_TRACE("游戏消息：{}，交由业务层", message->GetDescriptor()->full_name());
 
     // 执行业务层回调，分发消息
     m_NotifierCommand(FindUser(conn->GetName()), message);
 }
 
-void GameServer::OnUnknownUdpMessage(const UdpSessionPtr & conn, const MessagePtr &message) {
+void LogicServer::OnUnknownUdpMessage(const UdpSessionPtr & conn, const MessagePtr &message) {
     YLOG_TRACE("游戏消息：{}，交由业务层", message->GetDescriptor()->full_name());
 
     // 执行业务层回调，分发消息
     m_NotifierCommand(FindUser(conn->GetName()), message);
 }
 
-void GameServer::OnConnectionEstablished(const TcpConnectionPtr  & conn) {
+void LogicServer::OnConnectionEstablished(const TcpConnectionPtr  & conn) {
     YLOG_INFO("███████████████████连接成功<{}:{}, {}>！",
               conn->GetPeerAddr()->GetIPStr().c_str(), conn->GetPeerAddr()->GetPort(), conn->GetSocketFD());
 
@@ -124,7 +124,7 @@ void GameServer::OnConnectionEstablished(const TcpConnectionPtr  & conn) {
     SendXorCode(conn);
 }
 
-void GameServer::AddCheckTimer(const TcpConnectionPtr & conn, const UserConnectionPtr & userdata) {
+void LogicServer::AddCheckTimer(const TcpConnectionPtr & conn, const UserConnectionPtr & userdata) {
     /* ***** 需要是弱引用，不能因为这个回调函数延长TcpConnection的生命周期 ***** */
     //! ①检查是否在指定时间内完成安全连接的认证，若未认证，则关闭连接
     conn->GetIOLoop()->RunAfter(Seconds{GetAppConfig().time_security_max()},
@@ -148,7 +148,7 @@ void GameServer::AddCheckTimer(const TcpConnectionPtr & conn, const UserConnecti
     });
 }
 
-void GameServer::CheckHeart(const UserConnectionPtr & userdata) {
+void LogicServer::CheckHeart(const UserConnectionPtr & userdata) {
     const auto & conn = userdata->GetConnection();
     if(!conn->IsConnected() or Timestamp::Now() - conn->GetHeartTime() > Seconds{m_appConfigvar->GetValue().time_heart_max()}) {
         YLOG_WARN("<{}>主线程Update_CheckDisconnetion: 用户心跳包超时，关闭用户连接！", conn->GetSocketFD());
@@ -166,7 +166,7 @@ void GameServer::CheckHeart(const UserConnectionPtr & userdata) {
     }
 }
 
-void GameServer::SendXorCode(const TcpConnectionPtr &conn) {
+void LogicServer::SendXorCode(const TcpConnectionPtr &conn) {
     // 发送随机生成的异或码给用户，之后的通信都用该异或码进行加密
     auto gen_val = MessageHeader::GenerateXorCode();
     yy::protocol::core::XorBody xorBody;
@@ -184,7 +184,7 @@ void GameServer::SendXorCode(const TcpConnectionPtr &conn) {
 
 
 
-void GameServer::OnTcpHeart(const TcpConnectionPtr & conn, const HeartPtr & message) {
+void LogicServer::OnTcpHeart(const TcpConnectionPtr & conn, const HeartPtr & message) {
     assert(conn != nullptr);
     YLOG_DEBUG("收到TCP心跳包");
     // 只需发一个只有消息头的包
@@ -192,7 +192,7 @@ void GameServer::OnTcpHeart(const TcpConnectionPtr & conn, const HeartPtr & mess
     m_tcpCodec.SendTCP(conn, heartBody);
 }
 
-void GameServer::OnUdpHeart(const UdpSessionPtr & conn, const HeartPtr & message) {
+void LogicServer::OnUdpHeart(const UdpSessionPtr & conn, const HeartPtr & message) {
     assert(conn != nullptr);
     YLOG_DEBUG("收到UDP心跳包");
     // 只需发一个只有消息头的包
@@ -200,7 +200,7 @@ void GameServer::OnUdpHeart(const UdpSessionPtr & conn, const HeartPtr & message
     m_udpCodec.SendUDP(conn, heartBody);
 }
 
-void GameServer::OnSecurity(const TcpConnectionPtr & conn, const SecurityPtr & message)
+void LogicServer::OnSecurity(const TcpConnectionPtr & conn, const SecurityPtr & message)
 {
     assert(conn != nullptr);
 
@@ -247,7 +247,7 @@ void GameServer::OnSecurity(const TcpConnectionPtr & conn, const SecurityPtr & m
     }
 }
 
-void GameServer::OnUdpPortRegisterRequest(const TcpConnectionPtr & conn, const UdpPortRegisterRequestPtr & message)
+void LogicServer::OnUdpPortRegisterRequest(const TcpConnectionPtr & conn, const UdpPortRegisterRequestPtr & message)
 {
     if(message->session_id() != conn->GetName()) {
         YLOG_INFO("<{}>客户端会话ID验证错误", conn->GetName())
@@ -271,25 +271,25 @@ void GameServer::OnUdpPortRegisterRequest(const TcpConnectionPtr & conn, const U
 
 
 
-net::TimerID GameServer::RunAt(net::Timestamp time, net::F_TaskCallback cb) {
+net::TimerID LogicServer::RunAt(net::Timestamp time, net::F_TaskCallback cb) {
     return m_accpetorLoop->RunAt(time, std::move(cb));
 }
 
-net::TimerID GameServer::RunAfter(net::Microseconds delay, net::F_TaskCallback cb) {
+net::TimerID LogicServer::RunAfter(net::Microseconds delay, net::F_TaskCallback cb) {
     return m_accpetorLoop->RunAfter(delay, std::move(cb));
 }
 
-net::TimerID GameServer::RunEvery(net::Microseconds interval, net::F_TaskCallback cb) {
+net::TimerID LogicServer::RunEvery(net::Microseconds interval, net::F_TaskCallback cb) {
     return m_accpetorLoop->RunEvery(interval, std::move(cb));
 }
 
-void GameServer::CancelTimer(net::TimerID timerid) {
+void LogicServer::CancelTimer(net::TimerID timerid) {
     m_accpetorLoop->CancelTimer(timerid);
 }
 
 
 
-void GameServer::AfterShutdownConnection(const TcpConnectionPtr & conn) {
+void LogicServer::AfterShutdownConnection(const TcpConnectionPtr & conn) {
     //! 应用层处理
     if(m_NotifierDisconnect)
         m_NotifierDisconnect(FindUser(conn->GetName()));
@@ -297,20 +297,20 @@ void GameServer::AfterShutdownConnection(const TcpConnectionPtr & conn) {
 
 
 
-UserConnectionPtr GameServer::FindUser(const std::string & conn_name) {
+UserConnectionPtr LogicServer::FindUser(const std::string & conn_name) {
     std::lock_guard lg{m_usersMutex};
 
     const auto it = m_users.find(conn_name);
     return (it == m_users.end()) ? nullptr : it->second;
 }
 
-void GameServer::DelUser(const std::string & conn_name) {
+void LogicServer::DelUser(const std::string & conn_name) {
     std::lock_guard lg{m_usersMutex};
 
     m_users.erase(conn_name);
 }
 
-void GameServer::AddUser(const std::string & conn_name, const UserConnectionPtr & userdata) {
+void LogicServer::AddUser(const std::string & conn_name, const UserConnectionPtr & userdata) {
     std::lock_guard lg{m_usersMutex};
 
     m_users[conn_name] = userdata;

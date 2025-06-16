@@ -7,7 +7,9 @@ set(LocalSrc
         codec/ProtobufTcpCodec.cpp
         codec/ProtobufDispatcher.cpp
         codec/MessageHeader.cpp
-        GameServer.cpp
+        codec/ProtobufUdpCodec.cpp
+        redis/RedisClient.cpp
+        redis/RedisConnectionPool.cpp
         UserConnection.cpp
 )
 

@@ -75,28 +75,11 @@ else()
     find_package(Protobuf REQUIRED)
 endif()
 
-
-
-
-
 #! 自动执行终端命令生成C++代码文件
 set(ProtocDirname ${CMAKE_SOURCE_DIR}/protobuf)
 
-# 不带引号时，ProtocArgs后面的参数是数组，如果带引号则会变成带;的字符串
-set(ProtocCmd ${Protobuf_PROTOC_EXECUTABLE})
-set(ProtocArgs # 不能带引号！
-        --proto_path=${ProtocDirname}
-        --cpp_out=${ProtocDirname}
-        --experimental_allow_proto3_optional
-)
-file(GLOB ProtocFiles ${ProtocDirname}/*.proto )
-
-message(execute_process: ${ProtocCmd} ${ProtocArgs} ${ProtocFiles})
-
-execute_process(
-        COMMAND ${ProtocCmd} ${ProtocArgs} ${ProtocFiles}
-        WORKING_DIRECTORY ${ProtocDirname}
-)
+include(cmake/ProtocGenCpp.cmake)
+ProtoGenCpp(ProtocDirname)
 
 message(STATUS "Protobuf_FOUND = ${Protobuf_FOUND}")
 message(STATUS "Protobuf_VERSION = ${Protobuf_VERSION}")
@@ -123,59 +106,25 @@ include_directories(
         base/utils
         base/log
         base/net
-        game
         core
+        core/codec
+        core/redis
         protobuf
+        game
+        game/logic
+        game/gate
+        game/login
         ${Protobuf_INCLUDE_DIRS}
 )
 
-#file(GLOB ProtocSrcs ${ProtocDirname}/*.cc )
-#
-#file(GLOB_RECURSE COMMON_SOURCES
-#        base/*.cpp
-#        core/*.cpp
-#        game/*.cpp
-#        protobuf/*.cc
-#)
 
-set(COMMON_SOURCES
-        base/net/PriorityQueueTimerManager.cpp
-        base/net/NewDefaultTimerManager.cpp
-        base/log/LogFormatter.cpp
-        base/log/LogBufferManager.cpp
-        base/log/StdoutLogApeender.h
-        base/log/FileLogAppender.h
-        base/log/StdoutLogApeender.cpp
-        base/log/StdoutLogApeender.h
-        base/log/FileLogAppender.cpp
-        base/log/FileLogAppender.h
-        base/utils/FactoryX.h
-        base/utils/ClassRegister.h
-        base/utils/SequentialBuffer.cpp
-        base/utils/SequentialBuffer.h
-        base/log/ILogAppender.h
-        base/net/socket_definations.cpp
-        base/net/UdpTransport.cpp
-        base/net/UdpServer.cpp
-        core/codec/ProtobufUdpCodec.cpp
-        core/codec/ProtobufUdpCodec.h
-        base/net/UdpSession.cpp
-        base/net/UdpSession.h
-        base/net/NetBuffer.cpp
-        base/utils/RingBuffer.cpp
-        base/utils/RingBuffer.h
-        base/net/IOCPPoller.cpp
-        base/net/IOCPPoller.h
-)
+set(COMMON_SOURCES)
 # 调用子目录下的cmake
 add_subdirectory(base)
 add_subdirectory(core)
-add_subdirectory(game)
 add_subdirectory(protobuf)
-
+add_subdirectory(game)
 #message(COMMON_SOURCES = ${COMMON_SOURCES})
-
-
 
 #! 制作 libCommonLibrary.a 静态库
 add_library(CommonLibrary STATIC ${COMMON_SOURCES}) # STATIC替换为SHARED就为动态库，生成 libCommonLibrary.so
@@ -184,9 +133,10 @@ add_library(CommonLibrary STATIC ${COMMON_SOURCES}) # STATIC替换为SHARED就�
 #! 添加多个可执行文件，可在clion选择一个来构建/执行
 add_executable(codec_client test/test_codec_client.cpp)
 add_executable(codec_server test/test_codec_server.cpp)
-add_executable(main  main.cpp)
 add_executable(test testtt.cpp)
 add_executable(echo_server test/test_echo.cpp)
+
+add_executable(LogicServer game/logic/main_logic.cpp)
 
 #! 添加系统动态库
 if(CMAKE_HOST_SYSTEM_NAME MATCHES Windows)
@@ -197,6 +147,8 @@ if(CMAKE_HOST_SYSTEM_NAME MATCHES Windows)
             protobuf::libprotobuf
             protobuf::libprotobuf-lite
             ws2_32.lib
+#            redis++::redis++
+#            hiredis::hiredis
     )
 else()
     target_link_libraries( CommonLibrary
@@ -207,6 +159,8 @@ else()
             protobuf::libprotoc
             protobuf::libprotobuf
             protobuf::libprotobuf-lite
+#            redis++::redis++
+#            hiredis::hiredis
     )
 endif()
 
@@ -224,7 +178,7 @@ target_link_libraries(
 
 
 target_link_libraries(
-        main
+        LogicServer
         CommonLibrary
 )
 

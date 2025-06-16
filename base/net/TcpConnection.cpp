@@ -67,20 +67,6 @@ SocketApiWrapper::socket_t TcpConnection::GetSocketFD() const {
 }
 
 
-void TcpConnection::SendTCP(const void *buf, const size_t len) {
-    SendTCP(std::string_view((char *) buf, len)); // 使用 string_view 观察调用者提供的内存，生命周期由调用者保证
-}
-
-// void TcpConnection::SendTCP(const google::protobuf::Message & message) {
-//     //! FIXED_BUG：string_view对象并不会延长临时string的生命周期
-//     //! 下面两种方式生成的临时string均会在message.SerializeAsString()返回后被销毁，string_view 持有的指针变成悬垂指针
-//     //! SendUDP(std::string_view(message.SerializeAsString()));
-//     //! SendUDP(message.SerializeAsString());
-//
-//     std::string tmp = message.SerializeAsString(); // tmp 是一个局部变量，生命周期在本函数结束前有效（如果跨线程，则不安全需要拷贝该字符串）
-//     SendTCP(std::string_view{tmp}); // string 会自动转换构造为 string_view临时对象，被调用的Send不论有没有const&都是生命周期安全的。
-// }
-
 void TcpConnection::SendTCP(const std::string_view & message) {
     if (not CanIO()) {
         YLOG_TRACE("<{}>In TcpConnection::SendUDP, Connection Already Closed", m_socket->GetFD())

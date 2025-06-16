@@ -40,7 +40,6 @@ public:
     ~TcpConnection();
 
     ///Region 发送TCP数据：将待发送数据message添加至输出缓冲中（如果输出缓冲为空，则直接发送，无需等待事件触发）
-    void SendTCP(const void * buf, size_t len);
     void SendTCP(const std::string_view & message);
     ///End
 

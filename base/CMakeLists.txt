@@ -2,46 +2,23 @@ cmake_minimum_required(VERSION 3.22)
 project(GameServer)
 set(CMAKE_CXX_STANDARD 20)
 
-set(LocalSrc
-        public/md5/md5.cpp
-        public/tinyxml/tinyxml2.cpp
-        log/log.cpp
-        config/ConfigManager.cpp
-        config/AppXmlConfig.cpp
-        config/LogXmlConfig.cpp
-        config/RemoteXmlConfig.cpp
-        utils/util_functions.cpp
-        utils/BoundedLockedQueue.hpp
-        utils/ThreadPool.cpp
-        utils/status/Status.cpp
-        utils/SequentialBuffer.cpp
-        net/IPAddress.cpp
-        net/IOChannel.cpp
-        net/EpollPoller.cpp
-        net/EventLoop.cpp
-        net/Poller.cpp
-        net/NewDefaultPoller.cpp
-        net/Timestamp.cpp
-        net/RBTreeTimerManager.cpp
-        net/Timer.cpp
-        net/EventLoopThread.cpp
-        net/Acceptor.cpp
-        net/Socket.cpp
-        net/TcpConnection.cpp
-        net/TcpServer.cpp
-        net/EventLoopThreadPool.cpp
-        net/Connector.cpp
-        net/TcpClient.cpp
-        net/SocketApiWrapper.cpp
-        net/SelectPoller.cpp
-        net/FullDuplexPipe.cpp
-        net/NetBuffer.cpp
-)
+#set(LocalSrc
+#
+#)
+#
+##! 给本地相对路径添加前缀，变为绝对路径
+#foreach(LocalFile ${LocalSrc})
+#    list(PREPEND FullLocalSrc "${CMAKE_CURRENT_SOURCE_DIR}/${LocalFile}")
+#endforeach()
+#
+#
+#set(FullLocalSrc)
 
-#! 给本地相对路径添加前缀，变为绝对路径
-foreach(LocalFile ${LocalSrc})
-    list(PREPEND FullLocalSrc "${CMAKE_CURRENT_SOURCE_DIR}/${LocalFile}")
-endforeach()
+add_subdirectory(public)
+add_subdirectory(config)
+add_subdirectory(log)
+add_subdirectory(utils)
+add_subdirectory(net)
 
 #! 使用PARENT_SCOPE关键字是的子目录可以更改父目录的变量：这里是添加子目录源文件到父目录的变量中
 set(COMMON_SOURCES ${COMMON_SOURCES} ${FullLocalSrc} PARENT_SCOPE)

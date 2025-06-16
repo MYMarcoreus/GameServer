@@ -299,7 +299,7 @@ std::vector<TimerPtr> RBTreeTimerManager::GetExpiredTimers() {
 
     //! 因为这里能知道要删除的范围，所以在这里删除比较好一点，否则可以在ResetAndFreeExpiredTimers中统一删除，而非在这里删除
     m_TimerList.erase(m_TimerList.begin(), bound_end);
-    for(auto & expiredTimer: expiredTimers) {
+    for(const auto & expiredTimer: expiredTimers) {
         m_TimeridMap.erase(expiredTimer->GetID());
     }
 

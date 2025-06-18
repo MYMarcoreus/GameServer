@@ -133,29 +133,32 @@ uint8_t MessageHeader::GenerateXorCode() {
     return gen_val;
 }
 
-void MessageHeader::SetAllFieldsFromMessage(const google::protobuf::Message &message) {
+void MessageHeader::SetAllFieldsFromMessage(const google::protobuf::Message &message/*, const uint32_t cid*/) {
     SetCheckCode(config::g_app_config->GetValue().check_code());
 
+    // SetClientID(cid);
     std::string typeName = message.GetDescriptor()->full_name();
     SetTypeNameLength(typeName.length());
     SetTypeName(typeName);
 
-    int fullLen = MessageHeader::kMinHeaderLen + typeName.length() + message.ByteSizeLong();
+    const int fullLen = MessageHeader::kMinHeaderLen + typeName.length() + message.ByteSizeLong();
     SetFullLength(fullLen);
 }
 
 
 std::array<char, MessageHeader::kCheckCodeSize>
-MessageHeader::XorCheckCode(uint8_t xorCode) const {
+MessageHeader::XorCheckCode(const uint8_t xorCode) const {
     std::array<char, MessageHeader::kCheckCodeSize> result = m_CheckCode;
     result[0] ^= xorCode;
     result[1] ^= xorCode;
     return result;
 }
 
-uint32_t MessageHeader::XorFullLength(uint8_t xorCode) const { return m_FullLength ^ xorCode; }
+// uint32_t MessageHeader::XorClientID(const uint8_t xorCode) const { return m_ClientID ^ xorCode; }
 
-uint16_t MessageHeader::XorNameLength(uint8_t xorCode) const { return m_TypeNameLength ^ xorCode; }
+uint32_t MessageHeader::XorFullLength(const uint8_t xorCode) const { return m_FullLength ^ xorCode; }
+
+uint16_t MessageHeader::XorNameLength(const uint8_t xorCode) const { return m_TypeNameLength ^ xorCode; }
 
 std::string MessageHeader::XorTypeName(uint8_t xorCode) const {
     std::string val = m_TypeName;

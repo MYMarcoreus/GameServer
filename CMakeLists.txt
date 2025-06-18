@@ -79,7 +79,7 @@ endif()
 set(ProtocDirname ${CMAKE_SOURCE_DIR}/protobuf)
 
 include(cmake/ProtocGenCpp.cmake)
-ProtoGenCpp(ProtocDirname)
+ProtoGenCpp(${ProtocDirname})
 
 message(STATUS "Protobuf_FOUND = ${Protobuf_FOUND}")
 message(STATUS "Protobuf_VERSION = ${Protobuf_VERSION}")
@@ -118,7 +118,11 @@ include_directories(
 )
 
 
-set(COMMON_SOURCES)
+set(COMMON_SOURCES
+        game/gate/GateServer.cpp
+        game/gate/GateServer.h
+        game/gate/MessageDispatchManager.cpp
+        game/gate/MessageDispatchManager.h)
 # 调用子目录下的cmake
 add_subdirectory(base)
 add_subdirectory(core)

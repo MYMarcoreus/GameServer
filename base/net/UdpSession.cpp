@@ -3,8 +3,8 @@
 
 namespace yy::net {
 
-UdpSession::UdpSession(std::string name, UdpTransport &udpTran, const IPAddressPtr& peerAddr, const uint8_t xor_code)
-        : m_name(std::move(name)),
+UdpSession::UdpSession(uint64_t name, UdpTransport &udpTran, const IPAddressPtr& peerAddr, const uint8_t xor_code)
+        : m_tcpConnID(name),
         m_xorCode{xor_code},
         m_udpTran(udpTran),
         m_peerAddr(peerAddr)
@@ -16,7 +16,7 @@ UdpSession::~UdpSession() {
 
 }
 
-void UdpSession::SendUDP(const void *buf, size_t len) {
+void UdpSession::SendUDP(const void *buf, const size_t len) {
     m_udpTran.SendUDP(buf, len, m_peerAddr);
 }
 

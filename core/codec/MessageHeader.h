@@ -58,8 +58,10 @@ public:
 
     const auto & GetCheckCode() const { return m_CheckCode; }
 
+    // uint32_t GetClientID() const { return m_ClientID; }
+
     ///@brief 消息头+消息体长度
-    size_t GetFullLength() const { return m_FullLength; }
+    uint32_t GetFullLength() const { return m_FullLength; }
 
     uint16_t GetTypeNameLength() const { return m_TypeNameLength; }
 
@@ -77,26 +79,30 @@ public:
 
 private:
     ///@brief 设置首部结构的所有字段
-    void SetAllFieldsFromMessage(const google::protobuf::Message &message);
-    void SetFullLength    (uint32_t     value) { m_FullLength = value; }
-    void SetTypeNameLength(uint16_t     value) { m_TypeNameLength = value; }
+    void SetAllFieldsFromMessage(const google::protobuf::Message &message/*, uint32_t cid*/);
+    // void SetClientID    (const uint32_t     value) { m_ClientID = value; }
+    void SetFullLength    (const uint32_t     value) { m_FullLength = value; }
+    void SetTypeNameLength(const uint16_t     value) { m_TypeNameLength = value; }
     void SetTypeName(const std::string& typeName) { m_TypeName = typeName; }
 
     std::array<char, kCheckCodeSize> XorCheckCode(uint8_t xorCode) const;
+    // uint32_t    XorClientID(uint8_t xorCode) const;
     uint32_t    XorFullLength(uint8_t xorCode) const;
     uint16_t    XorNameLength(uint8_t xorCode) const;
     std::string XorTypeName(uint8_t xorCode) const;
 
 private:
-    std::array<char, kCheckCodeSize> m_CheckCode;    // 2B: 用于验证该包是否是我们规定的游戏协议包
-    uint32_t    m_FullLength;                // 4B: 指示整个包的长度
-    uint16_t    m_TypeNameLength;            // 2B: RPC类型
-    std::string m_TypeName;                  // TypeNameLength B：RPC名称
-                                             //... protobuf消息
+    std::array<char, kCheckCodeSize> m_CheckCode;      // 2B: 用于验证该包是否是我们规定的游戏协议包
+    // uint32_t                         m_ClientID;       // 4B：客户端ID
+    uint32_t                         m_FullLength;     // 4B: 指示整个包的长度
+    uint16_t                         m_TypeNameLength; // 2B: RPC类型
+    std::string                      m_TypeName;       // TypeNameLength B：RPC名称
+                                                       //... protobuf消息
 
 public:
     static constexpr int kMinHeaderLen =
             sizeof(MessageHeader::m_CheckCode) +
+            // sizeof(MessageHeader::m_ClientID) +
             sizeof(MessageHeader::m_FullLength) +
             sizeof(MessageHeader::m_TypeNameLength);
     static constexpr int kMaxHeaderLen = 128;

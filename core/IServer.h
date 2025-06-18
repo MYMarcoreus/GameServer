@@ -33,9 +33,9 @@ public:
     /// @brief 结束服务器
     virtual void Stop() = 0;
 
-    virtual UserConnectionPtr FindUser(const std::string & conn_name) = 0;
-    virtual void            DelUser(const std::string & conn_name) = 0;
-    virtual void            AddUser (const std::string & conn_name, const UserConnectionPtr &) = 0;
+    virtual UserConnectionPtr FindUser(uint64_t conn_id) = 0;
+    virtual void            DelUser(uint64_t conn_id) = 0;
+    virtual void            AddUser (uint64_t conn_id, const UserConnectionPtr &) = 0;
 
     virtual bool IsRunning() const = 0;
 

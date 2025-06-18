@@ -32,7 +32,7 @@ class TcpConnection: public std::enable_shared_from_this<TcpConnection> {
 
 public:
     ///@brief Acceptor接受用户连接后，在NewConnection回调函数（由TcpServer定义）中创建的数据结构
-    TcpConnection(std::string && name, EventLoop *loop, SocketApiWrapper::socket_t sockfd,
+    TcpConnection(uint64_t connid, EventLoop *loop, SocketApiWrapper::socket_t sockfd,
                   const IPAddress::ptr& localAddr, const IPAddress::ptr& peerAddr,
                   int32_t send_bytes_one, int32_t send_bytes_max, int32_t recv_bytes_one, int32_t recv_bytes_max,
                   uint8_t xor_code);
@@ -55,7 +55,7 @@ public:
 
 
     ///Region GETTER
-    const std::string &         GetName()          const { return m_name; }
+    uint64_t                    GetConnID()          const { return m_connid; }
     EventLoop *                 GetIOLoop()        const { return m_ioLoop; }
     const IPAddress::ptr &      GetLocalAddr()     const { return m_localAddr; }
     const IPAddress::ptr &      GetPeerAddr()      const { return m_peerAddr; }
@@ -110,7 +110,7 @@ private:
     int32_t m_recv_bytes_one;
     int32_t m_recv_bytes_max;
 
-    std::string                      m_name;
+    uint64_t                         m_connid;
     EventLoop *                      m_ioLoop;
     std::unique_ptr<Socket>          m_socket;
     std::unique_ptr<IOChannel>       m_channel;

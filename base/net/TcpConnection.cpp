@@ -17,7 +17,7 @@ using namespace yy::config;
 using yy::SocketApiWrapper::SocketError;
 
 
-TcpConnection::TcpConnection(std::string && name, EventLoop *loop, SocketApiWrapper::socket_t sockfd,
+TcpConnection::TcpConnection(uint64_t connid, EventLoop *loop, SocketApiWrapper::socket_t sockfd,
                              const IPAddress::ptr& localAddr, const IPAddress::ptr& peerAddr,
                              const int32_t send_bytes_one, const int32_t send_bytes_max, const int32_t recv_bytes_one, const int32_t recv_bytes_max,
                              const uint8_t xor_code)
@@ -25,10 +25,10 @@ TcpConnection::TcpConnection(std::string && name, EventLoop *loop, SocketApiWrap
       m_send_bytes_max(send_bytes_max),
       m_recv_bytes_one(recv_bytes_one),
       m_recv_bytes_max(recv_bytes_max),
-      m_name(std::move(name)),
+      m_connid(connid),
       m_ioLoop(loop),
       m_socket (std::make_unique<Socket>(sockfd, Socket::Type::TCP, Socket::Family::IPv4)),
-      m_channel(std::make_unique<IOChannel>(loop, sockfd, name)),
+      m_channel(std::make_unique<IOChannel>(loop, sockfd, std::to_string(connid))),
       m_xorCode{xor_code},
       m_localAddr(localAddr),
       m_peerAddr(peerAddr),
@@ -59,7 +59,7 @@ TcpConnection::~TcpConnection() {
     // m_Channel->DisableAllEvent();
     // m_Channel->RemoveFromLoop();
 
-    YLOG_DEBUG("连接<{}: {}>已被析构！", this->GetSocketFD(), m_name.c_str())
+    YLOG_DEBUG("连接<{}: {}>已被析构！", this->GetSocketFD(), m_connid)
 }
 
 SocketApiWrapper::socket_t TcpConnection::GetSocketFD() const {

@@ -86,7 +86,7 @@ public:
         answer.set_answerer("Server");
         answer.add_solution(now.ToString());
         answer.add_solution("Win!");
-        YLOG_INFO("即将向<{}:{}>发送Answer：\n{}", conn->GetSocketFD(), conn->GetName().c_str(), answer.DebugString().c_str())
+        YLOG_INFO("即将向<{}:{}>发送Answer：\n{}", conn->GetSocketFD(), conn->GetConnID(), answer.DebugString().c_str())
         codec_.SendTCP(conn, answer);
     }
 

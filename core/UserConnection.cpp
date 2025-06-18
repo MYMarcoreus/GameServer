@@ -22,7 +22,7 @@ UserConnection::UserConnection(net::TcpConnectionPtr conn, ProtobufTcpCodec & tc
 
 void UserConnection::Shutdown() { m_tcpChannel->Shutdown(); }
 
-const std::string &UserConnection::GetConnName() const { return m_tcpChannel->GetName(); }
+uint64_t UserConnection::GetConnID() const { return m_tcpChannel->GetConnID(); }
 
 
 void UserConnection::SendTCP(const MessagePtr &message) {

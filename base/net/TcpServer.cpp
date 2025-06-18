@@ -118,10 +118,11 @@ void TcpServer::HandleNewConnection(SocketApiWrapper::socket_t sockfd, IPAddress
     IPAddressPtr localAddr = SocketApiWrapper::GetLocalAddr(sockfd);
 
     //! 以"连接时间:连接编号"作为连接的唯一标记，相同连接时间的连接编号一定不同
-    auto name = std::format("{:020}-{:011}", Timestamp::Now().GetMircoSecondSinceEpoch().count(), m_NextConnID++);
+    // auto name = std::format("{:020}-{:011}", Timestamp::Now().GetMircoSecondSinceEpoch().count(), m_NextConnID++);
+    auto connid = m_NextConnID++;
 
     TcpConnectionPtr conn = std::make_shared<TcpConnection>(
-            std::move(name),
+            connid,
             ioLoop,
             sockfd,
             localAddr,
@@ -132,7 +133,7 @@ void TcpServer::HandleNewConnection(SocketApiWrapper::socket_t sockfd, IPAddress
             m_recv_bytes_max,
             m_xorCode
     );
-    m_ConnectionMap[conn->GetName()] = conn;
+    m_ConnectionMap[conn->GetConnID()] = conn;
 
     // YLOG_INFO("连接[{}], {}", name, name.size());
 
@@ -147,7 +148,7 @@ void TcpServer::HandleNewConnection(SocketApiWrapper::socket_t sockfd, IPAddress
     //!
     conn->GetIOLoop()->RunCallbackInLoop([conn](){ conn->ConnectionEstablished(); });
 
-    YLOG_INFO("In TcpServer::HandleNewConnection<{}:{}>，PeerAddr<{},{}>", conn->GetSocketFD(), conn->GetName().c_str(),
+    YLOG_INFO("In TcpServer::HandleNewConnection<{}:{}>，PeerAddr<{},{}>", conn->GetSocketFD(), conn->GetConnID(),
               conn->GetPeerAddr()->GetIPStr().c_str(), conn->GetPeerAddr()->GetPortStr().c_str());
 
     ++m_NumConnect;
@@ -161,7 +162,7 @@ void TcpServer::RemoveConnection(const TcpConnectionPtr &conn) {
 void TcpServer::RemoveConnectionInLoop(TcpConnectionPtr conn) {
     m_AcceptorLoop->AssertInLoopingThread();
 
-    m_ConnectionMap.erase(conn->GetName());
+    m_ConnectionMap.erase(conn->GetConnID());
     --m_NumConnect;
 
     conn->GetIOLoop()->EnqueueCallbackInLoop([conn](){ conn->ConnectionDestroyed(); });

@@ -96,6 +96,12 @@ public:
         return element_ptr;
     }
 
+    void swap(BoundedLockedQueue & other)
+    {
+        std::lock_guard lock{m_mutex};
+        std::swap(m_queue, other.m_queue);
+    }
+
     [[nodiscard]] bool empty() const
     {
         std::lock_guard lock{m_mutex};

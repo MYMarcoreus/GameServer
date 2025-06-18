@@ -5,8 +5,7 @@ package yy.protocol.app;
 
 message PlayerBaseData
 {
-    uint32     uid         = 1;
-    bytes      conn_name   = 2;
+    uint64     uid         = 1;
     int32      state       = 3;
     int32      hp_current  = 4;
     int32      hp_max      = 5;
@@ -29,63 +28,64 @@ message PlayerJumpAndGravity
 }
 
 //! 客户端发送和接收
-message PlayerLeave
+message C2SPlayerLeave
 {
-    uint32   leaver_uid = 1;
+    uint64   leaver_uid = 1;
 };
 
 
 //! 客户端发送自己的移动数据，服务端验证，然后返回让客户端接收
-message SelfMovement
+message C2SMove
 {
-    uint32      uid = 1;
+    uint64      uid = 1;
     PlayerMove movement = 2;
 }
 //! 客户端接收其它玩家的移动
-message OtherMovement
+message S2CMove
 {
-    uint32      uid = 1;
+    uint64      uid = 1;
     PlayerMove  movement = 2;
 }
 
 
 //! 客户端发送自己的跳跃数据，服务端验证，然后返回让客户端接收
-message SelfJumpAndGravity
+message C2SJumpAndGravity
 {
-    uint32      uid = 1;
+    uint64      uid = 1;
     PlayerJumpAndGravity jump_and_gravity = 2;
 }
 //! 客户端接收其它玩家的跳跃
-message OtherJumpAndGravity
+message S2CJumpAndGravity
 {
-    uint32      uid = 1;
+    uint64      uid = 1;
     PlayerJumpAndGravity jump_and_gravity = 2;
 }
 
 
-//! 客户端的登录请求
-message LoginRequest
+//! 客户端登录成功申请进入场景
+message C2SEnterScene
 {
-    bytes  conn_name   = 1;
+    uint64  uid   = 1;
 }
 //! 服务器端返回给客户端的登录结果
-message LoginResponse
+message S2CEnterScene
 {
-    bool result = 1;
-    PlayerBaseData self_data = 2;
-    repeated PlayerBaseData other_datas = 3;
+    uint64  uid = 1;
+    bool   result = 2;
+    PlayerBaseData self_data = 3;
+    repeated PlayerBaseData other_datas = 4;
 }
 
 
 //! 如果收到其它玩家的移动或跳跃数据，但是没有该玩家的基础数据，则先请求之
-message OtherPlayerDataRequest
+message C2SOtherPlayerData
 {
-    uint32     requester_uid        = 1;
-    uint32     requested_uid        = 2;
+    uint64     requester_uid        = 1;
+    uint64     requested_uid        = 2;
 }
 
 //! 如果收到其它玩家的移动或跳跃数据，但是没有该玩家的基础数据，则先请求之
-message OtherPlayerDataResponse
+message S2COtherPlayerData
 {
     PlayerBaseData other_data = 1;
 }

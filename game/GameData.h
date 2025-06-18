@@ -10,7 +10,7 @@
 namespace yy::app {
 
 
-using UID_t = uint32_t;
+using UID_t = uint64_t;
 
 template<class T>
 using Ptr = std::shared_ptr<T>;

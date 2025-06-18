@@ -21,7 +21,8 @@ ProtobufUdpCodec::ProtobufUdpCodec(ProtobufUdpCodec::F_ProtobufMessageDispatchCa
 { }
 
 
-MessagePtr ProtobufUdpCodec::Parse(const UdpSessionPtr & udpSession, NetBuffer &buf, MessageParseErrorCode & outErrCode) {
+std::pair<MessageHeader, MessagePtr> ProtobufUdpCodec::Parse(const UdpSessionPtr& udpSession, NetBuffer& buf, MessageParseErrorCode& outErrCode)
+{
     MessageHeader header;
 
     //! 解析消息头
@@ -45,10 +46,10 @@ MessagePtr ProtobufUdpCodec::Parse(const UdpSessionPtr & udpSession, NetBuffer &
             outErrCode = MessageParseErrorCode::eUnkonwnMessage;
         }
     } else {
-        YLOG_ERROR("解析消息头失败<{}>，{}", udpSession->GetName().c_str(), ToString(outErrCode).c_str())
+        YLOG_ERROR("解析消息头失败<{}>，{}", udpSession->GetName(), ToString(outErrCode).c_str())
     }
 
-    return message;
+    return {header, message};
 }
 
 
@@ -60,7 +61,7 @@ void ProtobufUdpCodec::OnData(const UdpSessionPtr & udpSession, NetBuffer & buf)
         MessageParseErrorCode errCode;
 
         //! 解析消息头，获得消息体
-        MessagePtr message = Parse(udpSession, buf, errCode);
+        auto [header, message] = Parse(udpSession, buf, errCode);
         bool isDone = false;
         switch (errCode) {
             //! 消息未接收完全

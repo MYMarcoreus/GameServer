@@ -12,6 +12,22 @@ using namespace std::chrono_literals;
 namespace yy::app {
 
 
+GameManager::GameManager():
+      m_server{},
+      m_player{},
+      m_test{},
+      m_dispatcher{[this](const core::UserConnectionPtr& userdata, const core::MessagePtr& message) { this->UnkonwnCommand(userdata, message); }},
+      m_accpetorLoop{},
+      m_wordThreads("Game Work Thread")
+{
+}
+
+GameManager::~GameManager() {
+    m_server->Stop();
+
+    delete m_server;
+    delete m_accpetorLoop;
+}
 
 
 void GameManager::AppNotifier_Secutiry(const core::UserConnectionPtr& userdata) {
@@ -87,7 +103,7 @@ void GameManager::Init()
             config::g_app_config->GetValue().app_tcp_port());
 
     //! ⑤、初始化服务器对象（③和④）
-    m_server = new core::LogicServer(m_accpetorLoop, listenAddr);
+    m_server = new LogicServer(m_accpetorLoop, listenAddr);
     m_server->SetNotifier_Security(
         [this](const core::UserConnectionPtr& userdata) {
             this->AppNotifier_Secutiry(userdata);
@@ -116,23 +132,5 @@ void GameManager::StartListenAndIOLoop()
     m_server->Start();
 }
 
-GameManager::GameManager()
-    : m_wordThreads("Game Work Thread"),
-      m_server{},
-      m_player{},
-      m_test{},
-      m_dispatcher{[this](const core::UserConnectionPtr& userdata, const core::MessagePtr& message) { this->UnkonwnCommand(userdata, message); }},
-      m_accpetorLoop{}
-{
-
-
-}
-
-GameManager::~GameManager() {
-    m_server->Stop();
-
-    delete m_server;
-    delete m_accpetorLoop;
-}
 
 }

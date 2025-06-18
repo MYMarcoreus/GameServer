@@ -28,19 +28,19 @@ private:
     ~GamePlayerManager() override;
 
     /// @brief 玩家发来登录请求，验证，然后将储存的游戏数据发送回玩家
-    void OnLogin(const UserConnectionPtr& userdata, const Ptr<protocol::app::LoginRequest> & request);
+    void OnEnterScene(const UserConnectionPtr& userdata, const Ptr<protocol::app::C2SEnterScene> & request);
 
     /// @brief 玩家退出
-    void OnLeave(const UserConnectionPtr& userdata_self, const Ptr<protocol::app::PlayerLeave> & leave);
+    void OnLeave(const UserConnectionPtr& userdata_self, const Ptr<protocol::app::C2SPlayerLeave> & leave);
 
     /// @brief 玩家移动
-    void OnSelfMovement (const UserConnectionPtr& userdata_self, const Ptr<protocol::app::SelfMovement> &selfmove);
+    void OnC2SMove (const UserConnectionPtr& userdata_self, const Ptr<protocol::app::C2SMove> &selfmove);
 
     /// @brief　玩家申请获取另一玩家的数据
-    void OnOtherPlayerDataRequest(const UserConnectionPtr& userdata_self, const Ptr<protocol::app::OtherPlayerDataRequest> &request);
+    void OnC2SOtherPlayerData(const UserConnectionPtr& userdata_self, const Ptr<protocol::app::C2SOtherPlayerData> &request);
 
     /// @brief 玩家跳跃
-    void OnSelfJumpAndGravity(const UserConnectionPtr& userdata_self, const Ptr<protocol::app::SelfJumpAndGravity> &selfJumpAndGravity);
+    void OnC2SJumpAndGravity(const UserConnectionPtr& userdata_self, const Ptr<protocol::app::C2SJumpAndGravity> &selfJumpAndGravity);
 
     Ptr<yy::protocol::app::PlayerBaseData> FindPlayerByUID(UID_t onlineid);
 
@@ -50,6 +50,7 @@ private:
 
 private:
     yy::core::IServer *                                                 m_server;
+    std::unordered_map<UID_t,  uint64_t>                                m_uid_to_connid;
     std::unordered_map<UID_t,  Ptr<yy::protocol::app::PlayerBaseData>>  m_online_players;
     std::mutex                                                          m_online_players_mutex;
 

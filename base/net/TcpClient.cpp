@@ -76,10 +76,11 @@ void TcpClient::NewConnection(SocketApiWrapper::socket_t sockfd) {
     IPAddressPtr localAddr = SocketApiWrapper::GetLocalAddr(sockfd);
     IPAddressPtr peerAddr = SocketApiWrapper::GetPeerAddr(sockfd);
 
-    auto name = std::format("{}:{}", Timestamp::Now().GetMircoSecondSinceEpoch().count(), m_NextConnID++);
+    // auto name = std::format("{}:{}", Timestamp::Now().GetMircoSecondSinceEpoch().count(), m_NextConnID++);
+    auto connid = m_NextConnID++;
 
     TcpConnectionPtr conn = std::make_shared<TcpConnection>(
-            std::move(name),
+            connid,
             m_Loop,
             sockfd,
             localAddr,

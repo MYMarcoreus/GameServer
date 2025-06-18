@@ -3,6 +3,7 @@
 
 #include "noncopyable.h"
 #include "core_definations.h"
+#include "MessageHeader.h"
 #include "net_definations.h"
 
 namespace google::protobuf {
@@ -49,7 +50,7 @@ class ProtobufUdpCodec: public util::noncopyable {
     using F_ProtobufErrorMessageCallback = std::function<void(const net::UdpSessionPtr &, yy::net::NetBuffer &, MessageParseErrorCode)>;
 
 public:
-    ProtobufUdpCodec(F_ProtobufMessageDispatchCallback msgCb, F_ProtobufErrorMessageCallback errCb = DefaultErrorCallback);
+    explicit ProtobufUdpCodec(F_ProtobufMessageDispatchCallback msgCb, F_ProtobufErrorMessageCallback errCb = DefaultErrorCallback);
 
     ///@brief TcpConnection接收字节流到输入缓冲以后调用的回调函数，该函数用于处理字节流，解析并创建出消息，然后传递消息给ProtobufDispatcher
     void OnData(const yy::net::UdpSessionPtr & udpSession, yy::net::NetBuffer &buf);
@@ -59,7 +60,7 @@ public:
 
 private:
     ///@brief 解析Buffer中的二进制数据，将其解析为protobuf的Message
-    MessagePtr Parse(const yy::net::UdpSessionPtr & udpSession, yy::net::NetBuffer &buf, MessageParseErrorCode & outErrCode);
+    std::pair<MessageHeader, MessagePtr> Parse(const yy::net::UdpSessionPtr& udpSession, yy::net::NetBuffer& buf, MessageParseErrorCode& outErrCode);
 
     static void DefaultErrorCallback(const yy::net::UdpSessionPtr & udpSession, yy::net::NetBuffer & buf, MessageParseErrorCode);
 

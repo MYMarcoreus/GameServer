@@ -31,7 +31,7 @@ package yy.protocol.core;
 /*********** 消息体 ***********/
 
 
-message XorBody {
+message S2CXorBody {
     uint32 xor_code = 1;
 }
 
@@ -40,12 +40,12 @@ message HeartBody
 
 }
 
-message SecurityBody {
+message C2SSecurityBody {
     uint32 app_id      = 1;
     uint32 app_version = 2;
     string app_md5     = 3;
 }
-message ResultBody {
+message S2CSecurityBody {
     enum ResultCode {
         eSuccess          = 0;
         eAppVersionFailed = 1;
@@ -53,15 +53,15 @@ message ResultBody {
     }
     ResultCode result_code  = 1;
     optional uint32 server_udp_port  = 2;
-    optional string session_id = 3; // 长度为32的连接标识，仅在 eSuccess 时使用
+    optional uint64 session_id = 3; // 长度为32的连接标识，仅在 eSuccess 时使用
 }
 
-message UdpPortRegisterRequest  {
-    string session_id = 1;
+message C2SUdpPortRegister  {
+    uint64 session_id = 1;
     string client_udp_ip  = 2;
     uint32 client_udp_port  = 3;
 }
-message UdpPortRegisterResponse {
+message S2CUdpPortRegister {
     enum Status {
         eSuccess = 0;
         eInvalidPort = 1;
@@ -69,3 +69,5 @@ message UdpPortRegisterResponse {
     }
     Status status = 1;
 }
+
+//message S2SMessageRegister

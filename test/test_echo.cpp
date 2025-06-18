@@ -50,7 +50,7 @@ private:
     void onMessage(TcpConnectionPtr conn, NetBuffer& recvBuf)
     {
         YLOG_INFO("▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲处理用户<%d: %s>的消息<%zu>",
-                  conn->GetSocketFD(), conn->GetName().c_str(), recvBuf.GetDataSize())
+                  conn->GetSocketFD(), conn->GetConnID().c_str(), recvBuf.GetDataSize())
 
         std::string message = recvBuf.PopAllDataAsString();
 

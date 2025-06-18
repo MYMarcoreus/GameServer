@@ -80,7 +80,7 @@ private:
  // F_ConnectionCloseCallback            m_ConnectionCloseCallback;  // 不允许让用户指定close回调
     F_ConnectionShutdownCallback         m_ConnectionShutdownCallback;
 
-    std::unordered_map<std::string , TcpConnectionPtr> m_ConnectionMap;
+    std::unordered_map<uint64_t , TcpConnectionPtr> m_ConnectionMap;
 
 #ifdef ____LINUX
     std::unique_ptr<class SignalManager> m_SignalManager;

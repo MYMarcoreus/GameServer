@@ -1,5 +1,5 @@
-#ifndef GAMESERVER_GAMESERVER_H
-#define GAMESERVER_GAMESERVER_H
+#ifndef GATESERVER_H
+#define GATESERVER_H
 
 #include "IServer.h"
 #include "TcpServer.h"
@@ -10,6 +10,7 @@
 #include "net_definations.h"
 #include "ThreadPool.h"
 #include <future>
+
 
 
 namespace yy::protocol::core {
@@ -24,14 +25,14 @@ using yy::core::MessagePtr;
 namespace yy::app {
 
 
-class LogicServer final: public core::IServer{
+class GateServer final: public core::IServer{
     using HeartPtr    = std::shared_ptr<yy::protocol::core::HeartBody> ;
     using C2SSecurityPtr = std::shared_ptr<yy::protocol::core::C2SSecurityBody> ;
     using C2SUdpPortRegisterPtr = std::shared_ptr<yy::protocol::core::C2SUdpPortRegister> ;
 
 public:
-    LogicServer(yy::net::EventLoop* accpetorLoop, const yy::net::IPAddressPtr& listenAddr);
-    ~LogicServer() override;
+    GateServer(yy::net::EventLoop* accpetorLoop, const yy::net::IPAddressPtr& listenAddr);
+    ~GateServer() override;
 
     /// @brief Start Listen & IOLoop
     virtual void Start() override;
@@ -58,11 +59,6 @@ public:
     virtual net::TimerID RunEvery(net::Microseconds interval, net::F_TaskCallback cb) override;
     virtual void CancelTimer(net::TimerID timerid) override;
 
-    // template<typename T>
-    // void RegisterMessageCallback(const CallbackT<T>::ProtobufMessageTCallback &callback) {
-    //     m_dispatcher.RegisterMessageCallback<T>(callback);
-    // }
-
 private:
     void OnUnknownTcpMessage(const net::TcpConnectionPtr &conn, const MessagePtr& message);
     void OnUnknownUdpMessage(const net::UdpSessionPtr &conn, const MessagePtr& message);
@@ -75,7 +71,7 @@ private:
     void OnTcpHeart(const yy::net::TcpConnectionPtr &conn, const HeartPtr & message);
     void OnUdpHeart(const yy::net::UdpSessionPtr &conn, const HeartPtr & message);
     void OnSecurity(const net::TcpConnectionPtr & conn, const C2SSecurityPtr & message);
-    void OnC2SUdpPortRegister(const net::TcpConnectionPtr & conn, const C2SUdpPortRegisterPtr & message);
+    void OnUdpPortRegisterRequest(const net::TcpConnectionPtr & conn, const C2SUdpPortRegisterPtr & message);
 
     void AfterShutdownConnection(const yy::net::TcpConnectionPtr &conn);
 
@@ -104,5 +100,4 @@ private:
 
 }
 
-#endif //GAMESERVER_GAMESERVER_H
-
+#endif //GATESERVER_H

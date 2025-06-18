@@ -61,7 +61,8 @@ public:
 
 private:
     ///@brief 解析Buffer中的二进制数据，将其解析为protobuf的Message
-    MessagePtr Parse(const yy::net::TcpConnectionPtr &conn, yy::net::NetBuffer &buf, MessageParseErrorCode & outErrCode);
+    std::pair<MessageHeader, MessagePtr> Parse(const yy::net::TcpConnectionPtr& conn, yy::net::NetBuffer& buf,
+                                               MessageParseErrorCode& outErrCode);
 
     static void DefaultErrorCallback(const yy::net::TcpConnectionPtr & conn, yy::net::NetBuffer & buf, MessageParseErrorCode);
 

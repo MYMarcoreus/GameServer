@@ -20,13 +20,14 @@ ProtobufTcpCodec::ProtobufTcpCodec(const ProtobufTcpCodec::F_ProtobufMessageDisp
 { }
 
 
-MessagePtr ProtobufTcpCodec::Parse(const TcpConnectionPtr &conn, NetBuffer &buf, MessageParseErrorCode & outErrCode) {
+std::pair<MessageHeader, MessagePtr> ProtobufTcpCodec::Parse(const TcpConnectionPtr& conn, NetBuffer& buf, MessageParseErrorCode& outErrCode)
+{
     MessageHeader header;
 
     //! 解析消息头
     outErrCode = header.ParseFromBuffer(buf, conn->GetXorCode());
     if(outErrCode != MessageParseErrorCode::eNoError) {
-        YLOG_ERROR("解析消息头失败<{}:{}>，{}", conn->GetSocketFD(), conn->GetName().c_str(), ToString(outErrCode).c_str())
+        YLOG_ERROR("解析消息头失败<{}:{}>，{}", conn->GetSocketFD(), conn->GetConnID(), ToString(outErrCode).c_str())
     }
 
     //! 解析消息体
@@ -44,7 +45,7 @@ MessagePtr ProtobufTcpCodec::Parse(const TcpConnectionPtr &conn, NetBuffer &buf,
         outErrCode = MessageParseErrorCode::eUnkonwnMessage;
     }
 
-    return message;
+    return {header, message};
 }
 
 
@@ -56,7 +57,7 @@ void ProtobufTcpCodec::OnData(const TcpConnectionPtr &conn, NetBuffer &buf) {
         MessageParseErrorCode errCode;
 
         //! 解析消息头，获得消息体
-        MessagePtr message = Parse(conn, buf, errCode);
+        auto [header, message] = Parse(conn, buf, errCode);
         bool isDone = false;
         switch (errCode) {
             //! 消息未接收完全

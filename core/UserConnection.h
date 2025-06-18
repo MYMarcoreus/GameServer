@@ -66,7 +66,7 @@ public:
     bool IsNeedSave() const { return m_state == E_UserBaseState::eSavingData; }
 
     uint32_t GetUID() const { return m_uid; }
-    const std::string & GetConnName() const;
+    uint64_t GetConnID() const;
     SocketApiWrapper::socket_t GetSocketFD() const;
     ///End GETTER
 

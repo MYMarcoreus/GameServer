@@ -105,7 +105,7 @@ private:
         query.add_question("What time?");
         // Empty empty;
         const google::protobuf::Message* messageToSend = &query;
-        YLOG_INFO("即将向<{}: {}>发送Query[{} Byte]：\n{}", conn->GetSocketFD(), conn->GetName().c_str(), query.ByteSizeLong(), query.DebugString().c_str());
+        YLOG_INFO("即将向<{}: {}>发送Query[{} Byte]：\n{}", conn->GetSocketFD(), conn->GetConnID(), query.ByteSizeLong(), query.DebugString().c_str());
         codec_.SendTCP(conn, *messageToSend);
     }
 

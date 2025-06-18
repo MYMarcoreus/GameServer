@@ -1,4 +1,4 @@
-#include "LogicServer.h"
+#include "GateServer.h"
 #include "TcpConnection.h"
 #include "UdpSession.h"
 #include "log.h"
@@ -16,7 +16,7 @@ using yy::core::MessageHeader;
 
 namespace yy::app {
 
-LogicServer::LogicServer(EventLoop *accpetorLoop, const IPAddressPtr& listenAddr) :
+GateServer::GateServer(EventLoop *accpetorLoop, const IPAddressPtr& listenAddr) :
     m_appConfigvar(yy::config::g_app_config),
     m_accpetorLoop{accpetorLoop},
     m_tcpServer(accpetorLoop, listenAddr, true,
@@ -43,10 +43,12 @@ LogicServer::LogicServer(EventLoop *accpetorLoop, const IPAddressPtr& listenAddr
         m_udpDispatcher.OnProtobufMessage(conn, msg);
     })
 {
-    //! TCP消息回调注册
+    //! 消息回调注册
     m_tcpDispatcher.RegisterMessageCallback<yy::protocol::core::HeartBody>( [this](const TcpConnectionPtr& conn, const HeartPtr& msg) { this->OnTcpHeart(conn, msg); });
     m_tcpDispatcher.RegisterMessageCallback<yy::protocol::core::C2SSecurityBody>( [this](const TcpConnectionPtr& conn, const C2SSecurityPtr& msg) { this->OnSecurity(conn, msg); });
-    m_tcpDispatcher.RegisterMessageCallback<yy::protocol::core::C2SUdpPortRegister>( [this](const TcpConnectionPtr& conn, const C2SUdpPortRegisterPtr& msg) { this->OnC2SUdpPortRegister(conn, msg); });
+    m_tcpDispatcher.RegisterMessageCallback<yy::protocol::core::C2SUdpPortRegister>( [this](const TcpConnectionPtr& conn, const C2SUdpPortRegisterPtr& msg) { this->OnUdpPortRegisterRequest(conn, msg); });
+    m_udpDispatcher.RegisterMessageCallback<yy::protocol::core::HeartBody>( [this](const UdpSessionPtr& conn, const HeartPtr& msg) { this->OnUdpHeart(conn, msg); });
+
 
     m_tcpServer.SetMessageCallback(
         [this](const TcpConnectionPtr& conn, NetBuffer& buf) {
@@ -63,9 +65,6 @@ LogicServer::LogicServer(EventLoop *accpetorLoop, const IPAddressPtr& listenAddr
             this->AfterShutdownConnection(conn);
         });
 
-    //! UDP消息回调注册
-    m_udpDispatcher.RegisterMessageCallback<yy::protocol::core::HeartBody>( [this](const UdpSessionPtr& conn, const HeartPtr& msg) { this->OnUdpHeart(conn, msg); });
-
     m_udpServer.SetMessageCallback(
         [this](const UdpSessionPtr& conn, NetBuffer& buf) {
             m_udpCodec.OnData(conn, buf);
@@ -73,36 +72,36 @@ LogicServer::LogicServer(EventLoop *accpetorLoop, const IPAddressPtr& listenAddr
 }
 
 
-LogicServer::~LogicServer() {
+GateServer::~GateServer() {
     Stop();
 }
 
-void LogicServer::Start() {
+void GateServer::Start() {
     m_tcpServer.Start(config::g_app_config->GetValue().tcp_io_thread_num(), 500ms);
     m_udpServer.Start(1, 500ms);
     m_accpetorLoop->RunEvery(1s, [](){ YLOG_INFO("测试！！！"); });
 }
 
-void LogicServer::Stop() {
+void GateServer::Stop() {
     m_accpetorLoop->QuitLoop();
 }
 
 
-void LogicServer::OnUnknownTcpMessage(const TcpConnectionPtr & conn, const MessagePtr &message) {
+void GateServer::OnUnknownTcpMessage(const TcpConnectionPtr & conn, const MessagePtr &message) {
     YLOG_TRACE("游戏消息：{}，交由业务层", message->GetDescriptor()->full_name());
 
     // 执行业务层回调，分发消息
     m_NotifierCommand(FindUser(conn->GetConnID()), message);
 }
 
-void LogicServer::OnUnknownUdpMessage(const UdpSessionPtr & conn, const MessagePtr &message) {
+void GateServer::OnUnknownUdpMessage(const UdpSessionPtr & conn, const MessagePtr &message) {
     YLOG_TRACE("游戏消息：{}，交由业务层", message->GetDescriptor()->full_name());
 
     // 执行业务层回调，分发消息
     m_NotifierCommand(FindUser(conn->GetName()), message);
 }
 
-void LogicServer::OnConnectionEstablished(const TcpConnectionPtr  & conn) {
+void GateServer::OnConnectionEstablished(const TcpConnectionPtr  & conn) {
     YLOG_INFO("███████████████████连接成功<{}:{}, {}>！",
               conn->GetPeerAddr()->GetIPStr().c_str(), conn->GetPeerAddr()->GetPort(), conn->GetSocketFD());
 
@@ -112,7 +111,7 @@ void LogicServer::OnConnectionEstablished(const TcpConnectionPtr  & conn) {
     SendXorCode(conn);
 }
 
-void LogicServer::AddCheckTimer(const TcpConnectionPtr & conn, const UserConnectionPtr & userdata) {
+void GateServer::AddCheckTimer(const TcpConnectionPtr & conn, const UserConnectionPtr & userdata) {
     /* ***** 需要是弱引用，不能因为这个回调函数延长TcpConnection的生命周期 ***** */
     //! ①检查是否在指定时间内完成安全连接的认证，若未认证，则关闭连接
     conn->GetIOLoop()->RunAfter(Seconds{GetAppConfig().time_security_max()},
@@ -136,7 +135,7 @@ void LogicServer::AddCheckTimer(const TcpConnectionPtr & conn, const UserConnect
     });
 }
 
-void LogicServer::CheckHeart(const UserConnectionPtr & userdata) {
+void GateServer::CheckHeart(const UserConnectionPtr & userdata) {
     const auto & conn = userdata->GetConnection();
     if(!conn->IsConnected() or Timestamp::Now() - conn->GetHeartTime() > Seconds{m_appConfigvar->GetValue().time_heart_max()}) {
         YLOG_WARN("<{}>主线程Update_CheckDisconnetion: 用户心跳包超时，关闭用户连接！", conn->GetSocketFD());
@@ -154,7 +153,7 @@ void LogicServer::CheckHeart(const UserConnectionPtr & userdata) {
     }
 }
 
-void LogicServer::SendXorCode(const TcpConnectionPtr &conn) {
+void GateServer::SendXorCode(const TcpConnectionPtr &conn) {
     // 发送随机生成的异或码给用户，之后的通信都用该异或码进行加密
     auto gen_val = MessageHeader::GenerateXorCode();
     yy::protocol::core::S2CXorBody xorBody;
@@ -172,7 +171,7 @@ void LogicServer::SendXorCode(const TcpConnectionPtr &conn) {
 
 
 
-void LogicServer::OnTcpHeart(const TcpConnectionPtr & conn, const HeartPtr & message) {
+void GateServer::OnTcpHeart(const TcpConnectionPtr & conn, const HeartPtr & message) {
     assert(conn != nullptr);
     YLOG_DEBUG("收到TCP心跳包");
     // 只需发一个只有消息头的包
@@ -180,7 +179,7 @@ void LogicServer::OnTcpHeart(const TcpConnectionPtr & conn, const HeartPtr & mes
     m_tcpCodec.SendTCP(conn, heartBody);
 }
 
-void LogicServer::OnUdpHeart(const UdpSessionPtr & conn, const HeartPtr & message) {
+void GateServer::OnUdpHeart(const UdpSessionPtr & conn, const HeartPtr & message) {
     assert(conn != nullptr);
     YLOG_DEBUG("收到UDP心跳包");
     // 只需发一个只有消息头的包
@@ -188,7 +187,7 @@ void LogicServer::OnUdpHeart(const UdpSessionPtr & conn, const HeartPtr & messag
     m_udpCodec.SendUDP(conn, heartBody);
 }
 
-void LogicServer::OnSecurity(const TcpConnectionPtr & conn, const C2SSecurityPtr & message)
+void GateServer::OnSecurity(const TcpConnectionPtr & conn, const C2SSecurityPtr & message)
 {
     assert(conn != nullptr);
 
@@ -235,7 +234,7 @@ void LogicServer::OnSecurity(const TcpConnectionPtr & conn, const C2SSecurityPtr
     }
 }
 
-void LogicServer::OnC2SUdpPortRegister(const TcpConnectionPtr & conn, const C2SUdpPortRegisterPtr & message)
+void GateServer::OnUdpPortRegisterRequest(const TcpConnectionPtr & conn, const C2SUdpPortRegisterPtr & message)
 {
     if(message->session_id() != conn->GetConnID()) {
         YLOG_INFO("<{}>客户端会话ID验证错误", conn->GetConnID())
@@ -259,25 +258,25 @@ void LogicServer::OnC2SUdpPortRegister(const TcpConnectionPtr & conn, const C2SU
 
 
 
-net::TimerID LogicServer::RunAt(net::Timestamp time, net::F_TaskCallback cb) {
+net::TimerID GateServer::RunAt(net::Timestamp time, net::F_TaskCallback cb) {
     return m_accpetorLoop->RunAt(time, std::move(cb));
 }
 
-net::TimerID LogicServer::RunAfter(net::Microseconds delay, net::F_TaskCallback cb) {
+net::TimerID GateServer::RunAfter(net::Microseconds delay, net::F_TaskCallback cb) {
     return m_accpetorLoop->RunAfter(delay, std::move(cb));
 }
 
-net::TimerID LogicServer::RunEvery(net::Microseconds interval, net::F_TaskCallback cb) {
+net::TimerID GateServer::RunEvery(net::Microseconds interval, net::F_TaskCallback cb) {
     return m_accpetorLoop->RunEvery(interval, std::move(cb));
 }
 
-void LogicServer::CancelTimer(net::TimerID timerid) {
+void GateServer::CancelTimer(net::TimerID timerid) {
     m_accpetorLoop->CancelTimer(timerid);
 }
 
 
 
-void LogicServer::AfterShutdownConnection(const TcpConnectionPtr & conn) {
+void GateServer::AfterShutdownConnection(const TcpConnectionPtr & conn) {
     //! 应用层处理
     if(m_NotifierDisconnect)
         m_NotifierDisconnect(FindUser(conn->GetConnID()));
@@ -285,20 +284,20 @@ void LogicServer::AfterShutdownConnection(const TcpConnectionPtr & conn) {
 
 
 
-UserConnectionPtr LogicServer::FindUser(uint64_t conn_id) {
+UserConnectionPtr GateServer::FindUser(uint64_t conn_id) {
     std::lock_guard lg{m_usersMutex};
 
     const auto it = m_users.find(conn_id);
     return (it == m_users.end()) ? nullptr : it->second;
 }
 
-void LogicServer::DelUser(uint64_t conn_id) {
+void GateServer::DelUser(uint64_t conn_id) {
     std::lock_guard lg{m_usersMutex};
 
     m_users.erase(conn_id);
 }
 
-void LogicServer::AddUser(uint64_t conn_id, const UserConnectionPtr & userdata) {
+void GateServer::AddUser(uint64_t conn_id, const UserConnectionPtr & userdata) {
     std::lock_guard lg{m_usersMutex};
 
     m_users[conn_id] = userdata;

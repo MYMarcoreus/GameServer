@@ -226,7 +226,7 @@ public:
     //     } catch (std::exception& e) {
     //         std::cerr << "ConfigVar::toString exception "
     //                   << e.what() << " convert: " << TypeToName<T>() << " to string"
-    //                   << " m_TypeName=" << m_name;
+    //                   << " m_TypeName=" << m_connid;
     //     }
     //     return "";
     // }

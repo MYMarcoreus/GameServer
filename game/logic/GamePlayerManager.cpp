@@ -7,17 +7,17 @@ using namespace yy::core;
 using namespace yy::util;
 using yy::net::TcpConnectionPtr;
 
-using yy::protocol::app::LoginRequest;
-using yy::protocol::app::OtherPlayerDataRequest;
-using yy::protocol::app::SelfMovement;
-using yy::protocol::app::SelfJumpAndGravity;
-using yy::protocol::app::PlayerLeave;
+using yy::protocol::app::C2SEnterScene;
+using yy::protocol::app::C2SOtherPlayerData;
+using yy::protocol::app::C2SMove;
+using yy::protocol::app::C2SJumpAndGravity;
+using yy::protocol::app::C2SPlayerLeave;
 
-using yy::protocol::app::OtherMovement;
-using yy::protocol::app::OtherJumpAndGravity;
+using yy::protocol::app::S2CMove;
+using yy::protocol::app::S2CJumpAndGravity;
 
 
-using yy::protocol::app::OtherPlayerDataResponse;
+using yy::protocol::app::S2COtherPlayerData;
 using yy::protocol::app::PlayerBaseData;
 using yy::protocol::app::PlayerMove;
 
@@ -29,11 +29,11 @@ GamePlayerManager::GamePlayerManager()
     : m_server{GameManager::getInstance().GetServer()}, m_player_pool{m_server->GetAppConfig().app_player_max()},
       m_global_id{10000}
 {
-    GameManager::getInstance().RegisterMessageCallback<LoginRequest>( [this](const UserConnectionPtr& user, const Ptr<LoginRequest>& msg) { this->OnLogin(user, msg); });
-    GameManager::getInstance().RegisterMessageCallback<OtherPlayerDataRequest>( [this](const UserConnectionPtr& user, const Ptr<OtherPlayerDataRequest>& msg) { this->OnOtherPlayerDataRequest(user, msg); });
-    GameManager::getInstance().RegisterMessageCallback<SelfMovement>( [this](const UserConnectionPtr& user, const Ptr<SelfMovement>& msg) { this->OnSelfMovement(user, msg); });
-    GameManager::getInstance().RegisterMessageCallback<SelfJumpAndGravity>( [this](const UserConnectionPtr& user, const Ptr<SelfJumpAndGravity>& msg) { this->OnSelfJumpAndGravity(user, msg); });
-    GameManager::getInstance().RegisterMessageCallback<PlayerLeave>( [this](const UserConnectionPtr& user, const Ptr<PlayerLeave>& msg) { this->OnLeave(user, msg); });
+    GameManager::getInstance().RegisterMessageCallback<C2SEnterScene>( [this](const UserConnectionPtr& user, const Ptr<C2SEnterScene>& msg) { this->OnEnterScene(user, msg); });
+    GameManager::getInstance().RegisterMessageCallback<C2SOtherPlayerData>( [this](const UserConnectionPtr& user, const Ptr<C2SOtherPlayerData>& msg) { this->OnC2SOtherPlayerData(user, msg); });
+    GameManager::getInstance().RegisterMessageCallback<C2SMove>( [this](const UserConnectionPtr& user, const Ptr<C2SMove>& msg) { this->OnC2SMove(user, msg); });
+    GameManager::getInstance().RegisterMessageCallback<C2SJumpAndGravity>( [this](const UserConnectionPtr& user, const Ptr<C2SJumpAndGravity>& msg) { this->OnC2SJumpAndGravity(user, msg); });
+    GameManager::getInstance().RegisterMessageCallback<C2SPlayerLeave>( [this](const UserConnectionPtr& user, const Ptr<C2SPlayerLeave>& msg) { this->OnLeave(user, msg); });
 
 
     // m_server->RunTaskEvery(1s, [this]() {
@@ -114,19 +114,20 @@ Ptr<yy::protocol::app::PlayerBaseData> GamePlayerManager::FindPlayerByUID(UID_t 
 }
 
 void GamePlayerManager::Broadcast(const UserConnectionPtr &from, const google::protobuf::Message &data) {
-    decltype(m_online_players) players;
+    decltype(m_uid_to_connid) players_conns;
     {
         std::lock_guard lg{m_online_players_mutex};
-        players = m_online_players;
+        players_conns = m_uid_to_connid;
     }
 
-    for(const auto& p: players)
+    for(const auto& p: players_conns)
     {
-        if(p.second->uid() == from->GetUID())
+        auto [to_uid, to_connid] = p;
+        if(to_uid == from->GetUID())
             continue;
 
-        YLOG_TRACE("Broadcast<{}>: from {} to {}, ", data.GetDescriptor()->full_name(), from->GetUID(), p.second->uid())
-        auto to = m_server->FindUser(p.second->conn_name());
+        YLOG_TRACE("Broadcast<{}>: from {} to {}, ", data.GetDescriptor()->full_name(), from->GetUID(), to_uid)
+        auto to = m_server->FindUser(to_connid);
         if(to == nullptr) continue;
 
         // to->SendTCP(data);
@@ -143,7 +144,7 @@ void GamePlayerManager::Broadcast(const UserConnectionPtr& from, const MessagePt
 
 void GamePlayerManager::LeaveAndSave(UserConnectionPtr leave_user) {
     // 给其他玩家客户端发送离线通告
-    yy::protocol::app::PlayerLeave playerLeave;
+    yy::protocol::app::C2SPlayerLeave playerLeave;
     playerLeave.set_leaver_uid(leave_user->GetUID());
     Broadcast(leave_user, playerLeave);
     YLOG_INFO("玩家<{}>离开", playerLeave.leaver_uid())
@@ -163,7 +164,7 @@ void GamePlayerManager::LeaveAndSave(UserConnectionPtr leave_user) {
     YLOG_INFO("玩家<{}>离开并保存数据！", leave_user->GetUID());
 
     leave_user->SetState(core::UserConnection::E_UserBaseState::eFree);
-    m_server->DelUser(leave_user->GetConnName());
+    m_server->DelUser(leave_user->GetConnID());
 }
 
 
@@ -177,29 +178,29 @@ void GamePlayerManager::LeaveAndSave(UserConnectionPtr leave_user) {
 
 
 
-void GamePlayerManager::OnLogin(const UserConnectionPtr& userdata, const Ptr<protocol::app::LoginRequest> &) //NOLINT
+void GamePlayerManager::OnEnterScene(const UserConnectionPtr& userdata, const Ptr<protocol::app::C2SEnterScene> &) //NOLINT
 {
     if(userdata->IsLoggedIn()) {
         return;
     }
 
-    yy::protocol::app::LoginResponse loginResponse;
+    yy::protocol::app::S2CEnterScene loginResponse;
 
-    // ①登陆请求：设置登录结果
+    // ①进入请求：设置登录结果
     loginResponse.set_result(true);
 
-    // ②登陆请求：初始化登录玩家对象，加入玩家数据列表
+    // ②进入请求：初始化进入玩家对象，加入玩家数据列表
     userdata->SetUID(m_global_id++);
+    m_uid_to_connid[userdata->GetUID()] = userdata->GetConnID();
     auto selfdata = m_player_pool.pop();
     assert(selfdata != nullptr);
 
-    // ③登陆请求：
+    // ③进入请求：
     selfdata->set_uid(userdata->GetUID());
-    selfdata->set_conn_name(userdata->GetConnName());
     selfdata->set_hp_current(100);
     selfdata->set_hp_max(100);
 
-    // ④登陆请求：设置movement(初始position和rotation)
+    // ④进入请求：设置movement(初始position和rotation)
     {
         //! 若使用set_allocated，则需要主动传递堆空间，set_allocated会接管这片堆内存的管理权
         // PlayerMove  selfMove = new PlayerMove();
@@ -214,7 +215,7 @@ void GamePlayerManager::OnLogin(const UserConnectionPtr& userdata, const Ptr<pro
         *selfdata->mutable_movement() = selfMove;
     }
 
-    // ⑤登陆请求：
+    // ⑤进入请求：
     {
         decltype(m_online_players) players;
         {
@@ -222,7 +223,7 @@ void GamePlayerManager::OnLogin(const UserConnectionPtr& userdata, const Ptr<pro
             players = m_online_players;
         }
 
-        // ②登陆请求：填充其他玩家数据
+        // ②进入请求：填充其他玩家数据
         for (const auto &p: players) {
             const auto &otherdata = *p.second;
             if(otherdata.uid() == selfdata->uid())
@@ -242,9 +243,9 @@ void GamePlayerManager::OnLogin(const UserConnectionPtr& userdata, const Ptr<pro
     *loginResponse.mutable_self_data() = *selfdata;
 
 
-    YLOG_INFO("发送loginResponse = {}, {}, {}, {}, {}; size = {}",
+
+    YLOG_INFO("发送loginResponse = {}, {}, {}, {}; size = {}",
               loginResponse.self_data().uid(),
-              loginResponse.self_data().conn_name(),
               loginResponse.self_data().state(),
               loginResponse.self_data().hp_current(),
               loginResponse.self_data().hp_max(),
@@ -258,24 +259,23 @@ void GamePlayerManager::OnLogin(const UserConnectionPtr& userdata, const Ptr<pro
     userdata->SetState(core::UserConnection::E_UserBaseState::eLoggedIn);
 
     // 返回登录用户的信息给其他用户
-    OtherPlayerDataResponse otherPlayerDataResponse;
+    S2COtherPlayerData otherPlayerDataResponse;
     *otherPlayerDataResponse.mutable_other_data() = *selfdata;
-    YLOG_INFO("OtherPlayerDataResponse = {}, {}",
-              otherPlayerDataResponse.other_data().uid(),
-              otherPlayerDataResponse.other_data().conn_name());
+    YLOG_INFO("S2COtherPlayerData = {}",
+              otherPlayerDataResponse.other_data().uid());
     // Broadcast(userdata,  otherPlayerDataResponse);
 
-    YLOG_INFO("玩家<{}:{}>登录", selfdata->conn_name(), selfdata->uid())
+    YLOG_INFO("玩家<{}:{}>登录", userdata->GetConnID(), selfdata->uid())
 }
 
-void GamePlayerManager::OnLeave(const UserConnectionPtr& userdata_self, const Ptr<protocol::app::PlayerLeave> & leave) //NOLINT
+void GamePlayerManager::OnLeave(const UserConnectionPtr& userdata_self, const Ptr<protocol::app::C2SPlayerLeave> & leave) //NOLINT
 {
     if(userdata_self == nullptr) return;
     LeaveAndSave(userdata_self);
 }
 
 /// 当userdata_self收到其他人的移动的数据时，便会申请获取id为id_other的用户的玩家数据
-void GamePlayerManager::OnOtherPlayerDataRequest(const UserConnectionPtr& userdata_self, const Ptr<protocol::app::OtherPlayerDataRequest> & request) //NOLINT
+void GamePlayerManager::OnC2SOtherPlayerData(const UserConnectionPtr& userdata_self, const Ptr<protocol::app::C2SOtherPlayerData> & request) //NOLINT
 {
     auto player_other = FindPlayerByUID(request->requested_uid());
     if(player_other == nullptr) {
@@ -284,12 +284,12 @@ void GamePlayerManager::OnOtherPlayerDataRequest(const UserConnectionPtr& userda
     }
     // auto userdata_other = m_server.FindUserBySockfd(player_other->sockfd);
     // return_if(userdata_other == nullptr);
-    OtherPlayerDataResponse response;
+    S2COtherPlayerData response;
     *response.mutable_other_data() = *player_other;
     userdata_self->SendTCP(response);
 }
 
-void GamePlayerManager::OnSelfMovement(const UserConnectionPtr& userdata_self, const Ptr<protocol::app::SelfMovement> & selfmove)
+void GamePlayerManager::OnC2SMove(const UserConnectionPtr& userdata_self, const Ptr<protocol::app::C2SMove> & selfmove)
 {
     auto playerdata_self = FindPlayerByUID(selfmove->uid());
     if(playerdata_self == nullptr) {
@@ -301,14 +301,14 @@ void GamePlayerManager::OnSelfMovement(const UserConnectionPtr& userdata_self, c
     *playerdata_self->mutable_movement() = selfmove->movement();
     userdata_self->SendTCP(selfmove);
 
-    OtherMovement othermove;
+    S2CMove othermove;
     othermove.set_uid(selfmove->uid());
     *othermove.mutable_movement() = selfmove->movement();
 
     Broadcast(userdata_self, othermove);
 }
 
-void GamePlayerManager::OnSelfJumpAndGravity(const UserConnectionPtr& userdata_self, const Ptr<protocol::app::SelfJumpAndGravity> & selfJumpAndGravity) //NOLINT
+void GamePlayerManager::OnC2SJumpAndGravity(const UserConnectionPtr& userdata_self, const Ptr<protocol::app::C2SJumpAndGravity> & selfJumpAndGravity) //NOLINT
 {
     auto playerdata_self = FindPlayerByUID(selfJumpAndGravity->uid());
     if(playerdata_self == nullptr) {
@@ -321,7 +321,7 @@ void GamePlayerManager::OnSelfJumpAndGravity(const UserConnectionPtr& userdata_s
     *playerdata_self->mutable_jump_and_gravity() = selfJumpAndGravity->jump_and_gravity();
     userdata_self->SendTCP(selfJumpAndGravity);
 
-    OtherJumpAndGravity otherJumpAndGravity;
+    S2CJumpAndGravity otherJumpAndGravity;
     otherJumpAndGravity.set_uid(selfJumpAndGravity->uid());
     *otherJumpAndGravity.mutable_jump_and_gravity() = selfJumpAndGravity->jump_and_gravity();
 

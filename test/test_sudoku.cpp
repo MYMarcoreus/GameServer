@@ -349,7 +349,7 @@ public:
 private:
     void onConnectionEstablished(TcpConnectionPtr conn)
     {
-        YLOG_INFO("连接成功！：%s, %d", conn->GetName().c_str(), conn->GetSocketFD())
+        YLOG_INFO("连接成功！：%s, %d", conn->GetConnID().c_str(), conn->GetSocketFD())
     }
 
     void onMessage(TcpConnectionPtr conn, Buffer& buf)

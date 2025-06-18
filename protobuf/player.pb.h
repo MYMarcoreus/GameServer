@@ -47,58 +47,58 @@ extern const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table
 namespace yy {
 namespace protocol {
 namespace app {
-class LoginRequest;
-struct LoginRequestDefaultTypeInternal;
-extern LoginRequestDefaultTypeInternal _LoginRequest_default_instance_;
-class LoginResponse;
-struct LoginResponseDefaultTypeInternal;
-extern LoginResponseDefaultTypeInternal _LoginResponse_default_instance_;
-class OtherJumpAndGravity;
-struct OtherJumpAndGravityDefaultTypeInternal;
-extern OtherJumpAndGravityDefaultTypeInternal _OtherJumpAndGravity_default_instance_;
-class OtherMovement;
-struct OtherMovementDefaultTypeInternal;
-extern OtherMovementDefaultTypeInternal _OtherMovement_default_instance_;
-class OtherPlayerDataRequest;
-struct OtherPlayerDataRequestDefaultTypeInternal;
-extern OtherPlayerDataRequestDefaultTypeInternal _OtherPlayerDataRequest_default_instance_;
-class OtherPlayerDataResponse;
-struct OtherPlayerDataResponseDefaultTypeInternal;
-extern OtherPlayerDataResponseDefaultTypeInternal _OtherPlayerDataResponse_default_instance_;
+class C2SEnterScene;
+struct C2SEnterSceneDefaultTypeInternal;
+extern C2SEnterSceneDefaultTypeInternal _C2SEnterScene_default_instance_;
+class C2SJumpAndGravity;
+struct C2SJumpAndGravityDefaultTypeInternal;
+extern C2SJumpAndGravityDefaultTypeInternal _C2SJumpAndGravity_default_instance_;
+class C2SMove;
+struct C2SMoveDefaultTypeInternal;
+extern C2SMoveDefaultTypeInternal _C2SMove_default_instance_;
+class C2SOtherPlayerData;
+struct C2SOtherPlayerDataDefaultTypeInternal;
+extern C2SOtherPlayerDataDefaultTypeInternal _C2SOtherPlayerData_default_instance_;
+class C2SPlayerLeave;
+struct C2SPlayerLeaveDefaultTypeInternal;
+extern C2SPlayerLeaveDefaultTypeInternal _C2SPlayerLeave_default_instance_;
 class PlayerBaseData;
 struct PlayerBaseDataDefaultTypeInternal;
 extern PlayerBaseDataDefaultTypeInternal _PlayerBaseData_default_instance_;
 class PlayerJumpAndGravity;
 struct PlayerJumpAndGravityDefaultTypeInternal;
 extern PlayerJumpAndGravityDefaultTypeInternal _PlayerJumpAndGravity_default_instance_;
-class PlayerLeave;
-struct PlayerLeaveDefaultTypeInternal;
-extern PlayerLeaveDefaultTypeInternal _PlayerLeave_default_instance_;
 class PlayerMove;
 struct PlayerMoveDefaultTypeInternal;
 extern PlayerMoveDefaultTypeInternal _PlayerMove_default_instance_;
-class SelfJumpAndGravity;
-struct SelfJumpAndGravityDefaultTypeInternal;
-extern SelfJumpAndGravityDefaultTypeInternal _SelfJumpAndGravity_default_instance_;
-class SelfMovement;
-struct SelfMovementDefaultTypeInternal;
-extern SelfMovementDefaultTypeInternal _SelfMovement_default_instance_;
+class S2CEnterScene;
+struct S2CEnterSceneDefaultTypeInternal;
+extern S2CEnterSceneDefaultTypeInternal _S2CEnterScene_default_instance_;
+class S2CJumpAndGravity;
+struct S2CJumpAndGravityDefaultTypeInternal;
+extern S2CJumpAndGravityDefaultTypeInternal _S2CJumpAndGravity_default_instance_;
+class S2CMove;
+struct S2CMoveDefaultTypeInternal;
+extern S2CMoveDefaultTypeInternal _S2CMove_default_instance_;
+class S2COtherPlayerData;
+struct S2COtherPlayerDataDefaultTypeInternal;
+extern S2COtherPlayerDataDefaultTypeInternal _S2COtherPlayerData_default_instance_;
 }  // namespace app
 }  // namespace protocol
 }  // namespace yy
 PROTOBUF_NAMESPACE_OPEN
-template<> ::yy::protocol::app::LoginRequest* Arena::CreateMaybeMessage<::yy::protocol::app::LoginRequest>(Arena*);
-template<> ::yy::protocol::app::LoginResponse* Arena::CreateMaybeMessage<::yy::protocol::app::LoginResponse>(Arena*);
-template<> ::yy::protocol::app::OtherJumpAndGravity* Arena::CreateMaybeMessage<::yy::protocol::app::OtherJumpAndGravity>(Arena*);
-template<> ::yy::protocol::app::OtherMovement* Arena::CreateMaybeMessage<::yy::protocol::app::OtherMovement>(Arena*);
-template<> ::yy::protocol::app::OtherPlayerDataRequest* Arena::CreateMaybeMessage<::yy::protocol::app::OtherPlayerDataRequest>(Arena*);
-template<> ::yy::protocol::app::OtherPlayerDataResponse* Arena::CreateMaybeMessage<::yy::protocol::app::OtherPlayerDataResponse>(Arena*);
+template<> ::yy::protocol::app::C2SEnterScene* Arena::CreateMaybeMessage<::yy::protocol::app::C2SEnterScene>(Arena*);
+template<> ::yy::protocol::app::C2SJumpAndGravity* Arena::CreateMaybeMessage<::yy::protocol::app::C2SJumpAndGravity>(Arena*);
+template<> ::yy::protocol::app::C2SMove* Arena::CreateMaybeMessage<::yy::protocol::app::C2SMove>(Arena*);
+template<> ::yy::protocol::app::C2SOtherPlayerData* Arena::CreateMaybeMessage<::yy::protocol::app::C2SOtherPlayerData>(Arena*);
+template<> ::yy::protocol::app::C2SPlayerLeave* Arena::CreateMaybeMessage<::yy::protocol::app::C2SPlayerLeave>(Arena*);
 template<> ::yy::protocol::app::PlayerBaseData* Arena::CreateMaybeMessage<::yy::protocol::app::PlayerBaseData>(Arena*);
 template<> ::yy::protocol::app::PlayerJumpAndGravity* Arena::CreateMaybeMessage<::yy::protocol::app::PlayerJumpAndGravity>(Arena*);
-template<> ::yy::protocol::app::PlayerLeave* Arena::CreateMaybeMessage<::yy::protocol::app::PlayerLeave>(Arena*);
 template<> ::yy::protocol::app::PlayerMove* Arena::CreateMaybeMessage<::yy::protocol::app::PlayerMove>(Arena*);
-template<> ::yy::protocol::app::SelfJumpAndGravity* Arena::CreateMaybeMessage<::yy::protocol::app::SelfJumpAndGravity>(Arena*);
-template<> ::yy::protocol::app::SelfMovement* Arena::CreateMaybeMessage<::yy::protocol::app::SelfMovement>(Arena*);
+template<> ::yy::protocol::app::S2CEnterScene* Arena::CreateMaybeMessage<::yy::protocol::app::S2CEnterScene>(Arena*);
+template<> ::yy::protocol::app::S2CJumpAndGravity* Arena::CreateMaybeMessage<::yy::protocol::app::S2CJumpAndGravity>(Arena*);
+template<> ::yy::protocol::app::S2CMove* Arena::CreateMaybeMessage<::yy::protocol::app::S2CMove>(Arena*);
+template<> ::yy::protocol::app::S2COtherPlayerData* Arena::CreateMaybeMessage<::yy::protocol::app::S2COtherPlayerData>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
 namespace yy {
 namespace protocol {
@@ -227,7 +227,6 @@ class PlayerBaseData final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kConnNameFieldNumber = 2,
     kMovementFieldNumber = 6,
     kJumpAndGravityFieldNumber = 7,
     kUidFieldNumber = 1,
@@ -235,20 +234,6 @@ class PlayerBaseData final :
     kHpCurrentFieldNumber = 4,
     kHpMaxFieldNumber = 5,
   };
-  // bytes conn_name = 2;
-  void clear_conn_name();
-  const std::string& conn_name() const;
-  template <typename ArgT0 = const std::string&, typename... ArgT>
-  void set_conn_name(ArgT0&& arg0, ArgT... args);
-  std::string* mutable_conn_name();
-  PROTOBUF_NODISCARD std::string* release_conn_name();
-  void set_allocated_conn_name(std::string* conn_name);
-  private:
-  const std::string& _internal_conn_name() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_conn_name(const std::string& value);
-  std::string* _internal_mutable_conn_name();
-  public:
-
   // .yy.protocol.app.PlayerMove movement = 6;
   bool has_movement() const;
   private:
@@ -285,13 +270,13 @@ class PlayerBaseData final :
       ::yy::protocol::app::PlayerJumpAndGravity* jump_and_gravity);
   ::yy::protocol::app::PlayerJumpAndGravity* unsafe_arena_release_jump_and_gravity();
 
-  // uint32 uid = 1;
+  // uint64 uid = 1;
   void clear_uid();
-  uint32_t uid() const;
-  void set_uid(uint32_t value);
+  uint64_t uid() const;
+  void set_uid(uint64_t value);
   private:
-  uint32_t _internal_uid() const;
-  void _internal_set_uid(uint32_t value);
+  uint64_t _internal_uid() const;
+  void _internal_set_uid(uint64_t value);
   public:
 
   // int32 state = 3;
@@ -329,10 +314,9 @@ class PlayerBaseData final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
-    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr conn_name_;
     ::yy::protocol::app::PlayerMove* movement_;
     ::yy::protocol::app::PlayerJumpAndGravity* jump_and_gravity_;
-    uint32_t uid_;
+    uint64_t uid_;
     int32_t state_;
     int32_t hp_current_;
     int32_t hp_max_;
@@ -704,24 +688,24 @@ class PlayerJumpAndGravity final :
 };
 // -------------------------------------------------------------------
 
-class PlayerLeave final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:yy.protocol.app.PlayerLeave) */ {
+class C2SPlayerLeave final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:yy.protocol.app.C2SPlayerLeave) */ {
  public:
-  inline PlayerLeave() : PlayerLeave(nullptr) {}
-  ~PlayerLeave() override;
-  explicit PROTOBUF_CONSTEXPR PlayerLeave(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+  inline C2SPlayerLeave() : C2SPlayerLeave(nullptr) {}
+  ~C2SPlayerLeave() override;
+  explicit PROTOBUF_CONSTEXPR C2SPlayerLeave(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
 
-  PlayerLeave(const PlayerLeave& from);
-  PlayerLeave(PlayerLeave&& from) noexcept
-    : PlayerLeave() {
+  C2SPlayerLeave(const C2SPlayerLeave& from);
+  C2SPlayerLeave(C2SPlayerLeave&& from) noexcept
+    : C2SPlayerLeave() {
     *this = ::std::move(from);
   }
 
-  inline PlayerLeave& operator=(const PlayerLeave& from) {
+  inline C2SPlayerLeave& operator=(const C2SPlayerLeave& from) {
     CopyFrom(from);
     return *this;
   }
-  inline PlayerLeave& operator=(PlayerLeave&& from) noexcept {
+  inline C2SPlayerLeave& operator=(C2SPlayerLeave&& from) noexcept {
     if (this == &from) return *this;
     if (GetOwningArena() == from.GetOwningArena()
   #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
@@ -744,20 +728,20 @@ class PlayerLeave final :
   static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
     return default_instance().GetMetadata().reflection;
   }
-  static const PlayerLeave& default_instance() {
+  static const C2SPlayerLeave& default_instance() {
     return *internal_default_instance();
   }
-  static inline const PlayerLeave* internal_default_instance() {
-    return reinterpret_cast<const PlayerLeave*>(
-               &_PlayerLeave_default_instance_);
+  static inline const C2SPlayerLeave* internal_default_instance() {
+    return reinterpret_cast<const C2SPlayerLeave*>(
+               &_C2SPlayerLeave_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
     3;
 
-  friend void swap(PlayerLeave& a, PlayerLeave& b) {
+  friend void swap(C2SPlayerLeave& a, C2SPlayerLeave& b) {
     a.Swap(&b);
   }
-  inline void Swap(PlayerLeave* other) {
+  inline void Swap(C2SPlayerLeave* other) {
     if (other == this) return;
   #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
     if (GetOwningArena() != nullptr &&
@@ -770,7 +754,7 @@ class PlayerLeave final :
       ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
     }
   }
-  void UnsafeArenaSwap(PlayerLeave* other) {
+  void UnsafeArenaSwap(C2SPlayerLeave* other) {
     if (other == this) return;
     GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
     InternalSwap(other);
@@ -778,14 +762,14 @@ class PlayerLeave final :
 
   // implements Message ----------------------------------------------
 
-  PlayerLeave* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
-    return CreateMaybeMessage<PlayerLeave>(arena);
+  C2SPlayerLeave* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<C2SPlayerLeave>(arena);
   }
   using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
-  void CopyFrom(const PlayerLeave& from);
+  void CopyFrom(const C2SPlayerLeave& from);
   using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
-  void MergeFrom( const PlayerLeave& from) {
-    PlayerLeave::MergeImpl(*this, from);
+  void MergeFrom( const C2SPlayerLeave& from) {
+    C2SPlayerLeave::MergeImpl(*this, from);
   }
   private:
   static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
@@ -803,15 +787,15 @@ class PlayerLeave final :
   void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
   void SharedDtor();
   void SetCachedSize(int size) const final;
-  void InternalSwap(PlayerLeave* other);
+  void InternalSwap(C2SPlayerLeave* other);
 
   private:
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "yy.protocol.app.PlayerLeave";
+    return "yy.protocol.app.C2SPlayerLeave";
   }
   protected:
-  explicit PlayerLeave(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+  explicit C2SPlayerLeave(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                        bool is_message_owned = false);
   public:
 
@@ -827,16 +811,16 @@ class PlayerLeave final :
   enum : int {
     kLeaverUidFieldNumber = 1,
   };
-  // uint32 leaver_uid = 1;
+  // uint64 leaver_uid = 1;
   void clear_leaver_uid();
-  uint32_t leaver_uid() const;
-  void set_leaver_uid(uint32_t value);
+  uint64_t leaver_uid() const;
+  void set_leaver_uid(uint64_t value);
   private:
-  uint32_t _internal_leaver_uid() const;
-  void _internal_set_leaver_uid(uint32_t value);
+  uint64_t _internal_leaver_uid() const;
+  void _internal_set_leaver_uid(uint64_t value);
   public:
 
-  // @@protoc_insertion_point(class_scope:yy.protocol.app.PlayerLeave)
+  // @@protoc_insertion_point(class_scope:yy.protocol.app.C2SPlayerLeave)
  private:
   class _Internal;
 
@@ -844,7 +828,7 @@ class PlayerLeave final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
-    uint32_t leaver_uid_;
+    uint64_t leaver_uid_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -852,24 +836,24 @@ class PlayerLeave final :
 };
 // -------------------------------------------------------------------
 
-class SelfMovement final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:yy.protocol.app.SelfMovement) */ {
+class C2SMove final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:yy.protocol.app.C2SMove) */ {
  public:
-  inline SelfMovement() : SelfMovement(nullptr) {}
-  ~SelfMovement() override;
-  explicit PROTOBUF_CONSTEXPR SelfMovement(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+  inline C2SMove() : C2SMove(nullptr) {}
+  ~C2SMove() override;
+  explicit PROTOBUF_CONSTEXPR C2SMove(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
 
-  SelfMovement(const SelfMovement& from);
-  SelfMovement(SelfMovement&& from) noexcept
-    : SelfMovement() {
+  C2SMove(const C2SMove& from);
+  C2SMove(C2SMove&& from) noexcept
+    : C2SMove() {
     *this = ::std::move(from);
   }
 
-  inline SelfMovement& operator=(const SelfMovement& from) {
+  inline C2SMove& operator=(const C2SMove& from) {
     CopyFrom(from);
     return *this;
   }
-  inline SelfMovement& operator=(SelfMovement&& from) noexcept {
+  inline C2SMove& operator=(C2SMove&& from) noexcept {
     if (this == &from) return *this;
     if (GetOwningArena() == from.GetOwningArena()
   #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
@@ -892,20 +876,20 @@ class SelfMovement final :
   static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
     return default_instance().GetMetadata().reflection;
   }
-  static const SelfMovement& default_instance() {
+  static const C2SMove& default_instance() {
     return *internal_default_instance();
   }
-  static inline const SelfMovement* internal_default_instance() {
-    return reinterpret_cast<const SelfMovement*>(
-               &_SelfMovement_default_instance_);
+  static inline const C2SMove* internal_default_instance() {
+    return reinterpret_cast<const C2SMove*>(
+               &_C2SMove_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
     4;
 
-  friend void swap(SelfMovement& a, SelfMovement& b) {
+  friend void swap(C2SMove& a, C2SMove& b) {
     a.Swap(&b);
   }
-  inline void Swap(SelfMovement* other) {
+  inline void Swap(C2SMove* other) {
     if (other == this) return;
   #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
     if (GetOwningArena() != nullptr &&
@@ -918,7 +902,7 @@ class SelfMovement final :
       ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
     }
   }
-  void UnsafeArenaSwap(SelfMovement* other) {
+  void UnsafeArenaSwap(C2SMove* other) {
     if (other == this) return;
     GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
     InternalSwap(other);
@@ -926,14 +910,14 @@ class SelfMovement final :
 
   // implements Message ----------------------------------------------
 
-  SelfMovement* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
-    return CreateMaybeMessage<SelfMovement>(arena);
+  C2SMove* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<C2SMove>(arena);
   }
   using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
-  void CopyFrom(const SelfMovement& from);
+  void CopyFrom(const C2SMove& from);
   using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
-  void MergeFrom( const SelfMovement& from) {
-    SelfMovement::MergeImpl(*this, from);
+  void MergeFrom( const C2SMove& from) {
+    C2SMove::MergeImpl(*this, from);
   }
   private:
   static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
@@ -951,15 +935,15 @@ class SelfMovement final :
   void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
   void SharedDtor();
   void SetCachedSize(int size) const final;
-  void InternalSwap(SelfMovement* other);
+  void InternalSwap(C2SMove* other);
 
   private:
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "yy.protocol.app.SelfMovement";
+    return "yy.protocol.app.C2SMove";
   }
   protected:
-  explicit SelfMovement(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+  explicit C2SMove(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                        bool is_message_owned = false);
   public:
 
@@ -994,16 +978,16 @@ class SelfMovement final :
       ::yy::protocol::app::PlayerMove* movement);
   ::yy::protocol::app::PlayerMove* unsafe_arena_release_movement();
 
-  // uint32 uid = 1;
+  // uint64 uid = 1;
   void clear_uid();
-  uint32_t uid() const;
-  void set_uid(uint32_t value);
+  uint64_t uid() const;
+  void set_uid(uint64_t value);
   private:
-  uint32_t _internal_uid() const;
-  void _internal_set_uid(uint32_t value);
+  uint64_t _internal_uid() const;
+  void _internal_set_uid(uint64_t value);
   public:
 
-  // @@protoc_insertion_point(class_scope:yy.protocol.app.SelfMovement)
+  // @@protoc_insertion_point(class_scope:yy.protocol.app.C2SMove)
  private:
   class _Internal;
 
@@ -1012,7 +996,7 @@ class SelfMovement final :
   typedef void DestructorSkippable_;
   struct Impl_ {
     ::yy::protocol::app::PlayerMove* movement_;
-    uint32_t uid_;
+    uint64_t uid_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -1020,24 +1004,24 @@ class SelfMovement final :
 };
 // -------------------------------------------------------------------
 
-class OtherMovement final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:yy.protocol.app.OtherMovement) */ {
+class S2CMove final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:yy.protocol.app.S2CMove) */ {
  public:
-  inline OtherMovement() : OtherMovement(nullptr) {}
-  ~OtherMovement() override;
-  explicit PROTOBUF_CONSTEXPR OtherMovement(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+  inline S2CMove() : S2CMove(nullptr) {}
+  ~S2CMove() override;
+  explicit PROTOBUF_CONSTEXPR S2CMove(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
 
-  OtherMovement(const OtherMovement& from);
-  OtherMovement(OtherMovement&& from) noexcept
-    : OtherMovement() {
+  S2CMove(const S2CMove& from);
+  S2CMove(S2CMove&& from) noexcept
+    : S2CMove() {
     *this = ::std::move(from);
   }
 
-  inline OtherMovement& operator=(const OtherMovement& from) {
+  inline S2CMove& operator=(const S2CMove& from) {
     CopyFrom(from);
     return *this;
   }
-  inline OtherMovement& operator=(OtherMovement&& from) noexcept {
+  inline S2CMove& operator=(S2CMove&& from) noexcept {
     if (this == &from) return *this;
     if (GetOwningArena() == from.GetOwningArena()
   #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
@@ -1060,20 +1044,20 @@ class OtherMovement final :
   static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
     return default_instance().GetMetadata().reflection;
   }
-  static const OtherMovement& default_instance() {
+  static const S2CMove& default_instance() {
     return *internal_default_instance();
   }
-  static inline const OtherMovement* internal_default_instance() {
-    return reinterpret_cast<const OtherMovement*>(
-               &_OtherMovement_default_instance_);
+  static inline const S2CMove* internal_default_instance() {
+    return reinterpret_cast<const S2CMove*>(
+               &_S2CMove_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
     5;
 
-  friend void swap(OtherMovement& a, OtherMovement& b) {
+  friend void swap(S2CMove& a, S2CMove& b) {
     a.Swap(&b);
   }
-  inline void Swap(OtherMovement* other) {
+  inline void Swap(S2CMove* other) {
     if (other == this) return;
   #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
     if (GetOwningArena() != nullptr &&
@@ -1086,7 +1070,7 @@ class OtherMovement final :
       ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
     }
   }
-  void UnsafeArenaSwap(OtherMovement* other) {
+  void UnsafeArenaSwap(S2CMove* other) {
     if (other == this) return;
     GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
     InternalSwap(other);
@@ -1094,14 +1078,14 @@ class OtherMovement final :
 
   // implements Message ----------------------------------------------
 
-  OtherMovement* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
-    return CreateMaybeMessage<OtherMovement>(arena);
+  S2CMove* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<S2CMove>(arena);
   }
   using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
-  void CopyFrom(const OtherMovement& from);
+  void CopyFrom(const S2CMove& from);
   using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
-  void MergeFrom( const OtherMovement& from) {
-    OtherMovement::MergeImpl(*this, from);
+  void MergeFrom( const S2CMove& from) {
+    S2CMove::MergeImpl(*this, from);
   }
   private:
   static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
@@ -1119,15 +1103,15 @@ class OtherMovement final :
   void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
   void SharedDtor();
   void SetCachedSize(int size) const final;
-  void InternalSwap(OtherMovement* other);
+  void InternalSwap(S2CMove* other);
 
   private:
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "yy.protocol.app.OtherMovement";
+    return "yy.protocol.app.S2CMove";
   }
   protected:
-  explicit OtherMovement(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+  explicit S2CMove(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                        bool is_message_owned = false);
   public:
 
@@ -1162,16 +1146,16 @@ class OtherMovement final :
       ::yy::protocol::app::PlayerMove* movement);
   ::yy::protocol::app::PlayerMove* unsafe_arena_release_movement();
 
-  // uint32 uid = 1;
+  // uint64 uid = 1;
   void clear_uid();
-  uint32_t uid() const;
-  void set_uid(uint32_t value);
+  uint64_t uid() const;
+  void set_uid(uint64_t value);
   private:
-  uint32_t _internal_uid() const;
-  void _internal_set_uid(uint32_t value);
+  uint64_t _internal_uid() const;
+  void _internal_set_uid(uint64_t value);
   public:
 
-  // @@protoc_insertion_point(class_scope:yy.protocol.app.OtherMovement)
+  // @@protoc_insertion_point(class_scope:yy.protocol.app.S2CMove)
  private:
   class _Internal;
 
@@ -1180,7 +1164,7 @@ class OtherMovement final :
   typedef void DestructorSkippable_;
   struct Impl_ {
     ::yy::protocol::app::PlayerMove* movement_;
-    uint32_t uid_;
+    uint64_t uid_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -1188,24 +1172,24 @@ class OtherMovement final :
 };
 // -------------------------------------------------------------------
 
-class SelfJumpAndGravity final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:yy.protocol.app.SelfJumpAndGravity) */ {
+class C2SJumpAndGravity final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:yy.protocol.app.C2SJumpAndGravity) */ {
  public:
-  inline SelfJumpAndGravity() : SelfJumpAndGravity(nullptr) {}
-  ~SelfJumpAndGravity() override;
-  explicit PROTOBUF_CONSTEXPR SelfJumpAndGravity(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+  inline C2SJumpAndGravity() : C2SJumpAndGravity(nullptr) {}
+  ~C2SJumpAndGravity() override;
+  explicit PROTOBUF_CONSTEXPR C2SJumpAndGravity(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
 
-  SelfJumpAndGravity(const SelfJumpAndGravity& from);
-  SelfJumpAndGravity(SelfJumpAndGravity&& from) noexcept
-    : SelfJumpAndGravity() {
+  C2SJumpAndGravity(const C2SJumpAndGravity& from);
+  C2SJumpAndGravity(C2SJumpAndGravity&& from) noexcept
+    : C2SJumpAndGravity() {
     *this = ::std::move(from);
   }
 
-  inline SelfJumpAndGravity& operator=(const SelfJumpAndGravity& from) {
+  inline C2SJumpAndGravity& operator=(const C2SJumpAndGravity& from) {
     CopyFrom(from);
     return *this;
   }
-  inline SelfJumpAndGravity& operator=(SelfJumpAndGravity&& from) noexcept {
+  inline C2SJumpAndGravity& operator=(C2SJumpAndGravity&& from) noexcept {
     if (this == &from) return *this;
     if (GetOwningArena() == from.GetOwningArena()
   #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
@@ -1228,20 +1212,20 @@ class SelfJumpAndGravity final :
   static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
     return default_instance().GetMetadata().reflection;
   }
-  static const SelfJumpAndGravity& default_instance() {
+  static const C2SJumpAndGravity& default_instance() {
     return *internal_default_instance();
   }
-  static inline const SelfJumpAndGravity* internal_default_instance() {
-    return reinterpret_cast<const SelfJumpAndGravity*>(
-               &_SelfJumpAndGravity_default_instance_);
+  static inline const C2SJumpAndGravity* internal_default_instance() {
+    return reinterpret_cast<const C2SJumpAndGravity*>(
+               &_C2SJumpAndGravity_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
     6;
 
-  friend void swap(SelfJumpAndGravity& a, SelfJumpAndGravity& b) {
+  friend void swap(C2SJumpAndGravity& a, C2SJumpAndGravity& b) {
     a.Swap(&b);
   }
-  inline void Swap(SelfJumpAndGravity* other) {
+  inline void Swap(C2SJumpAndGravity* other) {
     if (other == this) return;
   #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
     if (GetOwningArena() != nullptr &&
@@ -1254,7 +1238,7 @@ class SelfJumpAndGravity final :
       ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
     }
   }
-  void UnsafeArenaSwap(SelfJumpAndGravity* other) {
+  void UnsafeArenaSwap(C2SJumpAndGravity* other) {
     if (other == this) return;
     GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
     InternalSwap(other);
@@ -1262,14 +1246,14 @@ class SelfJumpAndGravity final :
 
   // implements Message ----------------------------------------------
 
-  SelfJumpAndGravity* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
-    return CreateMaybeMessage<SelfJumpAndGravity>(arena);
+  C2SJumpAndGravity* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<C2SJumpAndGravity>(arena);
   }
   using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
-  void CopyFrom(const SelfJumpAndGravity& from);
+  void CopyFrom(const C2SJumpAndGravity& from);
   using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
-  void MergeFrom( const SelfJumpAndGravity& from) {
-    SelfJumpAndGravity::MergeImpl(*this, from);
+  void MergeFrom( const C2SJumpAndGravity& from) {
+    C2SJumpAndGravity::MergeImpl(*this, from);
   }
   private:
   static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
@@ -1287,15 +1271,15 @@ class SelfJumpAndGravity final :
   void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
   void SharedDtor();
   void SetCachedSize(int size) const final;
-  void InternalSwap(SelfJumpAndGravity* other);
+  void InternalSwap(C2SJumpAndGravity* other);
 
   private:
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "yy.protocol.app.SelfJumpAndGravity";
+    return "yy.protocol.app.C2SJumpAndGravity";
   }
   protected:
-  explicit SelfJumpAndGravity(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+  explicit C2SJumpAndGravity(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                        bool is_message_owned = false);
   public:
 
@@ -1330,16 +1314,16 @@ class SelfJumpAndGravity final :
       ::yy::protocol::app::PlayerJumpAndGravity* jump_and_gravity);
   ::yy::protocol::app::PlayerJumpAndGravity* unsafe_arena_release_jump_and_gravity();
 
-  // uint32 uid = 1;
+  // uint64 uid = 1;
   void clear_uid();
-  uint32_t uid() const;
-  void set_uid(uint32_t value);
+  uint64_t uid() const;
+  void set_uid(uint64_t value);
   private:
-  uint32_t _internal_uid() const;
-  void _internal_set_uid(uint32_t value);
+  uint64_t _internal_uid() const;
+  void _internal_set_uid(uint64_t value);
   public:
 
-  // @@protoc_insertion_point(class_scope:yy.protocol.app.SelfJumpAndGravity)
+  // @@protoc_insertion_point(class_scope:yy.protocol.app.C2SJumpAndGravity)
  private:
   class _Internal;
 
@@ -1348,7 +1332,7 @@ class SelfJumpAndGravity final :
   typedef void DestructorSkippable_;
   struct Impl_ {
     ::yy::protocol::app::PlayerJumpAndGravity* jump_and_gravity_;
-    uint32_t uid_;
+    uint64_t uid_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -1356,24 +1340,24 @@ class SelfJumpAndGravity final :
 };
 // -------------------------------------------------------------------
 
-class OtherJumpAndGravity final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:yy.protocol.app.OtherJumpAndGravity) */ {
+class S2CJumpAndGravity final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:yy.protocol.app.S2CJumpAndGravity) */ {
  public:
-  inline OtherJumpAndGravity() : OtherJumpAndGravity(nullptr) {}
-  ~OtherJumpAndGravity() override;
-  explicit PROTOBUF_CONSTEXPR OtherJumpAndGravity(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+  inline S2CJumpAndGravity() : S2CJumpAndGravity(nullptr) {}
+  ~S2CJumpAndGravity() override;
+  explicit PROTOBUF_CONSTEXPR S2CJumpAndGravity(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
 
-  OtherJumpAndGravity(const OtherJumpAndGravity& from);
-  OtherJumpAndGravity(OtherJumpAndGravity&& from) noexcept
-    : OtherJumpAndGravity() {
+  S2CJumpAndGravity(const S2CJumpAndGravity& from);
+  S2CJumpAndGravity(S2CJumpAndGravity&& from) noexcept
+    : S2CJumpAndGravity() {
     *this = ::std::move(from);
   }
 
-  inline OtherJumpAndGravity& operator=(const OtherJumpAndGravity& from) {
+  inline S2CJumpAndGravity& operator=(const S2CJumpAndGravity& from) {
     CopyFrom(from);
     return *this;
   }
-  inline OtherJumpAndGravity& operator=(OtherJumpAndGravity&& from) noexcept {
+  inline S2CJumpAndGravity& operator=(S2CJumpAndGravity&& from) noexcept {
     if (this == &from) return *this;
     if (GetOwningArena() == from.GetOwningArena()
   #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
@@ -1396,20 +1380,20 @@ class OtherJumpAndGravity final :
   static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
     return default_instance().GetMetadata().reflection;
   }
-  static const OtherJumpAndGravity& default_instance() {
+  static const S2CJumpAndGravity& default_instance() {
     return *internal_default_instance();
   }
-  static inline const OtherJumpAndGravity* internal_default_instance() {
-    return reinterpret_cast<const OtherJumpAndGravity*>(
-               &_OtherJumpAndGravity_default_instance_);
+  static inline const S2CJumpAndGravity* internal_default_instance() {
+    return reinterpret_cast<const S2CJumpAndGravity*>(
+               &_S2CJumpAndGravity_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
     7;
 
-  friend void swap(OtherJumpAndGravity& a, OtherJumpAndGravity& b) {
+  friend void swap(S2CJumpAndGravity& a, S2CJumpAndGravity& b) {
     a.Swap(&b);
   }
-  inline void Swap(OtherJumpAndGravity* other) {
+  inline void Swap(S2CJumpAndGravity* other) {
     if (other == this) return;
   #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
     if (GetOwningArena() != nullptr &&
@@ -1422,7 +1406,7 @@ class OtherJumpAndGravity final :
       ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
     }
   }
-  void UnsafeArenaSwap(OtherJumpAndGravity* other) {
+  void UnsafeArenaSwap(S2CJumpAndGravity* other) {
     if (other == this) return;
     GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
     InternalSwap(other);
@@ -1430,14 +1414,14 @@ class OtherJumpAndGravity final :
 
   // implements Message ----------------------------------------------
 
-  OtherJumpAndGravity* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
-    return CreateMaybeMessage<OtherJumpAndGravity>(arena);
+  S2CJumpAndGravity* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<S2CJumpAndGravity>(arena);
   }
   using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
-  void CopyFrom(const OtherJumpAndGravity& from);
+  void CopyFrom(const S2CJumpAndGravity& from);
   using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
-  void MergeFrom( const OtherJumpAndGravity& from) {
-    OtherJumpAndGravity::MergeImpl(*this, from);
+  void MergeFrom( const S2CJumpAndGravity& from) {
+    S2CJumpAndGravity::MergeImpl(*this, from);
   }
   private:
   static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
@@ -1455,15 +1439,15 @@ class OtherJumpAndGravity final :
   void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
   void SharedDtor();
   void SetCachedSize(int size) const final;
-  void InternalSwap(OtherJumpAndGravity* other);
+  void InternalSwap(S2CJumpAndGravity* other);
 
   private:
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "yy.protocol.app.OtherJumpAndGravity";
+    return "yy.protocol.app.S2CJumpAndGravity";
   }
   protected:
-  explicit OtherJumpAndGravity(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+  explicit S2CJumpAndGravity(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                        bool is_message_owned = false);
   public:
 
@@ -1498,16 +1482,16 @@ class OtherJumpAndGravity final :
       ::yy::protocol::app::PlayerJumpAndGravity* jump_and_gravity);
   ::yy::protocol::app::PlayerJumpAndGravity* unsafe_arena_release_jump_and_gravity();
 
-  // uint32 uid = 1;
+  // uint64 uid = 1;
   void clear_uid();
-  uint32_t uid() const;
-  void set_uid(uint32_t value);
+  uint64_t uid() const;
+  void set_uid(uint64_t value);
   private:
-  uint32_t _internal_uid() const;
-  void _internal_set_uid(uint32_t value);
+  uint64_t _internal_uid() const;
+  void _internal_set_uid(uint64_t value);
   public:
 
-  // @@protoc_insertion_point(class_scope:yy.protocol.app.OtherJumpAndGravity)
+  // @@protoc_insertion_point(class_scope:yy.protocol.app.S2CJumpAndGravity)
  private:
   class _Internal;
 
@@ -1516,7 +1500,7 @@ class OtherJumpAndGravity final :
   typedef void DestructorSkippable_;
   struct Impl_ {
     ::yy::protocol::app::PlayerJumpAndGravity* jump_and_gravity_;
-    uint32_t uid_;
+    uint64_t uid_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -1524,24 +1508,24 @@ class OtherJumpAndGravity final :
 };
 // -------------------------------------------------------------------
 
-class LoginRequest final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:yy.protocol.app.LoginRequest) */ {
+class C2SEnterScene final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:yy.protocol.app.C2SEnterScene) */ {
  public:
-  inline LoginRequest() : LoginRequest(nullptr) {}
-  ~LoginRequest() override;
-  explicit PROTOBUF_CONSTEXPR LoginRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+  inline C2SEnterScene() : C2SEnterScene(nullptr) {}
+  ~C2SEnterScene() override;
+  explicit PROTOBUF_CONSTEXPR C2SEnterScene(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
 
-  LoginRequest(const LoginRequest& from);
-  LoginRequest(LoginRequest&& from) noexcept
-    : LoginRequest() {
+  C2SEnterScene(const C2SEnterScene& from);
+  C2SEnterScene(C2SEnterScene&& from) noexcept
+    : C2SEnterScene() {
     *this = ::std::move(from);
   }
 
-  inline LoginRequest& operator=(const LoginRequest& from) {
+  inline C2SEnterScene& operator=(const C2SEnterScene& from) {
     CopyFrom(from);
     return *this;
   }
-  inline LoginRequest& operator=(LoginRequest&& from) noexcept {
+  inline C2SEnterScene& operator=(C2SEnterScene&& from) noexcept {
     if (this == &from) return *this;
     if (GetOwningArena() == from.GetOwningArena()
   #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
@@ -1564,20 +1548,20 @@ class LoginRequest final :
   static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
     return default_instance().GetMetadata().reflection;
   }
-  static const LoginRequest& default_instance() {
+  static const C2SEnterScene& default_instance() {
     return *internal_default_instance();
   }
-  static inline const LoginRequest* internal_default_instance() {
-    return reinterpret_cast<const LoginRequest*>(
-               &_LoginRequest_default_instance_);
+  static inline const C2SEnterScene* internal_default_instance() {
+    return reinterpret_cast<const C2SEnterScene*>(
+               &_C2SEnterScene_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
     8;
 
-  friend void swap(LoginRequest& a, LoginRequest& b) {
+  friend void swap(C2SEnterScene& a, C2SEnterScene& b) {
     a.Swap(&b);
   }
-  inline void Swap(LoginRequest* other) {
+  inline void Swap(C2SEnterScene* other) {
     if (other == this) return;
   #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
     if (GetOwningArena() != nullptr &&
@@ -1590,7 +1574,7 @@ class LoginRequest final :
       ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
     }
   }
-  void UnsafeArenaSwap(LoginRequest* other) {
+  void UnsafeArenaSwap(C2SEnterScene* other) {
     if (other == this) return;
     GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
     InternalSwap(other);
@@ -1598,14 +1582,14 @@ class LoginRequest final :
 
   // implements Message ----------------------------------------------
 
-  LoginRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
-    return CreateMaybeMessage<LoginRequest>(arena);
+  C2SEnterScene* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<C2SEnterScene>(arena);
   }
   using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
-  void CopyFrom(const LoginRequest& from);
+  void CopyFrom(const C2SEnterScene& from);
   using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
-  void MergeFrom( const LoginRequest& from) {
-    LoginRequest::MergeImpl(*this, from);
+  void MergeFrom( const C2SEnterScene& from) {
+    C2SEnterScene::MergeImpl(*this, from);
   }
   private:
   static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
@@ -1623,15 +1607,15 @@ class LoginRequest final :
   void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
   void SharedDtor();
   void SetCachedSize(int size) const final;
-  void InternalSwap(LoginRequest* other);
+  void InternalSwap(C2SEnterScene* other);
 
   private:
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "yy.protocol.app.LoginRequest";
+    return "yy.protocol.app.C2SEnterScene";
   }
   protected:
-  explicit LoginRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+  explicit C2SEnterScene(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                        bool is_message_owned = false);
   public:
 
@@ -1645,23 +1629,18 @@ class LoginRequest final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kConnNameFieldNumber = 1,
+    kUidFieldNumber = 1,
   };
-  // bytes conn_name = 1;
-  void clear_conn_name();
-  const std::string& conn_name() const;
-  template <typename ArgT0 = const std::string&, typename... ArgT>
-  void set_conn_name(ArgT0&& arg0, ArgT... args);
-  std::string* mutable_conn_name();
-  PROTOBUF_NODISCARD std::string* release_conn_name();
-  void set_allocated_conn_name(std::string* conn_name);
+  // uint64 uid = 1;
+  void clear_uid();
+  uint64_t uid() const;
+  void set_uid(uint64_t value);
   private:
-  const std::string& _internal_conn_name() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_conn_name(const std::string& value);
-  std::string* _internal_mutable_conn_name();
+  uint64_t _internal_uid() const;
+  void _internal_set_uid(uint64_t value);
   public:
 
-  // @@protoc_insertion_point(class_scope:yy.protocol.app.LoginRequest)
+  // @@protoc_insertion_point(class_scope:yy.protocol.app.C2SEnterScene)
  private:
   class _Internal;
 
@@ -1669,7 +1648,7 @@ class LoginRequest final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
-    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr conn_name_;
+    uint64_t uid_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -1677,24 +1656,24 @@ class LoginRequest final :
 };
 // -------------------------------------------------------------------
 
-class LoginResponse final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:yy.protocol.app.LoginResponse) */ {
+class S2CEnterScene final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:yy.protocol.app.S2CEnterScene) */ {
  public:
-  inline LoginResponse() : LoginResponse(nullptr) {}
-  ~LoginResponse() override;
-  explicit PROTOBUF_CONSTEXPR LoginResponse(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+  inline S2CEnterScene() : S2CEnterScene(nullptr) {}
+  ~S2CEnterScene() override;
+  explicit PROTOBUF_CONSTEXPR S2CEnterScene(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
 
-  LoginResponse(const LoginResponse& from);
-  LoginResponse(LoginResponse&& from) noexcept
-    : LoginResponse() {
+  S2CEnterScene(const S2CEnterScene& from);
+  S2CEnterScene(S2CEnterScene&& from) noexcept
+    : S2CEnterScene() {
     *this = ::std::move(from);
   }
 
-  inline LoginResponse& operator=(const LoginResponse& from) {
+  inline S2CEnterScene& operator=(const S2CEnterScene& from) {
     CopyFrom(from);
     return *this;
   }
-  inline LoginResponse& operator=(LoginResponse&& from) noexcept {
+  inline S2CEnterScene& operator=(S2CEnterScene&& from) noexcept {
     if (this == &from) return *this;
     if (GetOwningArena() == from.GetOwningArena()
   #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
@@ -1717,20 +1696,20 @@ class LoginResponse final :
   static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
     return default_instance().GetMetadata().reflection;
   }
-  static const LoginResponse& default_instance() {
+  static const S2CEnterScene& default_instance() {
     return *internal_default_instance();
   }
-  static inline const LoginResponse* internal_default_instance() {
-    return reinterpret_cast<const LoginResponse*>(
-               &_LoginResponse_default_instance_);
+  static inline const S2CEnterScene* internal_default_instance() {
+    return reinterpret_cast<const S2CEnterScene*>(
+               &_S2CEnterScene_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
     9;
 
-  friend void swap(LoginResponse& a, LoginResponse& b) {
+  friend void swap(S2CEnterScene& a, S2CEnterScene& b) {
     a.Swap(&b);
   }
-  inline void Swap(LoginResponse* other) {
+  inline void Swap(S2CEnterScene* other) {
     if (other == this) return;
   #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
     if (GetOwningArena() != nullptr &&
@@ -1743,7 +1722,7 @@ class LoginResponse final :
       ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
     }
   }
-  void UnsafeArenaSwap(LoginResponse* other) {
+  void UnsafeArenaSwap(S2CEnterScene* other) {
     if (other == this) return;
     GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
     InternalSwap(other);
@@ -1751,14 +1730,14 @@ class LoginResponse final :
 
   // implements Message ----------------------------------------------
 
-  LoginResponse* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
-    return CreateMaybeMessage<LoginResponse>(arena);
+  S2CEnterScene* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<S2CEnterScene>(arena);
   }
   using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
-  void CopyFrom(const LoginResponse& from);
+  void CopyFrom(const S2CEnterScene& from);
   using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
-  void MergeFrom( const LoginResponse& from) {
-    LoginResponse::MergeImpl(*this, from);
+  void MergeFrom( const S2CEnterScene& from) {
+    S2CEnterScene::MergeImpl(*this, from);
   }
   private:
   static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
@@ -1776,15 +1755,15 @@ class LoginResponse final :
   void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
   void SharedDtor();
   void SetCachedSize(int size) const final;
-  void InternalSwap(LoginResponse* other);
+  void InternalSwap(S2CEnterScene* other);
 
   private:
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "yy.protocol.app.LoginResponse";
+    return "yy.protocol.app.S2CEnterScene";
   }
   protected:
-  explicit LoginResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+  explicit S2CEnterScene(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                        bool is_message_owned = false);
   public:
 
@@ -1798,11 +1777,12 @@ class LoginResponse final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kOtherDatasFieldNumber = 3,
-    kSelfDataFieldNumber = 2,
-    kResultFieldNumber = 1,
+    kOtherDatasFieldNumber = 4,
+    kSelfDataFieldNumber = 3,
+    kUidFieldNumber = 1,
+    kResultFieldNumber = 2,
   };
-  // repeated .yy.protocol.app.PlayerBaseData other_datas = 3;
+  // repeated .yy.protocol.app.PlayerBaseData other_datas = 4;
   int other_datas_size() const;
   private:
   int _internal_other_datas_size() const;
@@ -1820,7 +1800,7 @@ class LoginResponse final :
   const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::yy::protocol::app::PlayerBaseData >&
       other_datas() const;
 
-  // .yy.protocol.app.PlayerBaseData self_data = 2;
+  // .yy.protocol.app.PlayerBaseData self_data = 3;
   bool has_self_data() const;
   private:
   bool _internal_has_self_data() const;
@@ -1838,7 +1818,16 @@ class LoginResponse final :
       ::yy::protocol::app::PlayerBaseData* self_data);
   ::yy::protocol::app::PlayerBaseData* unsafe_arena_release_self_data();
 
-  // bool result = 1;
+  // uint64 uid = 1;
+  void clear_uid();
+  uint64_t uid() const;
+  void set_uid(uint64_t value);
+  private:
+  uint64_t _internal_uid() const;
+  void _internal_set_uid(uint64_t value);
+  public:
+
+  // bool result = 2;
   void clear_result();
   bool result() const;
   void set_result(bool value);
@@ -1847,7 +1836,7 @@ class LoginResponse final :
   void _internal_set_result(bool value);
   public:
 
-  // @@protoc_insertion_point(class_scope:yy.protocol.app.LoginResponse)
+  // @@protoc_insertion_point(class_scope:yy.protocol.app.S2CEnterScene)
  private:
   class _Internal;
 
@@ -1857,6 +1846,7 @@ class LoginResponse final :
   struct Impl_ {
     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::yy::protocol::app::PlayerBaseData > other_datas_;
     ::yy::protocol::app::PlayerBaseData* self_data_;
+    uint64_t uid_;
     bool result_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
@@ -1865,24 +1855,24 @@ class LoginResponse final :
 };
 // -------------------------------------------------------------------
 
-class OtherPlayerDataRequest final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:yy.protocol.app.OtherPlayerDataRequest) */ {
+class C2SOtherPlayerData final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:yy.protocol.app.C2SOtherPlayerData) */ {
  public:
-  inline OtherPlayerDataRequest() : OtherPlayerDataRequest(nullptr) {}
-  ~OtherPlayerDataRequest() override;
-  explicit PROTOBUF_CONSTEXPR OtherPlayerDataRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+  inline C2SOtherPlayerData() : C2SOtherPlayerData(nullptr) {}
+  ~C2SOtherPlayerData() override;
+  explicit PROTOBUF_CONSTEXPR C2SOtherPlayerData(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
 
-  OtherPlayerDataRequest(const OtherPlayerDataRequest& from);
-  OtherPlayerDataRequest(OtherPlayerDataRequest&& from) noexcept
-    : OtherPlayerDataRequest() {
+  C2SOtherPlayerData(const C2SOtherPlayerData& from);
+  C2SOtherPlayerData(C2SOtherPlayerData&& from) noexcept
+    : C2SOtherPlayerData() {
     *this = ::std::move(from);
   }
 
-  inline OtherPlayerDataRequest& operator=(const OtherPlayerDataRequest& from) {
+  inline C2SOtherPlayerData& operator=(const C2SOtherPlayerData& from) {
     CopyFrom(from);
     return *this;
   }
-  inline OtherPlayerDataRequest& operator=(OtherPlayerDataRequest&& from) noexcept {
+  inline C2SOtherPlayerData& operator=(C2SOtherPlayerData&& from) noexcept {
     if (this == &from) return *this;
     if (GetOwningArena() == from.GetOwningArena()
   #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
@@ -1905,20 +1895,20 @@ class OtherPlayerDataRequest final :
   static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
     return default_instance().GetMetadata().reflection;
   }
-  static const OtherPlayerDataRequest& default_instance() {
+  static const C2SOtherPlayerData& default_instance() {
     return *internal_default_instance();
   }
-  static inline const OtherPlayerDataRequest* internal_default_instance() {
-    return reinterpret_cast<const OtherPlayerDataRequest*>(
-               &_OtherPlayerDataRequest_default_instance_);
+  static inline const C2SOtherPlayerData* internal_default_instance() {
+    return reinterpret_cast<const C2SOtherPlayerData*>(
+               &_C2SOtherPlayerData_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
     10;
 
-  friend void swap(OtherPlayerDataRequest& a, OtherPlayerDataRequest& b) {
+  friend void swap(C2SOtherPlayerData& a, C2SOtherPlayerData& b) {
     a.Swap(&b);
   }
-  inline void Swap(OtherPlayerDataRequest* other) {
+  inline void Swap(C2SOtherPlayerData* other) {
     if (other == this) return;
   #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
     if (GetOwningArena() != nullptr &&
@@ -1931,7 +1921,7 @@ class OtherPlayerDataRequest final :
       ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
     }
   }
-  void UnsafeArenaSwap(OtherPlayerDataRequest* other) {
+  void UnsafeArenaSwap(C2SOtherPlayerData* other) {
     if (other == this) return;
     GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
     InternalSwap(other);
@@ -1939,14 +1929,14 @@ class OtherPlayerDataRequest final :
 
   // implements Message ----------------------------------------------
 
-  OtherPlayerDataRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
-    return CreateMaybeMessage<OtherPlayerDataRequest>(arena);
+  C2SOtherPlayerData* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<C2SOtherPlayerData>(arena);
   }
   using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
-  void CopyFrom(const OtherPlayerDataRequest& from);
+  void CopyFrom(const C2SOtherPlayerData& from);
   using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
-  void MergeFrom( const OtherPlayerDataRequest& from) {
-    OtherPlayerDataRequest::MergeImpl(*this, from);
+  void MergeFrom( const C2SOtherPlayerData& from) {
+    C2SOtherPlayerData::MergeImpl(*this, from);
   }
   private:
   static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
@@ -1964,15 +1954,15 @@ class OtherPlayerDataRequest final :
   void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
   void SharedDtor();
   void SetCachedSize(int size) const final;
-  void InternalSwap(OtherPlayerDataRequest* other);
+  void InternalSwap(C2SOtherPlayerData* other);
 
   private:
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "yy.protocol.app.OtherPlayerDataRequest";
+    return "yy.protocol.app.C2SOtherPlayerData";
   }
   protected:
-  explicit OtherPlayerDataRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+  explicit C2SOtherPlayerData(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                        bool is_message_owned = false);
   public:
 
@@ -1989,25 +1979,25 @@ class OtherPlayerDataRequest final :
     kRequesterUidFieldNumber = 1,
     kRequestedUidFieldNumber = 2,
   };
-  // uint32 requester_uid = 1;
+  // uint64 requester_uid = 1;
   void clear_requester_uid();
-  uint32_t requester_uid() const;
-  void set_requester_uid(uint32_t value);
+  uint64_t requester_uid() const;
+  void set_requester_uid(uint64_t value);
   private:
-  uint32_t _internal_requester_uid() const;
-  void _internal_set_requester_uid(uint32_t value);
+  uint64_t _internal_requester_uid() const;
+  void _internal_set_requester_uid(uint64_t value);
   public:
 
-  // uint32 requested_uid = 2;
+  // uint64 requested_uid = 2;
   void clear_requested_uid();
-  uint32_t requested_uid() const;
-  void set_requested_uid(uint32_t value);
+  uint64_t requested_uid() const;
+  void set_requested_uid(uint64_t value);
   private:
-  uint32_t _internal_requested_uid() const;
-  void _internal_set_requested_uid(uint32_t value);
+  uint64_t _internal_requested_uid() const;
+  void _internal_set_requested_uid(uint64_t value);
   public:
 
-  // @@protoc_insertion_point(class_scope:yy.protocol.app.OtherPlayerDataRequest)
+  // @@protoc_insertion_point(class_scope:yy.protocol.app.C2SOtherPlayerData)
  private:
   class _Internal;
 
@@ -2015,8 +2005,8 @@ class OtherPlayerDataRequest final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
-    uint32_t requester_uid_;
-    uint32_t requested_uid_;
+    uint64_t requester_uid_;
+    uint64_t requested_uid_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -2024,24 +2014,24 @@ class OtherPlayerDataRequest final :
 };
 // -------------------------------------------------------------------
 
-class OtherPlayerDataResponse final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:yy.protocol.app.OtherPlayerDataResponse) */ {
+class S2COtherPlayerData final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:yy.protocol.app.S2COtherPlayerData) */ {
  public:
-  inline OtherPlayerDataResponse() : OtherPlayerDataResponse(nullptr) {}
-  ~OtherPlayerDataResponse() override;
-  explicit PROTOBUF_CONSTEXPR OtherPlayerDataResponse(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+  inline S2COtherPlayerData() : S2COtherPlayerData(nullptr) {}
+  ~S2COtherPlayerData() override;
+  explicit PROTOBUF_CONSTEXPR S2COtherPlayerData(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
 
-  OtherPlayerDataResponse(const OtherPlayerDataResponse& from);
-  OtherPlayerDataResponse(OtherPlayerDataResponse&& from) noexcept
-    : OtherPlayerDataResponse() {
+  S2COtherPlayerData(const S2COtherPlayerData& from);
+  S2COtherPlayerData(S2COtherPlayerData&& from) noexcept
+    : S2COtherPlayerData() {
     *this = ::std::move(from);
   }
 
-  inline OtherPlayerDataResponse& operator=(const OtherPlayerDataResponse& from) {
+  inline S2COtherPlayerData& operator=(const S2COtherPlayerData& from) {
     CopyFrom(from);
     return *this;
   }
-  inline OtherPlayerDataResponse& operator=(OtherPlayerDataResponse&& from) noexcept {
+  inline S2COtherPlayerData& operator=(S2COtherPlayerData&& from) noexcept {
     if (this == &from) return *this;
     if (GetOwningArena() == from.GetOwningArena()
   #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
@@ -2064,20 +2054,20 @@ class OtherPlayerDataResponse final :
   static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
     return default_instance().GetMetadata().reflection;
   }
-  static const OtherPlayerDataResponse& default_instance() {
+  static const S2COtherPlayerData& default_instance() {
     return *internal_default_instance();
   }
-  static inline const OtherPlayerDataResponse* internal_default_instance() {
-    return reinterpret_cast<const OtherPlayerDataResponse*>(
-               &_OtherPlayerDataResponse_default_instance_);
+  static inline const S2COtherPlayerData* internal_default_instance() {
+    return reinterpret_cast<const S2COtherPlayerData*>(
+               &_S2COtherPlayerData_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
     11;
 
-  friend void swap(OtherPlayerDataResponse& a, OtherPlayerDataResponse& b) {
+  friend void swap(S2COtherPlayerData& a, S2COtherPlayerData& b) {
     a.Swap(&b);
   }
-  inline void Swap(OtherPlayerDataResponse* other) {
+  inline void Swap(S2COtherPlayerData* other) {
     if (other == this) return;
   #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
     if (GetOwningArena() != nullptr &&
@@ -2090,7 +2080,7 @@ class OtherPlayerDataResponse final :
       ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
     }
   }
-  void UnsafeArenaSwap(OtherPlayerDataResponse* other) {
+  void UnsafeArenaSwap(S2COtherPlayerData* other) {
     if (other == this) return;
     GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
     InternalSwap(other);
@@ -2098,14 +2088,14 @@ class OtherPlayerDataResponse final :
 
   // implements Message ----------------------------------------------
 
-  OtherPlayerDataResponse* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
-    return CreateMaybeMessage<OtherPlayerDataResponse>(arena);
+  S2COtherPlayerData* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<S2COtherPlayerData>(arena);
   }
   using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
-  void CopyFrom(const OtherPlayerDataResponse& from);
+  void CopyFrom(const S2COtherPlayerData& from);
   using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
-  void MergeFrom( const OtherPlayerDataResponse& from) {
-    OtherPlayerDataResponse::MergeImpl(*this, from);
+  void MergeFrom( const S2COtherPlayerData& from) {
+    S2COtherPlayerData::MergeImpl(*this, from);
   }
   private:
   static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
@@ -2123,15 +2113,15 @@ class OtherPlayerDataResponse final :
   void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
   void SharedDtor();
   void SetCachedSize(int size) const final;
-  void InternalSwap(OtherPlayerDataResponse* other);
+  void InternalSwap(S2COtherPlayerData* other);
 
   private:
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "yy.protocol.app.OtherPlayerDataResponse";
+    return "yy.protocol.app.S2COtherPlayerData";
   }
   protected:
-  explicit OtherPlayerDataResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+  explicit S2COtherPlayerData(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                        bool is_message_owned = false);
   public:
 
@@ -2165,7 +2155,7 @@ class OtherPlayerDataResponse final :
       ::yy::protocol::app::PlayerBaseData* other_data);
   ::yy::protocol::app::PlayerBaseData* unsafe_arena_release_other_data();
 
-  // @@protoc_insertion_point(class_scope:yy.protocol.app.OtherPlayerDataResponse)
+  // @@protoc_insertion_point(class_scope:yy.protocol.app.S2COtherPlayerData)
  private:
   class _Internal;
 
@@ -2190,74 +2180,24 @@ class OtherPlayerDataResponse final :
 #endif  // __GNUC__
 // PlayerBaseData
 
-// uint32 uid = 1;
+// uint64 uid = 1;
 inline void PlayerBaseData::clear_uid() {
-  _impl_.uid_ = 0u;
+  _impl_.uid_ = uint64_t{0u};
 }
-inline uint32_t PlayerBaseData::_internal_uid() const {
+inline uint64_t PlayerBaseData::_internal_uid() const {
   return _impl_.uid_;
 }
-inline uint32_t PlayerBaseData::uid() const {
+inline uint64_t PlayerBaseData::uid() const {
   // @@protoc_insertion_point(field_get:yy.protocol.app.PlayerBaseData.uid)
   return _internal_uid();
 }
-inline void PlayerBaseData::_internal_set_uid(uint32_t value) {
+inline void PlayerBaseData::_internal_set_uid(uint64_t value) {
   
   _impl_.uid_ = value;
 }
-inline void PlayerBaseData::set_uid(uint32_t value) {
+inline void PlayerBaseData::set_uid(uint64_t value) {
   _internal_set_uid(value);
   // @@protoc_insertion_point(field_set:yy.protocol.app.PlayerBaseData.uid)
-}
-
-// bytes conn_name = 2;
-inline void PlayerBaseData::clear_conn_name() {
-  _impl_.conn_name_.ClearToEmpty();
-}
-inline const std::string& PlayerBaseData::conn_name() const {
-  // @@protoc_insertion_point(field_get:yy.protocol.app.PlayerBaseData.conn_name)
-  return _internal_conn_name();
-}
-template <typename ArgT0, typename... ArgT>
-inline PROTOBUF_ALWAYS_INLINE
-void PlayerBaseData::set_conn_name(ArgT0&& arg0, ArgT... args) {
- 
- _impl_.conn_name_.SetBytes(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:yy.protocol.app.PlayerBaseData.conn_name)
-}
-inline std::string* PlayerBaseData::mutable_conn_name() {
-  std::string* _s = _internal_mutable_conn_name();
-  // @@protoc_insertion_point(field_mutable:yy.protocol.app.PlayerBaseData.conn_name)
-  return _s;
-}
-inline const std::string& PlayerBaseData::_internal_conn_name() const {
-  return _impl_.conn_name_.Get();
-}
-inline void PlayerBaseData::_internal_set_conn_name(const std::string& value) {
-  
-  _impl_.conn_name_.Set(value, GetArenaForAllocation());
-}
-inline std::string* PlayerBaseData::_internal_mutable_conn_name() {
-  
-  return _impl_.conn_name_.Mutable(GetArenaForAllocation());
-}
-inline std::string* PlayerBaseData::release_conn_name() {
-  // @@protoc_insertion_point(field_release:yy.protocol.app.PlayerBaseData.conn_name)
-  return _impl_.conn_name_.Release();
-}
-inline void PlayerBaseData::set_allocated_conn_name(std::string* conn_name) {
-  if (conn_name != nullptr) {
-    
-  } else {
-    
-  }
-  _impl_.conn_name_.SetAllocated(conn_name, GetArenaForAllocation());
-#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (_impl_.conn_name_.IsDefault()) {
-    _impl_.conn_name_.Set("", GetArenaForAllocation());
-  }
-#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:yy.protocol.app.PlayerBaseData.conn_name)
 }
 
 // int32 state = 3;
@@ -2710,75 +2650,75 @@ inline void PlayerJumpAndGravity::set_ani_is_freefall(bool value) {
 
 // -------------------------------------------------------------------
 
-// PlayerLeave
+// C2SPlayerLeave
 
-// uint32 leaver_uid = 1;
-inline void PlayerLeave::clear_leaver_uid() {
-  _impl_.leaver_uid_ = 0u;
+// uint64 leaver_uid = 1;
+inline void C2SPlayerLeave::clear_leaver_uid() {
+  _impl_.leaver_uid_ = uint64_t{0u};
 }
-inline uint32_t PlayerLeave::_internal_leaver_uid() const {
+inline uint64_t C2SPlayerLeave::_internal_leaver_uid() const {
   return _impl_.leaver_uid_;
 }
-inline uint32_t PlayerLeave::leaver_uid() const {
-  // @@protoc_insertion_point(field_get:yy.protocol.app.PlayerLeave.leaver_uid)
+inline uint64_t C2SPlayerLeave::leaver_uid() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.C2SPlayerLeave.leaver_uid)
   return _internal_leaver_uid();
 }
-inline void PlayerLeave::_internal_set_leaver_uid(uint32_t value) {
+inline void C2SPlayerLeave::_internal_set_leaver_uid(uint64_t value) {
   
   _impl_.leaver_uid_ = value;
 }
-inline void PlayerLeave::set_leaver_uid(uint32_t value) {
+inline void C2SPlayerLeave::set_leaver_uid(uint64_t value) {
   _internal_set_leaver_uid(value);
-  // @@protoc_insertion_point(field_set:yy.protocol.app.PlayerLeave.leaver_uid)
+  // @@protoc_insertion_point(field_set:yy.protocol.app.C2SPlayerLeave.leaver_uid)
 }
 
 // -------------------------------------------------------------------
 
-// SelfMovement
+// C2SMove
 
-// uint32 uid = 1;
-inline void SelfMovement::clear_uid() {
-  _impl_.uid_ = 0u;
+// uint64 uid = 1;
+inline void C2SMove::clear_uid() {
+  _impl_.uid_ = uint64_t{0u};
 }
-inline uint32_t SelfMovement::_internal_uid() const {
+inline uint64_t C2SMove::_internal_uid() const {
   return _impl_.uid_;
 }
-inline uint32_t SelfMovement::uid() const {
-  // @@protoc_insertion_point(field_get:yy.protocol.app.SelfMovement.uid)
+inline uint64_t C2SMove::uid() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.C2SMove.uid)
   return _internal_uid();
 }
-inline void SelfMovement::_internal_set_uid(uint32_t value) {
+inline void C2SMove::_internal_set_uid(uint64_t value) {
   
   _impl_.uid_ = value;
 }
-inline void SelfMovement::set_uid(uint32_t value) {
+inline void C2SMove::set_uid(uint64_t value) {
   _internal_set_uid(value);
-  // @@protoc_insertion_point(field_set:yy.protocol.app.SelfMovement.uid)
+  // @@protoc_insertion_point(field_set:yy.protocol.app.C2SMove.uid)
 }
 
 // .yy.protocol.app.PlayerMove movement = 2;
-inline bool SelfMovement::_internal_has_movement() const {
+inline bool C2SMove::_internal_has_movement() const {
   return this != internal_default_instance() && _impl_.movement_ != nullptr;
 }
-inline bool SelfMovement::has_movement() const {
+inline bool C2SMove::has_movement() const {
   return _internal_has_movement();
 }
-inline void SelfMovement::clear_movement() {
+inline void C2SMove::clear_movement() {
   if (GetArenaForAllocation() == nullptr && _impl_.movement_ != nullptr) {
     delete _impl_.movement_;
   }
   _impl_.movement_ = nullptr;
 }
-inline const ::yy::protocol::app::PlayerMove& SelfMovement::_internal_movement() const {
+inline const ::yy::protocol::app::PlayerMove& C2SMove::_internal_movement() const {
   const ::yy::protocol::app::PlayerMove* p = _impl_.movement_;
   return p != nullptr ? *p : reinterpret_cast<const ::yy::protocol::app::PlayerMove&>(
       ::yy::protocol::app::_PlayerMove_default_instance_);
 }
-inline const ::yy::protocol::app::PlayerMove& SelfMovement::movement() const {
-  // @@protoc_insertion_point(field_get:yy.protocol.app.SelfMovement.movement)
+inline const ::yy::protocol::app::PlayerMove& C2SMove::movement() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.C2SMove.movement)
   return _internal_movement();
 }
-inline void SelfMovement::unsafe_arena_set_allocated_movement(
+inline void C2SMove::unsafe_arena_set_allocated_movement(
     ::yy::protocol::app::PlayerMove* movement) {
   if (GetArenaForAllocation() == nullptr) {
     delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.movement_);
@@ -2789,9 +2729,9 @@ inline void SelfMovement::unsafe_arena_set_allocated_movement(
   } else {
     
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:yy.protocol.app.SelfMovement.movement)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:yy.protocol.app.C2SMove.movement)
 }
-inline ::yy::protocol::app::PlayerMove* SelfMovement::release_movement() {
+inline ::yy::protocol::app::PlayerMove* C2SMove::release_movement() {
   
   ::yy::protocol::app::PlayerMove* temp = _impl_.movement_;
   _impl_.movement_ = nullptr;
@@ -2806,14 +2746,14 @@ inline ::yy::protocol::app::PlayerMove* SelfMovement::release_movement() {
 #endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
   return temp;
 }
-inline ::yy::protocol::app::PlayerMove* SelfMovement::unsafe_arena_release_movement() {
-  // @@protoc_insertion_point(field_release:yy.protocol.app.SelfMovement.movement)
+inline ::yy::protocol::app::PlayerMove* C2SMove::unsafe_arena_release_movement() {
+  // @@protoc_insertion_point(field_release:yy.protocol.app.C2SMove.movement)
   
   ::yy::protocol::app::PlayerMove* temp = _impl_.movement_;
   _impl_.movement_ = nullptr;
   return temp;
 }
-inline ::yy::protocol::app::PlayerMove* SelfMovement::_internal_mutable_movement() {
+inline ::yy::protocol::app::PlayerMove* C2SMove::_internal_mutable_movement() {
   
   if (_impl_.movement_ == nullptr) {
     auto* p = CreateMaybeMessage<::yy::protocol::app::PlayerMove>(GetArenaForAllocation());
@@ -2821,12 +2761,12 @@ inline ::yy::protocol::app::PlayerMove* SelfMovement::_internal_mutable_movement
   }
   return _impl_.movement_;
 }
-inline ::yy::protocol::app::PlayerMove* SelfMovement::mutable_movement() {
+inline ::yy::protocol::app::PlayerMove* C2SMove::mutable_movement() {
   ::yy::protocol::app::PlayerMove* _msg = _internal_mutable_movement();
-  // @@protoc_insertion_point(field_mutable:yy.protocol.app.SelfMovement.movement)
+  // @@protoc_insertion_point(field_mutable:yy.protocol.app.C2SMove.movement)
   return _msg;
 }
-inline void SelfMovement::set_allocated_movement(::yy::protocol::app::PlayerMove* movement) {
+inline void C2SMove::set_allocated_movement(::yy::protocol::app::PlayerMove* movement) {
   ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
   if (message_arena == nullptr) {
     delete _impl_.movement_;
@@ -2843,56 +2783,56 @@ inline void SelfMovement::set_allocated_movement(::yy::protocol::app::PlayerMove
     
   }
   _impl_.movement_ = movement;
-  // @@protoc_insertion_point(field_set_allocated:yy.protocol.app.SelfMovement.movement)
+  // @@protoc_insertion_point(field_set_allocated:yy.protocol.app.C2SMove.movement)
 }
 
 // -------------------------------------------------------------------
 
-// OtherMovement
+// S2CMove
 
-// uint32 uid = 1;
-inline void OtherMovement::clear_uid() {
-  _impl_.uid_ = 0u;
+// uint64 uid = 1;
+inline void S2CMove::clear_uid() {
+  _impl_.uid_ = uint64_t{0u};
 }
-inline uint32_t OtherMovement::_internal_uid() const {
+inline uint64_t S2CMove::_internal_uid() const {
   return _impl_.uid_;
 }
-inline uint32_t OtherMovement::uid() const {
-  // @@protoc_insertion_point(field_get:yy.protocol.app.OtherMovement.uid)
+inline uint64_t S2CMove::uid() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.S2CMove.uid)
   return _internal_uid();
 }
-inline void OtherMovement::_internal_set_uid(uint32_t value) {
+inline void S2CMove::_internal_set_uid(uint64_t value) {
   
   _impl_.uid_ = value;
 }
-inline void OtherMovement::set_uid(uint32_t value) {
+inline void S2CMove::set_uid(uint64_t value) {
   _internal_set_uid(value);
-  // @@protoc_insertion_point(field_set:yy.protocol.app.OtherMovement.uid)
+  // @@protoc_insertion_point(field_set:yy.protocol.app.S2CMove.uid)
 }
 
 // .yy.protocol.app.PlayerMove movement = 2;
-inline bool OtherMovement::_internal_has_movement() const {
+inline bool S2CMove::_internal_has_movement() const {
   return this != internal_default_instance() && _impl_.movement_ != nullptr;
 }
-inline bool OtherMovement::has_movement() const {
+inline bool S2CMove::has_movement() const {
   return _internal_has_movement();
 }
-inline void OtherMovement::clear_movement() {
+inline void S2CMove::clear_movement() {
   if (GetArenaForAllocation() == nullptr && _impl_.movement_ != nullptr) {
     delete _impl_.movement_;
   }
   _impl_.movement_ = nullptr;
 }
-inline const ::yy::protocol::app::PlayerMove& OtherMovement::_internal_movement() const {
+inline const ::yy::protocol::app::PlayerMove& S2CMove::_internal_movement() const {
   const ::yy::protocol::app::PlayerMove* p = _impl_.movement_;
   return p != nullptr ? *p : reinterpret_cast<const ::yy::protocol::app::PlayerMove&>(
       ::yy::protocol::app::_PlayerMove_default_instance_);
 }
-inline const ::yy::protocol::app::PlayerMove& OtherMovement::movement() const {
-  // @@protoc_insertion_point(field_get:yy.protocol.app.OtherMovement.movement)
+inline const ::yy::protocol::app::PlayerMove& S2CMove::movement() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.S2CMove.movement)
   return _internal_movement();
 }
-inline void OtherMovement::unsafe_arena_set_allocated_movement(
+inline void S2CMove::unsafe_arena_set_allocated_movement(
     ::yy::protocol::app::PlayerMove* movement) {
   if (GetArenaForAllocation() == nullptr) {
     delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.movement_);
@@ -2903,9 +2843,9 @@ inline void OtherMovement::unsafe_arena_set_allocated_movement(
   } else {
     
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:yy.protocol.app.OtherMovement.movement)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:yy.protocol.app.S2CMove.movement)
 }
-inline ::yy::protocol::app::PlayerMove* OtherMovement::release_movement() {
+inline ::yy::protocol::app::PlayerMove* S2CMove::release_movement() {
   
   ::yy::protocol::app::PlayerMove* temp = _impl_.movement_;
   _impl_.movement_ = nullptr;
@@ -2920,14 +2860,14 @@ inline ::yy::protocol::app::PlayerMove* OtherMovement::release_movement() {
 #endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
   return temp;
 }
-inline ::yy::protocol::app::PlayerMove* OtherMovement::unsafe_arena_release_movement() {
-  // @@protoc_insertion_point(field_release:yy.protocol.app.OtherMovement.movement)
+inline ::yy::protocol::app::PlayerMove* S2CMove::unsafe_arena_release_movement() {
+  // @@protoc_insertion_point(field_release:yy.protocol.app.S2CMove.movement)
   
   ::yy::protocol::app::PlayerMove* temp = _impl_.movement_;
   _impl_.movement_ = nullptr;
   return temp;
 }
-inline ::yy::protocol::app::PlayerMove* OtherMovement::_internal_mutable_movement() {
+inline ::yy::protocol::app::PlayerMove* S2CMove::_internal_mutable_movement() {
   
   if (_impl_.movement_ == nullptr) {
     auto* p = CreateMaybeMessage<::yy::protocol::app::PlayerMove>(GetArenaForAllocation());
@@ -2935,12 +2875,12 @@ inline ::yy::protocol::app::PlayerMove* OtherMovement::_internal_mutable_movemen
   }
   return _impl_.movement_;
 }
-inline ::yy::protocol::app::PlayerMove* OtherMovement::mutable_movement() {
+inline ::yy::protocol::app::PlayerMove* S2CMove::mutable_movement() {
   ::yy::protocol::app::PlayerMove* _msg = _internal_mutable_movement();
-  // @@protoc_insertion_point(field_mutable:yy.protocol.app.OtherMovement.movement)
+  // @@protoc_insertion_point(field_mutable:yy.protocol.app.S2CMove.movement)
   return _msg;
 }
-inline void OtherMovement::set_allocated_movement(::yy::protocol::app::PlayerMove* movement) {
+inline void S2CMove::set_allocated_movement(::yy::protocol::app::PlayerMove* movement) {
   ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
   if (message_arena == nullptr) {
     delete _impl_.movement_;
@@ -2957,56 +2897,56 @@ inline void OtherMovement::set_allocated_movement(::yy::protocol::app::PlayerMov
     
   }
   _impl_.movement_ = movement;
-  // @@protoc_insertion_point(field_set_allocated:yy.protocol.app.OtherMovement.movement)
+  // @@protoc_insertion_point(field_set_allocated:yy.protocol.app.S2CMove.movement)
 }
 
 // -------------------------------------------------------------------
 
-// SelfJumpAndGravity
+// C2SJumpAndGravity
 
-// uint32 uid = 1;
-inline void SelfJumpAndGravity::clear_uid() {
-  _impl_.uid_ = 0u;
+// uint64 uid = 1;
+inline void C2SJumpAndGravity::clear_uid() {
+  _impl_.uid_ = uint64_t{0u};
 }
-inline uint32_t SelfJumpAndGravity::_internal_uid() const {
+inline uint64_t C2SJumpAndGravity::_internal_uid() const {
   return _impl_.uid_;
 }
-inline uint32_t SelfJumpAndGravity::uid() const {
-  // @@protoc_insertion_point(field_get:yy.protocol.app.SelfJumpAndGravity.uid)
+inline uint64_t C2SJumpAndGravity::uid() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.C2SJumpAndGravity.uid)
   return _internal_uid();
 }
-inline void SelfJumpAndGravity::_internal_set_uid(uint32_t value) {
+inline void C2SJumpAndGravity::_internal_set_uid(uint64_t value) {
   
   _impl_.uid_ = value;
 }
-inline void SelfJumpAndGravity::set_uid(uint32_t value) {
+inline void C2SJumpAndGravity::set_uid(uint64_t value) {
   _internal_set_uid(value);
-  // @@protoc_insertion_point(field_set:yy.protocol.app.SelfJumpAndGravity.uid)
+  // @@protoc_insertion_point(field_set:yy.protocol.app.C2SJumpAndGravity.uid)
 }
 
 // .yy.protocol.app.PlayerJumpAndGravity jump_and_gravity = 2;
-inline bool SelfJumpAndGravity::_internal_has_jump_and_gravity() const {
+inline bool C2SJumpAndGravity::_internal_has_jump_and_gravity() const {
   return this != internal_default_instance() && _impl_.jump_and_gravity_ != nullptr;
 }
-inline bool SelfJumpAndGravity::has_jump_and_gravity() const {
+inline bool C2SJumpAndGravity::has_jump_and_gravity() const {
   return _internal_has_jump_and_gravity();
 }
-inline void SelfJumpAndGravity::clear_jump_and_gravity() {
+inline void C2SJumpAndGravity::clear_jump_and_gravity() {
   if (GetArenaForAllocation() == nullptr && _impl_.jump_and_gravity_ != nullptr) {
     delete _impl_.jump_and_gravity_;
   }
   _impl_.jump_and_gravity_ = nullptr;
 }
-inline const ::yy::protocol::app::PlayerJumpAndGravity& SelfJumpAndGravity::_internal_jump_and_gravity() const {
+inline const ::yy::protocol::app::PlayerJumpAndGravity& C2SJumpAndGravity::_internal_jump_and_gravity() const {
   const ::yy::protocol::app::PlayerJumpAndGravity* p = _impl_.jump_and_gravity_;
   return p != nullptr ? *p : reinterpret_cast<const ::yy::protocol::app::PlayerJumpAndGravity&>(
       ::yy::protocol::app::_PlayerJumpAndGravity_default_instance_);
 }
-inline const ::yy::protocol::app::PlayerJumpAndGravity& SelfJumpAndGravity::jump_and_gravity() const {
-  // @@protoc_insertion_point(field_get:yy.protocol.app.SelfJumpAndGravity.jump_and_gravity)
+inline const ::yy::protocol::app::PlayerJumpAndGravity& C2SJumpAndGravity::jump_and_gravity() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.C2SJumpAndGravity.jump_and_gravity)
   return _internal_jump_and_gravity();
 }
-inline void SelfJumpAndGravity::unsafe_arena_set_allocated_jump_and_gravity(
+inline void C2SJumpAndGravity::unsafe_arena_set_allocated_jump_and_gravity(
     ::yy::protocol::app::PlayerJumpAndGravity* jump_and_gravity) {
   if (GetArenaForAllocation() == nullptr) {
     delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.jump_and_gravity_);
@@ -3017,9 +2957,9 @@ inline void SelfJumpAndGravity::unsafe_arena_set_allocated_jump_and_gravity(
   } else {
     
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:yy.protocol.app.SelfJumpAndGravity.jump_and_gravity)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:yy.protocol.app.C2SJumpAndGravity.jump_and_gravity)
 }
-inline ::yy::protocol::app::PlayerJumpAndGravity* SelfJumpAndGravity::release_jump_and_gravity() {
+inline ::yy::protocol::app::PlayerJumpAndGravity* C2SJumpAndGravity::release_jump_and_gravity() {
   
   ::yy::protocol::app::PlayerJumpAndGravity* temp = _impl_.jump_and_gravity_;
   _impl_.jump_and_gravity_ = nullptr;
@@ -3034,14 +2974,14 @@ inline ::yy::protocol::app::PlayerJumpAndGravity* SelfJumpAndGravity::release_ju
 #endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
   return temp;
 }
-inline ::yy::protocol::app::PlayerJumpAndGravity* SelfJumpAndGravity::unsafe_arena_release_jump_and_gravity() {
-  // @@protoc_insertion_point(field_release:yy.protocol.app.SelfJumpAndGravity.jump_and_gravity)
+inline ::yy::protocol::app::PlayerJumpAndGravity* C2SJumpAndGravity::unsafe_arena_release_jump_and_gravity() {
+  // @@protoc_insertion_point(field_release:yy.protocol.app.C2SJumpAndGravity.jump_and_gravity)
   
   ::yy::protocol::app::PlayerJumpAndGravity* temp = _impl_.jump_and_gravity_;
   _impl_.jump_and_gravity_ = nullptr;
   return temp;
 }
-inline ::yy::protocol::app::PlayerJumpAndGravity* SelfJumpAndGravity::_internal_mutable_jump_and_gravity() {
+inline ::yy::protocol::app::PlayerJumpAndGravity* C2SJumpAndGravity::_internal_mutable_jump_and_gravity() {
   
   if (_impl_.jump_and_gravity_ == nullptr) {
     auto* p = CreateMaybeMessage<::yy::protocol::app::PlayerJumpAndGravity>(GetArenaForAllocation());
@@ -3049,12 +2989,12 @@ inline ::yy::protocol::app::PlayerJumpAndGravity* SelfJumpAndGravity::_internal_
   }
   return _impl_.jump_and_gravity_;
 }
-inline ::yy::protocol::app::PlayerJumpAndGravity* SelfJumpAndGravity::mutable_jump_and_gravity() {
+inline ::yy::protocol::app::PlayerJumpAndGravity* C2SJumpAndGravity::mutable_jump_and_gravity() {
   ::yy::protocol::app::PlayerJumpAndGravity* _msg = _internal_mutable_jump_and_gravity();
-  // @@protoc_insertion_point(field_mutable:yy.protocol.app.SelfJumpAndGravity.jump_and_gravity)
+  // @@protoc_insertion_point(field_mutable:yy.protocol.app.C2SJumpAndGravity.jump_and_gravity)
   return _msg;
 }
-inline void SelfJumpAndGravity::set_allocated_jump_and_gravity(::yy::protocol::app::PlayerJumpAndGravity* jump_and_gravity) {
+inline void C2SJumpAndGravity::set_allocated_jump_and_gravity(::yy::protocol::app::PlayerJumpAndGravity* jump_and_gravity) {
   ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
   if (message_arena == nullptr) {
     delete _impl_.jump_and_gravity_;
@@ -3071,56 +3011,56 @@ inline void SelfJumpAndGravity::set_allocated_jump_and_gravity(::yy::protocol::a
     
   }
   _impl_.jump_and_gravity_ = jump_and_gravity;
-  // @@protoc_insertion_point(field_set_allocated:yy.protocol.app.SelfJumpAndGravity.jump_and_gravity)
+  // @@protoc_insertion_point(field_set_allocated:yy.protocol.app.C2SJumpAndGravity.jump_and_gravity)
 }
 
 // -------------------------------------------------------------------
 
-// OtherJumpAndGravity
+// S2CJumpAndGravity
 
-// uint32 uid = 1;
-inline void OtherJumpAndGravity::clear_uid() {
-  _impl_.uid_ = 0u;
+// uint64 uid = 1;
+inline void S2CJumpAndGravity::clear_uid() {
+  _impl_.uid_ = uint64_t{0u};
 }
-inline uint32_t OtherJumpAndGravity::_internal_uid() const {
+inline uint64_t S2CJumpAndGravity::_internal_uid() const {
   return _impl_.uid_;
 }
-inline uint32_t OtherJumpAndGravity::uid() const {
-  // @@protoc_insertion_point(field_get:yy.protocol.app.OtherJumpAndGravity.uid)
+inline uint64_t S2CJumpAndGravity::uid() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.S2CJumpAndGravity.uid)
   return _internal_uid();
 }
-inline void OtherJumpAndGravity::_internal_set_uid(uint32_t value) {
+inline void S2CJumpAndGravity::_internal_set_uid(uint64_t value) {
   
   _impl_.uid_ = value;
 }
-inline void OtherJumpAndGravity::set_uid(uint32_t value) {
+inline void S2CJumpAndGravity::set_uid(uint64_t value) {
   _internal_set_uid(value);
-  // @@protoc_insertion_point(field_set:yy.protocol.app.OtherJumpAndGravity.uid)
+  // @@protoc_insertion_point(field_set:yy.protocol.app.S2CJumpAndGravity.uid)
 }
 
 // .yy.protocol.app.PlayerJumpAndGravity jump_and_gravity = 2;
-inline bool OtherJumpAndGravity::_internal_has_jump_and_gravity() const {
+inline bool S2CJumpAndGravity::_internal_has_jump_and_gravity() const {
   return this != internal_default_instance() && _impl_.jump_and_gravity_ != nullptr;
 }
-inline bool OtherJumpAndGravity::has_jump_and_gravity() const {
+inline bool S2CJumpAndGravity::has_jump_and_gravity() const {
   return _internal_has_jump_and_gravity();
 }
-inline void OtherJumpAndGravity::clear_jump_and_gravity() {
+inline void S2CJumpAndGravity::clear_jump_and_gravity() {
   if (GetArenaForAllocation() == nullptr && _impl_.jump_and_gravity_ != nullptr) {
     delete _impl_.jump_and_gravity_;
   }
   _impl_.jump_and_gravity_ = nullptr;
 }
-inline const ::yy::protocol::app::PlayerJumpAndGravity& OtherJumpAndGravity::_internal_jump_and_gravity() const {
+inline const ::yy::protocol::app::PlayerJumpAndGravity& S2CJumpAndGravity::_internal_jump_and_gravity() const {
   const ::yy::protocol::app::PlayerJumpAndGravity* p = _impl_.jump_and_gravity_;
   return p != nullptr ? *p : reinterpret_cast<const ::yy::protocol::app::PlayerJumpAndGravity&>(
       ::yy::protocol::app::_PlayerJumpAndGravity_default_instance_);
 }
-inline const ::yy::protocol::app::PlayerJumpAndGravity& OtherJumpAndGravity::jump_and_gravity() const {
-  // @@protoc_insertion_point(field_get:yy.protocol.app.OtherJumpAndGravity.jump_and_gravity)
+inline const ::yy::protocol::app::PlayerJumpAndGravity& S2CJumpAndGravity::jump_and_gravity() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.S2CJumpAndGravity.jump_and_gravity)
   return _internal_jump_and_gravity();
 }
-inline void OtherJumpAndGravity::unsafe_arena_set_allocated_jump_and_gravity(
+inline void S2CJumpAndGravity::unsafe_arena_set_allocated_jump_and_gravity(
     ::yy::protocol::app::PlayerJumpAndGravity* jump_and_gravity) {
   if (GetArenaForAllocation() == nullptr) {
     delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.jump_and_gravity_);
@@ -3131,9 +3071,9 @@ inline void OtherJumpAndGravity::unsafe_arena_set_allocated_jump_and_gravity(
   } else {
     
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:yy.protocol.app.OtherJumpAndGravity.jump_and_gravity)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:yy.protocol.app.S2CJumpAndGravity.jump_and_gravity)
 }
-inline ::yy::protocol::app::PlayerJumpAndGravity* OtherJumpAndGravity::release_jump_and_gravity() {
+inline ::yy::protocol::app::PlayerJumpAndGravity* S2CJumpAndGravity::release_jump_and_gravity() {
   
   ::yy::protocol::app::PlayerJumpAndGravity* temp = _impl_.jump_and_gravity_;
   _impl_.jump_and_gravity_ = nullptr;
@@ -3148,14 +3088,14 @@ inline ::yy::protocol::app::PlayerJumpAndGravity* OtherJumpAndGravity::release_j
 #endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
   return temp;
 }
-inline ::yy::protocol::app::PlayerJumpAndGravity* OtherJumpAndGravity::unsafe_arena_release_jump_and_gravity() {
-  // @@protoc_insertion_point(field_release:yy.protocol.app.OtherJumpAndGravity.jump_and_gravity)
+inline ::yy::protocol::app::PlayerJumpAndGravity* S2CJumpAndGravity::unsafe_arena_release_jump_and_gravity() {
+  // @@protoc_insertion_point(field_release:yy.protocol.app.S2CJumpAndGravity.jump_and_gravity)
   
   ::yy::protocol::app::PlayerJumpAndGravity* temp = _impl_.jump_and_gravity_;
   _impl_.jump_and_gravity_ = nullptr;
   return temp;
 }
-inline ::yy::protocol::app::PlayerJumpAndGravity* OtherJumpAndGravity::_internal_mutable_jump_and_gravity() {
+inline ::yy::protocol::app::PlayerJumpAndGravity* S2CJumpAndGravity::_internal_mutable_jump_and_gravity() {
   
   if (_impl_.jump_and_gravity_ == nullptr) {
     auto* p = CreateMaybeMessage<::yy::protocol::app::PlayerJumpAndGravity>(GetArenaForAllocation());
@@ -3163,12 +3103,12 @@ inline ::yy::protocol::app::PlayerJumpAndGravity* OtherJumpAndGravity::_internal
   }
   return _impl_.jump_and_gravity_;
 }
-inline ::yy::protocol::app::PlayerJumpAndGravity* OtherJumpAndGravity::mutable_jump_and_gravity() {
+inline ::yy::protocol::app::PlayerJumpAndGravity* S2CJumpAndGravity::mutable_jump_and_gravity() {
   ::yy::protocol::app::PlayerJumpAndGravity* _msg = _internal_mutable_jump_and_gravity();
-  // @@protoc_insertion_point(field_mutable:yy.protocol.app.OtherJumpAndGravity.jump_and_gravity)
+  // @@protoc_insertion_point(field_mutable:yy.protocol.app.S2CJumpAndGravity.jump_and_gravity)
   return _msg;
 }
-inline void OtherJumpAndGravity::set_allocated_jump_and_gravity(::yy::protocol::app::PlayerJumpAndGravity* jump_and_gravity) {
+inline void S2CJumpAndGravity::set_allocated_jump_and_gravity(::yy::protocol::app::PlayerJumpAndGravity* jump_and_gravity) {
   ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
   if (message_arena == nullptr) {
     delete _impl_.jump_and_gravity_;
@@ -3185,110 +3125,100 @@ inline void OtherJumpAndGravity::set_allocated_jump_and_gravity(::yy::protocol::
     
   }
   _impl_.jump_and_gravity_ = jump_and_gravity;
-  // @@protoc_insertion_point(field_set_allocated:yy.protocol.app.OtherJumpAndGravity.jump_and_gravity)
+  // @@protoc_insertion_point(field_set_allocated:yy.protocol.app.S2CJumpAndGravity.jump_and_gravity)
 }
 
 // -------------------------------------------------------------------
 
-// LoginRequest
+// C2SEnterScene
 
-// bytes conn_name = 1;
-inline void LoginRequest::clear_conn_name() {
-  _impl_.conn_name_.ClearToEmpty();
+// uint64 uid = 1;
+inline void C2SEnterScene::clear_uid() {
+  _impl_.uid_ = uint64_t{0u};
 }
-inline const std::string& LoginRequest::conn_name() const {
-  // @@protoc_insertion_point(field_get:yy.protocol.app.LoginRequest.conn_name)
-  return _internal_conn_name();
+inline uint64_t C2SEnterScene::_internal_uid() const {
+  return _impl_.uid_;
 }
-template <typename ArgT0, typename... ArgT>
-inline PROTOBUF_ALWAYS_INLINE
-void LoginRequest::set_conn_name(ArgT0&& arg0, ArgT... args) {
- 
- _impl_.conn_name_.SetBytes(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:yy.protocol.app.LoginRequest.conn_name)
+inline uint64_t C2SEnterScene::uid() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.C2SEnterScene.uid)
+  return _internal_uid();
 }
-inline std::string* LoginRequest::mutable_conn_name() {
-  std::string* _s = _internal_mutable_conn_name();
-  // @@protoc_insertion_point(field_mutable:yy.protocol.app.LoginRequest.conn_name)
-  return _s;
-}
-inline const std::string& LoginRequest::_internal_conn_name() const {
-  return _impl_.conn_name_.Get();
-}
-inline void LoginRequest::_internal_set_conn_name(const std::string& value) {
+inline void C2SEnterScene::_internal_set_uid(uint64_t value) {
   
-  _impl_.conn_name_.Set(value, GetArenaForAllocation());
+  _impl_.uid_ = value;
 }
-inline std::string* LoginRequest::_internal_mutable_conn_name() {
-  
-  return _impl_.conn_name_.Mutable(GetArenaForAllocation());
-}
-inline std::string* LoginRequest::release_conn_name() {
-  // @@protoc_insertion_point(field_release:yy.protocol.app.LoginRequest.conn_name)
-  return _impl_.conn_name_.Release();
-}
-inline void LoginRequest::set_allocated_conn_name(std::string* conn_name) {
-  if (conn_name != nullptr) {
-    
-  } else {
-    
-  }
-  _impl_.conn_name_.SetAllocated(conn_name, GetArenaForAllocation());
-#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (_impl_.conn_name_.IsDefault()) {
-    _impl_.conn_name_.Set("", GetArenaForAllocation());
-  }
-#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:yy.protocol.app.LoginRequest.conn_name)
+inline void C2SEnterScene::set_uid(uint64_t value) {
+  _internal_set_uid(value);
+  // @@protoc_insertion_point(field_set:yy.protocol.app.C2SEnterScene.uid)
 }
 
 // -------------------------------------------------------------------
 
-// LoginResponse
+// S2CEnterScene
 
-// bool result = 1;
-inline void LoginResponse::clear_result() {
+// uint64 uid = 1;
+inline void S2CEnterScene::clear_uid() {
+  _impl_.uid_ = uint64_t{0u};
+}
+inline uint64_t S2CEnterScene::_internal_uid() const {
+  return _impl_.uid_;
+}
+inline uint64_t S2CEnterScene::uid() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.S2CEnterScene.uid)
+  return _internal_uid();
+}
+inline void S2CEnterScene::_internal_set_uid(uint64_t value) {
+  
+  _impl_.uid_ = value;
+}
+inline void S2CEnterScene::set_uid(uint64_t value) {
+  _internal_set_uid(value);
+  // @@protoc_insertion_point(field_set:yy.protocol.app.S2CEnterScene.uid)
+}
+
+// bool result = 2;
+inline void S2CEnterScene::clear_result() {
   _impl_.result_ = false;
 }
-inline bool LoginResponse::_internal_result() const {
+inline bool S2CEnterScene::_internal_result() const {
   return _impl_.result_;
 }
-inline bool LoginResponse::result() const {
-  // @@protoc_insertion_point(field_get:yy.protocol.app.LoginResponse.result)
+inline bool S2CEnterScene::result() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.S2CEnterScene.result)
   return _internal_result();
 }
-inline void LoginResponse::_internal_set_result(bool value) {
+inline void S2CEnterScene::_internal_set_result(bool value) {
   
   _impl_.result_ = value;
 }
-inline void LoginResponse::set_result(bool value) {
+inline void S2CEnterScene::set_result(bool value) {
   _internal_set_result(value);
-  // @@protoc_insertion_point(field_set:yy.protocol.app.LoginResponse.result)
+  // @@protoc_insertion_point(field_set:yy.protocol.app.S2CEnterScene.result)
 }
 
-// .yy.protocol.app.PlayerBaseData self_data = 2;
-inline bool LoginResponse::_internal_has_self_data() const {
+// .yy.protocol.app.PlayerBaseData self_data = 3;
+inline bool S2CEnterScene::_internal_has_self_data() const {
   return this != internal_default_instance() && _impl_.self_data_ != nullptr;
 }
-inline bool LoginResponse::has_self_data() const {
+inline bool S2CEnterScene::has_self_data() const {
   return _internal_has_self_data();
 }
-inline void LoginResponse::clear_self_data() {
+inline void S2CEnterScene::clear_self_data() {
   if (GetArenaForAllocation() == nullptr && _impl_.self_data_ != nullptr) {
     delete _impl_.self_data_;
   }
   _impl_.self_data_ = nullptr;
 }
-inline const ::yy::protocol::app::PlayerBaseData& LoginResponse::_internal_self_data() const {
+inline const ::yy::protocol::app::PlayerBaseData& S2CEnterScene::_internal_self_data() const {
   const ::yy::protocol::app::PlayerBaseData* p = _impl_.self_data_;
   return p != nullptr ? *p : reinterpret_cast<const ::yy::protocol::app::PlayerBaseData&>(
       ::yy::protocol::app::_PlayerBaseData_default_instance_);
 }
-inline const ::yy::protocol::app::PlayerBaseData& LoginResponse::self_data() const {
-  // @@protoc_insertion_point(field_get:yy.protocol.app.LoginResponse.self_data)
+inline const ::yy::protocol::app::PlayerBaseData& S2CEnterScene::self_data() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.S2CEnterScene.self_data)
   return _internal_self_data();
 }
-inline void LoginResponse::unsafe_arena_set_allocated_self_data(
+inline void S2CEnterScene::unsafe_arena_set_allocated_self_data(
     ::yy::protocol::app::PlayerBaseData* self_data) {
   if (GetArenaForAllocation() == nullptr) {
     delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.self_data_);
@@ -3299,9 +3229,9 @@ inline void LoginResponse::unsafe_arena_set_allocated_self_data(
   } else {
     
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:yy.protocol.app.LoginResponse.self_data)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:yy.protocol.app.S2CEnterScene.self_data)
 }
-inline ::yy::protocol::app::PlayerBaseData* LoginResponse::release_self_data() {
+inline ::yy::protocol::app::PlayerBaseData* S2CEnterScene::release_self_data() {
   
   ::yy::protocol::app::PlayerBaseData* temp = _impl_.self_data_;
   _impl_.self_data_ = nullptr;
@@ -3316,14 +3246,14 @@ inline ::yy::protocol::app::PlayerBaseData* LoginResponse::release_self_data() {
 #endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
   return temp;
 }
-inline ::yy::protocol::app::PlayerBaseData* LoginResponse::unsafe_arena_release_self_data() {
-  // @@protoc_insertion_point(field_release:yy.protocol.app.LoginResponse.self_data)
+inline ::yy::protocol::app::PlayerBaseData* S2CEnterScene::unsafe_arena_release_self_data() {
+  // @@protoc_insertion_point(field_release:yy.protocol.app.S2CEnterScene.self_data)
   
   ::yy::protocol::app::PlayerBaseData* temp = _impl_.self_data_;
   _impl_.self_data_ = nullptr;
   return temp;
 }
-inline ::yy::protocol::app::PlayerBaseData* LoginResponse::_internal_mutable_self_data() {
+inline ::yy::protocol::app::PlayerBaseData* S2CEnterScene::_internal_mutable_self_data() {
   
   if (_impl_.self_data_ == nullptr) {
     auto* p = CreateMaybeMessage<::yy::protocol::app::PlayerBaseData>(GetArenaForAllocation());
@@ -3331,12 +3261,12 @@ inline ::yy::protocol::app::PlayerBaseData* LoginResponse::_internal_mutable_sel
   }
   return _impl_.self_data_;
 }
-inline ::yy::protocol::app::PlayerBaseData* LoginResponse::mutable_self_data() {
+inline ::yy::protocol::app::PlayerBaseData* S2CEnterScene::mutable_self_data() {
   ::yy::protocol::app::PlayerBaseData* _msg = _internal_mutable_self_data();
-  // @@protoc_insertion_point(field_mutable:yy.protocol.app.LoginResponse.self_data)
+  // @@protoc_insertion_point(field_mutable:yy.protocol.app.S2CEnterScene.self_data)
   return _msg;
 }
-inline void LoginResponse::set_allocated_self_data(::yy::protocol::app::PlayerBaseData* self_data) {
+inline void S2CEnterScene::set_allocated_self_data(::yy::protocol::app::PlayerBaseData* self_data) {
   ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
   if (message_arena == nullptr) {
     delete _impl_.self_data_;
@@ -3353,120 +3283,120 @@ inline void LoginResponse::set_allocated_self_data(::yy::protocol::app::PlayerBa
     
   }
   _impl_.self_data_ = self_data;
-  // @@protoc_insertion_point(field_set_allocated:yy.protocol.app.LoginResponse.self_data)
+  // @@protoc_insertion_point(field_set_allocated:yy.protocol.app.S2CEnterScene.self_data)
 }
 
-// repeated .yy.protocol.app.PlayerBaseData other_datas = 3;
-inline int LoginResponse::_internal_other_datas_size() const {
+// repeated .yy.protocol.app.PlayerBaseData other_datas = 4;
+inline int S2CEnterScene::_internal_other_datas_size() const {
   return _impl_.other_datas_.size();
 }
-inline int LoginResponse::other_datas_size() const {
+inline int S2CEnterScene::other_datas_size() const {
   return _internal_other_datas_size();
 }
-inline void LoginResponse::clear_other_datas() {
+inline void S2CEnterScene::clear_other_datas() {
   _impl_.other_datas_.Clear();
 }
-inline ::yy::protocol::app::PlayerBaseData* LoginResponse::mutable_other_datas(int index) {
-  // @@protoc_insertion_point(field_mutable:yy.protocol.app.LoginResponse.other_datas)
+inline ::yy::protocol::app::PlayerBaseData* S2CEnterScene::mutable_other_datas(int index) {
+  // @@protoc_insertion_point(field_mutable:yy.protocol.app.S2CEnterScene.other_datas)
   return _impl_.other_datas_.Mutable(index);
 }
 inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::yy::protocol::app::PlayerBaseData >*
-LoginResponse::mutable_other_datas() {
-  // @@protoc_insertion_point(field_mutable_list:yy.protocol.app.LoginResponse.other_datas)
+S2CEnterScene::mutable_other_datas() {
+  // @@protoc_insertion_point(field_mutable_list:yy.protocol.app.S2CEnterScene.other_datas)
   return &_impl_.other_datas_;
 }
-inline const ::yy::protocol::app::PlayerBaseData& LoginResponse::_internal_other_datas(int index) const {
+inline const ::yy::protocol::app::PlayerBaseData& S2CEnterScene::_internal_other_datas(int index) const {
   return _impl_.other_datas_.Get(index);
 }
-inline const ::yy::protocol::app::PlayerBaseData& LoginResponse::other_datas(int index) const {
-  // @@protoc_insertion_point(field_get:yy.protocol.app.LoginResponse.other_datas)
+inline const ::yy::protocol::app::PlayerBaseData& S2CEnterScene::other_datas(int index) const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.S2CEnterScene.other_datas)
   return _internal_other_datas(index);
 }
-inline ::yy::protocol::app::PlayerBaseData* LoginResponse::_internal_add_other_datas() {
+inline ::yy::protocol::app::PlayerBaseData* S2CEnterScene::_internal_add_other_datas() {
   return _impl_.other_datas_.Add();
 }
-inline ::yy::protocol::app::PlayerBaseData* LoginResponse::add_other_datas() {
+inline ::yy::protocol::app::PlayerBaseData* S2CEnterScene::add_other_datas() {
   ::yy::protocol::app::PlayerBaseData* _add = _internal_add_other_datas();
-  // @@protoc_insertion_point(field_add:yy.protocol.app.LoginResponse.other_datas)
+  // @@protoc_insertion_point(field_add:yy.protocol.app.S2CEnterScene.other_datas)
   return _add;
 }
 inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::yy::protocol::app::PlayerBaseData >&
-LoginResponse::other_datas() const {
-  // @@protoc_insertion_point(field_list:yy.protocol.app.LoginResponse.other_datas)
+S2CEnterScene::other_datas() const {
+  // @@protoc_insertion_point(field_list:yy.protocol.app.S2CEnterScene.other_datas)
   return _impl_.other_datas_;
 }
 
 // -------------------------------------------------------------------
 
-// OtherPlayerDataRequest
+// C2SOtherPlayerData
 
-// uint32 requester_uid = 1;
-inline void OtherPlayerDataRequest::clear_requester_uid() {
-  _impl_.requester_uid_ = 0u;
+// uint64 requester_uid = 1;
+inline void C2SOtherPlayerData::clear_requester_uid() {
+  _impl_.requester_uid_ = uint64_t{0u};
 }
-inline uint32_t OtherPlayerDataRequest::_internal_requester_uid() const {
+inline uint64_t C2SOtherPlayerData::_internal_requester_uid() const {
   return _impl_.requester_uid_;
 }
-inline uint32_t OtherPlayerDataRequest::requester_uid() const {
-  // @@protoc_insertion_point(field_get:yy.protocol.app.OtherPlayerDataRequest.requester_uid)
+inline uint64_t C2SOtherPlayerData::requester_uid() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.C2SOtherPlayerData.requester_uid)
   return _internal_requester_uid();
 }
-inline void OtherPlayerDataRequest::_internal_set_requester_uid(uint32_t value) {
+inline void C2SOtherPlayerData::_internal_set_requester_uid(uint64_t value) {
   
   _impl_.requester_uid_ = value;
 }
-inline void OtherPlayerDataRequest::set_requester_uid(uint32_t value) {
+inline void C2SOtherPlayerData::set_requester_uid(uint64_t value) {
   _internal_set_requester_uid(value);
-  // @@protoc_insertion_point(field_set:yy.protocol.app.OtherPlayerDataRequest.requester_uid)
+  // @@protoc_insertion_point(field_set:yy.protocol.app.C2SOtherPlayerData.requester_uid)
 }
 
-// uint32 requested_uid = 2;
-inline void OtherPlayerDataRequest::clear_requested_uid() {
-  _impl_.requested_uid_ = 0u;
+// uint64 requested_uid = 2;
+inline void C2SOtherPlayerData::clear_requested_uid() {
+  _impl_.requested_uid_ = uint64_t{0u};
 }
-inline uint32_t OtherPlayerDataRequest::_internal_requested_uid() const {
+inline uint64_t C2SOtherPlayerData::_internal_requested_uid() const {
   return _impl_.requested_uid_;
 }
-inline uint32_t OtherPlayerDataRequest::requested_uid() const {
-  // @@protoc_insertion_point(field_get:yy.protocol.app.OtherPlayerDataRequest.requested_uid)
+inline uint64_t C2SOtherPlayerData::requested_uid() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.C2SOtherPlayerData.requested_uid)
   return _internal_requested_uid();
 }
-inline void OtherPlayerDataRequest::_internal_set_requested_uid(uint32_t value) {
+inline void C2SOtherPlayerData::_internal_set_requested_uid(uint64_t value) {
   
   _impl_.requested_uid_ = value;
 }
-inline void OtherPlayerDataRequest::set_requested_uid(uint32_t value) {
+inline void C2SOtherPlayerData::set_requested_uid(uint64_t value) {
   _internal_set_requested_uid(value);
-  // @@protoc_insertion_point(field_set:yy.protocol.app.OtherPlayerDataRequest.requested_uid)
+  // @@protoc_insertion_point(field_set:yy.protocol.app.C2SOtherPlayerData.requested_uid)
 }
 
 // -------------------------------------------------------------------
 
-// OtherPlayerDataResponse
+// S2COtherPlayerData
 
 // .yy.protocol.app.PlayerBaseData other_data = 1;
-inline bool OtherPlayerDataResponse::_internal_has_other_data() const {
+inline bool S2COtherPlayerData::_internal_has_other_data() const {
   return this != internal_default_instance() && _impl_.other_data_ != nullptr;
 }
-inline bool OtherPlayerDataResponse::has_other_data() const {
+inline bool S2COtherPlayerData::has_other_data() const {
   return _internal_has_other_data();
 }
-inline void OtherPlayerDataResponse::clear_other_data() {
+inline void S2COtherPlayerData::clear_other_data() {
   if (GetArenaForAllocation() == nullptr && _impl_.other_data_ != nullptr) {
     delete _impl_.other_data_;
   }
   _impl_.other_data_ = nullptr;
 }
-inline const ::yy::protocol::app::PlayerBaseData& OtherPlayerDataResponse::_internal_other_data() const {
+inline const ::yy::protocol::app::PlayerBaseData& S2COtherPlayerData::_internal_other_data() const {
   const ::yy::protocol::app::PlayerBaseData* p = _impl_.other_data_;
   return p != nullptr ? *p : reinterpret_cast<const ::yy::protocol::app::PlayerBaseData&>(
       ::yy::protocol::app::_PlayerBaseData_default_instance_);
 }
-inline const ::yy::protocol::app::PlayerBaseData& OtherPlayerDataResponse::other_data() const {
-  // @@protoc_insertion_point(field_get:yy.protocol.app.OtherPlayerDataResponse.other_data)
+inline const ::yy::protocol::app::PlayerBaseData& S2COtherPlayerData::other_data() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.S2COtherPlayerData.other_data)
   return _internal_other_data();
 }
-inline void OtherPlayerDataResponse::unsafe_arena_set_allocated_other_data(
+inline void S2COtherPlayerData::unsafe_arena_set_allocated_other_data(
     ::yy::protocol::app::PlayerBaseData* other_data) {
   if (GetArenaForAllocation() == nullptr) {
     delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.other_data_);
@@ -3477,9 +3407,9 @@ inline void OtherPlayerDataResponse::unsafe_arena_set_allocated_other_data(
   } else {
     
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:yy.protocol.app.OtherPlayerDataResponse.other_data)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:yy.protocol.app.S2COtherPlayerData.other_data)
 }
-inline ::yy::protocol::app::PlayerBaseData* OtherPlayerDataResponse::release_other_data() {
+inline ::yy::protocol::app::PlayerBaseData* S2COtherPlayerData::release_other_data() {
   
   ::yy::protocol::app::PlayerBaseData* temp = _impl_.other_data_;
   _impl_.other_data_ = nullptr;
@@ -3494,14 +3424,14 @@ inline ::yy::protocol::app::PlayerBaseData* OtherPlayerDataResponse::release_oth
 #endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
   return temp;
 }
-inline ::yy::protocol::app::PlayerBaseData* OtherPlayerDataResponse::unsafe_arena_release_other_data() {
-  // @@protoc_insertion_point(field_release:yy.protocol.app.OtherPlayerDataResponse.other_data)
+inline ::yy::protocol::app::PlayerBaseData* S2COtherPlayerData::unsafe_arena_release_other_data() {
+  // @@protoc_insertion_point(field_release:yy.protocol.app.S2COtherPlayerData.other_data)
   
   ::yy::protocol::app::PlayerBaseData* temp = _impl_.other_data_;
   _impl_.other_data_ = nullptr;
   return temp;
 }
-inline ::yy::protocol::app::PlayerBaseData* OtherPlayerDataResponse::_internal_mutable_other_data() {
+inline ::yy::protocol::app::PlayerBaseData* S2COtherPlayerData::_internal_mutable_other_data() {
   
   if (_impl_.other_data_ == nullptr) {
     auto* p = CreateMaybeMessage<::yy::protocol::app::PlayerBaseData>(GetArenaForAllocation());
@@ -3509,12 +3439,12 @@ inline ::yy::protocol::app::PlayerBaseData* OtherPlayerDataResponse::_internal_m
   }
   return _impl_.other_data_;
 }
-inline ::yy::protocol::app::PlayerBaseData* OtherPlayerDataResponse::mutable_other_data() {
+inline ::yy::protocol::app::PlayerBaseData* S2COtherPlayerData::mutable_other_data() {
   ::yy::protocol::app::PlayerBaseData* _msg = _internal_mutable_other_data();
-  // @@protoc_insertion_point(field_mutable:yy.protocol.app.OtherPlayerDataResponse.other_data)
+  // @@protoc_insertion_point(field_mutable:yy.protocol.app.S2COtherPlayerData.other_data)
   return _msg;
 }
-inline void OtherPlayerDataResponse::set_allocated_other_data(::yy::protocol::app::PlayerBaseData* other_data) {
+inline void S2COtherPlayerData::set_allocated_other_data(::yy::protocol::app::PlayerBaseData* other_data) {
   ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
   if (message_arena == nullptr) {
     delete _impl_.other_data_;
@@ -3531,7 +3461,7 @@ inline void OtherPlayerDataResponse::set_allocated_other_data(::yy::protocol::ap
     
   }
   _impl_.other_data_ = other_data;
-  // @@protoc_insertion_point(field_set_allocated:yy.protocol.app.OtherPlayerDataResponse.other_data)
+  // @@protoc_insertion_point(field_set_allocated:yy.protocol.app.S2COtherPlayerData.other_data)
 }
 
 #ifdef __GNUC__

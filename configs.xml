@@ -14,7 +14,7 @@
         sendBytesMax     = "4"
         maxHeartTime     = "30"
         maxSecurityTime  = "10"
-        securityCode     = "csdnxxxx"
+        securityCode     = "114514"
         checkCode        = "DE"
         closeDelay       = "1"
         tcpIOThreadNum   = "2"
@@ -31,7 +31,7 @@
         sendBytesMax    = "256"
         maxHeartTime    = "10"
         autoConnectTime = "3"
-        securityCode    = "csdnxxxx"
+        securityCode    = "114514"
         checkCode       = "DE"
     >
         <remote_node

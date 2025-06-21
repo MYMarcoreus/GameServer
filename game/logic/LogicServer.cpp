@@ -7,6 +7,9 @@
 #include "UserConnection.h"
 #include "EventLoop.h"
 #include "Socket.h"
+#include "RemoteXmlConfig.h"
+#include "MySqlPool.h"
+#include "RedisClient.h"
 
 #include <google/protobuf/message.h>
 
@@ -50,7 +53,7 @@ LogicServer::LogicServer(EventLoop *accpetorLoop, const IPAddressPtr& listenAddr
 
     m_tcpServer.SetMessageCallback(
         [this](const TcpConnectionPtr& conn, NetBuffer& buf) {
-            m_tcpCodec.OnData(conn, buf);
+            m_tcpCodec.OnTcpData(conn, buf);
         });
 
     m_tcpServer.SetConnectionEstablishedCallback(
@@ -80,7 +83,6 @@ LogicServer::~LogicServer() {
 void LogicServer::Start() {
     m_tcpServer.Start(config::g_app_config->GetValue().tcp_io_thread_num(), 500ms);
     m_udpServer.Start(1, 500ms);
-    m_accpetorLoop->RunEvery(1s, [](){ YLOG_INFO("测试！！！"); });
 }
 
 void LogicServer::Stop() {

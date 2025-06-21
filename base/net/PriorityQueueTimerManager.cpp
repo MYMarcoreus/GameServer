@@ -24,7 +24,7 @@ PriorityQueueTimerManager::~PriorityQueueTimerManager()
 
 TimerID PriorityQueueTimerManager::AddTimer(F_TaskCallback cb, Timestamp expiredTime, Microseconds interval)
 {
-    Timer * timer = new Timer{m_TimerCounter++, std::move(cb), expiredTime, interval};
+    Timer * timer = new Timer{m_TimerCounter.fetch_add(1, std::memory_order_relaxed), std::move(cb), expiredTime, interval};
     m_loop->RunCallbackInLoop([timer, this]() { AddTimerInLoop(timer); });
     return timer->GetID();
 }
@@ -42,11 +42,10 @@ int PriorityQueueTimerManager::HandleExpiredTimersInLoop()
         return 0;
     }
     int expiredCount = 0;
-    int max_id = m_TimerCounter;
+    int max_id = m_TimerCounter.load(std::memory_order_relaxed);
 
-    Timer* node;
     while (!m_timers.empty()) {
-        node = m_timers.top();
+        Timer* node = m_timers.top();
 
         if (net::Timestamp::Now() < node->GetExpireTime())
             break; // 没有到期的timer

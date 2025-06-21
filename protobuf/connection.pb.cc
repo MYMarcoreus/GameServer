@@ -95,7 +95,8 @@ struct C2SUdpPortRegisterDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 C2SUdpPortRegisterDefaultTypeInternal _C2SUdpPortRegister_default_instance_;
 PROTOBUF_CONSTEXPR S2CUdpPortRegister::S2CUdpPortRegister(
     ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_.status_)*/0
+    /*decltype(_impl_.session_id_)*/uint64_t{0u}
+  , /*decltype(_impl_.status_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct S2CUdpPortRegisterDefaultTypeInternal {
   PROTOBUF_CONSTEXPR S2CUdpPortRegisterDefaultTypeInternal()
@@ -163,6 +164,7 @@ const uint32_t TableStruct_connection_2eproto::offsets[] PROTOBUF_SECTION_VARIAB
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::core::S2CUdpPortRegister, _impl_.session_id_),
   PROTOBUF_FIELD_OFFSET(::yy::protocol::core::S2CUdpPortRegister, _impl_.status_),
 };
 static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
@@ -196,15 +198,15 @@ const char descriptor_table_protodef_connection_2eproto[] PROTOBUF_SECTION_VARIA
   "d\020\002B\022\n\020_server_udp_portB\r\n\013_session_id\"X"
   "\n\022C2SUdpPortRegister\022\022\n\nsession_id\030\001 \001(\004"
   "\022\025\n\rclient_udp_ip\030\002 \001(\t\022\027\n\017client_udp_po"
-  "rt\030\003 \001(\r\"\217\001\n\022S2CUdpPortRegister\022;\n\006statu"
-  "s\030\001 \001(\0162+.yy.protocol.core.S2CUdpPortReg"
-  "ister.Status\"<\n\006Status\022\014\n\010eSuccess\020\000\022\020\n\014"
-  "eInvalidPort\020\001\022\022\n\016eDuplicatePort\020\002b\006prot"
-  "o3"
+  "rt\030\003 \001(\r\"\243\001\n\022S2CUdpPortRegister\022\022\n\nsessi"
+  "on_id\030\001 \001(\004\022;\n\006status\030\002 \001(\0162+.yy.protoco"
+  "l.core.S2CUdpPortRegister.Status\"<\n\006Stat"
+  "us\022\014\n\010eSuccess\020\000\022\020\n\014eInvalidPort\020\001\022\022\n\016eD"
+  "uplicatePort\020\002b\006proto3"
   ;
 static ::_pbi::once_flag descriptor_table_connection_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_connection_2eproto = {
-    false, false, 642, descriptor_table_protodef_connection_2eproto,
+    false, false, 662, descriptor_table_protodef_connection_2eproto,
     "connection.proto",
     &descriptor_table_connection_2eproto_once, nullptr, 0, 6,
     schemas, file_default_instances, TableStruct_connection_2eproto::offsets,
@@ -1291,11 +1293,14 @@ S2CUdpPortRegister::S2CUdpPortRegister(const S2CUdpPortRegister& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   S2CUdpPortRegister* const _this = this; (void)_this;
   new (&_impl_) Impl_{
-      decltype(_impl_.status_){}
+      decltype(_impl_.session_id_){}
+    , decltype(_impl_.status_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  _this->_impl_.status_ = from._impl_.status_;
+  ::memcpy(&_impl_.session_id_, &from._impl_.session_id_,
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.status_) -
+    reinterpret_cast<char*>(&_impl_.session_id_)) + sizeof(_impl_.status_));
   // @@protoc_insertion_point(copy_constructor:yy.protocol.core.S2CUdpPortRegister)
 }
 
@@ -1304,7 +1309,8 @@ inline void S2CUdpPortRegister::SharedCtor(
   (void)arena;
   (void)is_message_owned;
   new (&_impl_) Impl_{
-      decltype(_impl_.status_){0}
+      decltype(_impl_.session_id_){uint64_t{0u}}
+    , decltype(_impl_.status_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
 }
@@ -1332,7 +1338,9 @@ void S2CUdpPortRegister::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  _impl_.status_ = 0;
+  ::memset(&_impl_.session_id_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&_impl_.status_) -
+      reinterpret_cast<char*>(&_impl_.session_id_)) + sizeof(_impl_.status_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -1342,9 +1350,17 @@ const char* S2CUdpPortRegister::_InternalParse(const char* ptr, ::_pbi::ParseCon
     uint32_t tag;
     ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // .yy.protocol.core.S2CUdpPortRegister.Status status = 1;
+      // uint64 session_id = 1;
       case 1:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
+          _impl_.session_id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // .yy.protocol.core.S2CUdpPortRegister.Status status = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
           uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
           _internal_set_status(static_cast<::yy::protocol::core::S2CUdpPortRegister_Status>(val));
@@ -1380,11 +1396,17 @@ uint8_t* S2CUdpPortRegister::_InternalSerialize(
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // .yy.protocol.core.S2CUdpPortRegister.Status status = 1;
+  // uint64 session_id = 1;
+  if (this->_internal_session_id() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(1, this->_internal_session_id(), target);
+  }
+
+  // .yy.protocol.core.S2CUdpPortRegister.Status status = 2;
   if (this->_internal_status() != 0) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteEnumToArray(
-      1, this->_internal_status(), target);
+      2, this->_internal_status(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -1403,7 +1425,12 @@ size_t S2CUdpPortRegister::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // .yy.protocol.core.S2CUdpPortRegister.Status status = 1;
+  // uint64 session_id = 1;
+  if (this->_internal_session_id() != 0) {
+    total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_session_id());
+  }
+
+  // .yy.protocol.core.S2CUdpPortRegister.Status status = 2;
   if (this->_internal_status() != 0) {
     total_size += 1 +
       ::_pbi::WireFormatLite::EnumSize(this->_internal_status());
@@ -1427,6 +1454,9 @@ void S2CUdpPortRegister::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, con
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
+  if (from._internal_session_id() != 0) {
+    _this->_internal_set_session_id(from._internal_session_id());
+  }
   if (from._internal_status() != 0) {
     _this->_internal_set_status(from._internal_status());
   }
@@ -1447,7 +1477,12 @@ bool S2CUdpPortRegister::IsInitialized() const {
 void S2CUdpPortRegister::InternalSwap(S2CUdpPortRegister* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  swap(_impl_.status_, other->_impl_.status_);
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(S2CUdpPortRegister, _impl_.status_)
+      + sizeof(S2CUdpPortRegister::_impl_.status_)
+      - PROTOBUF_FIELD_OFFSET(S2CUdpPortRegister, _impl_.session_id_)>(
+          reinterpret_cast<char*>(&_impl_.session_id_),
+          reinterpret_cast<char*>(&other->_impl_.session_id_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata S2CUdpPortRegister::GetMetadata() const {

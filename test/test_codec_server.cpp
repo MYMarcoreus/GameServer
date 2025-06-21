@@ -61,7 +61,7 @@ public:
 
         server_.SetMessageCallback(
             [this](const TcpConnectionPtr &conn, NetBuffer &buf) {
-                codec_.OnData(conn, buf);
+                codec_.OnTcpData(conn, buf);
             });
     }
 

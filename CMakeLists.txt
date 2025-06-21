@@ -7,6 +7,16 @@ message(STATUS "CMAKE_TOOLCHAIN_FILE: ${CMAKE_TOOLCHAIN_FILE}")
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+
+find_package(redis++ REQUIRED)
+
+find_package(unofficial-mysql-connector-cpp CONFIG REQUIRED)
+
+
+add_definitions(-DTHREADED)
+include_directories(${Zookeeper_INCLUDE_DIRS})
+link_directories(${Zookeeper_LIBRARIES})
+
 #! 查找 Lua
 find_package(Lua REQUIRED)
 message(STATUS "LUA_INCLUDE_DIR: ${LUA_INCLUDE_DIR}")
@@ -109,6 +119,8 @@ include_directories(
         core
         core/codec
         core/redis
+        core/mysql
+        core/zookeeper
         protobuf
         game
         game/logic
@@ -119,27 +131,24 @@ include_directories(
 
 
 set(COMMON_SOURCES
-        game/gate/GateServer.cpp
-        game/gate/GateServer.h
-        game/gate/MessageDispatchManager.cpp
-        game/gate/MessageDispatchManager.h)
+        core/rpc/RpcChannel.cpp
+        core/rpc/RpcChannel.h
+        core/rpc/RpcHeader.cpp
+        core/rpc/RpcHeader.h
+)
 # 调用子目录下的cmake
 add_subdirectory(base)
 add_subdirectory(core)
 add_subdirectory(protobuf)
 add_subdirectory(game)
+add_subdirectory(test)
+
 #message(COMMON_SOURCES = ${COMMON_SOURCES})
 
 #! 制作 libCommonLibrary.a 静态库
 add_library(CommonLibrary STATIC ${COMMON_SOURCES}) # STATIC替换为SHARED就为动态库，生成 libCommonLibrary.so
 
-
 #! 添加多个可执行文件，可在clion选择一个来构建/执行
-add_executable(codec_client test/test_codec_client.cpp)
-add_executable(codec_server test/test_codec_server.cpp)
-add_executable(test testtt.cpp)
-add_executable(echo_server test/test_echo.cpp)
-
 add_executable(LogicServer game/logic/main_logic.cpp)
 
 #! 添加系统动态库
@@ -151,8 +160,11 @@ if(CMAKE_HOST_SYSTEM_NAME MATCHES Windows)
             protobuf::libprotobuf
             protobuf::libprotobuf-lite
             ws2_32.lib
-#            redis++::redis++
-#            hiredis::hiredis
+            zookeeper_mt
+#            hiredis
+            redis++::redis++_static
+            PRIVATE unofficial::mysql-connector-cpp::connector
+            resolv
     )
 else()
     target_link_libraries( CommonLibrary
@@ -163,37 +175,17 @@ else()
             protobuf::libprotoc
             protobuf::libprotobuf
             protobuf::libprotobuf-lite
-#            redis++::redis++
-#            hiredis::hiredis
+            zookeeper_mt
+#            hiredis
+            redis++::redis++_static
+            PRIVATE unofficial::mysql-connector-cpp::connector
+            resolv
     )
 endif()
 
 
 #! 在cmake中指定要链接的动态库的时候，应该将命令写到生成了可执行文件之后，因为是在可执行文件生成后，再将protobuf库链接的
 target_link_libraries(
-        codec_client
-        CommonLibrary
-)
-
-target_link_libraries(
-        codec_server
-        CommonLibrary
-)
-
-
-target_link_libraries(
         LogicServer
         CommonLibrary
 )
-
-
-target_link_libraries(
-        echo_server
-        CommonLibrary
-)
-
-target_link_libraries(
-        test
-        CommonLibrary
-)
-

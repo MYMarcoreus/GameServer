@@ -53,7 +53,7 @@ message S2CSecurityBody {
     }
     ResultCode result_code  = 1;
     optional uint32 server_udp_port  = 2;
-    optional uint64 session_id = 3; // 长度为32的连接标识，仅在 eSuccess 时使用
+    optional uint64 session_id = 3; // 连接标识，仅在 eSuccess 时使用
 }
 
 message C2SUdpPortRegister  {
@@ -62,12 +62,14 @@ message C2SUdpPortRegister  {
     uint32 client_udp_port  = 3;
 }
 message S2CUdpPortRegister {
+    uint64 session_id = 1;
+
     enum Status {
         eSuccess = 0;
         eInvalidPort = 1;
         eDuplicatePort = 2;
     }
-    Status status = 1;
+    Status status = 2;
 }
 
 //message S2SMessageRegister

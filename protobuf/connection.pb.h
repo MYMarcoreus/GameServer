@@ -1116,9 +1116,19 @@ class S2CUdpPortRegister final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kStatusFieldNumber = 1,
+    kSessionIdFieldNumber = 1,
+    kStatusFieldNumber = 2,
   };
-  // .yy.protocol.core.S2CUdpPortRegister.Status status = 1;
+  // uint64 session_id = 1;
+  void clear_session_id();
+  uint64_t session_id() const;
+  void set_session_id(uint64_t value);
+  private:
+  uint64_t _internal_session_id() const;
+  void _internal_set_session_id(uint64_t value);
+  public:
+
+  // .yy.protocol.core.S2CUdpPortRegister.Status status = 2;
   void clear_status();
   ::yy::protocol::core::S2CUdpPortRegister_Status status() const;
   void set_status(::yy::protocol::core::S2CUdpPortRegister_Status value);
@@ -1135,6 +1145,7 @@ class S2CUdpPortRegister final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
+    uint64_t session_id_;
     int status_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
@@ -1448,7 +1459,27 @@ inline void C2SUdpPortRegister::set_client_udp_port(uint32_t value) {
 
 // S2CUdpPortRegister
 
-// .yy.protocol.core.S2CUdpPortRegister.Status status = 1;
+// uint64 session_id = 1;
+inline void S2CUdpPortRegister::clear_session_id() {
+  _impl_.session_id_ = uint64_t{0u};
+}
+inline uint64_t S2CUdpPortRegister::_internal_session_id() const {
+  return _impl_.session_id_;
+}
+inline uint64_t S2CUdpPortRegister::session_id() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.core.S2CUdpPortRegister.session_id)
+  return _internal_session_id();
+}
+inline void S2CUdpPortRegister::_internal_set_session_id(uint64_t value) {
+  
+  _impl_.session_id_ = value;
+}
+inline void S2CUdpPortRegister::set_session_id(uint64_t value) {
+  _internal_set_session_id(value);
+  // @@protoc_insertion_point(field_set:yy.protocol.core.S2CUdpPortRegister.session_id)
+}
+
+// .yy.protocol.core.S2CUdpPortRegister.Status status = 2;
 inline void S2CUdpPortRegister::clear_status() {
   _impl_.status_ = 0;
 }

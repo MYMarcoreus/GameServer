@@ -197,15 +197,6 @@ bool StrCmp_IgnoreCase(const char * str1, const char * str2)
     return true;
 }
 
-// std::thread::native_handle_type GetIntThreadID() {
-//     //! 很好，因为std::thread::id类型只有一个数据成员且没有虚函数，可直接取地址获得内部的原生线程id成员
-//     std::thread::id threadId = std::this_thread::get_id();
-//     return *(std::thread::native_handle_type*)(&threadId);
-// }
-// std::thread::native_handle_type CastThreadIDToInt(std::thread::id threadId) {
-//     return *(std::thread::native_handle_type*)(&threadId);
-// }
-
 std::string GetStrThreadID() {
     //! 线程安全，稍稍会慢一点点，占用空间也会多一点点，不过使用简单
     std::thread::id threadId = std::this_thread::get_id();

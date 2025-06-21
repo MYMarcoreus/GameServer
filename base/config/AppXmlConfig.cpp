@@ -28,6 +28,7 @@ public:
         appXmlConfig.tcpIOThreadNum = XmlAttributeTo<uint32_t>(xml_app->FindAttribute("tcpIOThreadNum"));
         appXmlConfig.udpIOThreadNum = XmlAttributeTo<uint32_t>(xml_app->FindAttribute("udpIOThreadNum"));
         appXmlConfig.workThreadNum  = XmlAttributeTo<uint32_t>(xml_app->FindAttribute("workThreadNum"));
+        appXmlConfig.rpcPort  = XmlAttributeTo<uint16_t>(xml_app->FindAttribute("rpcPort"));
 
         auto securityCode = XmlAttributeTo<std::string>(xml_app->FindAttribute("securityCode"));
         auto checkCode    = XmlAttributeTo<std::string>(xml_app->FindAttribute("checkCode"));

@@ -8,6 +8,10 @@ set(LocalSrc
         logic/GameManager.cpp
         logic/GamePlayerManager.cpp
         logic/GameTestManager.cpp
+        gate/GateServer.cpp
+        gate/MessageDispatchManager.cpp
+        login/LoginServer.cpp
+        login/LoginMaganer.cpp
 )
 
 #! 给本地相对路径添加前缀，变为绝对路径

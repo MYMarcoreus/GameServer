@@ -54,7 +54,7 @@ public:
 
         client_.SetMessageCallback(
             [this](const TcpConnectionPtr& conn,  NetBuffer & buf) {
-                codec_.OnData(conn, buf);
+                codec_.OnTcpData(conn, buf);
             });
 
         client_.SetConnectionEstablishedCallback(
@@ -149,7 +149,7 @@ int main()
 
     EventLoop loop{500ms};
     auto serverNode = config::g_remote_config->GetValue().m_remote_nodes[0];
-    IPAddressPtr serverAddr = std::make_shared<IPv4Address>(serverNode.m_ip, serverNode.m_port);
+    IPAddressPtr serverAddr = std::make_shared<IPv4Address>(serverNode.ip, serverNode.port);
     QueryClient echoClient{&loop, serverAddr};
     echoClient.Start();
     loop.Loop();

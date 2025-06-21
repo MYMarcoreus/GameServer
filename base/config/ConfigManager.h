@@ -437,13 +437,7 @@ public:
     ///@return 返回局部静态变量的引用
     static std::vector<std::filesystem::path> &
     GetAllFilePath() {
-        static std::vector<std::filesystem::path>  s_config_file_paths {
-                "./configs.xml",
-                "./config/configs.xml",
-                "../configs.xml",
-                "../config/configs.xml"
-        };;
-
+        static std::vector<std::filesystem::path>  s_config_file_paths;
         return s_config_file_paths;
     }
 

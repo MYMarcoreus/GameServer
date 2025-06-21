@@ -19,6 +19,8 @@ public:
     /// @brief 服务器端口号
     [[nodiscard]] uint16_t app_udp_port() const { return appUdpPort; }
 
+    [[nodiscard]] uint16_t rpc_port() const { return rpcPort; }
+
     /// @brief 服务器ID：可用于判断服务器类型
     [[nodiscard]] uint32_t app_id() const { return appID; }
 
@@ -93,6 +95,8 @@ private:
     uint32_t tcpIOThreadNum{};
     uint32_t udpIOThreadNum{};
     uint32_t workThreadNum{};
+
+    uint16_t rpcPort{}; // 登录网关与登录服务器采用RPC通信
 };
 
 extern ConfigVar<AppXmlConfig>::ptr g_app_config;

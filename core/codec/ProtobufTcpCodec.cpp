@@ -50,7 +50,7 @@ std::pair<MessageHeader, MessagePtr> ProtobufTcpCodec::Parse(const TcpConnection
 
 
 
-void ProtobufTcpCodec::OnData(const TcpConnectionPtr &conn, NetBuffer &buf) {
+void ProtobufTcpCodec::OnTcpData(const TcpConnectionPtr &conn, NetBuffer &buf) {
     // 不断解析接收缓冲中的字节流，直到遇到不完整的信息或解析完毕
     while(buf.GetDataSize() >= MessageHeader::kMinHeaderLen)
     {

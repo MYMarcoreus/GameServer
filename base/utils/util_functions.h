@@ -98,11 +98,9 @@ extern std::string StrError(int errnum);
 ///@brief 两字符数组逐字符比较
 extern bool StrCmp_IgnoreCase(const char * str1, const char * str2);
 
-extern std::thread::native_handle_type GetIntThreadID();
 extern std::string                     GetStrThreadID();
 extern size_t                          GetHashThreadID();
 
-extern std::thread::native_handle_type CastThreadIDToInt(std::thread::id);
 extern std::string                     CastThreadIDToStr(std::thread::id);
 extern size_t                          CastThreadIDToHash(std::thread::id);
 

@@ -1,5 +1,6 @@
-#ifndef GAMESERVER_LOGICSERVER_H
-#define GAMESERVER_LOGICSERVER_H
+#ifndef LOGINSERVER_H
+#define LOGINSERVER_H
+
 
 #include "IServer.h"
 #include "TcpServer.h"
@@ -11,7 +12,6 @@
 #include "ThreadPool.h"
 #include <future>
 
-#include "MySqlPool.h"
 
 
 namespace yy::protocol::core {
@@ -23,17 +23,16 @@ class C2SUdpPortRegister;
 using yy::core::UserConnectionPtr;
 using yy::core::MessagePtr;
 
-namespace yy::app {
-
-
-class LogicServer final: public core::IServer{
+namespace yy::app
+{
+class LoginServer final: public core::IServer{
     using HeartPtr    = std::shared_ptr<yy::protocol::core::HeartBody> ;
     using C2SSecurityPtr = std::shared_ptr<yy::protocol::core::C2SSecurityBody> ;
     using C2SUdpPortRegisterPtr = std::shared_ptr<yy::protocol::core::C2SUdpPortRegister> ;
 
 public:
-    LogicServer(yy::net::EventLoop* accpetorLoop, const yy::net::IPAddressPtr& listenAddr);
-    ~LogicServer() override;
+    LoginServer(yy::net::EventLoop* accpetorLoop, const yy::net::IPAddressPtr& listenAddr);
+    ~LoginServer() override;
 
     /// @brief Start Listen & IOLoop
     virtual void Start() override;
@@ -72,7 +71,7 @@ private:
     void OnTcpHeart(const yy::net::TcpConnectionPtr &conn, const HeartPtr & message);
     void OnUdpHeart(const yy::net::UdpSessionPtr &conn, const HeartPtr & message);
     void OnSecurity(const net::TcpConnectionPtr & conn, const C2SSecurityPtr & message);
-    void OnC2SUdpPortRegister(const net::TcpConnectionPtr & conn, const C2SUdpPortRegisterPtr & message);
+    void OnUdpPortRegisterRequest(const net::TcpConnectionPtr & conn, const C2SUdpPortRegisterPtr & message);
 
     void AfterShutdownConnection(const yy::net::TcpConnectionPtr &conn);
 
@@ -97,18 +96,8 @@ private:
     std::mutex                                          m_usersMutex;
     std::unordered_map<uint64_t , UserConnectionPtr> m_users;
     std::vector<uint64_t> m_closeUsers;
-
-    std::shared_ptr<yy::core::MySqlPool> pool = std::make_shared<yy::core::MySqlPool>(
-            m_accpetorLoop,
-            "127.0.0.1",           // IP 地址
-            33060,                 // MySQL X Protocol 端口（注意不是3306）
-            "yy",                  // 用户名
-            "0",                   // 密码
-            "information_schema",  // Schema / 数据库名
-            10                     // 池大小
-        );
 };
 
 }
 
-#endif
+#endif //LOGINSERVER_H

@@ -21,7 +21,9 @@ struct RemoteXmlConfig
         CENTER, // 中心服务器
         GAME,   // 游戏服务器
         GATE,   // 网关服务器
-        LOGIN   // 登录服务器
+        LOGIN,   // 登录服务器
+        ZOOKEEPER,
+        MYSQL
     };
 
 
@@ -29,19 +31,22 @@ struct RemoteXmlConfig
     {
         RemoteNode() = default;
 
-        RemoteNode(int32_t id, std::string ip,
-                   uint16_t port, const std::string& type)
-            : m_id{id}, m_ip{std::move(ip)}, m_port{port}, m_type{StringToType(type)} {}
+        RemoteNode(const int32_t id, std::string ip, const uint16_t port, const std::string& type)
+            : id{id}, ip{std::move(ip)}, port{port}, type{type} {}
 
-        int32_t        m_id{ };
-        std::string    m_ip{ };
-        uint16_t       m_port{ };
-        RemoteType     m_type{ };
+        int32_t        id{ };
+        std::string    ip{ };
+        uint16_t       port{ };
+        std::string    type{ };
+    };
 
-        [[maybe_unused]] [[nodiscard]] std::string TypeToString() const;
-
-        static RemoteType StringToType(const std::string& t);
-
+    struct MySqlNode
+    {
+        std::string   ip{};
+        uint16_t      port{};
+        std::string   username{};
+        std::string   password{};
+        size_t        poolsize{};
     };
 
 public:
@@ -57,9 +62,10 @@ public:
     int32_t autoConnectTime{ }; // 自动重连时间：用于客户端
 
     char securityCode[20]{ };  // md5码加密
-    char checkCode[3]{ };
+    char checkCode[2]{ };
 
     std::vector<RemoteNode> m_remote_nodes;
+    MySqlNode m_mysql_configs;
 public:
 
     /// @brief 读取root元素下名为remote的配置项

@@ -4,13 +4,16 @@ set(CMAKE_CXX_STANDARD 20)
 
 
 set(LocalSrc
+        UserConnection.cpp
         codec/ProtobufTcpCodec.cpp
         codec/ProtobufDispatcher.cpp
         codec/MessageHeader.cpp
         codec/ProtobufUdpCodec.cpp
         redis/RedisClient.cpp
-        redis/RedisConnectionPool.cpp
-        UserConnection.cpp
+        redis/RedisPool.cpp
+        rpc/RPCCodec.cpp
+        zookeeper/ZKClient.cpp
+        mysql/MySqlPool.cpp
 )
 
 #! 给本地相对路径添加前缀，变为绝对路径

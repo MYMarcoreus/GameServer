@@ -8,10 +8,10 @@
         appMaxConnection = "2000"
         appXorCode       = "130"
         appVersion       = "20230123"
-        recvBytesOne     = "2"
-        recvBytesMax     = "4"
-        sendBytesOne     = "2"
-        sendBytesMax     = "4"
+        recvBytesOne     = "16"
+        recvBytesMax     = "32"
+        sendBytesOne     = "16"
+        sendBytesMax     = "32"
         maxHeartTime     = "30"
         maxSecurityTime  = "10"
         securityCode     = "114514"
@@ -20,7 +20,9 @@
         tcpIOThreadNum   = "2"
         udpIOThreadNum   = "2"
         workThreadNum    = "2"
+        rpcPort          = "13334"
     />
+
 
     <remote
         appXorCode      = "130"
@@ -33,19 +35,31 @@
         autoConnectTime = "3"
         securityCode    = "114514"
         checkCode       = "DE"
+        mysql_ip       = "127.0.0.1"
+        mysql_port     = "33060"
+        mysql_username = "yy"
+        mysql_password = "0"
+        mysql_poolsize = "10"
     >
         <remote_node
-            userID   = "4001"
-            ip   = "127.0.0.1"
-            port = "13333"
-            type = "Center"
+            type    = "ZooKeeper"
+            userID  = "4001"
+            ip      = "127.0.0.1"
+            port    = "2181"
         />
 
         <remote_node
-            userID   = "4002"
-            ip   = "127.0.0.1"
-            port = "13333"
-            type = "Gate"
+            type    = "Center"
+            userID  = "4001"
+            ip      = "127.0.0.1"
+            port    = "19999"
+        />
+
+        <remote_node
+            type    = "Gate"
+            userID  = "4002"
+            ip      = "127.0.0.1"
+            port    = "18888"
         />
     </remote>
 
@@ -99,7 +113,10 @@
 <!--            </appender>-->
         </logger>
     </log>
+
     <error>
 
     </error>
+
+
 </root>

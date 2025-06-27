@@ -174,17 +174,19 @@ std::string RingBuffer::PopAllDataAsString()
 bool RingBuffer::TryMakeEnoughFreeSpace(size_t needLen)
 {
     if (GetFreeSize() < needLen) {
+        auto old_datasize = GetDataSize();
+
         // 把数据放入新数组中
-        auto new_datasize = GetDataSize() + needLen;
+        auto new_datasize = old_datasize + needLen;
         auto new_capacity = NextPowerOfTwo(new_datasize);
         std::vector<char> new_buffer(new_capacity);
 
         // 旧数据复制到新数组
-        PeekToCBuffer(0, new_buffer.data(), GetDataSize());
+        PeekToCBuffer(0, new_buffer.data(), old_datasize);
 
         m_Buf = std::move(new_buffer);
         m_Head = 0;
-        m_Tail = m_Head + new_datasize;
+        m_Tail = m_Head + old_datasize;
         m_Capacity = new_capacity;
     }
 

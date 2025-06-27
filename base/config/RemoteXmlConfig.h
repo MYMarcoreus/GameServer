@@ -29,12 +29,9 @@ struct RemoteXmlConfig
 
     struct RemoteNode
     {
-        RemoteNode() = default;
-
-        RemoteNode(const int32_t id, std::string ip, const uint16_t port, const std::string& type)
-            : id{id}, ip{std::move(ip)}, port{port}, type{type} {}
-
-        int32_t        id{ };
+        std::string    username{ };
+        std::string    password{ };
+        size_t         poolsize{ };
         std::string    ip{ };
         uint16_t       port{ };
         std::string    type{ };
@@ -65,7 +62,6 @@ public:
     char checkCode[2]{ };
 
     std::vector<RemoteNode> m_remote_nodes;
-    MySqlNode m_mysql_configs;
 public:
 
     /// @brief 读取root元素下名为remote的配置项

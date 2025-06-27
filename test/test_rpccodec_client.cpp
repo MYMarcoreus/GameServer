@@ -3,9 +3,9 @@
 #include "EventLoop.h"
 #include "IPAddress.h"
 #include "log.h"
-#include "codec/ProtobufTcpCodec.h"
+#include "RpcCodec.h"
 #include "codec/ProtobufDispatcher.h"
-#include "query.pb.h"
+#include "rpc.pb.h"
 #include "RemoteXmlConfig.h"
 #include <stdio.h>
 
@@ -14,17 +14,12 @@ using namespace yy::net;
 using namespace yy::util;
 using namespace yy::core;
 using std::string;
-using yy::protobuf::Query;
-using yy::protobuf::Answer;
-using yy::protobuf::Empty;
 
-
+using yy::protocol::core::RpcMessage;
 
 class QueryClient
 {
-    using QueryPtr  = std::shared_ptr<yy::protobuf::Query> ;
-    using AnswerPtr = std::shared_ptr<yy::protobuf::Answer> ;
-    using EmptyPtr = std::shared_ptr<yy::protobuf::Empty> ;
+    using RpcMessagePtr = std::shared_ptr<RpcMessage> ;
 public:
     QueryClient(EventLoop * loop, const IPAddressPtr& serverAddr, const bool CanRetry = true) :
         loop_{loop},
@@ -42,16 +37,6 @@ public:
               dispatcher_.OnProtobufMessage(conn, buf);
           })
     {
-        dispatcher_.RegisterMessageCallback<Empty>(
-            [this](const TcpConnectionPtr& conn, const EmptyPtr& msg) {
-                OnEmpty(conn, msg);
-            });
-
-        dispatcher_.RegisterMessageCallback<Answer>(
-            [this](const TcpConnectionPtr& conn, const AnswerPtr& msg) {
-                OnAnswer(conn, msg);
-            });
-
         client_.SetMessageCallback(
             [this](const TcpConnectionPtr& conn,  NetBuffer & buf) {
                 codec_.OnTcpData(conn, buf);
@@ -86,8 +71,7 @@ private:
         YLOG_INFO("连接至<{}:{}>，我方地址为<{}:{}>", conn->GetPeerAddr()->GetIPStr().c_str(), conn->GetPeerAddr()->GetPort()
                                                  , conn->GetLocalAddr()->GetIPStr().c_str(), conn->GetLocalAddr()->GetPort());
 
-        // SendQuery(conn);
-        loop_->RunEvery(1000ms, [conn, this]()
+        loop_->RunEvery(100ms, [conn, this]()
         {
             SendQuery(conn);
         });
@@ -99,14 +83,15 @@ private:
 
     void SendQuery(const TcpConnectionPtr& conn)
     {
-        Query query;
-        query.set_id(Timestamp::Now().GetMircoSecondSinceEpoch().count());
-        query.set_questioner("Client");
-        query.add_question("What time?");
-        // Empty empty;
-        const google::protobuf::Message* messageToSend = &query;
-        YLOG_INFO("即将向<{}: {}>发送Query[{} Byte]：\n{}", conn->GetSocketFD(), conn->GetConnID(), query.ByteSizeLong(), query.DebugString().c_str());
-        codec_.SendTCP(conn, *messageToSend);
+        RpcMessage msg;
+        msg.set_type(protocol::core::RpcMessage_Type_REQUEST);
+        msg.set_id(10086);
+
+        YLOG_INFO("即将向<{}: {}>发送Query[{} Byte]：\n{}\n{}\n{}", conn->GetSocketFD(), conn->GetConnID(), msg.ByteSizeLong(),
+            msg.DebugString().c_str(),
+            msg.id(),
+            (int)msg.type());
+        codec_.SendTCP(conn, msg);
     }
 
     void OnUnknownMessage(TcpConnectionPtr conn, const MessagePtr& message)
@@ -114,26 +99,10 @@ private:
         YLOG_INFO("未知的消息类型：{}", message->GetDescriptor()->full_name().c_str())
     }
 
-    void OnEmpty(const TcpConnectionPtr& conn, const EmptyPtr & message)
-    {
-        YLOG_INFO("OnEmpty: {}\n{}\n",   message->GetTypeName().c_str(), message->DebugString().c_str());
-    }
-
-    void OnAnswer(const TcpConnectionPtr& conn, const AnswerPtr& message)
-    {
-        string solu{};
-        for (int i = 0; i < message->solution_size(); ++i) {
-            solu += message->solution(i).c_str();
-        }
-
-        YLOG_INFO("OnAnswer: {}\n{}\n", message->GetTypeName(), message->DebugString())
-        // loop_->RunAfter(100ms, [l = loop_](){ l->QuitLoop();} );
-    }
-
     EventLoop *                             loop_;
     TcpClient                               client_;
     ProtobufDispatcher<TcpConnectionPtr>    dispatcher_;
-    ProtobufTcpCodec                        codec_;
+    RpcCodec                        codec_;
 };
 
 
@@ -142,14 +111,13 @@ private:
 
 int main()
 {
-    yy::config::ConfigManager::AddFilePath("../config/configs_client.xml");
-    yy::config::ConfigManager::AddFilePath("../../config/configs_client.xml");
+    yy::config::ConfigManager::AddFilePath("../config/configs_gate.xml");
+    yy::config::ConfigManager::AddFilePath("../../config/configs_gate.xml");
     yy::config::ConfigManager::LoadXmlConfigs();
     yy::Ylog::LoggerManager::getInstance().ReadConfigs();
 
     EventLoop loop{500ms};
-    auto serverNode = config::g_remote_config->GetValue().m_remote_nodes[0];
-    IPAddressPtr serverAddr = std::make_shared<IPv4Address>(serverNode.ip, serverNode.port);
+    IPAddressPtr serverAddr = std::make_shared<IPv4Address>("127.0.0.1", 13334);
     QueryClient echoClient{&loop, serverAddr};
     echoClient.Start();
     loop.Loop();

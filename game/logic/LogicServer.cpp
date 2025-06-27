@@ -86,6 +86,7 @@ void LogicServer::Start() {
 }
 
 void LogicServer::Stop() {
+    m_tcpServer.Stop();
     m_accpetorLoop->QuitLoop();
 }
 

@@ -15,7 +15,7 @@ public:
     using BufferPtr = std::unique_ptr<util::SequentialBuffer>;
     using BufferVector = std::vector<BufferPtr>;
 
-    explicit LogBufferManager(int bufferSize = 4096);
+    explicit LogBufferManager(int bufferSize = 40960);
 
     /// 向当前缓冲区追加日志字符串
     void Append(const std::string & logstr);

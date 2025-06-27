@@ -354,8 +354,6 @@ void TcpConnection::HandleRead() {
     #error Platform not supported
 #endif
 
-    const size_t out_nBytesRead = rst.Result();
-
     if(rst.HasNoError()) {
         YLOG_TRACE("<{}>TcpConnection::HandleRead(): 数据接收完毕 head-tail=={}-{}",
                    m_socket->GetFD(), m_recvBuf->GetHead(), m_recvBuf->GetTail());
@@ -364,13 +362,6 @@ void TcpConnection::HandleRead() {
 
         //! 无需拷贝数据，这里是顺序执行，后续将消息传递给工作线程处理时，需要做拷贝
         m_MessageCallback(shared_from_this(), *m_recvBuf);
-    } else {
-        //! 允许适当扩容，但是用户发送的数据大于 recv_bytes_max，则连接异常，关闭之
-        if(m_recvBuf->GetCapacity() > m_recv_bytes_max) {
-            HandleClose();
-            YLOG_WARN("<{}>TcpConnection::HandleRead(): 用户连接发送数据过多<{}+{}>{}>，关闭连接",
-                      m_recvBuf->GetDataSize(), out_nBytesRead, m_recvBuf->GetCapacity(), m_socket->GetFD())
-        }
     }
 }
 

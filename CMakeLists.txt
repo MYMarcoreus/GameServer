@@ -121,6 +121,7 @@ include_directories(
         core/redis
         core/mysql
         core/zookeeper
+        core/rpc
         protobuf
         game
         game/logic
@@ -131,10 +132,8 @@ include_directories(
 
 
 set(COMMON_SOURCES
-        core/rpc/RpcChannel.cpp
-        core/rpc/RpcChannel.h
-        core/rpc/RpcHeader.cpp
-        core/rpc/RpcHeader.h
+        game/login/LoginService.cpp
+        game/login/LoginService.h
 )
 # 调用子目录下的cmake
 add_subdirectory(base)

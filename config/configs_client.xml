@@ -14,7 +14,7 @@
         sendBytesMax     = "4"
         maxHeartTime     = "30"
         maxSecurityTime  = "10"
-        securityCode     = "csdnxxxx"
+        securityCode     = "114514"
         checkCode        = "DE"
         closeDelay       = "1"
         tcpIOThreadNum   = "2"
@@ -31,18 +31,18 @@
         sendBytesMax    = "256"
         maxHeartTime    = "10"
         autoConnectTime = "3"
-        securityCode    = "csdnxxxx"
+        securityCode    = "114514"
         checkCode       = "DE"
     >
         <remote_node
-            userID   = "4001"
+            username   = "4001"
             ip   = "127.0.0.1"
             port = "13333"
             type = "Center"
         />
 
         <remote_node
-            userID   = "4002"
+            username   = "4002"
             ip   = "127.0.0.1"
             port = "13333"
             type = "Gate"

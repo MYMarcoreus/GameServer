@@ -8,10 +8,10 @@
         appMaxConnection = "2000"
         appXorCode       = "130"
         appVersion       = "20230123"
-        recvBytesOne     = "16"
-        recvBytesMax     = "32"
-        sendBytesOne     = "16"
-        sendBytesMax     = "32"
+        recvBytesOne     = "4"
+        recvBytesMax     = "16"
+        sendBytesOne     = "4"
+        sendBytesMax     = "16"
         maxHeartTime     = "30"
         maxSecurityTime  = "10"
         securityCode     = "114514"
@@ -20,16 +20,15 @@
         tcpIOThreadNum   = "2"
         udpIOThreadNum   = "2"
         workThreadNum    = "2"
-        rpcPort          = "13334"
     />
 
 
     <remote
         appXorCode      = "130"
         appVersion      = "20230123"
-        recvBytesOne    = "8"
+        recvBytesOne    = "4"
         recvBytesMax    = "256"
-        sendBytesOne    = "8"
+        sendBytesOne    = "4"
         sendBytesMax    = "256"
         maxHeartTime    = "10"
         autoConnectTime = "3"
@@ -96,7 +95,7 @@
 
     <log> good description
         <logger m_TypeName  = "default"
-                level = "info"
+                level = "debug"
                 is_async = "true" >
             <appender
                     type = "stdout"

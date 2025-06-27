@@ -8,9 +8,9 @@
         appMaxConnection = "2000"
         appXorCode       = "130"
         appVersion       = "20230123"
-        recvBytesOne     = "16"
+        recvBytesOne     = "4"
         recvBytesMax     = "32"
-        sendBytesOne     = "16"
+        sendBytesOne     = "4"
         sendBytesMax     = "32"
         maxHeartTime     = "30"
         maxSecurityTime  = "10"
@@ -64,22 +64,14 @@
         />
 
         <remote_node
-            type      = "login"
+            type      = "gate"
             username  = "yy"
             password  = "0"
             poolsize  = "10"
             ip        = "127.0.0.1"
-            port      = "18888"
+            port      = "13333"
         />
 
-        <remote_node
-            type      = "login-rpc"
-            username  = "yy"
-            password  = "0"
-            poolsize  = "10"
-            ip        = "127.0.0.1"
-            port      = "18889"
-        />
     </remote>
 
     <!--
@@ -96,7 +88,7 @@
 
     <log> good description
         <logger m_TypeName  = "default"
-                level = "info"
+                level = "debug"
                 is_async = "true" >
             <appender
                     type = "stdout"

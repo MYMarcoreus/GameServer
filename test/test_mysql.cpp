@@ -12,7 +12,12 @@ int main(int argc, char* argv[])
     yy::config::ConfigManager::LoadXmlConfigs();
     yy::Ylog::LoggerManager::getInstance().ReadConfigs();
 
-    auto mysql_configs = yy::config::g_remote_config->GetValue().m_mysql_configs;
+    decltype(yy::config::g_remote_config->GetValue().m_remote_nodes)::value_type mysql_configs;
+    for (auto & node: yy::config::g_remote_config->GetValue().m_remote_nodes) {
+        if (node.type == "mysql") {
+            mysql_configs = node;
+        }
+    }
     auto loop = new yy::net::EventLoop(500ms);
 
     loop->RunEvery(1s, [&loop, &mysql_configs]()

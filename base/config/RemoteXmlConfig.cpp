@@ -11,9 +11,11 @@ public:
     RemoteXmlConfig::RemoteNode operator() (const XMLElement * xml_remote_node) const
     {
         return {
-            XmlAttributeTo<int32_t    >(xml_remote_node->FindAttribute( "userID")),
+            XmlAttributeTo<std::string>(xml_remote_node->FindAttribute( "username")),
+            XmlAttributeTo<std::string>(xml_remote_node->FindAttribute( "password")),
+            XmlAttributeTo<size_t>(xml_remote_node->FindAttribute( "poolsize")),
             XmlAttributeTo<std::string>(xml_remote_node->FindAttribute( "ip")),
-            XmlAttributeTo<uint16_t   >(xml_remote_node->FindAttribute( "port")),
+            XmlAttributeTo<uint16_t>(xml_remote_node->FindAttribute( "port")),
             XmlAttributeTo<std::string>(xml_remote_node->FindAttribute( "type"))
         };
     }
@@ -39,14 +41,6 @@ public:
          remoteXmlConfig.autoConnectTime = XmlAttributeTo<int32_t>(xml_remote->FindAttribute("autoConnectTime"));
          memcpy(remoteXmlConfig.securityCode, XmlAttributeTo<std::string>(xml_remote->FindAttribute( "securityCode")).c_str(), 20);
          memcpy(remoteXmlConfig.checkCode, XmlAttributeTo<std::string>(xml_remote->FindAttribute( "checkCode")).c_str(), 2);
-
-         remoteXmlConfig.m_mysql_configs = {
-                XmlAttributeTo<std::string>(xml_remote->FindAttribute( "mysql_ip")),
-                XmlAttributeTo<uint16_t>(xml_remote->FindAttribute( "mysql_port")),
-                XmlAttributeTo<std::string>(xml_remote->FindAttribute( "mysql_username")),
-                XmlAttributeTo<std::string>(xml_remote->FindAttribute( "mysql_password")),
-                XmlAttributeTo<size_t>(xml_remote->FindAttribute( "mysql_poolsize"))
-         };
 
          remoteXmlConfig.m_remote_nodes = XmlElementTo<decltype(remoteXmlConfig.m_remote_nodes)>{}(xml_remote);
 

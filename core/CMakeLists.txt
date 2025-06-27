@@ -11,7 +11,10 @@ set(LocalSrc
         codec/ProtobufUdpCodec.cpp
         redis/RedisClient.cpp
         redis/RedisPool.cpp
-        rpc/RPCCodec.cpp
+        rpc/RpcCodec.cpp
+        rpc/RpcChannel.cpp
+        rpc/RpcHeader.cpp
+        rpc/RpcServer.cpp
         zookeeper/ZKClient.cpp
         mysql/MySqlPool.cpp
 )

@@ -4,7 +4,6 @@
 #include "AppXmlConfig.h"
 #include "log.h"
 #include <google/protobuf/message.h>
-#include <google/protobuf/message_lite.h>
 
 namespace yy::core {
 

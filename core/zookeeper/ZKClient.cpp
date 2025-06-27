@@ -42,7 +42,7 @@ void ZkClient::Start()
 
     std::string host;
 	std::string port;
-	for (auto node: yy::config::g_remote_config->GetValue().m_remote_nodes) {
+	for (auto & node: yy::config::g_remote_config->GetValue().m_remote_nodes) {
 		if (node.type == "zookeeper") {
 			host = node.ip;
 			port = node.port;
@@ -103,6 +103,7 @@ void ZkClient::Create(const char *path, const char *data, int datalen, int state
 // 根据指定的path，获取znode节点的值
 std::string ZkClient::GetData(const char *path)
 {
+	//! zoo_get是线程安全的，但是buffer等传入的数据结构需要用户保证线程安全，此处使用栈变量，能保证每个线程一个变量，保证线程安全。
     char buffer[64];
 	int bufferlen = sizeof(buffer);
 	int flag = zoo_get(m_zhandle, path, 0, buffer, &bufferlen, nullptr);

@@ -5,6 +5,7 @@
 #include "Socket.h"
 #include "EventLoop.h"
 #include "log.h"
+#include "SignalManager.h"
 #include "SocketApiWrapper.h"
 
 
@@ -31,7 +32,7 @@ const int32_t recv_bytes_one, const int32_t recv_bytes_max, const uint8_t xor_co
     m_Connector->SetConnectFailedCallback( [this]() { YLOG_WARN("coonect to <{}:{}>", this->m_ServerAddr->GetIPStr().c_str(), m_ServerAddr->GetPort()) } );
 
 #ifdef ____LINUX
-    util::set_signal_ignore(SIGPIPE);
+    util::SignalManager::set_signal_ignore(SIGPIPE);
 #endif
 }
 

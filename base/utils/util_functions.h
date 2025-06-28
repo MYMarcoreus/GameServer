@@ -79,19 +79,6 @@ extern void set_linger(SocketApiWrapper::socket_t sockfd, bool onoff, int timeou
 // 判断是否为已打开文件的描述符
 extern bool isOpenedFD(int fd);
 
-
-/// @brief 设置信号SIGXXXX的处理函数为sighandler，
-///        该处理函数：
-///             标志选项为SA_XXXX；
-///             忽略block_sigs中的所有信号
-extern void set_signal_handler(int SIGXXXX, sighandler_t sighandler);
-
-// 忽略信号
-extern void set_signal_ignore(int SIGXXXX);
-
-/// @ 将信号的处理函数恢复为系统默认
-extern void set_signal_handler_default(int SIGXXXX);
-
 ///@brief strerror的线程安全的跨平台C++版本
 extern std::string StrError(int errnum);
 

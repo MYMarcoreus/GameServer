@@ -134,6 +134,8 @@ include_directories(
 set(COMMON_SOURCES
         game/login/LoginService.cpp
         game/login/LoginService.h
+        base/net/SignalManager.h
+        base/net/SignalManager.cpp
 )
 # 调用子目录下的cmake
 add_subdirectory(base)

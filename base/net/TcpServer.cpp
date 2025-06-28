@@ -5,65 +5,15 @@
 #include "Acceptor.h"
 #include "EventLoopThreadPool.h"
 #include "EventLoop.h"
-// #include "ConfigManager.h"
 #include "TcpConnection.h"
 #include "log.h"
 #include "SocketApiWrapper.h"
 #include "util_functions.h"
-#include "FullDuplexPipe.h"
+#include "SignalManager.h"
+
+
 
 namespace yy::net {
-
-#ifdef ____LINUX
-
-class SignalManager {
-public:
-    SignalManager(EventLoop * loop, const std::function<void()>& handler)
-        : loop_{loop}, channel_(std::make_unique<IOChannel>(loop_, SignalManager::pipe_.sideR(), "Wakeup Eventfd Channel"))
-    {
-        // 屏蔽SIGPIPE：当服务器进程向已收到RST的用户套接字执行写操作时，内核会向进程发送SIGPIPE信号来结束进程
-        util::set_signal_ignore(SIGPIPE);
-
-        channel_->SetReadCallback(handler);
-        channel_->EnableReading();
-
-        // 设置三个信号处理函数：该处理函数将信号通过管道传送
-        yy::util::set_signal_handler(SIGALRM, WritePipe);
-        yy::util::set_signal_handler(SIGINT, WritePipe);/* Ctrl+c */
-        yy::util::set_signal_handler(SIGTERM, WritePipe);// kill <pid>
-    }
-
-
-    static void WritePipe(int sig) {
-        //! 向唤醒事件文件描述符进行写，以触发其eoll事件
-        const int msg = sig;
-        pipe_.Write((const char *)&msg, 1);
-    }
-
-    static std::string ReadPipe() {
-        //! 向唤醒事件文件描述符进行写，以触发其epoll事件
-        static std::string sigs;
-        sigs.assign(128, 0);
-        auto nSig = pipe_.Read(sigs.data(), sigs.size());
-        return sigs;
-    }
-
-    static FullDuplexPipe pipe_;
-
-private:
-    EventLoop * loop_;
-    std::unique_ptr<IOChannel> channel_;
-};
-
-FullDuplexPipe SignalManager::pipe_{};
-
-
-#endif
-
-
-
-
-
 
 TcpServer::TcpServer(EventLoop *acceptorLoop, IPAddress::ptr listenAddr, bool reusePort,
 const int32_t send_bytes_one, const int32_t send_bytes_max,
@@ -77,11 +27,11 @@ const int32_t recv_bytes_one, const int32_t recv_bytes_max, const uint8_t xor_co
     m_Acceptor(std::make_unique<Acceptor>(m_AcceptorLoop, Socket::Type::TCP, listenAddr, reusePort)),
     m_IOThreadPool(std::make_unique<EventLoopThreadPool>(acceptorLoop))
 #ifdef ____LINUX
-     ,m_SignalManager{std::make_unique<SignalManager>(acceptorLoop, [this](){ this->HandleSignal(); })}
+     ,m_SignalManager(std::make_unique<yy::util::SignalManager>(acceptorLoop, [this](){ this->HandleSignal(); }))
 #endif
 {
 #ifdef ____LINUX
-    util::set_signal_ignore(SIGPIPE);
+    util::SignalManager::set_signal_ignore(SIGPIPE);
 #endif
 }
 
@@ -178,7 +128,7 @@ void TcpServer::SetCloseSocketsCallback(const F_CloseShutdownConnectionsCallback
 
 void TcpServer::HandleSignal() {
 #ifdef ____LINUX
-    auto sigs = SignalManager::ReadPipe();
+    auto sigs = util::SignalManager::ReadPipe();
 
     for(int i = 0 ; i < sigs.size() ; ++i) {
         switch(sigs[i]) {
@@ -190,7 +140,7 @@ void TcpServer::HandleSignal() {
             // case SIGQUIT: /* Ctrl+\ */
             case SIGINT:  /* Ctrl+C */
             case SIGTERM: // kill <pid>
-            // case SIGKILL: // kill -9 <pid>
+            case SIGKILL: // kill -9 <pid>
             {
                 YLOG_WARN("收到{}信号，结束服务器进程！", strsignal(sigs[i]))
                 this->Stop();

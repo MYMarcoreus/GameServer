@@ -60,7 +60,8 @@
 #define YLOG_ERROR(format, ...) YLOG_LEVEL("default", yy::Ylog::LogLevel::eERROR, format, ##__VA_ARGS__)
 #define YLOG_FATAL(format, ...) YLOG_LEVEL("default", yy::Ylog::LogLevel::eFATAL, format, ##__VA_ARGS__)
 
-#define CLOSE_YLOG() Ylog::LoggerManager::getInstance().StopAsyncThread();
+#define START_YLOG_AFTER_CONFIG() yy::Ylog::LoggerManager::getInstance().ReadConfigs();
+#define CLOSE_YLOG() yy::Ylog::LoggerManager::getInstance().StopAsyncThread();
 
 #define USE_CPP_STREAM false
 
@@ -232,6 +233,8 @@ public:
 
     bool delLogger(const std::string& name);
 
+    // 关闭异步写日志线程：等待异步写线程将日志信息队列都读空并写到文件中
+    void StopAsyncThread();
 private:
     LoggerManager();
 
@@ -248,8 +251,6 @@ private:
     /// @brief 开启异步写日志线程
     void StartAsyncThread();
 
-    // 关闭异步写日志线程：等待异步写线程将日志信息队列都读空并写到文件中
-    void StopAsyncThread();
 
     // static void addListener();
 

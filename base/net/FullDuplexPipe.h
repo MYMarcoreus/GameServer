@@ -9,7 +9,7 @@
 #include<type_traits>
 
 
-namespace yy::net {
+namespace yy::util {
 
 class FullDuplexPipe
 {

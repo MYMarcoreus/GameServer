@@ -1,4 +1,7 @@
 #include "EventLoopThread.h"
+
+#include <iostream>
+
 #include "EventLoop.h"
 #include "util_functions.h"
 
@@ -13,7 +16,10 @@ EventLoopThread::EventLoopThread(F_ThreadInitCallback init_cb, Milliseconds poll
 { }
 
 EventLoopThread::~EventLoopThread() {
-    m_LoopThread.join();
+    if (m_Loop != nullptr) {
+        m_Loop->QuitLoop();
+        m_LoopThread.join();
+    }
 }
 
 EventLoop *EventLoopThread::CreateLoop() {
@@ -27,6 +33,7 @@ EventLoop *EventLoopThread::CreateLoop() {
             m_LoopThread = std::thread(
                 [this, &loopPromise]() {
                     ThreadLoopFunction(loopPromise);
+                    std::cout << std::format("io线程<{}>结束", this->GetThreadID()) << std::endl;
                 }
             );
             //! 等待Loop线程初始化m_Loop

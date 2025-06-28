@@ -9,6 +9,11 @@
 #include <atomic>
 #include <map>
 
+namespace yy::util
+{
+class SignalManager;
+}
+
 namespace yy::net {
 
 class Acceptor;
@@ -83,7 +88,7 @@ private:
     std::unordered_map<uint64_t , TcpConnectionPtr> m_ConnectionMap;
 
 #ifdef ____LINUX
-    std::unique_ptr<class SignalManager> m_SignalManager;
+    std::unique_ptr<util::SignalManager> m_SignalManager;
 #endif
 };
 

@@ -2,9 +2,7 @@
 #include "AppXmlConfig.h"
 #include "TcpConnection.h"
 #include "rpc.pb.h"
-#include <google/protobuf/message.h>
 #include <google/protobuf/descriptor.h>
-#include <google/protobuf/service.h>
 #include <google/protobuf/stubs/callback.h>
 
 #include "log.h"
@@ -43,9 +41,6 @@ RpcServer::RpcServer(yy::net::EventLoop* accpetorLoop, const yy::net::IPAddressP
 RpcServer::~RpcServer()
 {
     Stop();
-    for (auto s: services_) {
-        delete s.second;
-    }
 }
 
 void RpcServer::Start()
@@ -60,12 +55,6 @@ void RpcServer::Stop()
     server_.Stop();
 }
 
-void RpcServer::RegisterService(google::protobuf::Service * service)
-{
-    const google::protobuf::ServiceDescriptor* desc = service->GetDescriptor();
-    services_[desc->full_name()] = service;
-    YLOG_INFO("RPC Server: Registered service {}", desc->full_name());
-}
 
 void RpcServer::OnRpcRequest(const net::TcpConnectionPtr& conn, const RpcMessagePtr & msg)
 {
@@ -73,58 +62,96 @@ void RpcServer::OnRpcRequest(const net::TcpConnectionPtr& conn, const RpcMessage
     const std::string & method_name = msg->method();
     auto id = msg->id();
 
-    auto it = services_.find(service_name);
-    if (it == services_.end()) {
-        YLOG_ERROR("{}:{} is not exist!", service_name, method_name)
+    RpcMessage::Status errcode = RpcMessage::NO_ERROR;
+
+    const auto & service_opt = this->GetService(service_name);
+    if (not service_opt.has_value()) {
+        errcode = RpcMessage::NO_SERVICE;
+        YLOG_WARN("RPC Server：收到Rpc的服务请求，但是Server未注册该服务<{}>", service_name)
     }
 
-    const auto & service = it->second;
-    const google::protobuf::ServiceDescriptor* desc = service->GetDescriptor();
+    auto & service = service_opt.value().get();
+    const google::protobuf::ServiceDescriptor* desc = service.GetDescriptor();
     const google::protobuf::MethodDescriptor * method = desc->FindMethodByName(method_name);
+    if (method == nullptr) {
+        errcode = RpcMessage::NO_METHOD;
+        YLOG_WARN("RPC Server：Server已注册服务<{}>，但是查找不到其下的方法<{}>", service_name, method_name)
+    }
 
     //! 读取请求消息
-    std::unique_ptr<google::protobuf::Message> request{service->GetRequestPrototype(method).New()}; //! 函数结束后自动析构
-    if (!request->ParseFromString(msg->request())) {
-        YLOG_ERROR("request parse error")
-        return;
+    const std::unique_ptr<google::protobuf::Message> request{service.GetRequestPrototype(method).New()}; //! 函数结束后自动析构
+    if (msg->has_request()) {
+        if (request->ParseFromString(msg->request()) == false) {
+            errcode = RpcMessage::INVALID_REQUEST;
+            YLOG_WARN("RPC Server：request parse error")
+        }
+    } else {
+        errcode = RpcMessage::INVALID_REQUEST;
     }
 
-    //! 生成响应消息
-    std::unique_ptr<google::protobuf::Message> response{service->GetResponsePrototype(method).New()}; //! 函数结束后自动析构
+    switch (errcode) {
+        case protocol::core::RpcMessage_Status_NO_ERROR: {
+            //! 生成响应消息
+            const std::unique_ptr<google::protobuf::Message> response{service.GetResponsePrototype(method).New()}; //! 函数结束后自动析构
 
-    // 给下面的method方法的调用，绑定一个Closure的回调函数
-    google::protobuf::Closure *done = google::protobuf::NewCallback
-        <RpcServer, const net::TcpConnectionPtr&, const std::pair<google::protobuf::Message*, int64_t> &>
-        (this, &RpcServer::SendRpcResponse, conn, std::pair<google::protobuf::Message*, int64_t>{response.get(), id});
+            // 给下面的method方法的调用，绑定一个Closure的回调函数
+            google::protobuf::Closure *done = google::protobuf::NewCallback
+                <RpcServer, const net::TcpConnectionPtr&, const std::pair<google::protobuf::Message*, int64_t> &>
+                (this, &RpcServer::SendRpcResponse, conn, std::pair<google::protobuf::Message*, int64_t>{response.get(), id});
 
-    // 在框架上根据远端rpc请求，调用当前rpc节点上发布的方法
-    // new UserService().Login(controller, request, response, done)
-    service->CallMethod(method, nullptr, request.get(), response.get(), done);
+            // 在框架上根据远端rpc请求，调用当前rpc节点上发布的方法
+            // new UserService().Login(controller, request, response, done)
+            service.CallMethod(method, nullptr, request.get(), response.get(), done);
+            break;
+        }
+        default: {
+            RpcMessage message;
+            message.set_type(RpcMessage::RESPONSE);
+            message.set_id(id);
+            message.set_error(errcode);
+            codec_.SendTCP(conn, message);
+            break;
+        }
+    }
+
+
 }
 
-void RpcServer::SendRpcResponse(const net::TcpConnectionPtr& conn, const std::pair<google::protobuf::Message*, int64_t>& response_id)
+void RpcServer::SendRpcResponse(const net::TcpConnectionPtr& conn, const std::pair<google::protobuf::Message*, int64_t>& pair_response_id)
 {
-    const auto response = response_id.first;
-    const auto id = response_id.second;
+    const auto response = pair_response_id.first;
+    const auto id = pair_response_id.second;
 
-    // 序列化成功后，通过网络把rpc方法执行的结果发送会rpc的调用方
-    std::string response_str;
-    if (response->SerializeToString(&response_str))  {
-        RpcMessage message;
-        message.set_type(RpcMessage::RESPONSE);
-        message.set_id(id);
+    if (response) {
+        // 序列化成功后，通过网络把rpc方法执行的结果发送会rpc的调用方
+        std::string response_str;
+        if (response->SerializeToString(&response_str))  {
+            RpcMessage message;
+            message.set_type(RpcMessage::RESPONSE);
+            message.set_id(id);
+            message.set_error(RpcMessage::NO_ERROR);
 
-        *message.mutable_response() = std::move(response_str); // 比message.set_response(response_str);高效
-        codec_.SendTCP(conn, message);
+            *message.mutable_response() = std::move(response_str); // 比message.set_response(response_str);高效
+            codec_.SendTCP(conn, message);
 
-        YLOG_TRACE("RPC Server：发送RPC Response {}, {}", id, response_str.c_str());
-    }
-    else {
-        std::cerr << "serialize response_str error!" << std::endl;
+            YLOG_TRACE("RPC Server：发送RPC Response {}, {}", id, response_str.c_str());
+        }
+        else {
+            std::cerr << "serialize response_str error!" << std::endl;
+        }
     }
 
     // 模拟http的短链接服务，由RpcServer主动断开连接
     conn->Shutdown();
     YLOG_TRACE("RPC Server: 断开与<{}:{}>的连接", conn->GetPeerAddr()->GetIPStr(), conn->GetPeerAddr()->GetPortStr())
+}
+
+auto RpcServer::GetService(const std::string& name) const -> std::optional<std::reference_wrapper<google::protobuf::Service>>
+{
+    const auto it = services_.find(name);
+    if (it != services_.end() && it->second) {
+        return std::ref(*it->second);
+    }
+    return std::nullopt;
 }
 }

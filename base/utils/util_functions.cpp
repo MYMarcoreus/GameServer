@@ -138,22 +138,6 @@ bool isOpenedFD(int fd)
 #endif
 }
 
-
-void set_signal_handler(int SIGXXXX, sighandler_t sighandler)
-{
-    ::signal(SIGXXXX, sighandler);
-}
-
-void set_signal_ignore(int SIGXXXX)
-{
-    set_signal_handler(SIGXXXX, SIG_IGN);
-}
-
-void set_signal_handler_default(int SIGXXXX)
-{
-    set_signal_handler(SIGXXXX, SIG_DFL);
-}
-
 std::string StrError(int errnum)
 {
     const char * str;

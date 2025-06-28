@@ -18,11 +18,10 @@ void EventLoopThreadPool::Start(int threadNum, Milliseconds pollwaitTimeout, F_T
     m_BaseLoop->AssertInLoopingThread();
 
     for (int i = 0; i < threadNum; ++i) {
-        auto t = new EventLoopThread(cb, pollwaitTimeout);
-        m_Threads.emplace_back(std::unique_ptr<EventLoopThread>(t));
-        m_ioLoops.emplace_back(t->CreateLoop());
-        // m_Loops.back()->SetCloseSocketsCallback(CloseShutdownCallbacks);
-        YLOG_INFO("启动io线程<{}>！", t->GetThreadID())
+        auto loop_thread = std::make_unique<EventLoopThread>(cb, pollwaitTimeout);
+        m_ioLoops.emplace_back(loop_thread->CreateLoop());
+        YLOG_INFO("启动io线程<{}>！", loop_thread->GetThreadID())
+        m_Threads.emplace_back(std::move(loop_thread));
     }
 
     // 没有额外的线程，只有主线程，仍要执行线程初始化回调

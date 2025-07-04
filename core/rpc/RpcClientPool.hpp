@@ -91,7 +91,8 @@ public:
             return *stub_;
         }
 
-        void SetConnectionEstablishedCallback(const yy::net::F_ConnectionEstablishedCallback &connectionEstablishedCallback) {
+        void SetConnectionEstablishedCallback(const yy::net::F_ConnectionEstablishedCallback &connectionEstablishedCallback) const
+        {
             rpc_channel_->SetConnectionEstablishedCallback(connectionEstablishedCallback);
         }
 

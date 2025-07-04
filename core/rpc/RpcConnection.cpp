@@ -32,7 +32,7 @@ RpcConnection::RpcConnection(yy::net::EventLoop * loop, const net::TcpConnection
         [this](const net::TcpConnectionPtr & conn) {
             // 连接意外断开时，之前积压在pending_calls_中的未收到回复的请求应该进行处理：
             //     方式一：使这些请求清空（这里所采用的）
-            //     方式一：重新发送这些请求（服务端需要判断是否收到重复的请求）
+            //     方式二：（todo）重新发送这些请求（服务端需要判断是否收到重复的请求，客户端需要在收到响应前一直保存请求）
             {
                 std::lock_guard lock(pending_call_mutex_);
                 pending_calls_.clear();

@@ -89,7 +89,6 @@ void TcpConnection::SendTCP(const std::string_view & message) {
     } else {
         //! 需要将数据从业务线程拷贝到IO线程中（否则线程不安全），这里SendInLoop使用const &延长临时对象生命周期
         //! 其实代办Callback列表隐式构成了一个SendBuffers列表
-        //todo 这里可以优化不拷贝，用堆存储待发送的数据，传入指针
         m_ioLoop->RunCallbackInLoop([conn = shared_from_this(), msg = std::string(message)](){
             conn->SendTCPInLoop(std::string_view{msg}); });
     }

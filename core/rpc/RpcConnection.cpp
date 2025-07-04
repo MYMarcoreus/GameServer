@@ -30,6 +30,13 @@ RpcConnection::RpcConnection(yy::net::EventLoop * loop, const net::TcpConnection
 
     tcp_client_->SetConnectionEstablishedCallback(
         [this](const net::TcpConnectionPtr & conn) {
+            // 连接意外断开时，之前积压在pending_calls_中的未收到回复的请求应该进行处理：
+            //     方式一：使这些请求清空（这里所采用的）
+            //     方式一：重新发送这些请求（服务端需要判断是否收到重复的请求）
+            {
+                std::lock_guard lock(pending_call_mutex_);
+                pending_calls_.clear();
+            }
             conn_ = conn;
             if (connectionEstablishedCallback_)
                 connectionEstablishedCallback_(conn);
@@ -40,8 +47,8 @@ RpcConnection::RpcConnection(yy::net::EventLoop * loop, const net::TcpConnection
 }
 
 void RpcConnection::CallMethod(const google::protobuf::MethodDescriptor* method,
-                            google::protobuf::RpcController* controller, const google::protobuf::Message* request,
-                            google::protobuf::Message* response, google::protobuf::Closure* done)
+                               google::protobuf::RpcController* controller, const google::protobuf::Message* request,
+                               google::protobuf::Message* response, google::protobuf::Closure* done)
 {
     if (conn_ == nullptr or not conn_->IsConnected()) {
         auto ctrl = dynamic_cast<RpcController*>(controller);
@@ -86,6 +93,10 @@ void RpcConnection::CallMethod(const google::protobuf::MethodDescriptor* method,
 
 void RpcConnection::Connect(const net::IPAddressPtr& server_addr)
 {
+    {
+        std::lock_guard lock(pending_call_mutex_);
+        pending_calls_.clear();
+    }
     tcp_client_->Connect(server_addr);
 }
 
@@ -93,6 +104,10 @@ void RpcConnection::Disconnect()
 {
     conn_ = nullptr;
     tcp_client_->Disconnect();
+    {
+        std::lock_guard lock(pending_call_mutex_);
+        pending_calls_.clear();
+    }
 }
 
 

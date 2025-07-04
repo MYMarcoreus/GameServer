@@ -17,6 +17,7 @@ namespace yy::core
 class RpcConnection final : public ::google::protobuf::RpcChannel {
 public:
     explicit RpcConnection(yy::net::EventLoop * loop, const net::TcpConnectionPtr & _conn = nullptr);
+    ~RpcConnection() override = default;
 
     ///@brief 调用具体实现的服务时会调用的函数
     /// @param method	    不可释放（由 Protobuf 框架管理）	一般是全局静态对象，无需管理

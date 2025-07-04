@@ -53,6 +53,11 @@ public:
             });
 
         client_.SetCanAutoRetry(CanRetry);
+
+        dispatcher_.RegisterMessageCallback<RpcMessage>(
+            [this](const TcpConnectionPtr& conn, const RpcMessagePtr& msg) {
+                OnAnswer(conn, msg);
+            });
     }
 
 
@@ -71,14 +76,16 @@ private:
         YLOG_INFO("连接至<{}:{}>，我方地址为<{}:{}>", conn->GetPeerAddr()->GetIPStr().c_str(), conn->GetPeerAddr()->GetPort()
                                                  , conn->GetLocalAddr()->GetIPStr().c_str(), conn->GetLocalAddr()->GetPort());
 
-        loop_->RunEvery(100ms, [conn, this]()
+        loop_->RunEvery(10ms, [weak_conn = std::weak_ptr{conn}, this]()
         {
-            SendQuery(conn);
+            if (const auto shared_conn = weak_conn.lock()) {
+                SendQuery(shared_conn);
+            }
         });
     }
 
     void ConnectionWriteComplete(const TcpConnectionPtr& conn) {
-        YLOG_INFO("数据已发送给服务器<{}:{}>", conn->GetPeerAddr()->GetIPStr().c_str(), conn->GetPeerAddr()->GetPort())
+        // YLOG_INFO("数据已发送给服务器<{}:{}>", conn->GetPeerAddr()->GetIPStr().c_str(), conn->GetPeerAddr()->GetPort())
     }
 
     void SendQuery(const TcpConnectionPtr& conn)
@@ -86,12 +93,14 @@ private:
         RpcMessage msg;
         msg.set_type(protocol::core::RpcMessage_Type_REQUEST);
         msg.set_id(10086);
-
-        YLOG_INFO("即将向<{}: {}>发送Query[{} Byte]：\n{}\n{}\n{}", conn->GetSocketFD(), conn->GetConnID(), msg.ByteSizeLong(),
-            msg.DebugString().c_str(),
-            msg.id(),
-            (int)msg.type());
         codec_.SendTCP(conn, msg);
+    }
+
+    void OnAnswer(const TcpConnectionPtr& conn, const RpcMessagePtr& message)
+    {
+        static std::atomic_size_t cnt_ = 0;
+        cnt_.fetch_add(1, std::memory_order_relaxed);
+        YLOG_INFO("OnAnswer<{}>: {}; {};", cnt_.load(), static_cast<int>(message->type()), message->id())
     }
 
     void OnUnknownMessage(TcpConnectionPtr conn, const MessagePtr& message)
@@ -102,7 +111,7 @@ private:
     EventLoop *                             loop_;
     TcpClient                               client_;
     ProtobufDispatcher<TcpConnectionPtr>    dispatcher_;
-    RpcCodec                        codec_;
+    RpcCodec                                codec_;
 };
 
 
@@ -114,14 +123,22 @@ int main()
     yy::config::ConfigManager::AddFilePath("../config/configs_gate.xml");
     yy::config::ConfigManager::AddFilePath("../../config/configs_gate.xml");
     yy::config::ConfigManager::LoadXmlConfigs();
-    yy::Ylog::LoggerManager::getInstance().ReadConfigs();
 
-    EventLoop loop{500ms};
-    IPAddressPtr serverAddr = std::make_shared<IPv4Address>("127.0.0.1", 13334);
-    QueryClient echoClient{&loop, serverAddr};
-    echoClient.Start();
+    START_YLOG_AFTER_CONFIG()
+
+    yy::net::EventLoop loop{200ms};
+    IPAddressPtr serverAddr = std::make_shared<IPv4Address>("127.0.0.1", 13333);
+
+    std::vector<std::unique_ptr<QueryClient>> clients;
+    for (int i = 0; i < 20; ++i) {
+        auto client = std::make_unique<QueryClient>(&loop, serverAddr);
+        client->Start();
+        clients.emplace_back(std::move(client));
+    }
+
     loop.Loop();
 
-
+    CLOSE_YLOG();
+    google::protobuf::ShutdownProtobufLibrary();
     return 0;
 }

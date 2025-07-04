@@ -20,8 +20,8 @@
         tcpIOThreadNum   = "2"
         udpIOThreadNum   = "2"
         workThreadNum    = "2"
+        rpcPort          = "13334"
     />
-
 
     <remote
         appXorCode      = "130"

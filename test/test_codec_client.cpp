@@ -86,10 +86,11 @@ private:
         YLOG_INFO("连接至<{}:{}>，我方地址为<{}:{}>", conn->GetPeerAddr()->GetIPStr().c_str(), conn->GetPeerAddr()->GetPort()
                                                  , conn->GetLocalAddr()->GetIPStr().c_str(), conn->GetLocalAddr()->GetPort());
 
-        // SendQuery(conn);
-        loop_->RunEvery(1000ms, [conn, this]()
+        loop_->RunEvery(10ms, [weak_conn = std::weak_ptr{conn}, this]()
         {
-            SendQuery(conn);
+            if (const auto shared_conn = weak_conn.lock()) {
+                SendQuery(shared_conn);
+            }
         });
     }
 
@@ -105,7 +106,7 @@ private:
         query.add_question("What time?");
         // Empty empty;
         const google::protobuf::Message* messageToSend = &query;
-        YLOG_INFO("即将向<{}: {}>发送Query[{} Byte]：\n{}", conn->GetSocketFD(), conn->GetConnID(), query.ByteSizeLong(), query.DebugString().c_str());
+        // YLOG_INFO("即将向<{}: {}>发送Query[{} Byte]：\n{}", conn->GetSocketFD(), conn->GetConnID(), query.ByteSizeLong(), query.DebugString().c_str());
         codec_.SendTCP(conn, *messageToSend);
     }
 
@@ -121,13 +122,14 @@ private:
 
     void OnAnswer(const TcpConnectionPtr& conn, const AnswerPtr& message)
     {
+        static std::atomic_size_t cnt_ = 0;
+
         string solu{};
         for (int i = 0; i < message->solution_size(); ++i) {
             solu += message->solution(i).c_str();
         }
-
-        YLOG_INFO("OnAnswer: {}\n{}\n", message->GetTypeName(), message->DebugString())
-        // loop_->RunAfter(100ms, [l = loop_](){ l->QuitLoop();} );
+        cnt_.fetch_add(1, std::memory_order_relaxed);
+        YLOG_INFO("OnAnswer<{}>: {}; {};", cnt_.load(), message->GetTypeName(), message->DebugString())
     }
 
     EventLoop *                             loop_;
@@ -145,15 +147,23 @@ int main()
     yy::config::ConfigManager::AddFilePath("../config/configs_client.xml");
     yy::config::ConfigManager::AddFilePath("../../config/configs_client.xml");
     yy::config::ConfigManager::LoadXmlConfigs();
-    yy::Ylog::LoggerManager::getInstance().ReadConfigs();
 
-    EventLoop loop{500ms};
+    START_YLOG_AFTER_CONFIG()
+
+    yy::net::EventLoop loop{200ms};
     auto serverNode = config::g_remote_config->GetValue().m_remote_nodes[0];
     IPAddressPtr serverAddr = std::make_shared<IPv4Address>(serverNode.ip, serverNode.port);
-    QueryClient echoClient{&loop, serverAddr};
-    echoClient.Start();
+
+    std::vector<std::unique_ptr<QueryClient>> clients;
+    for (int i = 0; i < 20; ++i) {
+        auto client = std::make_unique<QueryClient>(&loop, serverAddr);
+        client->Start();
+        clients.emplace_back(std::move(client));
+    }
+
     loop.Loop();
 
-
+    CLOSE_YLOG();
+    google::protobuf::ShutdownProtobufLibrary();
     return 0;
 }

@@ -17,6 +17,9 @@ using namespace yy::config;
 using yy::SocketApiWrapper::SocketError;
 
 
+static std::atomic<size_t> cnt_new = 0;
+static std::atomic<size_t> cnt_del = 0;
+
 TcpConnection::TcpConnection(uint64_t connid, EventLoop *loop, SocketApiWrapper::socket_t sockfd,
                              const IPAddress::ptr& localAddr, const IPAddress::ptr& peerAddr,
                              const int32_t send_bytes_one, const int32_t send_bytes_max, const int32_t recv_bytes_one, const int32_t recv_bytes_max,
@@ -50,6 +53,11 @@ TcpConnection::TcpConnection(uint64_t connid, EventLoop *loop, SocketApiWrapper:
     m_connectedTime.SetNow();
     m_shudownTime.SetNow();
     m_heartTime.SetNow();
+
+    cnt_new++;
+    // if (cnt_new == 1000) {
+    //     std::cout << cnt_new << std::endl;
+    // }
 }
 
 
@@ -60,6 +68,9 @@ TcpConnection::~TcpConnection() {
     // m_Channel->RemoveFromLoop();
 
     YLOG_DEBUG("连接<{}: {}>已被析构！", this->GetSocketFD(), m_connid)
+
+
+    cnt_del++;
 }
 
 SocketApiWrapper::socket_t TcpConnection::GetSocketFD() const {
@@ -396,7 +407,7 @@ SocketApiWrapper::SocketResult TcpConnection::HandleRead_ET() {
                 case SocketError::eConnectionAborted:
                 case SocketError::eNotConnected:
                 case SocketError::eConnectionRefused:
-                    YLOG_DEBUG("<{}>TcpConnection::HandleRead_ET(): 连接错误，关闭用户连接", m_socket->GetFD());
+                    YLOG_DEBUG("<{}>TcpConnection::HandleRead_ET(): 连接错误<{}>，关闭用户连接", m_socket->GetFD(), rst.GetErrorInfo());
                     HandleClose();
                     break;
                 default:

@@ -11,10 +11,17 @@ class TcpClient {
 public:
     TcpClient(EventLoop * loop, IPAddressPtr serverAddr,
         const int32_t send_bytes_one, const int32_t send_bytes_max,
-        const int32_t recv_bytes_one, const int32_t recv_bytes_max, const uint8_t xor_code);
+        const int32_t recv_bytes_one, const int32_t recv_bytes_max,
+        const uint8_t xor_code);
+
+    TcpClient(EventLoop * loop,
+        const int32_t send_bytes_one, const int32_t send_bytes_max,
+        const int32_t recv_bytes_one, const int32_t recv_bytes_max,
+        const uint8_t xor_code);
+
     ~TcpClient();
 
-    void Connect();
+    void Connect(const IPAddressPtr& server_addr = nullptr);
     void Disconnect();
     void StopConnecting();
 

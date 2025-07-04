@@ -49,11 +49,6 @@ public:
                 OnQuery(conn, msg);
             });
 
-        dispatcher_.RegisterMessageCallback<Answer>(
-            [this](const TcpConnectionPtr& conn, const std::shared_ptr<Answer>& msg) {
-                OnAnswer(conn, msg);
-            });
-
         server_.SetConnectionEstablishedCallback(
             [this](const TcpConnectionPtr& conn) {
                 OnConnectionEstablished(conn);
@@ -78,7 +73,7 @@ public:
 
     void SendAnswer(const TcpConnectionPtr& conn, const QueryPtr& query)
     {
-        auto now = Timestamp::Now();
+        const auto now = Timestamp::Now();
 
         Answer answer;
         answer.set_id(now.GetMircoSecondSinceEpoch().count());
@@ -98,25 +93,22 @@ private:
 
     void OnQuery(const TcpConnectionPtr& conn, const QueryPtr& message)
     {
+        static std::atomic<size_t> cnt_ = 0;
+
         string ques{};
         for (int i = 0; i < message->question_size(); ++i) {
             ques += message->question(i).c_str();
         }
+        cnt_.fetch_add(1, std::memory_order_relaxed);
 
-        YLOG_INFO("收到用户的Query<{}>: \nid:{} \nquestioner: {} \nquestion: {}", conn->GetSocketFD(), message->id(), message->questioner(), ques);
+        // YLOG_INFO("收到用户的Query<{}>: \nid:{} \nquestioner: {} \nquestion: {}", cnt_,
+        //     message->id(),
+        //     message->questioner(),
+        //     ques);
+
+        YLOG_INFO("收到用户的Query<{}>: id:{}; questioner: {}; question: {};", cnt_.load(), message->id(), message->questioner(), ques);
 
         SendAnswer(conn, message);
-    }
-
-    void OnAnswer(const TcpConnectionPtr& conn, const AnswerPtr& message)
-    {
-        string solu{};
-        for (int i = 0; i < message->solution_size(); ++i) {
-            solu += message->solution(i).c_str();
-        }
-
-        YLOG_INFO("OnAnswer: \n{}, \n{}, \n{}, \n{}, \n{}", message->GetTypeName().c_str(),
-                  message->id(), message->questioner().c_str(), message->answerer().c_str(), solu.c_str())
     }
 
     void OnUnknownMessage(TcpConnectionPtr conn, const MessagePtr& message)
@@ -125,12 +117,11 @@ private:
     }
 
 
-    EventLoop *         loop_;
-    TcpServer           server_;
-    ProtobufDispatcher<TcpConnectionPtr>  dispatcher_;
-    ProtobufTcpCodec       codec_;
+    EventLoop *                             loop_;
+    TcpServer                               server_;
+    ProtobufDispatcher<TcpConnectionPtr>    dispatcher_;
+    ProtobufTcpCodec                        codec_;
 };
-
 
 
 

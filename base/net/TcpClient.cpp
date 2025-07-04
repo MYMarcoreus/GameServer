@@ -28,8 +28,34 @@ const int32_t recv_bytes_one, const int32_t recv_bytes_max, const uint8_t xor_co
     m_NextConnID{0},
     m_ServerAddr{serverAddr}
 {
+    assert(m_Connector != nullptr);
+    assert(m_Loop != nullptr);
+
     m_Connector->SetNewConnectionCallback( [this](const SocketApiWrapper::socket_t sockfd){ this->NewConnection(sockfd); } );
     m_Connector->SetConnectFailedCallback( [this]() { YLOG_WARN("coonect to <{}:{}>", this->m_ServerAddr->GetIPStr().c_str(), m_ServerAddr->GetPort()) } );
+
+#ifdef ____LINUX
+    util::SignalManager::set_signal_ignore(SIGPIPE);
+#endif
+}
+
+TcpClient::TcpClient(EventLoop *loop,
+const int32_t send_bytes_one, const int32_t send_bytes_max,
+const int32_t recv_bytes_one, const int32_t recv_bytes_max, const uint8_t xor_code) :
+    m_send_bytes_one(send_bytes_one),
+    m_send_bytes_max(send_bytes_max),
+    m_recv_bytes_one(recv_bytes_one),
+    m_recv_bytes_max(recv_bytes_max),
+    m_xorCode(xor_code),
+    m_Loop(loop),
+    m_Connection{},
+    m_Connector{nullptr},
+    m_CanAutoRetry{true},
+    m_IsStarted{false},
+    m_NextConnID{0},
+    m_ServerAddr{nullptr}
+{
+    assert(m_Loop != nullptr);
 
 #ifdef ____LINUX
     util::SignalManager::set_signal_ignore(SIGPIPE);
@@ -54,8 +80,15 @@ TcpClient::~TcpClient() {
     }
 }
 
-void TcpClient::Connect() {
+void TcpClient::Connect(const IPAddressPtr& server_addr) {
     m_IsStarted = true;
+
+    if (server_addr) {
+        m_ServerAddr = server_addr;
+        m_Connector = std::make_shared<Connector>(m_Loop, m_ServerAddr);
+        m_Connector->SetNewConnectionCallback( [this](const SocketApiWrapper::socket_t sockfd){ this->NewConnection(sockfd); } );
+        m_Connector->SetConnectFailedCallback( [this]() { YLOG_WARN("coonect to <{}:{}>", this->m_ServerAddr->GetIPStr().c_str(), m_ServerAddr->GetPort()) } );
+    }
     m_Connector->Start();
 }
 

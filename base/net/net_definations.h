@@ -37,7 +37,7 @@ using F_TaskCallback = std::function<void()>;
 using TimerID = int64_t;
 
 using TcpConnectionPtr  = std::shared_ptr<TcpConnection>;
-using UdpSessionPtr   = std::shared_ptr<UdpSession>;
+using UdpSessionPtr     = std::shared_ptr<UdpSession>;
 using TimerPtr          = std::shared_ptr<Timer>;
 using IPAddressPtr      = std::shared_ptr<IPAddress>;
 using ConnectorPtr      = std::shared_ptr<Connector>;

@@ -27,7 +27,7 @@ public:
     virtual socklen_t GetRawAddrLen() const = 0;
 
     /// @brief 获取端口号
-    virtual uint32_t GetPort() const = 0;
+    virtual uint16_t GetPort() const = 0;
 
     virtual std::string GetPortStr() const = 0;
 
@@ -74,7 +74,7 @@ public:
     [[nodiscard]] socklen_t GetRawAddrLen() const override { return sizeof(m_address); }
 
     /// @brief 获取端口号
-    [[nodiscard]] uint32_t GetPort() const override { return ntohs(m_address.sin_port); }
+    [[nodiscard]] uint16_t GetPort() const override { return ntohs(m_address.sin_port); }
 
     std::string GetPortStr() const override { return std::to_string(ntohs(m_address.sin_port)); };
 
@@ -117,7 +117,7 @@ public:
     [[nodiscard]] socklen_t GetRawAddrLen() const override { return sizeof m_address;}
 
     /// @brief 获取端口号
-    [[nodiscard]] uint32_t GetPort() const override { return ntohs(m_address.sin6_port); }
+    [[nodiscard]] uint16_t GetPort() const override { return ntohs(m_address.sin6_port); }
 
     /// @brief 设置端口号
     void SetPort(uint16_t port) override { m_address.sin6_port = port; }

@@ -256,7 +256,7 @@ private:
 
 private:
     std::unordered_map<std::string, Logger::ptr> m_loggers;
-    util::RWLock m_loggerMutex;
+    util::RWMutex m_loggerMutex;
 
     /* 所有日志器共用一个阻塞队列，并用m_isRun控制异步写日志线程的运行 */
     // yy::util::UnboundedLockedQueue<std::pair<std::shared_ptr<ILogAppender>, LogMessage::ptr>> m_blockqueue;

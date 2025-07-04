@@ -132,10 +132,10 @@ include_directories(
 
 
 set(COMMON_SOURCES
-        game/login/LoginService.cpp
-        game/login/LoginService.h
-        base/net/SignalManager.h
-        base/net/SignalManager.cpp
+        core/rpc/RpcController.cpp
+        core/rpc/RpcController.h
+        core/rpc/RpcClientPool.cpp
+        core/rpc/RpcClientPool.h
 )
 # 调用子目录下的cmake
 add_subdirectory(base)

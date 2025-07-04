@@ -1,0 +1,219 @@
+#include "ZkClient.h"
+#include "log.h"
+#include "ConfigManager.h"
+#include "RemoteXmlConfig.h"
+#include <semaphore.h>
+#include <iostream>
+
+namespace yy::core
+{
+
+
+void ZkClient::global_watcher(zhandle_t* zh, int type, int state, const char* path, void* watcherCtx)
+{
+	auto zk_client = static_cast<ZkClient*>(watcherCtx);
+
+	if (type == ZOO_SESSION_EVENT) {
+		if (state == ZOO_CONNECTED_STATE) {
+			zk_client->connected_.store(true, std::memory_order_release);
+			zk_client->connected_.notify_all();
+			YLOG_INFO("[ZkWatcher] Connect Success to ZooKeeper!");
+		} else if (state == ZOO_EXPIRED_SESSION_STATE) {
+			YLOG_WARN("[ZkWatcher] Session expired! Need to reconnect.");
+			zk_client->Stop();
+			zk_client->Start();
+			zk_client->RecoverEphemeralNodes();
+		} else if (state == ZOO_CONNECTING_STATE) {
+			YLOG_INFO("[ZkWatcher] Connecting to ZooKeeper.");
+		} else if (state == ZOO_AUTH_FAILED_STATE) {
+			YLOG_WARN("[ZkWatcher] Authentication failed.");
+		} else {
+			YLOG_WARN("[ZkWatcher] Other session state: {}", state);
+		}
+	}
+}
+
+
+
+ZkClient::ZkClient(const std::string & host) : host_(host), zhandle_(nullptr)
+{
+}
+
+ZkClient::~ZkClient()
+{
+    Stop();
+}
+
+// 连接zkserver
+void ZkClient::Start()
+{
+	if (host_ == "") {
+		std::string ip;
+		std::string port;
+		for (auto & node: yy::config::g_remote_config->GetValue().m_remote_nodes) {
+			if (node.type == "zookeeper") {
+				ip = node.ip;
+				port = std::to_string(node.port);
+			}
+		}
+		if (ip.empty() && port.empty()) {
+			std::cerr << "未配置ZooKeeper的IP地址或端口，结束程序！" << std::endl;
+			std::terminate();
+		}
+		const std::string zk_host = std::format("{}:{}", ip, port);
+		host_ = zk_host;
+	}
+	/*
+		zookeeper_mt：多线程版本
+		zookeeper的API客户端程序提供了三个线程
+		API调用线程
+		网络I/O线程  pthread_create  poll
+		watcher回调线程 pthread_create
+	*/
+    zhandle_ = zookeeper_init(host_.c_str(), ZkClient::global_watcher, 30000, nullptr, this, 0);
+    if (nullptr == zhandle_)
+    {
+        YLOG_FATAL("[ZkClient] zookeeper_init error!");
+        exit(EXIT_FAILURE);
+    }
+
+	// 阻塞直到连接成功
+	while (!connected_.load(std::memory_order_acquire)) { // while防止虚假唤醒：wait被唤醒后，值不一定改变，因为唤醒方不一定修改值
+		connected_.wait(false, std::memory_order_acquire);
+	}
+
+    YLOG_INFO("[ZkClient] zookeeper_init success!");
+}
+
+void ZkClient::Stop()
+{
+	if (zhandle_ != nullptr) {
+		zookeeper_close(zhandle_); // 关闭句柄，释放资源
+		zhandle_ = nullptr;
+	}
+}
+
+void ZkClient::CreateNode(const std::string& path, const std::string& data, int flags)
+{
+	if (zhandle_ == nullptr) {
+		this->Start();
+	}
+
+    char path_buffer[128]{};
+    int bufferlen = sizeof(path_buffer);
+    // 先判断path表示的znode节点是否存在，如果存在，就不再重复创建了
+	int errcode = zoo_exists(zhandle_, path.c_str(), 0, nullptr);
+	if (ZNONODE == errcode) // 表示path的znode节点不存在
+	{
+		// 创建指定path的znode节点了
+		errcode = zoo_create(zhandle_, path.c_str(), data.c_str(), data.length(),
+			&ZOO_OPEN_ACL_UNSAFE, flags, path_buffer, bufferlen);
+		if (errcode == ZOK) {
+			YLOG_INFO("[ZkClient] znode create success... <path: {}, data: {}>", path, data);
+		}
+		else {
+			std::cout << "flag:" << errcode << std::endl;
+			YLOG_FATAL("[ZkClient] znode create error... <{}:{}>", path, data);
+		}
+	}
+
+	// 是临时节点，则记录下来，便于断线重连恢复
+	if (flags & ZOO_EPHEMERAL) {
+		ephemeral_nodes_.push_back(EphemeralNodeInfo{path, data, flags});
+	}
+}
+
+void ZkClient::RecoverEphemeralNodes()
+{
+	for (const auto& [path, data, flags] : ephemeral_nodes_) {
+		int errcode = zoo_exists(zhandle_, path.c_str(), 0, nullptr);
+		if (errcode == ZNONODE) {
+			char path_buffer[128]{};
+			constexpr int buffer_len = sizeof(path_buffer);
+			errcode = zoo_create(zhandle_, path.c_str(), data.c_str(), data.length(),
+				&ZOO_OPEN_ACL_UNSAFE, flags, path_buffer, buffer_len);
+			if (errcode == ZOK) {
+				YLOG_INFO("[ZKClient] Recovered ephemeral node: {}", path);
+			} else {
+				YLOG_FATAL("[ZKClient] Failed to recover node: {}, error: {}", path, errcode);
+			}
+		}
+	}
+}
+
+// 根据指定的path，获取znode节点的值
+std::string ZkClient::DiscoverService(const std::string& service_path)
+{
+	if (zhandle_ == nullptr) {
+		this->Start();
+	}
+
+	//! zoo_get是线程安全的，但是buffer等传入的数据结构需要用户保证线程安全，此处使用栈变量，能保证每个线程一个变量，保证线程安全。
+    char buffer[64]{};
+	int bufferlen = sizeof(buffer);
+	const int flag = zoo_get(zhandle_, service_path.c_str(), 0, buffer, &bufferlen, nullptr);
+	if (flag != ZOK)
+	{
+		YLOG_WARN("[ZkClient] get znode error... path: {}", service_path);
+		return "";
+	}
+	else
+	{
+		return std::string(buffer, bufferlen);
+	}
+}
+
+
+
+
+void ZkClient::AddChildrenWatcher(const std::string& path, std::function<void(std::vector<std::string>&&)> callback)
+{
+	{
+		std::unique_lock lock(watcher_mutex_);
+		child_watch_callbacks_[path] = std::move(callback);
+	}
+
+	// 拉取当前子节点并设置 watcher
+	OnChildrenChanged(path);
+}
+
+void ZkClient::OnChildrenChanged(const std::string& path)
+{
+	struct String_vector children;
+	const int ret = zoo_wget_children(zhandle_, path.c_str(), ZkClient::child_watcher, this, &children);
+	if (ret != ZOK) {
+		YLOG_WARN("[ZkClient] Failed to get children for path: {}, error: {}", path, ret);
+		return;
+	}
+
+	std::vector<std::string> children_vec;
+	for (int i = 0; i < children.count; ++i) {
+		children_vec.emplace_back(children.data[i]);
+	}
+	deallocate_String_vector(&children); // 释放由 ZooKeeper 分配的字符串数组
+
+	{
+		std::shared_lock lock(watcher_mutex_);
+		const auto it = child_watch_callbacks_.find(path);
+		if (it != child_watch_callbacks_.end()) {
+			it->second(std::move(children_vec)); // 触发上层业务逻辑
+		}
+	}
+
+}
+
+void ZkClient::child_watcher(zhandle_t* zh, int type, int state, const char* path, void* watcherCtx)
+{
+	if (type == ZOO_CHILD_EVENT && state == ZOO_CONNECTED_STATE) {
+		auto* zk_client = static_cast<ZkClient*>(watcherCtx);
+		if (zk_client && path) {
+			YLOG_WARN("[ZkClient] child_watcher: {}, {}, {}", path, type, state);
+			zk_client->OnChildrenChanged(path); // 再次获取最新子节点并触发业务回调
+		}
+	}
+}
+
+
+
+
+}

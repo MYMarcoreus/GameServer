@@ -77,9 +77,19 @@ private:
 
     void OnQuery(const TcpConnectionPtr& conn, const RpcMessagePtr& message)
     {
-        YLOG_INFO("收到用户的RpcMessage<{}>: \ntype:{} \nid: {} \n", conn->GetSocketFD(), (int)message->type(), message->id());
+        static std::atomic_size_t cnt_ = 0;
+        cnt_.fetch_add(1, std::memory_order_relaxed);
+
+        YLOG_INFO("OnQuery<{}>: {}; {};", cnt_.load(), static_cast<int>(message->type()), message->id())
+
+        RpcMessage msg;
+        msg.set_type(protocol::core::RpcMessage_Type_RESPONSE);
+        msg.set_id(20001);
+        codec_.SendTCP(conn, msg);
+
         conn->Shutdown();
     }
+
 
     void OnUnknownMessage(TcpConnectionPtr conn, const MessagePtr& message)
     {
@@ -87,10 +97,10 @@ private:
     }
 
 
-    EventLoop *         loop_;
-    TcpServer           server_;
-    ProtobufDispatcher<TcpConnectionPtr>  dispatcher_;
-    RpcCodec       codec_;
+    EventLoop *                             loop_;
+    TcpServer                               server_;
+    ProtobufDispatcher<TcpConnectionPtr>    dispatcher_;
+    RpcCodec                                codec_;
 };
 
 
@@ -106,7 +116,7 @@ int main()
     yy::Ylog::LoggerManager::getInstance().ReadConfigs();
 
     EventLoop loop{500ms};
-    const IPAddressPtr listenAddr = std::make_shared<IPv4Address>(config::g_app_config->GetValue().rpc_port());
+    const IPAddressPtr listenAddr = std::make_shared<IPv4Address>(config::g_app_config->GetValue().app_tcp_port());
     QueryServer server(&loop, listenAddr);
     server.Start();
     loop.Loop();
@@ -114,3 +124,4 @@ int main()
 
     return 0;
 }
+

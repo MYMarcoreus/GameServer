@@ -1,118 +1,96 @@
-#include "TcpClient.h"
+#include "RpcClientPool.hpp"
 #include "TcpConnection.h"
 #include "EventLoop.h"
-#include "IPAddress.h"
 #include "log.h"
-#include "RpcCodec.h"
-#include "codec/ProtobufDispatcher.h"
 #include "rpc.pb.h"
 #include "RemoteXmlConfig.h"
-#include <stdio.h>
 #include "login.pb.h"
-
-#include "login.pb.h"
-#include "LoginService.h"
-#include "RpcChannel.h"
-
-using namespace yy;
-using namespace yy::net;
-using namespace yy::util;
-using namespace yy::core;
-using namespace yy::protocol::app;
-using std::string;
+#include "RpcController.h"
 
 using yy::protocol::core::RpcMessage;
+using yy::protocol::app::AccountServiceRpc;
+using yy::protocol::app::AccountServiceRpc_Stub;
+using yy::protocol::app::S2CLogin;
+using yy::protocol::app::C2SLogin;
 
-class RpcTestClient
+
+
+
+
+
+
+class AccountRpcClient
 {
-    using RpcMessagePtr = std::shared_ptr<RpcMessage> ;
 public:
-    RpcTestClient(EventLoop * loop, const IPAddressPtr& serverAddr, const bool CanRetry = true) :
-        loop_{loop},
-        rpc_channel_{std::make_unique<RpcChannel>()},
-        stub_{std::make_unique<AccountServiceRpc_Stub>(rpc_channel_.get())},
-        client_(loop, serverAddr,
-            yy::config::g_remote_config->GetValue().sendBytesOne,
-            yy::config::g_remote_config->GetValue().sendBytesMax,
-            yy::config::g_remote_config->GetValue().recvBytesOne,
-            yy::config::g_remote_config->GetValue().recvBytesMax,
-            yy::config::g_remote_config->GetValue().appXorCode
-        )
+    explicit AccountRpcClient(yy::net::EventLoop * loop): pool_{10}, loop_{loop}
     {
-        client_.SetMessageCallback(
-            [this](const TcpConnectionPtr& conn,  NetBuffer & buf) {
-                rpc_channel_->OnRawMessage(conn, buf);
-            });
+        pool_.SetConnectionEstablishedCallback([this](const yy::net::TcpConnectionPtr& conn) {
+            YLOG_INFO("连接至<{}:{}>，我方地址为<{}:{}>", conn->GetPeerAddr()->GetIPStr().c_str(), conn->GetPeerAddr()->GetPort()
+                                                     , conn->GetLocalAddr()->GetIPStr().c_str(), conn->GetLocalAddr()->GetPort());
+        });
+        pool_.SetServiceChangeCallback([this](std::vector<std::string>&& children) {
+            cur_context_ = pool_.Acquire_AutoConnect();
+        });
 
-        client_.SetConnectionEstablishedCallback(
-            [this](const TcpConnectionPtr& conn) {
-                ConnectionEstablished(conn);
-            });
-
-        // client_.SetConnectionWriteCompleteCallback(
-        //     [this](const TcpConnectionPtr& conn) {
-        //         YLOG_INFO("{}的数据已发送给服务器<{}:{}>", conn->GetLocalAddr()->GetPortStr(), conn->GetPeerAddr()->GetIPStr().c_str(), conn->GetPeerAddr()->GetPort())
-        //     });
-
-        // client_.SetCanAutoRetry(CanRetry);
+        pool_.Start();
     }
-
 
     void Start()
     {
-        client_.Connect();
-    }
-
-    void Send(const std::string& message)
-    {
-        client_.GetConnection()->SendTCP(message);
-    }
-
-private:
-    void ConnectionEstablished(const TcpConnectionPtr& conn) {
-        YLOG_INFO("连接至<{}:{}>，我方地址为<{}:{}>", conn->GetPeerAddr()->GetIPStr().c_str(), conn->GetPeerAddr()->GetPort()
-                                                 , conn->GetLocalAddr()->GetIPStr().c_str(), conn->GetLocalAddr()->GetPort());
-
-        rpc_channel_->SetConnection(conn);
-
-        loop_->RunEvery(100ms, [conn, this]()
-        {
-            SendLogin(conn);
+        auto timerid = loop_->RunEvery(10ms, [this]() {
+            if (cur_context_ == nullptr) {
+                YLOG_ERROR("不存在有效的服务，服务连接池返回空指针")
+                return;
+            }
+            SendLogin();
         });
 
+        loop_->RunAfter(300s, [this, timerid]() {
+            this->loop_->CancelTimer(timerid);
+        });
     }
 
-    void SendLogin(const TcpConnectionPtr& conn)
+    void SendLogin()
     {
+        static std::atomic_size_t cnt_ = 0;
+
         C2SLogin request;
         request.set_account_name("nice_client" + std::to_string(cnt_));
         request.set_password("good_pwd" + std::to_string(cnt_));
         request.set_session_id(cnt_);
+        ++cnt_;
 
-        cnt_++;
+        auto response = new S2CLogin;
+        auto controller = new yy::core::RpcController;
+        controller->set_wait_for_ready(true);
+        controller->set_timeout(5s);
 
-        S2CLogin* response = new S2CLogin;
-
-        stub_->Login(nullptr, &request, response, google::protobuf::NewCallback(this, &RpcTestClient::LoginFinished, response));
+        cur_context_->Stub().Login(
+            controller,
+            &request,
+            response,
+            yy::core::NewLambdaClosureT([this, response, controller]()  {
+                auto resp = std::unique_ptr<S2CLogin>(response);
+                auto ctrl = std::unique_ptr<yy::core::RpcController>(controller);
+                this->LoginFinished(std::move(resp), std::move(ctrl));
+            })
+        );
     }
 
-    void LoginFinished(S2CLogin* response)
+private:
+    void LoginFinished(std::unique_ptr<S2CLogin> && response, std::unique_ptr<yy::core::RpcController> && controller)
     {
-        YLOG_INFO("Login返回结果：{}, {}, {}", response->account_id(), response->account_name(), response->session_id())
-        delete response;
-
-        // loop_->QuitLoop();
+        if (controller->Failed()) {
+            YLOG_INFO("Login失败！");
+        } else {
+            YLOG_INFO("Login返回结果：{}, {}, {}", response->account_id(), response->account_name(), response->session_id());
+        }
     }
 
-    yy::net::EventLoop *                                    loop_;
-    std::unique_ptr<yy::core::RpcChannel>                   rpc_channel_;
-    std::unique_ptr<yy::protocol::app::AccountServiceRpc::Stub>   stub_;
-    yy::net::TcpClient                                      client_;
-
-    std::atomic_size_t cnt_;
+    yy::core::RpcClientPool<AccountServiceRpc> pool_;
+    std::shared_ptr<decltype(pool_)::RpcClientContext> cur_context_;
+    yy::net::EventLoop * loop_;
 };
-
-
 
 
 
@@ -121,14 +99,21 @@ int main()
     yy::config::ConfigManager::AddFilePath("../config/configs_gate.xml");
     yy::config::ConfigManager::AddFilePath("../../config/configs_gate.xml");
     yy::config::ConfigManager::LoadXmlConfigs();
-    yy::Ylog::LoggerManager::getInstance().ReadConfigs();
 
-    EventLoop loop{500ms};
-    IPAddressPtr serverAddr = std::make_shared<IPv4Address>("127.0.0.1", 13334);
-    RpcTestClient echoClient{&loop, serverAddr};
-    echoClient.Start();
+    START_YLOG_AFTER_CONFIG()
+
+    yy::net::EventLoop loop{200ms};
+
+    std::vector<std::unique_ptr<AccountRpcClient>> clients;
+    for (int i = 0; i < 10; ++i) {
+        auto client = std::make_unique<AccountRpcClient>(&loop);
+        client->Start();
+        clients.emplace_back(std::move(client));
+    }
+
     loop.Loop();
 
-
+    CLOSE_YLOG();
+    google::protobuf::ShutdownProtobufLibrary();
     return 0;
 }

@@ -22,7 +22,7 @@ PriorityQueueTimerManager::~PriorityQueueTimerManager()
     }
 }
 
-TimerID PriorityQueueTimerManager::AddTimer(F_TaskCallback cb, Timestamp expiredTime, Microseconds interval)
+TimerID PriorityQueueTimerManager::AddTimer(F_TaskCallback cb, const Timestamp expiredTime, const Microseconds interval)
 {
     Timer * timer = new Timer{m_TimerCounter.fetch_add(1, std::memory_order_relaxed), std::move(cb), expiredTime, interval};
     m_loop->RunCallbackInLoop([timer, this]() { AddTimerInLoop(timer); });

@@ -20,6 +20,7 @@
         tcpIOThreadNum   = "2"
         udpIOThreadNum   = "2"
         workThreadNum    = "2"
+        rpcPort          = "13334"
     />
 
     <remote
@@ -35,17 +36,12 @@
         checkCode       = "DE"
     >
         <remote_node
-            username   = "4001"
-            ip   = "127.0.0.1"
-            port = "13333"
-            type = "Center"
-        />
-
-        <remote_node
-            username   = "4002"
-            ip   = "127.0.0.1"
-            port = "13333"
-            type = "Gate"
+            type      = "login"
+            username  = "yy"
+            password  = "0"
+            poolsize  = "10"
+            ip        = "127.0.0.1"
+            port      = "13333"
         />
     </remote>
 

@@ -12,10 +12,10 @@ set(LocalSrc
         redis/RedisClient.cpp
         redis/RedisPool.cpp
         rpc/RpcCodec.cpp
-        rpc/RpcChannel.cpp
+        rpc/RpcConnection.cpp
         rpc/RpcHeader.cpp
         rpc/RpcServer.cpp
-        zookeeper/ZKClient.cpp
+        zookeeper/ZkClient.cpp
         mysql/MySqlPool.cpp
 )
 

@@ -1,13 +1,14 @@
 #pragma once
 
+#include "RpcConnection.h"
+#include "log.h"
 #include "RpcCodec.h"
 #include "TcpServer.h"
+#include "ZkClient.h"
 
-#include <map>
 #include <google/protobuf/message.h>
 #include <google/protobuf/service.h>
 
-#include "log.h"
 
 
 namespace google::protobuf
@@ -26,7 +27,9 @@ class Service;
 namespace yy::core
 {
 
+// 服务提供方
 class RpcServer {
+    static constexpr std::string kServiceRoot = "/services";
 public:
     RpcServer(yy::net::EventLoop* accpetorLoop, const yy::net::IPAddressPtr& listenAddr);
     ~RpcServer();
@@ -53,6 +56,8 @@ private:
     net::TcpServer      server_;
     RpcCodec            codec_;
     std::unordered_map<std::string, std::unique_ptr<google::protobuf::Service>> services_;
+    net::IPAddressPtr   listenAddr_;
+    yy::core::ZkClient  zkClient_;
 };
 
 template <typename ServiceType>
@@ -60,16 +65,24 @@ template <typename ServiceType>
 void RpcServer::RegisterService()
 {
     auto service = std::make_unique<ServiceType>();
-    const auto* desc = service->GetDescriptor();
-    const std::string name = desc->full_name();
+    const auto* service_desc = service->GetDescriptor();
+    const std::string service_name = service_desc->name();
 
-    if (services_.contains(name)) {
-        YLOG_WARN("RPC Server: Service {} is already exist", name);
+    if (services_.contains(service_name)) {
+        YLOG_WARN("RPC Server: Service {} is already exist", service_name);
     } else {
-        services_[name] = std::move(service);
-        YLOG_INFO("RPC Server: Registered service {}", name);
+        services_[service_name] = std::move(service);
+        YLOG_INFO("RPC Server: Registered service {}", service_name);
     }
 }
 
+inline auto RpcServer::GetService(const std::string& name) const -> std::optional<std::reference_wrapper<google::protobuf::Service>>
+{
+    const auto it = services_.find(name);
+    if (it != services_.end() && it->second) {
+        return std::ref(*it->second);
+    }
+    return std::nullopt;
+}
 
 }

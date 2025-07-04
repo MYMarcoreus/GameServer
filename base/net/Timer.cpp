@@ -6,11 +6,11 @@ namespace yy::net {
 using namespace yy::util;
 
 
-Timer::Timer(TimerID id, F_TaskCallback timerCallback, Timestamp expiredTime, Microseconds interval)
-        : m_Callback(timerCallback),
-          m_ExpireTime(expiredTime),
+Timer::Timer(TimerID id, F_TaskCallback timerCallback, const Timestamp expiredTime, const Microseconds interval)
+        : m_Interval(interval),
+          m_Callback(std::move(timerCallback)),
           m_IsRepeat(interval.count() > 0),
-          m_Interval(interval),
+          m_ExpireTime(expiredTime),
           m_CreateSequence(id),
           m_IsCanceled{false}
 {}

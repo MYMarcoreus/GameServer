@@ -9,6 +9,7 @@ set(LocalSrc
         SequentialBuffer.cpp
         SequentialBuffer.cpp
         RingBuffer.cpp
+        SignalManager.cpp
 )
 
 #! 给本地相对路径添加前缀，变为绝对路径

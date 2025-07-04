@@ -19,7 +19,8 @@ RpcServer::RpcServer(yy::net::EventLoop* accpetorLoop, const yy::net::IPAddressP
         config::g_app_config->GetValue().recv_bytes_one(),
         config::g_app_config->GetValue().recv_bytes_max(),
         config::g_app_config->GetValue().app_xor_code()),
-    codec_([this](const net::TcpConnectionPtr & conn, const RpcMessagePtr & msg) { this->OnRpcRequest(conn, msg); })
+    codec_([this](const net::TcpConnectionPtr & conn, const RpcMessagePtr & msg) { this->OnRpcRequest(conn, msg); }),
+    listenAddr_(listenAddr)
 {
     server_.SetMessageCallback(
     [this](const net::TcpConnectionPtr& conn, net::NetBuffer& buf) {
@@ -45,9 +46,32 @@ RpcServer::~RpcServer()
 
 void RpcServer::Start()
 {
-    //todo 启动时注册zookeeper服务
+    if (services_.empty()) {
+        std::cerr << "RPC Server: No services were provided." << std::endl;
+        std::terminate();
+    }
+    const auto & ip = listenAddr_->GetIPStr();
+    const auto & port = listenAddr_->GetPort();
 
-    server_.Start(2, 500ms);
+    //! 启动时注册zookeeper服务
+    zkClient_.Start();
+
+    // 创建永久节点 /services
+    zkClient_.CreateNode(kServiceRoot);
+
+    for (auto & [service_name, service] : services_)
+    {
+        // /services/service_name   /services/AccountServiceRpc
+        std::string base_path = std::format("{}/{}", kServiceRoot, service_name);
+        zkClient_.CreateNode(base_path);
+
+        // /services/service_name   /services/AccountServiceRpc 存储当前这个rpc服务节点主机的ip和port
+        std::string service_path = std::format("{}/{}", base_path, "provider");
+        std::string service_path_data = std::format("{}:{}", ip, port);
+        zkClient_.CreateNode(service_path, service_path_data,  ZOO_EPHEMERAL | ZOO_SEQUENCE); // ZOO_EPHEMERAL：表示znode是一个临时性节点
+    }
+
+    server_.Start(2, 300ms);
 }
 
 void RpcServer::Stop()
@@ -146,12 +170,4 @@ void RpcServer::SendRpcResponse(const net::TcpConnectionPtr& conn, const std::pa
     YLOG_TRACE("RPC Server: 断开与<{}:{}>的连接", conn->GetPeerAddr()->GetIPStr(), conn->GetPeerAddr()->GetPortStr())
 }
 
-auto RpcServer::GetService(const std::string& name) const -> std::optional<std::reference_wrapper<google::protobuf::Service>>
-{
-    const auto it = services_.find(name);
-    if (it != services_.end() && it->second) {
-        return std::ref(*it->second);
-    }
-    return std::nullopt;
-}
 }

@@ -349,7 +349,7 @@ public:
     }
 
 private:
-    mutable util::RWLock m_mutex;
+    mutable util::RWMutex m_mutex;
     T m_val;
     //变更回调函数组, uint64_t key,要求唯一，一般可以用hash
     std::unordered_map <uint64_t, OnChangeCallback> m_cbs;
@@ -488,9 +488,9 @@ private:
 
     ///@brief 静态成员变量：读写锁，用于控制好配置项map的读写互斥访问
     ///@return 返回局部静态变量的引用
-    static util::RWLock &
+    static util::RWMutex &
     getMutex() {
-        static util::RWLock s_mutex;
+        static util::RWMutex s_mutex;
         return s_mutex;
     }
 

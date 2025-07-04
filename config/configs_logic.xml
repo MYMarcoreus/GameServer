@@ -23,7 +23,6 @@
         rpcPort          = "13334"
     />
 
-
     <remote
         appXorCode      = "130"
         appVersion      = "20230123"

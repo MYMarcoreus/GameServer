@@ -142,14 +142,19 @@ void TcpServer::HandleSignal() {
             case SIGTERM: // kill <pid>
             case SIGKILL: // kill -9 <pid>
             {
-                YLOG_WARN("收到{}信号，结束服务器进程！", strsignal(sigs[i]))
+                auto info = std::format("收到{}信号，结束服务器进程！", strsignal(sigs[i]));
+                std::cerr << info << std::endl;
+                YLOG_WARN("{}", info)
+
                 this->Stop();
                 break;
             }
             case 0:
                 break;
             default: {
-                YLOG_WARN("收到其它信号！")
+                auto info = std::format("收到{}信号！", strsignal(sigs[i]));
+                std::cerr << info << std::endl;
+                YLOG_WARN("{}", info)
                 break;
             }
         }

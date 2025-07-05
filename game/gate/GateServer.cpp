@@ -14,7 +14,7 @@ using namespace yy::net;
 using yy::core::UserConnection;
 using yy::core::MessageHeader;
 
-namespace yy::app {
+namespace yy::app::gate {
 
 GateServer::GateServer(EventLoop *accpetorLoop, const IPAddressPtr& listenAddr) :
     m_appConfigvar(yy::config::g_app_config),
@@ -250,7 +250,7 @@ void GateServer::OnUdpPortRegisterRequest(const TcpConnectionPtr & conn, const C
 
     yy::protocol::core::S2CUdpPortRegister response;
     response.set_session_id(conn->GetConnID());
-    response.set_status(protocol::core::S2CUdpPortRegister_Status_eSuccess); // S2CUdpPortRegister_Status_eSuccess
+    response.set_status(protocol::core::S2CUdpPortRegister_Status_eSuccess);
     m_tcpCodec.SendTCP(conn, response);
 }
 

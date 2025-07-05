@@ -5,7 +5,7 @@
 #include <semaphore.h>
 #include <iostream>
 
-namespace yy::core
+namespace yy::core::zk
 {
 
 
@@ -70,7 +70,7 @@ void ZkClient::Start()
 		网络I/O线程  pthread_create  poll
 		watcher回调线程 pthread_create
 	*/
-    zhandle_ = zookeeper_init(host_.c_str(), ZkClient::global_watcher, 30000, nullptr, this, 0);
+    zhandle_ = zookeeper_init(host_.c_str(), ZkClient::global_watcher, 10000, nullptr, this, 0);
     if (nullptr == zhandle_)
     {
         YLOG_FATAL("[ZkClient] zookeeper_init error!");
@@ -99,29 +99,31 @@ void ZkClient::CreateNode(const std::string& path, const std::string& data, int 
 		this->Start();
 	}
 
-    char path_buffer[128]{};
-    int bufferlen = sizeof(path_buffer);
-    // 先判断path表示的znode节点是否存在，如果存在，就不再重复创建了
+	// 判断 path 对应的 znode 节点是否存在
 	int errcode = zoo_exists(zhandle_, path.c_str(), 0, nullptr);
-	if (ZNONODE == errcode) // 表示path的znode节点不存在
-	{
-		// 创建指定path的znode节点了
+	if (errcode == ZNONODE) { // 节点不存在，创建节点
+		char path_buffer[128] {};
+		int bufferlen = sizeof(path_buffer);
+
+		// 创建节点
 		errcode = zoo_create(zhandle_, path.c_str(), data.c_str(), data.length(),
-			&ZOO_OPEN_ACL_UNSAFE, flags, path_buffer, bufferlen);
+							 &ZOO_OPEN_ACL_UNSAFE, flags, path_buffer, bufferlen);
 		if (errcode == ZOK) {
 			YLOG_INFO("[ZkClient] znode create success... <path: {}, data: {}>", path, data);
+		} else {
+			YLOG_FATAL("[ZkClient] znode create error... <{}:{}>, error: {}", path, data, errcode);
 		}
-		else {
-			std::cout << "flag:" << errcode << std::endl;
-			YLOG_FATAL("[ZkClient] znode create error... <{}:{}>", path, data);
-		}
+	}
+	else if (flags & ZOO_EPHEMERAL) { // 如果是临时节点且已存在，则删除旧节点
+		zoo_delete(zhandle_, path.c_str(), -1);
 	}
 
-	// 是临时节点，则记录下来，便于断线重连恢复
+	// 如果是临时节点，记录该节点以便断线重连时恢复
 	if (flags & ZOO_EPHEMERAL) {
-		ephemeral_nodes_.push_back(EphemeralNodeInfo{path, data, flags});
+		ephemeral_nodes_.emplace_back(path, data, flags);
 	}
 }
+
 
 void ZkClient::RecoverEphemeralNodes()
 {
@@ -142,7 +144,7 @@ void ZkClient::RecoverEphemeralNodes()
 }
 
 // 根据指定的path，获取znode节点的值
-std::string ZkClient::DiscoverService(const std::string& service_path)
+std::string ZkClient::GetNodeVal(const std::string& node_path)
 {
 	if (zhandle_ == nullptr) {
 		this->Start();
@@ -151,10 +153,10 @@ std::string ZkClient::DiscoverService(const std::string& service_path)
 	//! zoo_get是线程安全的，但是buffer等传入的数据结构需要用户保证线程安全，此处使用栈变量，能保证每个线程一个变量，保证线程安全。
     char buffer[64]{};
 	int bufferlen = sizeof(buffer);
-	const int flag = zoo_get(zhandle_, service_path.c_str(), 0, buffer, &bufferlen, nullptr);
+	const int flag = zoo_get(zhandle_, node_path.c_str(), 0, buffer, &bufferlen, nullptr);
 	if (flag != ZOK)
 	{
-		YLOG_WARN("[ZkClient] get znode error... path: {}", service_path);
+		YLOG_WARN("[ZkClient] get znode error... path: {}", node_path);
 		return "";
 	}
 	else
@@ -169,7 +171,7 @@ std::string ZkClient::DiscoverService(const std::string& service_path)
 void ZkClient::AddChildrenWatcher(const std::string& path, std::function<void(std::vector<std::string>&&)> callback)
 {
 	{
-		std::unique_lock lock(watcher_mutex_);
+		std::unique_lock lock(watcher_cb_mutex_);
 		child_watch_callbacks_[path] = std::move(callback);
 	}
 
@@ -179,11 +181,22 @@ void ZkClient::AddChildrenWatcher(const std::string& path, std::function<void(st
 
 void ZkClient::OnChildrenChanged(const std::string& path)
 {
+	std::vector<std::string> children_vec = GetNodeChildren(path);
+	{
+		std::shared_lock lock(watcher_cb_mutex_);
+		if (const auto it = child_watch_callbacks_.find(path); it != child_watch_callbacks_.end()) {
+			it->second(std::move(children_vec)); // 触发上层业务逻辑
+		}
+	}
+}
+
+std::vector<std::string> ZkClient::GetNodeChildren(const std::string& path)
+{
 	struct String_vector children;
 	const int ret = zoo_wget_children(zhandle_, path.c_str(), ZkClient::child_watcher, this, &children);
 	if (ret != ZOK) {
 		YLOG_WARN("[ZkClient] Failed to get children for path: {}, error: {}", path, ret);
-		return;
+		return {};
 	}
 
 	std::vector<std::string> children_vec;
@@ -191,15 +204,7 @@ void ZkClient::OnChildrenChanged(const std::string& path)
 		children_vec.emplace_back(children.data[i]);
 	}
 	deallocate_String_vector(&children); // 释放由 ZooKeeper 分配的字符串数组
-
-	{
-		std::shared_lock lock(watcher_mutex_);
-		const auto it = child_watch_callbacks_.find(path);
-		if (it != child_watch_callbacks_.end()) {
-			it->second(std::move(children_vec)); // 触发上层业务逻辑
-		}
-	}
-
+	return children_vec;
 }
 
 void ZkClient::child_watcher(zhandle_t* zh, int type, int state, const char* path, void* watcherCtx)

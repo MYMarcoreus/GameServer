@@ -4,19 +4,19 @@
 #include "IGameBase.h"
 #include "Singleton.h"
 
-namespace yy::app {
+namespace yy::app::logic {
 
-class GameTestManager final: public Singleton<GameTestManager>
+class TestService final: public Singleton<TestService>
 {
-    SINGLETON_NECESSITY(GameTestManager)
+    SINGLETON_NECESSITY(TestService)
 public:
     void Init() ;
 
     // void StartListenAndIOLoop() override;
 
 private:
-    ~GameTestManager() override;
-    GameTestManager();
+    ~TestService() override;
+    TestService();
 };
 
 }

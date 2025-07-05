@@ -2,8 +2,6 @@
 #define ____GAMEMANAGER_H
 
 #include "IServer.h"
-#include "GameData.h"
-#include "IGameBase.h"
 #include "ProtobufDispatcher.h"
 #include "ThreadPool.h"
 
@@ -13,17 +11,17 @@ using std::shared_ptr;
 
 
 // 业务层
-namespace yy::app {
+namespace yy::app::logic {
 
-class GamePlayerManager;
-class GameTestManager;
-
-
+class RoomService;
+class TestService;
 
 
-class GameManager final : public Singleton<GameManager>
+
+
+class LogicServerManager final : public Singleton<LogicServerManager>
 {
-    SINGLETON_NECESSITY(GameManager)
+    SINGLETON_NECESSITY(LogicServerManager)
 public:
     void RunApp();
 
@@ -34,8 +32,8 @@ public:
 
     IServer * GetServer() { return m_server; }
 private:
-    GameManager();
-    ~GameManager() override;
+    LogicServerManager();
+    ~LogicServerManager() override;
 
     void Init();
 
@@ -51,8 +49,8 @@ private:
 
 
     IServer   * m_server;
-    GamePlayerManager * m_player;
-    GameTestManager   * m_test;
+    RoomService * m_room_service;
+    TestService   * m_test_service;
     core::ProtobufDispatcher<core::UserConnectionPtr> m_dispatcher; // 处理下层(core层)分发传来的无法处理的消息
     yy::net::EventLoop * m_accpetorLoop;
 

@@ -13,7 +13,7 @@ namespace yy::core {
 
 IServer& get_server_instance()
 {
-    return LinuxServer::getInstance();
+    return LinuxServer::Instance();
 }
 
 

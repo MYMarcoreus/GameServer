@@ -2,7 +2,6 @@
 #define MESSAGEDISPATCHMANAGER_H
 
 #include "IServer.h"
-#include "GameData.h"
 #include "IGameBase.h"
 #include "ProtobufDispatcher.h"
 #include "ThreadPool.h"
@@ -11,11 +10,11 @@ using yy::core::IServer;
 using std::shared_ptr;
 
 
-namespace yy::app
+namespace yy::app::gate
 {
 
-class MessageDispatchManager final : public Singleton<MessageDispatchManager> {
-    SINGLETON_NECESSITY(MessageDispatchManager)
+class GateServerManager final : public Singleton<GateServerManager> {
+    SINGLETON_NECESSITY(GateServerManager)
 public:
     void RunApp();
 
@@ -26,8 +25,8 @@ public:
 
     IServer * GetServer() const { return m_server; }
 private:
-    MessageDispatchManager();
-    ~MessageDispatchManager() override;
+    GateServerManager();
+    ~GateServerManager() override;
 
     void Init();
 

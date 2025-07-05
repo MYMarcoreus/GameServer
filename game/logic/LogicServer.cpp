@@ -17,7 +17,7 @@ using namespace yy::net;
 using yy::core::UserConnection;
 using yy::core::MessageHeader;
 
-namespace yy::app {
+namespace yy::app::logic {
 
 LogicServer::LogicServer(EventLoop *accpetorLoop, const IPAddressPtr& listenAddr) :
     m_appConfigvar(yy::config::g_app_config),
@@ -73,6 +73,23 @@ LogicServer::LogicServer(EventLoop *accpetorLoop, const IPAddressPtr& listenAddr
         [this](const UdpSessionPtr& conn, NetBuffer& buf) {
             m_udpCodec.OnData(conn, buf);
         });
+
+    decltype(yy::config::g_remote_config->GetValue().m_remote_nodes)::value_type mysql_configs;
+    for (auto & node: yy::config::g_remote_config->GetValue().m_remote_nodes) {
+        if (node.type == "mysql") {
+            mysql_configs = node;
+        }
+    }
+
+    m_mysql_pool = std::make_unique<yy::core::MySqlPool>(
+        m_accpetorLoop,
+        mysql_configs.ip,           // IP 地址
+        mysql_configs.port,         // MySQL X Protocol 端口（注意不是3306）
+        mysql_configs.username,     // 用户名
+        mysql_configs.password,     // 密码
+        "gameserver",               // Schema / 数据库名
+        mysql_configs.poolsize      // 池大小
+    );
 }
 
 

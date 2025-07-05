@@ -1,8 +1,9 @@
 #include "LoginMaganer.h"
 #include "log.h"
 #include "EventLoop.h"
-#include "GateServer.h"
-#include "future"
+#include "LoginServer.h"
+#include "login.pb.h"
+#include <future>
 #include <functional>
 
 using namespace std::chrono_literals;
@@ -10,12 +11,14 @@ using namespace yy::core;
 using namespace yy::util;
 using yy::net::TcpConnectionPtr;
 
-using yy::protocol::app::C2SEnterScene;
+using yy::protocol::app::C2SLogin;
 
 
+template<class T>
+using Ptr = std::shared_ptr<T>;
 
 
-namespace yy::app {
+namespace yy::app::login {
 
 
 LoginManager::LoginManager():
@@ -24,8 +27,8 @@ LoginManager::LoginManager():
       m_accpetorLoop{},
       m_wordThreads("Login Work Thread")
 {
-    m_dispatcher.RegisterMessageCallback<C2SEnterScene>(
-        [this](const UserConnectionPtr& user, const Ptr<C2SEnterScene>& msg) {
+    m_dispatcher.RegisterMessageCallback<C2SLogin>(
+        [this](const UserConnectionPtr& user, const Ptr<C2SLogin>& msg) {
             // this->OnLogin(user, msg);
         });
 }
@@ -44,25 +47,10 @@ void LoginManager::AppNotifier_Secutiry(const core::UserConnectionPtr& userdata)
 
 void LoginManager::AppNotifier_Disconnect(const core::UserConnectionPtr& userdata) {
     YLOG_INFO("↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ 用户<{}>断开连接", userdata->GetUID())
-
-    // // 已登陆，保存数据
-    // if(userdata->IsLoggedIn())
-    // {
-    //     //! 被动离开时执行
-    //     YLOG_INFO("<{}> Saving Data Now!", userdata->GetSocketFD())
-    //     m_player->LeaveAndSave(userdata);
-    //     YLOG_INFO("<{}> User Data Saved!", userdata->GetSocketFD())
-    // }
-    // else // 未登录，重置数据
-    // {
-    //     YLOG_INFO("<{}> DataReset", userdata->GetSocketFD())
-    //     userdata->Shutdown();
-    // }
 }
 
 void LoginManager::AppNotifier_Command(const core::UserConnectionPtr & userdata, const core::MessagePtr & message)
 {
-    //! 对于游戏游戏，并不在IO线程处理，而是在专门处理游戏数据的工作线程中处理（让Game层的分发器找到该游戏消息所注册的对应的处理函数。）
     m_wordThreads.PushTask([this, userdata, message](){
         m_dispatcher.OnProtobufMessage(userdata, message);
     });
@@ -101,7 +89,7 @@ void LoginManager::Init()
     yy::config::ConfigManager::LoadXmlConfigs();
 
     //! ②、读取日志配置
-    yy::Ylog::LoggerManager::getInstance().ReadConfigs();
+    yy::Ylog::LoggerManager::Instance().ReadConfigs();
 
     //! ③、初始化
     m_accpetorLoop = new net::EventLoop(500ms);
@@ -111,7 +99,7 @@ void LoginManager::Init()
             config::g_app_config->GetValue().app_tcp_port());
 
     //! ⑤、初始化服务器对象（③和④）
-    m_server = new GateServer(m_accpetorLoop, listenAddr);
+    m_server = new LoginServer(m_accpetorLoop, listenAddr);
     m_server->SetNotifier_Security(
         [this](const core::UserConnectionPtr& userdata) {
             this->AppNotifier_Secutiry(userdata);

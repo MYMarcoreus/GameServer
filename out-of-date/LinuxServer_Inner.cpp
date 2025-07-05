@@ -43,14 +43,14 @@ void LinuxServer::LoadConfigs() // NOLINT(readability-convert-member-functions-t
 
 void LinuxServer::StartLog() // NOLINT(readability-convert-member-functions-to-static)
 {
-    yy::Ylog::LoggerManager::getInstance().ReadConfigs();
+    yy::Ylog::LoggerManager::Instance().ReadConfigs();
 #ifdef ____DEBUG
-    yy::Ylog::LoggerManager::getInstance().getLogger()->setLevel(yy::Ylog::LogLevel::eTRACE);
+    yy::Ylog::LoggerManager::Instance().getLogger()->setLevel(yy::Ylog::LogLevel::eTRACE);
 #else
-    yy::Ylog::LoggerManager::getInstance().getLogger()->setLevel(yy::Ylog::LogLevel::eINFO);
+    yy::Ylog::LoggerManager::Instance().getLogger()->setLevel(yy::Ylog::LogLevel::eINFO);
 #endif
     yy::Ylog::LogAppender::ptr appender{new yy::Ylog::StdoutLogApeender{"[%t][%l]%c%n"}};
-    yy::Ylog::LoggerManager::getInstance().getLogger()->addAppender(appender);
+    yy::Ylog::LoggerManager::Instance().getLogger()->addAppender(appender);
 }
 
 

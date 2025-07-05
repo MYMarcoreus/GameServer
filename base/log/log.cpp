@@ -129,7 +129,7 @@ void Logger::LogAsync(const LogMessage::ptr& msg) const
     for (const auto& appender: m_appenders) {
         // push到阻塞队列，进行异步写
         //! 注意异步操作时，智能指针一定得拷贝，不能是智能指针的const &，否则调用者可能已释放智能指针！
-        // LoggerManager::getInstance().m_blockqueue.push(std::pair{appender, msg});
+        // LoggerManager::Instance().m_blockqueue.push(std::pair{appender, msg});
 
         //! 多生产者：格式化消息并将其放入缓冲区
         appender->AppendBuffer(msg);
@@ -321,7 +321,7 @@ void LoggerManager::StopAsyncThread()
 //                     for (auto &&new_logger_var: new_config_var.m_loggers) {
 //                         // const引用无法更改new_val中的数据，因此根据其名字使用其它方式获得非const对象以更改
 //                         // getLogger总会返回，因为若查找不到就会返回一个新建的logger
-//                         auto logger = LoggerManager::getInstance().getLogger(new_logger_var.m_name);
+//                         auto logger = LoggerManager::Instance().getLogger(new_logger_var.m_name);
 //                         if (!logger) {
 //                             std::terminate();
 //                         }
@@ -345,8 +345,8 @@ void LoggerManager::StopAsyncThread()
 //                         // 旧的有，但新的没有，于是删除之
 //                         for (auto &&old_logger_var: old_config_var.m_loggers) {
 //                             if (old_logger_var != new_logger_var) {
-//                                 auto del_logger = LoggerManager::getInstance().getLogger(old_logger_var.m_name);
-//                                 LoggerManager::getInstance().delLogger(del_logger->getName());
+//                                 auto del_logger = LoggerManager::Instance().getLogger(old_logger_var.m_name);
+//                                 LoggerManager::Instance().delLogger(del_logger->getName());
 //                             }
 //                         }
 //                     }

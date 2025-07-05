@@ -1,11 +1,13 @@
+#pragma once
+
 #include "RpcClientPool.hpp"
 #include "TcpConnection.h"
 #include "EventLoop.h"
 #include "log.h"
 #include "rpc.pb.h"
 #include "RemoteXmlConfig.h"
-#include "login.pb.h"
 #include "RpcController.h"
+#include "login.pb.h"
 
 using yy::protocol::core::RpcMessage;
 using yy::protocol::app::AccountServiceRpc;
@@ -13,10 +15,9 @@ using yy::protocol::app::AccountServiceRpc_Stub;
 using yy::protocol::app::S2CLogin;
 using yy::protocol::app::C2SLogin;
 
-
-
-namespace yy::test
+namespace yy::app::gate
 {
+
 class AccountRpcClient
 {
 public:
@@ -90,28 +91,4 @@ private:
     yy::net::EventLoop *                                loop_;
 };
 
-}
-
-int main()
-{
-    yy::config::ConfigManager::AddFilePath("../config/configs_gate.xml");
-    yy::config::ConfigManager::AddFilePath("../../config/configs_gate.xml");
-    yy::config::ConfigManager::LoadXmlConfigs();
-
-    START_YLOG_AFTER_CONFIG()
-
-    yy::net::EventLoop loop{200ms};
-
-    std::vector<std::unique_ptr<yy::test::AccountRpcClient>> clients;
-    for (int i = 0; i < 10; ++i) {
-        auto client = std::make_unique<yy::test::AccountRpcClient>(&loop);
-        client->Start();
-        clients.emplace_back(std::move(client));
-    }
-
-    loop.Loop();
-
-    CLOSE_YLOG();
-    google::protobuf::ShutdownProtobufLibrary();
-    return 0;
 }

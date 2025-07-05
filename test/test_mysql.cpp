@@ -10,7 +10,7 @@ int main(int argc, char* argv[])
     yy::config::ConfigManager::AddFilePath("../config/configs_logic.xml");
     yy::config::ConfigManager::AddFilePath("../../config/configs_logic.xml");
     yy::config::ConfigManager::LoadXmlConfigs();
-    yy::Ylog::LoggerManager::getInstance().ReadConfigs();
+    yy::Ylog::LoggerManager::Instance().ReadConfigs();
 
     decltype(yy::config::g_remote_config->GetValue().m_remote_nodes)::value_type mysql_configs;
     for (auto & node: yy::config::g_remote_config->GetValue().m_remote_nodes) {

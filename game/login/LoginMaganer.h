@@ -2,7 +2,6 @@
 #define LOGINMAGANER_H
 
 #include "IServer.h"
-#include "GameData.h"
 #include "IGameBase.h"
 #include "ProtobufDispatcher.h"
 #include "ThreadPool.h"
@@ -11,7 +10,7 @@ using yy::core::IServer;
 using std::shared_ptr;
 
 
-namespace yy::app
+namespace yy::app::login
 {
 
 class LoginManager final : public Singleton<LoginManager> {

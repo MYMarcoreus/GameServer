@@ -81,7 +81,7 @@ int main()
     config::ConfigManager::AddFilePath("./configs.xml");
     config::ConfigManager::AddFilePath("../configs.xml");
     yy::config::ConfigManager::LoadXmlConfigs();
-    yy::Ylog::LoggerManager::getInstance().ReadConfigs();
+    yy::Ylog::LoggerManager::Instance().ReadConfigs();
 
     EventLoop loop{10000s};
     IPAddressPtr listenAddr = std::make_shared<IPv4Address>(config::g_app_config->GetValue().app_tcp_port());

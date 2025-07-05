@@ -1,6 +1,6 @@
-#include "GameManager.h"
-#include "GamePlayerManager.h"
-#include "GameTestManager.h"
+#include "LogicServerManager.h"
+#include "RoomService.h"
+#include "TestService.h"
 #include "log.h"
 #include "EventLoop.h"
 #include "LogicServer.h"
@@ -9,20 +9,20 @@
 
 using namespace std::chrono_literals;
 
-namespace yy::app {
+namespace yy::app::logic {
 
 
-GameManager::GameManager():
+LogicServerManager::LogicServerManager():
       m_server{},
-      m_player{},
-      m_test{},
+      m_room_service{},
+      m_test_service{},
       m_dispatcher{[this](const core::UserConnectionPtr& userdata, const core::MessagePtr& message) { this->UnkonwnCommand(userdata, message); }},
       m_accpetorLoop{},
       m_wordThreads("Game Work Thread")
 {
 }
 
-GameManager::~GameManager() {
+LogicServerManager::~LogicServerManager() {
     m_server->Stop();
 
     delete m_server;
@@ -30,11 +30,11 @@ GameManager::~GameManager() {
 }
 
 
-void GameManager::AppNotifier_Secutiry(const core::UserConnectionPtr& userdata) {
+void LogicServerManager::AppNotifier_Secutiry(const core::UserConnectionPtr& userdata) {
     userdata->SetState(core::UserConnection::E_UserBaseState::eSecure);
 }
 
-void GameManager::AppNotifier_Disconnect(const core::UserConnectionPtr& userdata) {
+void LogicServerManager::AppNotifier_Disconnect(const core::UserConnectionPtr& userdata) {
     YLOG_INFO("↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ 用户<{}>断开连接", userdata->GetUID())
 
     // 已登陆，保存数据
@@ -42,7 +42,7 @@ void GameManager::AppNotifier_Disconnect(const core::UserConnectionPtr& userdata
     {
         //! 被动离开时执行
         YLOG_INFO("<{}> Saving Data Now!", userdata->GetSocketFD())
-        m_player->LeaveAndSave(userdata);
+        m_room_service->LeaveAndSave(userdata);
         YLOG_INFO("<{}> User Data Saved!", userdata->GetSocketFD())
     }
     else // 未登录，重置数据
@@ -52,7 +52,7 @@ void GameManager::AppNotifier_Disconnect(const core::UserConnectionPtr& userdata
     }
 }
 
-void GameManager::AppNotifier_Command(const core::UserConnectionPtr & userdata, const core::MessagePtr & message)
+void LogicServerManager::AppNotifier_Command(const core::UserConnectionPtr & userdata, const core::MessagePtr & message)
 {
     //! 对于游戏游戏，并不在IO线程处理，而是在专门处理游戏数据的工作线程中处理（让Game层的分发器找到该游戏消息所注册的对应的处理函数。）
     m_wordThreads.PushTask([this, userdata, message](){
@@ -60,7 +60,7 @@ void GameManager::AppNotifier_Command(const core::UserConnectionPtr & userdata, 
     });
 }
 
-void GameManager::UnkonwnCommand(const core::UserConnectionPtr & userdata, const core::MessagePtr & message)
+void LogicServerManager::UnkonwnCommand(const core::UserConnectionPtr & userdata, const core::MessagePtr & message)
 {
     YLOG_DEBUG("未知的消息类型：{}", message->GetDescriptor()->full_name())
     userdata->Shutdown();
@@ -70,7 +70,7 @@ void GameManager::UnkonwnCommand(const core::UserConnectionPtr & userdata, const
 
 
 
-void GameManager::RunApp()
+void LogicServerManager::RunApp()
 {
     //! 初始化服务器
     Init();
@@ -87,13 +87,13 @@ void GameManager::RunApp()
 }
 
 
-void GameManager::Init()
+void LogicServerManager::Init()
 {
     //! ①、读取配置文件
     yy::config::ConfigManager::LoadXmlConfigs();
 
     //! ②、读取日志配置
-    yy::Ylog::LoggerManager::getInstance().ReadConfigs();
+    yy::Ylog::LoggerManager::Instance().ReadConfigs();
 
     //! ③、初始化
     m_accpetorLoop = new net::EventLoop(500ms);
@@ -120,14 +120,14 @@ void GameManager::Init()
         });
 
 
-    m_player = &GamePlayerManager::getInstance();
-    m_player->Init();
+    m_room_service = &RoomService::Instance();
+    m_room_service->Init();
 
-    m_test = &GameTestManager::getInstance();
-    m_test->Init();
+    m_test_service = &TestService::Instance();
+    m_test_service->Init();
 }
 
-void GameManager::StartListenAndIOLoop()
+void LogicServerManager::StartListenAndIOLoop()
 {
     m_server->Start();
 }

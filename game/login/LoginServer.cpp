@@ -14,7 +14,7 @@ using namespace yy::net;
 using yy::core::UserConnection;
 using yy::core::MessageHeader;
 
-namespace yy::app {
+namespace yy::app::login {
 
 LoginServer::LoginServer(EventLoop *accpetorLoop, const IPAddressPtr& listenAddr) :
     m_appConfigvar(yy::config::g_app_config),

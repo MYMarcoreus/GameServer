@@ -431,14 +431,14 @@ int main(int argc, char* argv[])
 {
     config::ConfigManager::LoadConfigs();
 
-    yy::Ylog::LoggerManager::getInstance().ReadConfigs();
+    yy::Ylog::LoggerManager::Instance().ReadConfigs();
 #ifdef ____DEBUG
-    yy::Ylog::LoggerManager::getInstance().getLogger()->setLevel(yy::Ylog::LogLevel::TRACE);
+    yy::Ylog::LoggerManager::Instance().getLogger()->setLevel(yy::Ylog::LogLevel::TRACE);
 #else
-    yy::Ylog::LoggerManager::getInstance().getLogger()->setLevel(yy::Ylog::LogLevel::INFO);
+    yy::Ylog::LoggerManager::Instance().getLogger()->setLevel(yy::Ylog::LogLevel::INFO);
 #endif
     yy::Ylog::LogAppender::ptr appender{new yy::Ylog::StdoutLogApeender{"[%t][%l]%c%n"}};
-    yy::Ylog::LoggerManager::getInstance().getLogger()->addAppender(appender);
+    yy::Ylog::LoggerManager::Instance().getLogger()->addAppender(appender);
 
 
     int numThreads = 4;

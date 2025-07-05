@@ -6,22 +6,22 @@ classDiagram
     direction TB
     
 	
-    class GameManager {
+    class LogicServerManager {
     	<<Singleton>>
         - **EventLoop** * m_accpetorLoop = new *EventLoop*(500ms)
         - **IServer**   * m_tcpServer = new *GameServer*(m_accpetorLoop, listenAddr)
         
-        - **GamePlayerManager** * m_player
-        - **GameTestManager**   * m_test
+        - **RoomService** * m_player
+        - **TestService**   * m_test
         - **ProtobufDispatcher**<**UserConnection**::ptr> m_tcpDispatcher
         - **ThreadPool** m_wordThreads
     }
     
-    class GamePlayerManager{
+    class RoomService{
     	<<Singleton>>
     	......
     }
-    class GameTestManager{
+    class TestService{
 		<<Singleton>>
 		......
     }
@@ -152,11 +152,11 @@ classDiagram
 	}
 	
 	subgraph LAYER_GAME
-        GameManager "1" *-- "1" EventLoop : creates (acceptor loop)
-        GameManager "1" *-- "1" IServer : manages 
-        GameManager o-- GamePlayerManager: has
-        GameManager o-- GameTestManager: has
-        GameManager "1" *-- "1" ThreadPool: contains 
+        LogicServerManager "1" *-- "1" EventLoop : creates (acceptor loop)
+        LogicServerManager "1" *-- "1" IServer : manages 
+        LogicServerManager o-- RoomService: has
+        LogicServerManager o-- TestService: has
+        LogicServerManager "1" *-- "1" ThreadPool: contains 
         
 	end
 	
@@ -199,7 +199,7 @@ classDiagram
     ProtobufDispatcher "1" *-- "n" Callback
     
     GameServer "1" *-- "1" ProtobufDispatcher : contains **ProtobufDispatcher**<**TcpConnection**Ptr> 为处理“下层net”无法识别的消息，故为下层的TcpConnection类型
-    GameManager "1" *-- "1" ProtobufDispatcher : contains **ProtobufDispatcher**<**UserConnection**Ptr> 为处理“下层core”无法识别的消息，故为下层的UserConnection类型
+    LogicServerManager "1" *-- "1" ProtobufDispatcher : contains **ProtobufDispatcher**<**UserConnection**Ptr> 为处理“下层core”无法识别的消息，故为下层的UserConnection类型
    
     
   
@@ -228,6 +228,6 @@ classDiagram
     CallbackT_6~UserConnection, SelfJumpAndGravity~ --|> Callback_User~UserConnection~
     CallbackT_7~UserConnection, PlayerLeave~ --|> Callback_User~UserConnection~
     Callback_User~UserConnection~ "n" --* "1"  ProtobufDispatcher_User~UserConnection~
-    ProtobufDispatcher_User~UserConnection~ "1" --* "1" GameManager
+    ProtobufDispatcher_User~UserConnection~ "1" --* "1" LogicServerManager
 ```
 

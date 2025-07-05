@@ -8,7 +8,7 @@
 // #include<ext/new_allocator.h>
 #include<mutex>
 
-/// @brief 在首次getInstance时会调用子类T的构造函数和析构函数，因此Singleton必须能够调用子类的构造/析构函数,所以子类T必须声明Singleton为其友元
+/// @brief 在首次Instance时会调用子类T的构造函数和析构函数，因此Singleton必须能够调用子类的构造/析构函数,所以子类T必须声明Singleton为其友元
 #define SINGLETON_NECESSITY(classname) friend class Singleton<classname>;
 
 /// @brief 因为SingletonPtr使用了std::shared_ptr，而在std::shared_ptr会使用__gnu_cxx::new_allocator调用子类T的构造函数，因此子类需额外将__gnu_cxx::new_allocator声明为其友元
@@ -21,9 +21,9 @@ template<typename T> //! T将会是Singleton的子类
 class Singleton
 {
 public:
-    //! 使用C++11的变参模板，支持有参数的构造函数，但存在同一类型的参数列表参数值不同的getInstance使用同一个对象的bug
+    //! 使用C++11的变参模板，支持有参数的构造函数，但存在同一类型的参数列表参数值不同的Instance使用同一个对象的bug
     template<typename ... Args>
-    static inline T & getInstance(Args &&... args)
+    static inline T & Instance(Args &&... args)
     {
         /*  local static对象的初始化发生在控制流第一次执行到该对象的初始化语句时，是懒汉式
                 在C++11之前，local static对象的初始化存在线程安全问题，可能会造成对象的重复构造，而这需要以双重检查+锁来防止
@@ -53,7 +53,7 @@ class SingletonPtr
 {
 public:
     template<typename ... Args>
-    static inline std::shared_ptr<T> getInstancePtr(Args &&... args)
+    static inline std::shared_ptr<T> InstancePtr(Args &&... args)
     {
         // 使用智能指针局部静态变量：懒汉式，被使用才进行构造
         static std::shared_ptr<T> instance_ptr = std::make_shared<T>(std::forward<Args>(args)...);

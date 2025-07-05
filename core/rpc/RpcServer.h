@@ -29,7 +29,7 @@ namespace yy::core
 
 // 服务提供方
 class RpcServer {
-    static constexpr std::string kServiceRoot = "/services";
+    inline static const std::string kServiceRoot = "/services";
 public:
     RpcServer(yy::net::EventLoop* accpetorLoop, const yy::net::IPAddressPtr& listenAddr);
     ~RpcServer();
@@ -57,7 +57,6 @@ private:
     RpcCodec            codec_;
     std::unordered_map<std::string, std::unique_ptr<google::protobuf::Service>> services_;
     net::IPAddressPtr   listenAddr_;
-    yy::core::ZkClient  zkClient_;
 };
 
 template <typename ServiceType>

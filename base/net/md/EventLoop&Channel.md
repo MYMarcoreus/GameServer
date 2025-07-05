@@ -193,7 +193,7 @@ classDiagram
 
 
 
-#### 主线程（即Acceptor线程）初始化（`GameManager::Init()`）：EventLoop的构造较复杂，不在此列出
+#### 主线程（即Acceptor线程）初始化（`LogicServerManager::Init()`）：EventLoop的构造较复杂，不在此列出
 
 ```mermaid
 sequenceDiagram
@@ -201,7 +201,7 @@ sequenceDiagram
     
 
 	actor main
-	participant GameManager
+	participant LogicServerManager
     participant ConfigManager
 	participant GameServer
     participant ProtobufDispatcher
@@ -216,19 +216,19 @@ sequenceDiagram
     participant IOChannel
     participant TcpConnection
     
-    main ->> +GameManager: GameManager::Init()
+    main ->> +LogicServerManager: LogicServerManager::Init()
     rect rgb(242, 242, 255) 
-        GameManager ->> +ConfigManager: LoadXmlConfigs()
-        ConfigManager -->> -GameManager: 
-        GameManager ->> +ProtobufDispatcher: ProtobufDispatcher(UnkonwnCommand)
-        ProtobufDispatcher -->> -GameManager: 
+        LogicServerManager ->> +ConfigManager: LoadXmlConfigs()
+        ConfigManager -->> -LogicServerManager: 
+        LogicServerManager ->> +ProtobufDispatcher: ProtobufDispatcher(UnkonwnCommand)
+        ProtobufDispatcher -->> -LogicServerManager: 
 
-        GameManager ->> EventLoop: acceptorLoop = new EventLoop()
-        EventLoop -->> GameManager: ......
+        LogicServerManager ->> EventLoop: acceptorLoop = new EventLoop()
+        EventLoop -->> LogicServerManager: ......
         rect rgb(242, 242, 255) 
-            note over GameManager, GameServer: Init GameServer
+            note over LogicServerManager, GameServer: Init GameServer
 
-            GameManager ->> +GameServer: m_tcpServer = new GameServer<br>(m_accpetorLoop, listenAddr);
+            LogicServerManager ->> +GameServer: m_tcpServer = new GameServer<br>(m_accpetorLoop, listenAddr);
             rect rgb(242, 242, 255) 
                 note over GameServer, TcpServer: Constructor of GameServer 
                 GameServer ->> +TcpServer: TcpServer<br>(acceptorLoop, listenAddr)
@@ -269,24 +269,24 @@ sequenceDiagram
                 ProtobufTcpCodec -->> -GameServer: 
             end
 
-            GameServer -->> -GameManager: 
+            GameServer -->> -LogicServerManager: 
 
-            GameManager ->> GameServer: SetNotifier_Security<br>(cb=AppNotifier_Secutiry)
+            LogicServerManager ->> GameServer: SetNotifier_Security<br>(cb=AppNotifier_Secutiry)
             %% GameServer ->> GameServer: m_NotifierSecurity = cb
-            GameServer -->> GameManager: 
-            GameManager ->> GameServer: SetNotifier_DisConnect<br>(cb=AppNotifier_Disconnect)
+            GameServer -->> LogicServerManager: 
+            LogicServerManager ->> GameServer: SetNotifier_DisConnect<br>(cb=AppNotifier_Disconnect)
             %% GameServer ->> GameServer: m_NotifierDisconnect = cb
-            GameServer -->> GameManager: 
-            GameManager ->> GameServer: SetNotifier_Command<br>(cb=AppNotifier_Command)
+            GameServer -->> LogicServerManager: 
+            LogicServerManager ->> GameServer: SetNotifier_Command<br>(cb=AppNotifier_Command)
             %% GameServer ->> GameServer:  m_NotifierCommand = cb
-            GameServer -->> GameManager: 
+            GameServer -->> LogicServerManager: 
         end
 
-        note right of GameManager: "c": 初始化具体业务的对象
+        note right of LogicServerManager: "c": 初始化具体业务的对象
     end
 
 
-    GameManager ->> -main: 
+    LogicServerManager ->> -main: 
     
     
     %%TcpConnection ->> IOChannel: m_channel->SetReadCallback(cb: this->HandleRead)
@@ -299,14 +299,14 @@ sequenceDiagram
 
 
 
-### 主线程（即Acceptor线程）启动（`GameManager::StartListenAndIOLoop()`）：
+### 主线程（即Acceptor线程）启动（`LogicServerManager::StartListenAndIOLoop()`）：
 
 ```mermaid
 sequenceDiagram
     autonumber
 	
 	actor main
-	participant GameManager
+	participant LogicServerManager
 	participant GameServer
 	participant TcpServer
 	participant EventLoopThreadPool
@@ -318,8 +318,8 @@ sequenceDiagram
     participant Socket
     participant TcpConnection
     
-    main ->> +GameManager: StartListenAndIOLoop()
-        GameManager ->> +GameServer: Start()
+    main ->> +LogicServerManager: StartListenAndIOLoop()
+        LogicServerManager ->> +GameServer: Start()
             GameServer ->> +TcpServer: Start(nIOthread=<br>appconfig::tcp_io_thread_num())
                 
                 TcpServer ->> +EventLoopThreadPool: Start(nIOthread)
@@ -339,8 +339,8 @@ sequenceDiagram
                 Acceptor -->> -TcpServer: 
 
             TcpServer -->> -GameServer: 
-        GameServer -->> -GameManager: 
-    GameManager -->> -main: 
+        GameServer -->> -LogicServerManager: 
+    LogicServerManager -->> -main: 
 ```
 
 
@@ -466,10 +466,10 @@ sequenceDiagram
     participant ProtobufDispatcher_Tcp
     participant GameServer
 
-    participant GameManager
+    participant LogicServerManager
     participant ProtobufDispatcher_User
-    participant GamePlayerManager
-    participant GameTestManager
+    participant RoomService
+    participant TestService
 
     
 	EventLoop ->>+ Poller: m_Poller->PollWait
@@ -489,37 +489,37 @@ sequenceDiagram
                             GameServer ->> +ProtobufTcpCodec: OnData()
                                 ProtobufTcpCodec ->> +ProtobufDispatcher_Tcp: OnProtobufMessage()
                                     ProtobufDispatcher_Tcp ->> +GameServer: OnUnknownTcpMessage()
-                                        GameServer ->> +GameManager: AppNotifier_Command()
-                                        	note over GameManager, GameTestManager: 异步函数
-                                            GameManager -) ProtobufDispatcher_User: m_wordThreads.PushTask<br>(OnProtobufMessage)
-                                            	alt GamePlayerManager
+                                        GameServer ->> +LogicServerManager: AppNotifier_Command()
+                                        	note over LogicServerManager, TestService: 异步函数
+                                            LogicServerManager -) ProtobufDispatcher_User: m_wordThreads.PushTask<br>(OnProtobufMessage)
+                                            	alt RoomService
                                                     alt LoginRequest
-                                                        GameManager ->> GamePlayerManager: OnLogin
-                                                        GamePlayerManager -->> GameManager: 
+                                                        LogicServerManager ->> RoomService: OnLogin
+                                                        RoomService -->> LogicServerManager: 
                                                     else OtherPlayerDataRequest
-                                                        GameManager ->> GamePlayerManager: OnOtherPlayerDataRequest
-                                                        GamePlayerManager -->> GameManager: 
+                                                        LogicServerManager ->> RoomService: OnOtherPlayerDataRequest
+                                                        RoomService -->> LogicServerManager: 
                                                     else SelfMovement
-                                                        GameManager ->> GamePlayerManager: OnSelfMovement
-                                                        GamePlayerManager -->> GameManager: 
+                                                        LogicServerManager ->> RoomService: OnSelfMovement
+                                                        RoomService -->> LogicServerManager: 
                                                     else SelfJumpAndGravity
-                                                        GameManager ->> GamePlayerManager: OnSelfJumpAndGravity
-                                                        GamePlayerManager -->> GameManager: 
+                                                        LogicServerManager ->> RoomService: OnSelfJumpAndGravity
+                                                        RoomService -->> LogicServerManager: 
                                                     else PlayerLeave
-                                                        GameManager ->> GamePlayerManager: OnLeave
-                                                        GamePlayerManager -->> GameManager: 
+                                                        LogicServerManager ->> RoomService: OnLeave
+                                                        RoomService -->> LogicServerManager: 
                                                     end 
-                                                else GameTestManager
+                                                else TestService
                                                 	alt TestMsg1
-                                                        GameManager ->> GameTestManager: OnTestMsg1
-                                                        GameTestManager -->> GameManager: 
+                                                        LogicServerManager ->> TestService: OnTestMsg1
+                                                        TestService -->> LogicServerManager: 
                                                 	else TestMsg2
-                                                        GameManager ->> GameTestManager: OnTestMsg2
-                                                        GameTestManager -->> GameManager: 
+                                                        LogicServerManager ->> TestService: OnTestMsg2
+                                                        TestService -->> LogicServerManager: 
                                                 	end
                                                 end
-                                            ProtobufDispatcher_User --) GameManager: 
-                                        GameManager -->> -GameServer: 
+                                            ProtobufDispatcher_User --) LogicServerManager: 
+                                        LogicServerManager -->> -GameServer: 
                                     GameServer -->> -ProtobufDispatcher_Tcp: 
                                 ProtobufDispatcher_Tcp -->> -ProtobufTcpCodec: 
                             ProtobufTcpCodec -->> -GameServer: 
@@ -571,13 +571,13 @@ sequenceDiagram
  
     participant ProtobufTcpCodec
     participant UserConnection
-    participant GameManager
-    participant GamePlayerManager
+    participant LogicServerManager
+    participant RoomService
 
 
 
-    GameManager ->> +GamePlayerManager: OnSelfMovement
-        GamePlayerManager ->> +UserConnection: SendUDP()
+    LogicServerManager ->> +RoomService: OnSelfMovement
+        RoomService ->> +UserConnection: SendUDP()
             UserConnection ->> +ProtobufTcpCodec: SendUDP()
                 ProtobufTcpCodec -) +TcpConnection: SendUDP() in ioLoop
                 note over ProtobufTcpCodec, TcpConnection: CallPenddingCallbacks的异步函数
@@ -598,8 +598,8 @@ sequenceDiagram
                     end
 
             ProtobufTcpCodec -->> -UserConnection: 
-        UserConnection -->> -GamePlayerManager: 
-    GamePlayerManager -->> -GameManager: 
+        UserConnection -->> -RoomService: 
+    RoomService -->> -LogicServerManager: 
 
 
 

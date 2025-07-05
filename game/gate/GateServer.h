@@ -22,7 +22,7 @@ class C2SUdpPortRegister;
 using yy::core::UserConnectionPtr;
 using yy::core::MessagePtr;
 
-namespace yy::app {
+namespace yy::app::gate {
 
 
 class GateServer final: public core::IServer{

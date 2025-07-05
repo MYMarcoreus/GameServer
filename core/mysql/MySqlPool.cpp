@@ -58,8 +58,8 @@ void MySqlPool::check_connection()
     size_t processed = 0;
 
     //3 时间戳
-    auto now = std::chrono::system_clock::now().time_since_epoch();
-    long long timestamp = std::chrono::duration_cast<std::chrono::seconds>(now).count();
+    const auto now = std::chrono::system_clock::now().time_since_epoch();
+    const long long timestamp = std::chrono::duration_cast<std::chrono::seconds>(now).count();
 
     while (processed < targetCount) {
         std::unique_ptr<MySqlConnection> con;
@@ -80,7 +80,7 @@ void MySqlPool::check_connection()
                 con->last_oper_time = timestamp;
             }
             catch (const mysqlx::Error& e) {
-                std::cout << "Error keeping mysql connection alive: " << e.what() << std::endl;
+                std::cerr << "Error keeping mysql connection alive: " << e.what() << std::endl;
                 healthy = false;
                 ++_fail_count;
             }
@@ -92,7 +92,6 @@ void MySqlPool::check_connection()
             std::lock_guard lg(mutex_);
             pool_.push(std::move(con));
             cond_.notify_one();
-            YLOG_INFO("MySqlPool check_connection completed: pool_.sisz = {}", pool_.size());
         }
 
         ++processed;

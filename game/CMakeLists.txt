@@ -5,14 +5,14 @@ set(CMAKE_CXX_STANDARD 20)
 
 set(LocalSrc
         logic/LogicServer.cpp
-        logic/GameManager.cpp
-        logic/GamePlayerManager.cpp
-        logic/GameTestManager.cpp
+        logic/LogicServerManager.cpp
+        logic/RoomService.cpp
+        logic/TestService.cpp
         gate/GateServer.cpp
-        gate/MessageDispatchManager.cpp
+        gate/GateServerManager.cpp
         login/LoginServer.cpp
         login/LoginMaganer.cpp
-        login/LoginService.cpp
+        login/LoginRpcService.cpp
 )
 
 #! 给本地相对路径添加前缀，变为绝对路径

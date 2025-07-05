@@ -18,7 +18,7 @@ classDiagram
     class Logger{
         + Log(const LogMessage::ptr& msg)
         - vector~LogAppender::ptr~ m_appenders
-        # LoggerManager::getInstance（）.m_blockqueue
+        # LoggerManager::Instance（）.m_blockqueue
     }
     Logger "1" o-- "n" LogAppender: m_appenders：vector
     Logger --> pair~LogAppender::ptr, LogMessage::ptr~: （生产者）Log函数中m_blockqueue.push(pair{msg,m_appenders[i]})

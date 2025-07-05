@@ -23,7 +23,7 @@
 
 #define MAKE_LOG_MESSAGE(level, content) std::make_shared<yy::Ylog::LogMessage>(level, /*yy::util::get_current_fmt_time(),*/ __FILE__, __LINE__, std::this_thread::get_id(), content)
 
-#define GET_LOGGER(loggername) yy::Ylog::LoggerManager::getInstance().getLogger(loggername)
+#define GET_LOGGER(loggername) yy::Ylog::LoggerManager::Instance().getLogger(loggername)
 
 // #define YLOG_LEVEL(____loggername, ____level, ____format, ...)                                  \
 // {                                                                                                \
@@ -60,8 +60,8 @@
 #define YLOG_ERROR(format, ...) YLOG_LEVEL("default", yy::Ylog::LogLevel::eERROR, format, ##__VA_ARGS__)
 #define YLOG_FATAL(format, ...) YLOG_LEVEL("default", yy::Ylog::LogLevel::eFATAL, format, ##__VA_ARGS__)
 
-#define START_YLOG_AFTER_CONFIG() yy::Ylog::LoggerManager::getInstance().ReadConfigs();
-#define CLOSE_YLOG() yy::Ylog::LoggerManager::getInstance().StopAsyncThread();
+#define START_YLOG_AFTER_CONFIG() yy::Ylog::LoggerManager::Instance().ReadConfigs();
+#define CLOSE_YLOG() yy::Ylog::LoggerManager::Instance().StopAsyncThread();
 
 #define USE_CPP_STREAM false
 
@@ -242,7 +242,7 @@ private:
     //       尤其是在~LinuxServer()执行时或执行后结束？而不是在其之前结束！
     //? 似乎可以使用饿汉单例模式使得LoggerManager在最开始就被构造，从而使得在最后才析构
     //? 如果不使用饿汉式的话，可以在主函数一开始时就写一条日志
-    //?（隐式调用LoggerManager::getInstance()从而初始化局部静态对象）
+    //?（隐式调用LoggerManager::Instance()从而初始化局部静态对象）
     ~LoggerManager() override;
 
     /// @brief 异步写日志线程：不断地等待blockqueue中的日志信息，取出并写到文件/标准输出中

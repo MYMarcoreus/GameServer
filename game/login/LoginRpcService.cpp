@@ -1,14 +1,14 @@
-#include "LoginService.h"
+#include "LoginRpcService.h"
 
 #include "log.h"
 
-namespace yy::app
+namespace yy::app::login
 {
-void LoginService::Login(google::protobuf::RpcController* controller, const yy::protocol::app::C2SLogin* request,
+void LoginRpcService::Login(google::protobuf::RpcController* controller, const yy::protocol::app::C2SLogin* request,
     yy::protocol::app::S2CLogin* response, google::protobuf::Closure* done)
 {
     // AccountServiceRpc::Login(controller, request, response, done);
-    YLOG_TRACE("正在执行LoginService::Login服务，填充响应体")
+    YLOG_TRACE("正在执行 LoginRpcService::Login 服务，填充响应体")
 
     response->set_account_id(2333);
     response->set_account_name("testid");

@@ -40,7 +40,7 @@ int main()
     yy::config::ConfigManager::AddFilePath("../config/configs_logic.xml");
     yy::config::ConfigManager::AddFilePath("../../config/configs_logic.xml");
     yy::config::ConfigManager::LoadXmlConfigs();
-    yy::Ylog::LoggerManager::getInstance().ReadConfigs();
+    yy::Ylog::LoggerManager::Instance().ReadConfigs();
 
     printTid();
     sleep(1);

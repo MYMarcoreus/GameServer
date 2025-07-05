@@ -23,7 +23,7 @@ class C2SUdpPortRegister;
 using yy::core::UserConnectionPtr;
 using yy::core::MessagePtr;
 
-namespace yy::app
+namespace yy::app::login
 {
 class LoginServer final: public core::IServer{
     using HeartPtr    = std::shared_ptr<yy::protocol::core::HeartBody> ;

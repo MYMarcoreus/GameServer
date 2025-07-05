@@ -1,4 +1,4 @@
-#include "GameManager.h"
+#include "LogicServerManager.h"
 #include "log.h"
 #include "ConfigManager.h"
 
@@ -8,7 +8,7 @@ int main()
 {
     try {
         yy::config::ConfigManager::AddFilePath("../config/configs_logic.xml");
-        yy::app::GameManager::getInstance().RunApp();
+        yy::app::logic::LogicServerManager::Instance().RunApp();
     } catch (const std::exception &e) {
         std::cerr << "Uncaught exception: " << e.what() << std::endl;
         return 114514;

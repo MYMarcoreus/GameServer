@@ -12,11 +12,11 @@
 
 using yy::core::UserConnectionPtr;
 
-namespace yy::app {
+namespace yy::app::logic {
 
-class GamePlayerManager final: public Singleton<GamePlayerManager>
+class RoomService final: public Singleton<RoomService>
 {
-    SINGLETON_NECESSITY(GamePlayerManager)
+    SINGLETON_NECESSITY(RoomService)
 public:
     void Init() ;
 
@@ -24,8 +24,8 @@ public:
     void LeaveAndSave(UserConnectionPtr leave_user);
 
 private:
-    GamePlayerManager();
-    ~GamePlayerManager() override;
+    RoomService();
+    ~RoomService() override;
 
     /// @brief 玩家发来登录请求，验证，然后将储存的游戏数据发送回玩家
     void OnEnterScene(const UserConnectionPtr& userdata, const Ptr<protocol::app::C2SEnterScene> & request);
@@ -51,8 +51,8 @@ private:
 private:
     yy::core::IServer *                                                 m_server;
     std::unordered_map<UID_t,  uint64_t>                                m_uid_to_connid;
-    std::unordered_map<UID_t,  Ptr<yy::protocol::app::PlayerBaseData>>  m_online_players;
-    std::mutex                                                          m_online_players_mutex;
+    std::unordered_map<UID_t,  Ptr<yy::protocol::app::PlayerBaseData>>  m_room_players;
+    std::mutex                                                          m_room_players_mutex;
 
     yy::util::ObjectPool<yy::protocol::app::PlayerBaseData>             m_player_pool;
     int                                                                 m_global_id;

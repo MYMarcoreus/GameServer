@@ -132,10 +132,11 @@ include_directories(
 
 
 set(COMMON_SOURCES
-        core/rpc/RpcController.cpp
-        core/rpc/RpcController.h
-        core/rpc/RpcClientPool.cpp
-        core/rpc/RpcClientPool.h
+        game/gate/AccountRpcClient.cpp
+        game/gate/AccountRpcClient.h
+        core/zookeeper/ZkServiceManager.cpp
+        core/zookeeper/ZkServiceManager.h
+
 )
 # 调用子目录下的cmake
 add_subdirectory(base)

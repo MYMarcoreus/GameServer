@@ -23,7 +23,7 @@ class C2SUdpPortRegister;
 using yy::core::UserConnectionPtr;
 using yy::core::MessagePtr;
 
-namespace yy::app {
+namespace yy::app::logic {
 
 
 class LogicServer final: public core::IServer{
@@ -98,15 +98,7 @@ private:
     std::unordered_map<uint64_t , UserConnectionPtr> m_users;
     std::vector<uint64_t> m_closeUsers;
 
-    std::shared_ptr<yy::core::MySqlPool> pool = std::make_shared<yy::core::MySqlPool>(
-            m_accpetorLoop,
-            "127.0.0.1",           // IP 地址
-            33060,                 // MySQL X Protocol 端口（注意不是3306）
-            "yy",                  // 用户名
-            "0",                   // 密码
-            "information_schema",  // Schema / 数据库名
-            10                     // 池大小
-        );
+    std::unique_ptr<yy::core::MySqlPool> m_mysql_pool;
 };
 
 }

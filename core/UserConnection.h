@@ -44,9 +44,9 @@ public:
     void SendUDP(const MessagePtr & message) ;
     void SendUDP(const google::protobuf::Message & message);
 
-    void SetState(E_UserBaseState state) { m_state = state; }
+    void SetState(const E_UserBaseState state) { m_state = state; }
 
-    void SetUID(uint32_t uid) { m_uid = uid; }
+    void SetUID(const uint32_t uid) { m_uid = uid; }
 
     void BindUdp(net::UdpSessionPtr);
 

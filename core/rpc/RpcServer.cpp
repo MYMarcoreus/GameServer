@@ -2,6 +2,7 @@
 #include "AppXmlConfig.h"
 #include "TcpConnection.h"
 #include "rpc.pb.h"
+#include "ZkServiceManager.h"
 #include <google/protobuf/descriptor.h>
 #include <google/protobuf/stubs/callback.h>
 
@@ -51,25 +52,15 @@ void RpcServer::Start()
         std::terminate();
     }
     const auto & ip = listenAddr_->GetIPStr();
-    const auto & port = listenAddr_->GetPort();
+    const auto & port = listenAddr_->GetPortStr();
 
     //! 启动时注册zookeeper服务
-    zkClient_.Start();
-
-    // 创建永久节点 /services
-    zkClient_.CreateNode(kServiceRoot);
-
+    zk::ZkServiceManager::Instance().Init(kServiceRoot);
     for (auto & [service_name, service] : services_)
     {
-        // /services/service_name   /services/AccountServiceRpc
-        std::string base_path = std::format("{}/{}", kServiceRoot, service_name);
-        zkClient_.CreateNode(base_path);
-
-        // /services/service_name   /services/AccountServiceRpc 存储当前这个rpc服务节点主机的ip和port
-        std::string service_path = std::format("{}/{}", base_path, "provider");
-        std::string service_path_data = std::format("{}:{}", ip, port);
-        zkClient_.CreateNode(service_path, service_path_data,  ZOO_EPHEMERAL | ZOO_SEQUENCE); // ZOO_EPHEMERAL：表示znode是一个临时性节点
+        zk::ZkServiceManager::Instance().Register(service_name, ip, port);
     }
+
 
     server_.Start(2, 300ms);
 }

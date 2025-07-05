@@ -1,7 +1,8 @@
-#include "MessageDispatchManager.h"
+#include "GateServerManager.h"
 #include "log.h"
 #include "EventLoop.h"
 #include "GateServer.h"
+#include"player.pb.h"
 #include "future"
 #include <functional>
 
@@ -23,12 +24,14 @@ using yy::protocol::app::S2COtherPlayerData;
 using yy::protocol::app::PlayerBaseData;
 using yy::protocol::app::PlayerMove;
 
+template<class T>
+using Ptr = std::shared_ptr<T>;
 
 
-namespace yy::app {
+namespace yy::app::gate {
 
 
-MessageDispatchManager::MessageDispatchManager():
+GateServerManager::GateServerManager():
       m_server{},
       m_dispatcher{[this](const core::UserConnectionPtr& userdata, const core::MessagePtr& message) { this->UnkonwnCommand(userdata, message); }},
       m_accpetorLoop{},
@@ -56,7 +59,7 @@ MessageDispatchManager::MessageDispatchManager():
         });
 }
 
-MessageDispatchManager::~MessageDispatchManager() {
+GateServerManager::~GateServerManager() {
     m_server->Stop();
 
     delete m_server;
@@ -64,11 +67,11 @@ MessageDispatchManager::~MessageDispatchManager() {
 }
 
 
-void MessageDispatchManager::AppNotifier_Secutiry(const core::UserConnectionPtr& userdata) {
+void GateServerManager::AppNotifier_Secutiry(const core::UserConnectionPtr& userdata) {
     userdata->SetState(core::UserConnection::E_UserBaseState::eSecure);
 }
 
-void MessageDispatchManager::AppNotifier_Disconnect(const core::UserConnectionPtr& userdata) {
+void GateServerManager::AppNotifier_Disconnect(const core::UserConnectionPtr& userdata) {
     YLOG_INFO("↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ 用户<{}>断开连接", userdata->GetUID())
 
     // // 已登陆，保存数据
@@ -86,7 +89,7 @@ void MessageDispatchManager::AppNotifier_Disconnect(const core::UserConnectionPt
     // }
 }
 
-void MessageDispatchManager::AppNotifier_Command(const core::UserConnectionPtr & userdata, const core::MessagePtr & message)
+void GateServerManager::AppNotifier_Command(const core::UserConnectionPtr & userdata, const core::MessagePtr & message)
 {
     //! 对于游戏游戏，并不在IO线程处理，而是在专门处理游戏数据的工作线程中处理（让Game层的分发器找到该游戏消息所注册的对应的处理函数。）
     m_wordThreads.PushTask([this, userdata, message](){
@@ -94,7 +97,7 @@ void MessageDispatchManager::AppNotifier_Command(const core::UserConnectionPtr &
     });
 }
 
-void MessageDispatchManager::UnkonwnCommand(const core::UserConnectionPtr & userdata, const core::MessagePtr & message)
+void GateServerManager::UnkonwnCommand(const core::UserConnectionPtr & userdata, const core::MessagePtr & message)
 {
     YLOG_DEBUG("未知的消息类型：{}", message->GetDescriptor()->full_name())
     userdata->Shutdown();
@@ -104,7 +107,7 @@ void MessageDispatchManager::UnkonwnCommand(const core::UserConnectionPtr & user
 
 
 
-void MessageDispatchManager::RunApp()
+void GateServerManager::RunApp()
 {
     //! 初始化服务器
     Init();
@@ -121,13 +124,13 @@ void MessageDispatchManager::RunApp()
 }
 
 
-void MessageDispatchManager::Init()
+void GateServerManager::Init()
 {
     //! ①、读取配置文件
     yy::config::ConfigManager::LoadXmlConfigs();
 
     //! ②、读取日志配置
-    yy::Ylog::LoggerManager::getInstance().ReadConfigs();
+    yy::Ylog::LoggerManager::Instance().ReadConfigs();
 
     //! ③、初始化
     m_accpetorLoop = new net::EventLoop(500ms);
@@ -154,7 +157,7 @@ void MessageDispatchManager::Init()
         });
 }
 
-void MessageDispatchManager::StartListenAndIOLoop()
+void GateServerManager::StartListenAndIOLoop()
 {
     m_server->Start();
 }

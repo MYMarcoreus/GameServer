@@ -66,7 +66,6 @@ class RpcClientPool
 {
 public:
     using ServiceType_Stub = typename ServiceType::Stub;
-    inline static const std::string kServiceRoot = "/services";
 
     struct RpcClientContext
     {
@@ -106,10 +105,10 @@ public:
         std::unique_ptr<ServiceType_Stub>   stub_;
     };
 
-    explicit RpcClientPool(size_t poolsize, const bool CanRetry = true) :
+    explicit RpcClientPool(size_t poolsize, const std::string & service_root = "/services", const bool CanRetry = true) :
         thread_{std::make_unique<yy::net::EventLoopThread>(nullptr, 500ms)},
-        loop_{thread_->CreateLoop()}
-
+        loop_{thread_->CreateLoop()},
+        service_root_(service_root)
     {
         if (poolsize == 0) { poolsize = 1; }
 
@@ -121,7 +120,7 @@ public:
             }
             pool_.emplace(std::move(entry));
         }
-        zk::ZkServiceManager::Instance().Init(kServiceRoot);
+        zk::ZkServiceManager::Instance().Init(service_root_);
     }
 
     void SetConnectionEstablishedCallback (const yy::net::F_ConnectionEstablishedCallback& cb)
@@ -129,7 +128,7 @@ public:
         m_ConnectionEstablishedCallback = cb;
     }
 
-    void SetServiceChangeCallback (const std::function<void(std::vector<yy::net::IPAddressPtr>&&)> & cb)
+    void SetServiceChangeCallback (const zk::ZkServiceManager::WatcherCallback & cb)
     {
         m_ServiceChangeCallback = cb;
     }
@@ -206,12 +205,12 @@ public:
 
     void Start()
     {
-        // 监听zookeeper在服务根目录下的变化，首次调用时会拉取所有服务
-        zk::ZkServiceManager::Instance().Watch(service_name_, [this](std::vector<yy::net::IPAddressPtr> && endpoints) {
+        // 监听zookeeper在服务根目录下的变化，首次调用时会拉取服务下的所有可用地址
+        zk::ZkServiceManager::Instance().Watch(service_name_, [this](const std::string& service_path, std::vector<yy::net::IPAddressPtr> && endpoints) {
             rr_idx_.store(0, std::memory_order_release);
 
             if (m_ServiceChangeCallback)
-                m_ServiceChangeCallback(std::move(endpoints));
+                m_ServiceChangeCallback(service_path, std::move(endpoints));
         });
     }
 
@@ -220,6 +219,7 @@ private:
     std::unique_ptr<yy::net::EventLoopThread>       thread_;
     yy::net::EventLoop *                            loop_;
     std::string service_name_;
+    const std::string & service_root_ ;
 
     std::queue<std::unique_ptr<RpcClientContext>>   pool_;
     std::mutex                                      pool_mutex_;
@@ -228,7 +228,7 @@ private:
     std::atomic<size_t>         rr_idx_;
 
     yy::net::F_ConnectionEstablishedCallback m_ConnectionEstablishedCallback;
-    std::function<void(std::vector<yy::net::IPAddressPtr>&&)> m_ServiceChangeCallback;
+    zk::ZkServiceManager::WatcherCallback m_ServiceChangeCallback;
 };
 
 }

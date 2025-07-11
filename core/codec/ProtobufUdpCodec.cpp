@@ -46,7 +46,7 @@ std::pair<MessageHeader, MessagePtr> ProtobufUdpCodec::Parse(const UdpSessionPtr
             outErrCode = MessageParseErrorCode::eUnkonwnMessage;
         }
     } else {
-        YLOG_ERROR("解析消息头失败<{}>，{}", udpSession->GetName(), ToString(outErrCode).c_str())
+        YLOG_ERROR("解析消息头失败<{}>，{}", udpSession->GetConnID(), ToString(outErrCode).c_str())
     }
 
     return {header, message};
@@ -86,6 +86,33 @@ void ProtobufUdpCodec::OnData(const UdpSessionPtr & udpSession, NetBuffer & buf)
     }
 }
 
+// void ProtobufUdpCodec::SendUDP(const UdpSessionPtr &udpSession, const google::protobuf::Message & message) {
+//     if(udpSession == nullptr)
+//         return;
+//
+//     //! 设置消息头
+//     MessageHeader header{message};
+//
+//     /* 不用关心buffer空间不足，因为我们已经分配好了足够的空间 */
+//     //! 填充消息头
+//     util::SequentialBuffer buffer{header.GetFullLength()+4};
+//     header.AppendIntoBuffer(buffer, udpSession->GetXorCode());
+//
+//     YLOG_TRACE("发送消息头<{}>：[{}][{}][{}][{}]", header.CalcHeaderLen(),
+//                std::string_view {header.GetCheckCode().data(), header.kCheckCodeSize},
+//                header.GetFullLength(),
+//                header.GetTypeNameLength(),
+//                header.GetTypeName());
+//
+//     //! 填充消息体
+//     buffer.AppendDataFromProtobuf(message);
+//
+//     YLOG_TRACE("发送消息体<{}>", header.CalcBodyLen());
+//
+//     //! 发送
+//     udpSession->SendUDP(std::string_view(buffer.Peek(), buffer.GetDataSize()));
+// }
+
 void ProtobufUdpCodec::SendUDP(const UdpSessionPtr &udpSession, const google::protobuf::Message & message) {
     if(udpSession == nullptr)
         return;
@@ -95,8 +122,8 @@ void ProtobufUdpCodec::SendUDP(const UdpSessionPtr &udpSession, const google::pr
 
     /* 不用关心buffer空间不足，因为我们已经分配好了足够的空间 */
     //! 填充消息头
-    util::SequentialBuffer buffer{header.GetFullLength()+4};
-    header.AppendIntoBuffer(buffer, udpSession->GetXorCode());
+    auto buffer = std::make_shared<util::SequentialBuffer>(header.GetFullLength()+4);
+    header.AppendIntoBuffer(*buffer, udpSession->GetXorCode());
 
     YLOG_TRACE("发送消息头<{}>：[{}][{}][{}][{}]", header.CalcHeaderLen(),
                std::string_view {header.GetCheckCode().data(), header.kCheckCodeSize},
@@ -105,12 +132,12 @@ void ProtobufUdpCodec::SendUDP(const UdpSessionPtr &udpSession, const google::pr
                header.GetTypeName());
 
     //! 填充消息体
-    buffer.AppendDataFromProtobuf(message);
+    buffer->AppendDataFromProtobuf(message);
 
     YLOG_TRACE("发送消息体<{}>", header.CalcBodyLen());
 
     //! 发送
-    udpSession->SendUDP(std::string_view(buffer.Peek(), buffer.GetDataSize()));
+    udpSession->SendUDP(buffer);
 }
 
 

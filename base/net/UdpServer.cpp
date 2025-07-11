@@ -56,7 +56,7 @@ void UdpServer::Stop() {
 void UdpServer::HandleNewMessage(NetBuffer & recvBuf, IPAddressPtr peerAddr) {
     assert(m_udpTran);
     auto name = std::format("{}:{}", peerAddr->GetIPStr(), peerAddr->GetPortStr());
-    UdpSessionPtr udpSession = std::make_shared<UdpSession>(0, *m_udpTran, peerAddr, m_init_xor_code);
+    const UdpSessionPtr udpSession = std::make_shared<UdpSession>(0, *m_udpTran, peerAddr, m_init_xor_code);
 
     //! ProtobufUdpCodec::OnData
     m_MessageCallback(udpSession, recvBuf);

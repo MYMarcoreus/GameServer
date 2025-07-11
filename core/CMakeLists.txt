@@ -12,13 +12,17 @@ set(LocalSrc
         redis/RedisClient.cpp
         redis/RedisPool.cpp
         mysql/MySqlPool.cpp
-        zookeeper/ZkClient.cpp
         rpc/RpcCodec.cpp
         rpc/RpcConnection.cpp
         rpc/RpcHeader.cpp
         rpc/RpcServer.cpp
         rpc/RpcController.cpp
         rpc/RpcClientPool.hpp
+        zookeeper/ZkClient.cpp
+        zookeeper/ZkServiceManager.cpp
+        BackendServer.cpp
+        FrontendServer.cpp
+
 )
 
 #! 给本地相对路径添加前缀，变为绝对路径

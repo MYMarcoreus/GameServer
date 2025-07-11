@@ -41,11 +41,9 @@ private:
 
     void AppNotifier_Secutiry(const core::UserConnectionPtr& userdata) ;
     void AppNotifier_Disconnect(const core::UserConnectionPtr& userdata) ;
-    void AppNotifier_Command(const core::UserConnectionPtr &, const core::MessagePtr &);
+    void AppNotifier_Command(const core::UserConnectionPtr &, const core::MessagePtr &, const core::MessageType);
 
     void UnkonwnCommand(const core::UserConnectionPtr &, const core::MessagePtr &);
-
-
 
 
     IServer   * m_server;

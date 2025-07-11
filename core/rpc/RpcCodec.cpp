@@ -69,7 +69,7 @@ void RpcCodec::SendTCP(const yy::net::TcpConnectionPtr& conn, const yy::protocol
     YLOG_TRACE("发送消息体<{}>", header.CalcBodyLen());
 
     //! 发送
-    conn->SendTCP(std::string_view(buffer.Peek(), buffer.GetDataSize()));
+    conn->SendRawTCP(std::string_view(buffer.Peek(), buffer.GetDataSize()));
 }
 
 std::pair<RpcHeader, MessagePtr> RpcCodec::Parse(const yy::net::TcpConnectionPtr& conn, yy::net::NetBuffer& buf, MessageParseErrorCode& outErrCode)

@@ -3,6 +3,11 @@
 
 #include "net_definations.h"
 
+namespace yy::util
+{
+class SequentialBuffer;
+}
+
 namespace google::protobuf {
 class Message;
 }
@@ -17,14 +22,14 @@ public:
     ~UdpSession();
 
     ///Region 发送UDP数据：将待发送数据message添加至输出缓冲中（如果输出缓冲为空，则直接发送，无需等待事件触发）
-    void SendUDP(const void * buf, size_t len);
     void SendUDP(const std::string_view & message);
+    void SendUDP(const std::shared_ptr<util::SequentialBuffer> & buf);
     ///End
 
-    void SetXorCode(uint8_t xorCode) { m_xorCode = xorCode; }
+    void SetXorCode(const uint8_t xorCode) { m_xorCode = xorCode; }
 
     uint8_t          GetXorCode()   const { return m_xorCode; }
-    uint64_t         GetName()      const { return m_tcpConnID; }
+    uint64_t         GetConnID()      const { return m_tcpConnID; }
 
 
 private:

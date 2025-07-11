@@ -9,6 +9,8 @@
 #include <atomic>
 #include <any>
 
+#include "ProtobufTcpCodec.h"
+
 namespace yy::net {
 
 class IOChannel;
@@ -40,7 +42,8 @@ public:
     ~TcpConnection();
 
     ///Region 发送TCP数据：将待发送数据message添加至输出缓冲中（如果输出缓冲为空，则直接发送，无需等待事件触发）
-    void SendTCP(const std::string_view & message);
+    void SendRawTCP(const std::string_view & buffer);
+    void SendRawTCP(const std::shared_ptr<util::SequentialBuffer> & buf);
     ///End
 
     /// @brief 关闭用户连接，但是不回收文件描述符，仍保留系统分配的套接字的资源(如缓存)
@@ -97,7 +100,8 @@ private:
     void HandleClose();    // 关闭套接字
     void HandleError();    // 处理错误
 
-    void SendTCPInLoop(const std::string_view &buf);
+    void SendRawTCPInLoop(const std::string_view &buf);
+    void SendRawTCPInLoop(const std::shared_ptr<util::SequentialBuffer> & buf);
     void ShutdownInLoop();
 
     bool CanShutdown() const { return !IsShutdown() and IsConnected(); }

@@ -1,6 +1,6 @@
 #include "EventLoop.h"
 #include "log.h"
-#include "LoginRpcService.h"
+#include "AccountRpcService.h"
 #include "RpcServer.h"
 #include "AppXmlConfig.h"
 #include "ZkServiceManager.h"
@@ -17,7 +17,7 @@ int main()
     yy::net::EventLoop loop{500ms};
     const yy::net::IPAddressPtr listenAddr = std::make_shared<yy::net::IPv4Address>(yy::config::g_app_config->GetValue().rpc_port());
     yy::core::RpcServer server(&loop, listenAddr);
-    server.RegisterService<yy::app::login::LoginRpcService>();
+    server.RegisterService<yy::app::login::AccountRpcService>();
     server.Start();
     loop.Loop();
 

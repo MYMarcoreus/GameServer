@@ -13,6 +13,7 @@ namespace yy::core::zk
 // 封装的zk客户端类
 class ZkClient
 {
+    using WatcherCallback = std::function<void(const std::string&, std::vector<std::string>&&)>;
 public:
     explicit ZkClient(const std::string & host = "");
     ~ZkClient();
@@ -25,12 +26,12 @@ public:
     void CreateNode(const std::string& path, const std::string& data="", int flags=0);
 
     ///@brief 服务调用者：根据参数指定的znode节点路径，或者znode节点的值
-    std::string GetNodeVal(const std::string& node_path);
+    auto GetNodeVal(const std::string& node_path) -> std::string;
 
-    std::vector<std::string> GetNodeChildren(const std::string& path);
+    auto GetNodeChildren(const std::string& path) -> std::vector<std::string>;
 
     ///@brief 服务调用者：注册并监听 path 子节点变化
-    void AddChildrenWatcher(const std::string& path, std::function<void(std::vector<std::string>&&)> callback);
+    void AddChildrenWatcher(const std::string& path, WatcherCallback callback);
 
 private:
 
@@ -58,7 +59,7 @@ private:
     std::vector<EphemeralNodeInfo> ephemeral_nodes_;
 
     // 子节点变更事件的业务回调注册表
-    std::unordered_map<std::string, std::function<void(std::vector<std::string>)>> child_watch_callbacks_;
+    std::unordered_map<std::string, WatcherCallback> child_watch_callbacks_;
     std::shared_mutex watcher_cb_mutex_;
 };
 

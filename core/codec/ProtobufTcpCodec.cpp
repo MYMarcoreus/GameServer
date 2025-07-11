@@ -79,14 +79,40 @@ void ProtobufTcpCodec::OnTcpData(const TcpConnectionPtr &conn, NetBuffer &buf) {
     }
 }
 
+// void ProtobufTcpCodec::SendTCP(const TcpConnectionPtr &conn, const google::protobuf::Message & message) {
+//     //! 设置消息头
+//     MessageHeader header{message};
+//
+//     /* 不用关心buffer空间不足，因为我们已经分配好了足够的空间 */
+//     //! 填充消息头
+//     util::SequentialBuffer buffer{header.GetFullLength()+4};
+//     header.AppendIntoBuffer(buffer, conn->GetXorCode());
+//
+//     YLOG_TRACE("发送消息头<{}>：[{}][{}][{}][{}]", header.CalcHeaderLen(),
+//                std::string_view {header.GetCheckCode().data(), header.kCheckCodeSize},
+//                header.GetFullLength(),
+//                header.GetTypeNameLength(),
+//                header.GetTypeName());
+//
+//
+//     //! 填充消息体
+//     buffer.AppendDataFromProtobuf(message);
+//
+//     YLOG_TRACE("发送消息体<{}>", header.CalcBodyLen());
+//
+//     //! 发送
+//     conn->SendRawTCP(std::string_view(buffer.Peek(), buffer.GetDataSize()));
+// }
+
+
 void ProtobufTcpCodec::SendTCP(const TcpConnectionPtr &conn, const google::protobuf::Message & message) {
     //! 设置消息头
     MessageHeader header{message};
 
     /* 不用关心buffer空间不足，因为我们已经分配好了足够的空间 */
     //! 填充消息头
-    util::SequentialBuffer buffer{header.GetFullLength()+4};
-    header.AppendIntoBuffer(buffer, conn->GetXorCode());
+    auto buffer = std::make_shared<util::SequentialBuffer>(header.GetFullLength()+4);
+    header.AppendIntoBuffer(*buffer, conn->GetXorCode());
 
     YLOG_TRACE("发送消息头<{}>：[{}][{}][{}][{}]", header.CalcHeaderLen(),
                std::string_view {header.GetCheckCode().data(), header.kCheckCodeSize},
@@ -96,14 +122,13 @@ void ProtobufTcpCodec::SendTCP(const TcpConnectionPtr &conn, const google::proto
 
 
     //! 填充消息体
-    buffer.AppendDataFromProtobuf(message);
+    buffer->AppendDataFromProtobuf(message);
 
     YLOG_TRACE("发送消息体<{}>", header.CalcBodyLen());
 
     //! 发送
-    conn->SendTCP(std::string_view(buffer.Peek(), buffer.GetDataSize()));
+    conn->SendRawTCP(buffer);
 }
-
 
 
 void ProtobufTcpCodec::DefaultErrorCallback(const TcpConnectionPtr &conn, NetBuffer &buf, MessageParseErrorCode) {

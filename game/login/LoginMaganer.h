@@ -18,11 +18,6 @@ class LoginManager final : public Singleton<LoginManager> {
 public:
     void RunApp();
 
-    // template<typename T>
-    // void RegisterMessageCallback(typename core::CallbackT<core::UserConnectionPtr, T>::ProtobufMessageTCallback callback) {
-    //     RegisterMessageCallback<T>(callback);
-    // }
-
     IServer * GetServer() const { return m_server; }
 private:
     LoginManager();
@@ -34,7 +29,7 @@ private:
 
     void AppNotifier_Secutiry(const core::UserConnectionPtr& userdata) ;
     void AppNotifier_Disconnect(const core::UserConnectionPtr& userdata) ;
-    void AppNotifier_Command(const core::UserConnectionPtr &, const core::MessagePtr &);
+    void AppNotifier_Command(const core::UserConnectionPtr &, const core::MessagePtr &, const core::MessageType);
 
     void UnkonwnCommand(const core::UserConnectionPtr &, const core::MessagePtr &);
 

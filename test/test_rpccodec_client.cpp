@@ -23,12 +23,13 @@ class QueryClient
 public:
     QueryClient(EventLoop * loop, const IPAddressPtr& serverAddr, const bool CanRetry = true) :
         loop_{loop},
-        client_(loop, serverAddr,
+        client_(loop,
             yy::config::g_remote_config->GetValue().sendBytesOne,
             yy::config::g_remote_config->GetValue().sendBytesMax,
             yy::config::g_remote_config->GetValue().recvBytesOne,
             yy::config::g_remote_config->GetValue().recvBytesMax,
-            yy::config::g_remote_config->GetValue().appXorCode
+            yy::config::g_remote_config->GetValue().appXorCode,
+            serverAddr
         ),
           dispatcher_([this](const TcpConnectionPtr& conn, const MessagePtr& msg) {
               OnUnknownMessage(conn, msg);
@@ -68,7 +69,7 @@ public:
 
     void Send(const std::string& message)
     {
-        client_.GetConnection()->SendTCP(message);
+        client_.GetConnection()->SendRawTCP(message);
     }
 
 private:

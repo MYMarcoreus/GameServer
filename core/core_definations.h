@@ -60,6 +60,12 @@ inline std::string ToString(MessageParseErrorCode code)
 
 using MessagePtr = std::shared_ptr<google::protobuf::Message>;
 
+enum class MessageType
+{
+    TCP = 0,
+    UDP = 1
+};
+
 }
 
 

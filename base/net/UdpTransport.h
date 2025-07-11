@@ -8,6 +8,11 @@
 #include <memory>
 
 
+namespace yy::util
+{
+class SequentialBuffer;
+}
+
 namespace google::protobuf {
 class Message;
 }
@@ -23,13 +28,14 @@ class EventLoop;
 class UdpTransport  {
     using F_UdpRecievedCallback = std::function<void(NetBuffer &, IPAddressPtr)>;
 public:
-    explicit UdpTransport(EventLoop * recvLoop, const uint16_t app_udp_port, const int32_t recv_bytes_one, const int32_t m_send_thread_num);
+    explicit UdpTransport(EventLoop * recvLoop, std::optional<uint16_t> app_udp_port, const int32_t recv_bytes_one, const int32_t m_send_thread_num);
 
     ~UdpTransport();
 
     ///Region 发送UDP数据：将待发送数据message添加至输出缓冲中（如果输出缓冲为空，则直接发送，无需等待事件触发）
-    void SendUDP(const void * buf, size_t len, IPAddressPtr peerAddr);
-    void SendUDP(const std::string_view & message, IPAddressPtr peerAddr);
+    void SendUDP(const std::string_view & message, const IPAddressPtr & peerAddr);
+    void SendUDP(const std::shared_ptr<util::SequentialBuffer> & buf, const IPAddressPtr & peerAddr);
+
     ///End
 
     ///Region GETTER
@@ -38,7 +44,7 @@ public:
     ///End
 
     ///Region SETTER
-    void SetUdpRecievedCallback(F_UdpRecievedCallback cb)                 { m_UdpRecievedCallback = cb; }
+    void SetUdpRecievedCallback(F_UdpRecievedCallback cb) { m_UdpRecievedCallback = std::move(cb); }
     ///End
 
 private:
@@ -51,7 +57,8 @@ private:
     SocketApiWrapper::SocketResult HandleRead_LT(IPAddressPtr & peerAddr);  // 将套接字的数据接收到RecvBuf中
     void HandleError();    // 处理错误
 
-    void SendUDPWorker(const std::string_view &buf, IPAddressPtr peerAddr);
+    void SendUDPWorker(const std::string_view &buf, const IPAddressPtr & peerAddr);
+    void SendUDPWorker(const std::shared_ptr<util::SequentialBuffer> & buf, const IPAddressPtr & peerAddr);
 
 private:
     EventLoop *                                     m_recvLoop;

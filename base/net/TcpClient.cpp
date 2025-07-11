@@ -12,61 +12,40 @@
 namespace yy::net {
 
 
-TcpClient::TcpClient(EventLoop *loop, IPAddressPtr serverAddr,
+TcpClient::TcpClient(EventLoop *loop,
 const int32_t send_bytes_one, const int32_t send_bytes_max,
-const int32_t recv_bytes_one, const int32_t recv_bytes_max, const uint8_t xor_code) :
+const int32_t recv_bytes_one, const int32_t recv_bytes_max,
+const uint8_t xor_code, IPAddressPtr serverAddr) :
     m_send_bytes_one(send_bytes_one),
     m_send_bytes_max(send_bytes_max),
     m_recv_bytes_one(recv_bytes_one),
     m_recv_bytes_max(recv_bytes_max),
     m_xorCode(xor_code),
     m_Loop(loop),
-    m_Connection{},
-    m_Connector(std::make_shared<Connector>(loop, serverAddr)),
+    m_Connection{nullptr},
+    m_Connector(serverAddr ? std::make_shared<Connector>(loop, serverAddr) : nullptr),
     m_CanAutoRetry{true},
     m_IsStarted{false},
     m_NextConnID{0},
     m_ServerAddr{serverAddr}
 {
-    assert(m_Connector != nullptr);
     assert(m_Loop != nullptr);
 
-    m_Connector->SetNewConnectionCallback( [this](const SocketApiWrapper::socket_t sockfd){ this->NewConnection(sockfd); } );
-    m_Connector->SetConnectFailedCallback( [this]() { YLOG_WARN("coonect to <{}:{}>", this->m_ServerAddr->GetIPStr().c_str(), m_ServerAddr->GetPort()) } );
-
+    if (m_Connector) {
+        m_Connector->SetNewConnectionCallback( [this](const SocketApiWrapper::socket_t sockfd){ this->NewConnection(sockfd); } );
+        m_Connector->SetConnectFailedCallback( [this]() { YLOG_WARN("coonect to <{}:{}>", this->m_ServerAddr->GetIPStr().c_str(), m_ServerAddr->GetPort()) } );
+    }
 #ifdef ____LINUX
     util::SignalManager::set_signal_ignore(SIGPIPE);
 #endif
 }
 
-TcpClient::TcpClient(EventLoop *loop,
-const int32_t send_bytes_one, const int32_t send_bytes_max,
-const int32_t recv_bytes_one, const int32_t recv_bytes_max, const uint8_t xor_code) :
-    m_send_bytes_one(send_bytes_one),
-    m_send_bytes_max(send_bytes_max),
-    m_recv_bytes_one(recv_bytes_one),
-    m_recv_bytes_max(recv_bytes_max),
-    m_xorCode(xor_code),
-    m_Loop(loop),
-    m_Connection{},
-    m_Connector{nullptr},
-    m_CanAutoRetry{true},
-    m_IsStarted{false},
-    m_NextConnID{0},
-    m_ServerAddr{nullptr}
-{
-    assert(m_Loop != nullptr);
-
-#ifdef ____LINUX
-    util::SignalManager::set_signal_ignore(SIGPIPE);
-#endif
-}
 
 TcpClient::~TcpClient() {
     TcpConnectionPtr conn;
     bool isUnique = false;
     {
-        std::lock_guard lg{m_ConnectionMutex};
+        util::ReadLockGuard lg{m_ConnectionMutex};
         if(m_Connection)
             isUnique = m_Connection.use_count() == 1;
         conn = m_Connection;
@@ -95,7 +74,7 @@ void TcpClient::Connect(const IPAddressPtr& server_addr) {
 void TcpClient::Disconnect() {
     m_IsStarted = false;
     {
-        std::lock_guard lg{m_ConnectionMutex};
+        util::WriteLockGuard lg{m_ConnectionMutex};
         if(m_Connection)
             m_Connection->Shutdown();
     }
@@ -104,6 +83,12 @@ void TcpClient::Disconnect() {
 void TcpClient::StopConnecting() {
     m_IsStarted = false;
     m_Connector->Stop();
+}
+
+TcpConnectionPtr TcpClient::GetConnection()
+{
+    util::ReadLockGuard lg{m_ConnectionMutex};
+    return m_Connection;
 }
 
 void TcpClient::NewConnection(SocketApiWrapper::socket_t sockfd) {
@@ -127,7 +112,7 @@ void TcpClient::NewConnection(SocketApiWrapper::socket_t sockfd) {
     );
 
     {
-        std::lock_guard lg{m_ConnectionMutex};
+        util::WriteLockGuard lg{m_ConnectionMutex};
         m_Connection = conn;
     }
     conn->SetConnectionEstablishedCallback(m_ConnectionEstablishedCallback);
@@ -140,7 +125,7 @@ void TcpClient::NewConnection(SocketApiWrapper::socket_t sockfd) {
 
 void TcpClient::RemoveConnection(TcpConnectionPtr conn) {
     {
-        std::lock_guard lg{m_ConnectionMutex};
+        util::WriteLockGuard lg{m_ConnectionMutex};
         m_Connection.reset();
     }
     conn->GetIOLoop()->EnqueueCallbackInLoop([conn](){conn->ConnectionDestroyed();});

@@ -1,4 +1,4 @@
-#include "GateServer.h"
+#include "BackendServer.h"
 #include "TcpConnection.h"
 #include "UdpSession.h"
 #include "log.h"
@@ -14,9 +14,9 @@ using namespace yy::net;
 using yy::core::UserConnection;
 using yy::core::MessageHeader;
 
-namespace yy::app::gate {
+namespace yy::core {
 
-GateServer::GateServer(EventLoop *accpetorLoop, const IPAddressPtr& listenAddr) :
+BackendServer::BackendServer(EventLoop *accpetorLoop, const IPAddressPtr& listenAddr) :
     m_appConfigvar(yy::config::g_app_config),
     m_accpetorLoop{accpetorLoop},
     m_tcpServer(accpetorLoop, listenAddr, true,
@@ -45,7 +45,6 @@ GateServer::GateServer(EventLoop *accpetorLoop, const IPAddressPtr& listenAddr) 
 {
     //! 消息回调注册
     m_tcpDispatcher.RegisterMessageCallback<yy::protocol::core::HeartBody>( [this](const TcpConnectionPtr& conn, const HeartPtr& msg) { this->OnTcpHeart(conn, msg); });
-    m_tcpDispatcher.RegisterMessageCallback<yy::protocol::core::C2SSecurityBody>( [this](const TcpConnectionPtr& conn, const C2SSecurityPtr& msg) { this->OnSecurity(conn, msg); });
     m_tcpDispatcher.RegisterMessageCallback<yy::protocol::core::C2SUdpPortRegister>( [this](const TcpConnectionPtr& conn, const C2SUdpPortRegisterPtr& msg) { this->OnUdpPortRegisterRequest(conn, msg); });
     m_udpDispatcher.RegisterMessageCallback<yy::protocol::core::HeartBody>( [this](const UdpSessionPtr& conn, const HeartPtr& msg) { this->OnUdpHeart(conn, msg); });
 
@@ -71,46 +70,48 @@ GateServer::GateServer(EventLoop *accpetorLoop, const IPAddressPtr& listenAddr) 
 }
 
 
-GateServer::~GateServer() {
+BackendServer::~BackendServer() {
     Stop();
 }
 
-void GateServer::Start() {
-    m_tcpServer.Start(config::g_app_config->GetValue().tcp_io_thread_num(), 500ms);
+void BackendServer::Start(const F_ThreadInitCallback& cb) {
+    m_tcpServer.Start(config::g_app_config->GetValue().tcp_io_thread_num(), 500ms, cb);
     m_udpServer.Start(1, 500ms);
-    m_accpetorLoop->RunEvery(1s, [](){ YLOG_INFO("测试！！！"); });
 }
 
-void GateServer::Stop() {
+void BackendServer::Stop() {
     m_accpetorLoop->QuitLoop();
 }
 
 
-void GateServer::OnUnknownTcpMessage(const TcpConnectionPtr & conn, const MessagePtr &message) {
-    YLOG_TRACE("游戏消息：{}，交由业务层", message->GetDescriptor()->full_name());
+void BackendServer::OnUnknownTcpMessage(const TcpConnectionPtr & conn, const MessagePtr &message) {
+    YLOG_TRACE("Tcp消息：{}，交由业务层", message->GetDescriptor()->full_name());
 
     // 执行业务层回调，分发消息
-    m_NotifierCommand(FindUser(conn->GetConnID()), message);
+    m_NotifierCommand(FindUser(conn->GetConnID()), message, MessageType::TCP);
 }
 
-void GateServer::OnUnknownUdpMessage(const UdpSessionPtr & conn, const MessagePtr &message) {
-    YLOG_TRACE("游戏消息：{}，交由业务层", message->GetDescriptor()->full_name());
+void BackendServer::OnUnknownUdpMessage(const UdpSessionPtr & sess, const MessagePtr &message) {
+    YLOG_TRACE("Udp消息：{}，交由业务层", message->GetDescriptor()->full_name());
 
     // 执行业务层回调，分发消息
-    m_NotifierCommand(FindUser(conn->GetName()), message);
+    m_NotifierCommand(FindUser(sess->GetConnID()), message, MessageType::UDP);
 }
 
-void GateServer::OnConnectionEstablished(const TcpConnectionPtr  & conn) {
+void BackendServer::OnConnectionEstablished(const TcpConnectionPtr  & conn) {
     YLOG_INFO("███████████████████连接成功<{}:{}, {}>！",
               conn->GetPeerAddr()->GetIPStr().c_str(), conn->GetPeerAddr()->GetPort(), conn->GetSocketFD());
 
     auto userdata = std::make_shared<UserConnection>(conn, m_tcpCodec, m_udpCodec);
     AddUser(conn->GetConnID(), userdata);
     AddCheckTimer(conn, userdata);
-    SendXorCode(conn);
+
+    ++m_numSecurity;
+    if(m_NotifierSecurity)
+        m_NotifierSecurity(FindUser(conn->GetConnID()));
 }
 
-void GateServer::AddCheckTimer(const TcpConnectionPtr & conn, const UserConnectionPtr & userdata) {
+void BackendServer::AddCheckTimer(const TcpConnectionPtr & conn, const UserConnectionPtr & userdata) {
     /* ***** 需要是弱引用，不能因为这个回调函数延长TcpConnection的生命周期 ***** */
     //! ①检查是否在指定时间内完成安全连接的认证，若未认证，则关闭连接
     conn->GetIOLoop()->RunAfter(Seconds{GetAppConfig().time_security_max()},
@@ -134,7 +135,7 @@ void GateServer::AddCheckTimer(const TcpConnectionPtr & conn, const UserConnecti
     });
 }
 
-void GateServer::CheckHeart(const UserConnectionPtr & userdata) {
+void BackendServer::CheckHeart(const UserConnectionPtr & userdata) {
     const auto & conn = userdata->GetConnection();
     if(!conn->IsConnected() or Timestamp::Now() - conn->GetHeartTime() > Seconds{m_appConfigvar->GetValue().time_heart_max()}) {
         YLOG_WARN("<{}>主线程Update_CheckDisconnetion: 用户心跳包超时，关闭用户连接！", conn->GetSocketFD());
@@ -152,25 +153,8 @@ void GateServer::CheckHeart(const UserConnectionPtr & userdata) {
     }
 }
 
-void GateServer::SendXorCode(const TcpConnectionPtr &conn) {
-    // 发送随机生成的异或码给用户，之后的通信都用该异或码进行加密
-    auto gen_val = MessageHeader::GenerateXorCode();
-    yy::protocol::core::S2CXorBody xorBody;
-    xorBody.set_xor_code(gen_val ^ GetAppConfig().app_xor_code()); //! 记得与初始异或码异或
 
-    m_tcpCodec.SendTCP(conn, xorBody);
-    conn->SetXorCode(gen_val); //! 必须在Send后面
-
-    YLOG_TRACE("Thread_Accepter: 封包异或码<{},{}>给用户<{}>，<{},{}>异或标识头<{},{}>", gen_val, xorBody.xor_code(), conn->GetSocketFD(),
-               static_cast<int>(GetAppConfig().check_code()[0]), static_cast<int>(GetAppConfig().check_code()[1]),
-               (int)(GetAppConfig().check_code()[0] ^ gen_val), (int)(GetAppConfig().check_code()[1] ^ gen_val)
-   );
-}
-
-
-
-
-void GateServer::OnTcpHeart(const TcpConnectionPtr & conn, const HeartPtr & message) {
+void BackendServer::OnTcpHeart(const TcpConnectionPtr & conn, const HeartPtr & message) {
     assert(conn != nullptr);
     YLOG_DEBUG("收到TCP心跳包");
     // 只需发一个只有消息头的包
@@ -178,7 +162,7 @@ void GateServer::OnTcpHeart(const TcpConnectionPtr & conn, const HeartPtr & mess
     m_tcpCodec.SendTCP(conn, heartBody);
 }
 
-void GateServer::OnUdpHeart(const UdpSessionPtr & conn, const HeartPtr & message) {
+void BackendServer::OnUdpHeart(const UdpSessionPtr & conn, const HeartPtr & message) {
     assert(conn != nullptr);
     YLOG_DEBUG("收到UDP心跳包");
     // 只需发一个只有消息头的包
@@ -186,54 +170,7 @@ void GateServer::OnUdpHeart(const UdpSessionPtr & conn, const HeartPtr & message
     m_udpCodec.SendUDP(conn, heartBody);
 }
 
-void GateServer::OnSecurity(const TcpConnectionPtr & conn, const C2SSecurityPtr & message)
-{
-    assert(conn != nullptr);
-
-    char md5Arr[35]{};
-    char Arr[30]{};
-    snprintf(Arr, sizeof(Arr), "%s_%d", m_appConfigvar->GetValue().security_code(), conn->GetXorCode());
-    ::md5::EncryptMD5str(md5Arr, reinterpret_cast<unsigned char*>(Arr), static_cast<int>(strlen(Arr)));
-
-    YLOG_DEBUG("服务器: {}, {}, {}", GetAppConfig().app_id(), GetAppConfig().app_version(), md5Arr)
-    YLOG_DEBUG("客户端: {}, {}, {}", message->app_id(),message->app_version(), message->app_md5().c_str())
-
-    //! 进行安全验证
-    yy::protocol::core::S2CSecurityBody::ResultCode resultCode;
-    if(message->app_version() != GetAppConfig().app_version()) {
-        YLOG_DEBUG("<{}>解包执行：版本不同，安全验证失败！", conn->GetConnID())
-        resultCode = yy::protocol::core::S2CSecurityBody_ResultCode_eAppVersionFailed;
-    }
-    else if(util::StrCmp_IgnoreCase(message->app_md5().c_str(), md5Arr)) {
-        YLOG_DEBUG("<{}>解包执行：md5码不同，安全验证失败！", conn->GetConnID())
-        resultCode = yy::protocol::core::S2CSecurityBody_ResultCode_eMd5Failed;
-    }
-    else {
-        resultCode = yy::protocol::core::S2CSecurityBody_ResultCode_eSuccess;
-    }
-
-    //! 发送安全验证结果
-    yy::protocol::core::S2CSecurityBody resultBody;
-    resultBody.set_result_code(resultCode);
-    resultBody.set_server_udp_port(FindUser(conn->GetConnID())->GetSocketFD());
-    resultBody.set_session_id(conn->GetConnID());
-    m_tcpCodec.SendTCP(conn, resultBody);
-
-    //! 安全验证通过：交由业务层
-    if(resultBody.result_code() == yy::protocol::core::S2CSecurityBody_ResultCode_eSuccess) {
-        ++m_numSecurity;
-        if(m_NotifierSecurity)
-            m_NotifierSecurity(FindUser(conn->GetConnID()));
-        YLOG_INFO("<{}>解包执行：安全验证通过", conn->GetConnID())
-    }
-    //? 安全验证失败：需要关闭用户连接吗？
-    else {
-        conn->Shutdown();
-        YLOG_INFO("<{}>解包执行：用户安全验证失败！", conn->GetConnID())
-    }
-}
-
-void GateServer::OnUdpPortRegisterRequest(const TcpConnectionPtr & conn, const C2SUdpPortRegisterPtr & message)
+void BackendServer::OnUdpPortRegisterRequest(const TcpConnectionPtr & conn, const C2SUdpPortRegisterPtr & message)
 {
     if(message->session_id() != conn->GetConnID()) {
         YLOG_INFO("<{}>客户端会话ID验证错误", conn->GetConnID())
@@ -258,25 +195,25 @@ void GateServer::OnUdpPortRegisterRequest(const TcpConnectionPtr & conn, const C
 
 
 
-net::TimerID GateServer::RunAt(net::Timestamp time, net::F_TaskCallback cb) {
+net::TimerID BackendServer::RunAt(net::Timestamp time, net::F_TaskCallback cb) {
     return m_accpetorLoop->RunAt(time, std::move(cb));
 }
 
-net::TimerID GateServer::RunAfter(net::Microseconds delay, net::F_TaskCallback cb) {
+net::TimerID BackendServer::RunAfter(net::Microseconds delay, net::F_TaskCallback cb) {
     return m_accpetorLoop->RunAfter(delay, std::move(cb));
 }
 
-net::TimerID GateServer::RunEvery(net::Microseconds interval, net::F_TaskCallback cb) {
+net::TimerID BackendServer::RunEvery(net::Microseconds interval, net::F_TaskCallback cb) {
     return m_accpetorLoop->RunEvery(interval, std::move(cb));
 }
 
-void GateServer::CancelTimer(net::TimerID timerid) {
+void BackendServer::CancelTimer(net::TimerID timerid) {
     m_accpetorLoop->CancelTimer(timerid);
 }
 
 
 
-void GateServer::AfterShutdownConnection(const TcpConnectionPtr & conn) {
+void BackendServer::AfterShutdownConnection(const TcpConnectionPtr & conn) {
     //! 应用层处理
     if(m_NotifierDisconnect)
         m_NotifierDisconnect(FindUser(conn->GetConnID()));
@@ -284,21 +221,21 @@ void GateServer::AfterShutdownConnection(const TcpConnectionPtr & conn) {
 
 
 
-UserConnectionPtr GateServer::FindUser(uint64_t conn_id) {
-    std::lock_guard lg{m_usersMutex};
+UserConnectionPtr BackendServer::FindUser(const uint64_t conn_id) {
+    util::ReadLockGuard lg{m_usersMutex};
 
     const auto it = m_users.find(conn_id);
     return (it == m_users.end()) ? nullptr : it->second;
 }
 
-void GateServer::DelUser(uint64_t conn_id) {
-    std::lock_guard lg{m_usersMutex};
+void BackendServer::DelUser(const uint64_t conn_id) {
+    util::WriteLockGuard lg{m_usersMutex};
 
     m_users.erase(conn_id);
 }
 
-void GateServer::AddUser(uint64_t conn_id, const UserConnectionPtr & userdata) {
-    std::lock_guard lg{m_usersMutex};
+void BackendServer::AddUser(const uint64_t conn_id, const UserConnectionPtr & userdata) {
+    util::WriteLockGuard lg{m_usersMutex};
 
     m_users[conn_id] = userdata;
 }

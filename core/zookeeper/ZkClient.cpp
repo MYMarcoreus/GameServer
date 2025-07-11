@@ -100,28 +100,38 @@ void ZkClient::CreateNode(const std::string& path, const std::string& data, int 
 	}
 
 	// 判断 path 对应的 znode 节点是否存在
-	int errcode = zoo_exists(zhandle_, path.c_str(), 0, nullptr);
-	if (errcode == ZNONODE) { // 节点不存在，创建节点
-		char path_buffer[128] {};
-		int bufferlen = sizeof(path_buffer);
 
-		// 创建节点
-		errcode = zoo_create(zhandle_, path.c_str(), data.c_str(), data.length(),
-							 &ZOO_OPEN_ACL_UNSAFE, flags, path_buffer, bufferlen);
-		if (errcode == ZOK) {
-			YLOG_INFO("[ZkClient] znode create success... <path: {}, data: {}>", path, data);
+	int errcode = zoo_exists(zhandle_, path.c_str(), 0, nullptr);
+	if (errcode != ZNONODE) {
+		if (flags & ZOO_EPHEMERAL) {
+			// 如果存在的结点为临时节点，则删除之；
+			errcode = zoo_delete(zhandle_, path.c_str(), -1);
+			if (errcode != ZOK) {
+				YLOG_ERROR("[ZkClient] failed to delete existing ephemeral znode: {}, code: {}", path, errcode);
+				return;
+			}
 		} else {
-			YLOG_FATAL("[ZkClient] znode create error... <{}:{}>, error: {}", path, data, errcode);
+			// 存在持久节点时，直接返回
+			return;
 		}
 	}
-	else if (flags & ZOO_EPHEMERAL) { // 如果是临时节点且已存在，则删除旧节点
-		zoo_delete(zhandle_, path.c_str(), -1);
+
+	// 创建节点
+	char path_buffer[128] {};
+	int bufferlen = sizeof(path_buffer);
+	errcode = zoo_create(zhandle_, path.c_str(), data.c_str(), data.length(),
+						 &ZOO_OPEN_ACL_UNSAFE, flags, path_buffer, bufferlen);
+	if (errcode == ZOK) {
+		YLOG_INFO("[ZkClient] znode create success... <path: {}, data: {}>", path, data);
+		// 如果是临时节点，记录该节点以便断线重连时恢复
+		if (flags & ZOO_EPHEMERAL) {
+			ephemeral_nodes_.emplace_back(path, data, flags);
+		}
+	} else {
+		YLOG_FATAL("[ZkClient] znode create error... <{}:{}>, error: {}", path, data, errcode);
 	}
 
-	// 如果是临时节点，记录该节点以便断线重连时恢复
-	if (flags & ZOO_EPHEMERAL) {
-		ephemeral_nodes_.emplace_back(path, data, flags);
-	}
+
 }
 
 
@@ -168,7 +178,7 @@ std::string ZkClient::GetNodeVal(const std::string& node_path)
 
 
 
-void ZkClient::AddChildrenWatcher(const std::string& path, std::function<void(std::vector<std::string>&&)> callback)
+void ZkClient::AddChildrenWatcher(const std::string& path, WatcherCallback callback)
 {
 	{
 		std::unique_lock lock(watcher_cb_mutex_);
@@ -185,7 +195,7 @@ void ZkClient::OnChildrenChanged(const std::string& path)
 	{
 		std::shared_lock lock(watcher_cb_mutex_);
 		if (const auto it = child_watch_callbacks_.find(path); it != child_watch_callbacks_.end()) {
-			it->second(std::move(children_vec)); // 触发上层业务逻辑
+			it->second(path, std::move(children_vec)); // 触发上层业务逻辑
 		}
 	}
 }

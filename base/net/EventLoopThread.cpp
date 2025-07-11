@@ -9,9 +9,9 @@ namespace yy::net {
 
 using namespace yy::util;
 
-EventLoopThread::EventLoopThread(F_ThreadInitCallback init_cb, Milliseconds pollWaitTimeout)
+EventLoopThread::EventLoopThread(F_ThreadInitCallback init_cb, const Milliseconds pollWaitTimeout)
     : m_Loop(nullptr),
-      m_ThreadInitCallback(init_cb),
+      m_ThreadInitCallback(std::move(init_cb)),
       m_PollWaitTimeout(pollWaitTimeout)
 { }
 

@@ -52,7 +52,7 @@ void LogicServerManager::AppNotifier_Disconnect(const core::UserConnectionPtr& u
     }
 }
 
-void LogicServerManager::AppNotifier_Command(const core::UserConnectionPtr & userdata, const core::MessagePtr & message)
+void LogicServerManager::AppNotifier_Command(const core::UserConnectionPtr & userdata, const core::MessagePtr & message, const core::MessageType type)
 {
     //! 对于游戏游戏，并不在IO线程处理，而是在专门处理游戏数据的工作线程中处理（让Game层的分发器找到该游戏消息所注册的对应的处理函数。）
     m_wordThreads.PushTask([this, userdata, message](){
@@ -115,8 +115,8 @@ void LogicServerManager::Init()
         });
 
     m_server->SetNotifier_Command(
-        [this](const core::UserConnectionPtr & userdata, const core::MessagePtr & message) {
-            this->AppNotifier_Command(userdata, message);
+        [this](const core::UserConnectionPtr & userdata, const core::MessagePtr & message, const core::MessageType type) {
+            this->AppNotifier_Command(userdata, message, type);
         });
 
 

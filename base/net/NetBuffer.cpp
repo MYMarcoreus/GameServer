@@ -141,13 +141,13 @@ NetBuffer::RecvAllFromSocket(const std::unique_ptr<Socket>& sock, SocketApiWrapp
 }
 
 SocketApiWrapper::SocketResult
-NetBuffer::SendAllToSocket(const std::unique_ptr<Socket>& sock, std::shared_ptr<IPAddress> peerAddr)
+NetBuffer::SendAllToSocket(const std::unique_ptr<Socket>& sock, const std::shared_ptr<IPAddress>& peerAddr)
 {
     auto data_size =  GetDataSize();
     const size_t firstSendLen = (std::min)(m_Capacity - m_Head, data_size);
     const size_t secondSendLen = data_size - firstSendLen;
 
-    char tempBuf[65536]{};
+    // char tempBuf[65536]{};
 
     IOV_TYPE vec[2];
     vec[0].IOV_PTR_FIELD = GetBufBegin() + m_Head;

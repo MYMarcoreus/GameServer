@@ -32,7 +32,7 @@ public:
     ~TcpServer();
 
     ///@brief 启动连接池并开启监听套接字
-    void Start(int ioThreadNum, Milliseconds ioWaitTimeout, const F_ThreadInitCallback& cb = F_ThreadInitCallback());
+    void Start(int ioThreadNum, Milliseconds ioWaitTimeout, const F_ThreadInitCallback& cb = nullptr);
 
     void Stop() const;
 

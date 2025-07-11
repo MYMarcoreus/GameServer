@@ -26,8 +26,26 @@ message S2CLogin {
     optional string account_name = 5;
 }
 
+message C2SRegister {
+    uint64 session_id = 1;
+
+    string account_name = 3;
+    string password = 4;
+}
+
+message S2CRegister {
+    uint64 session_id = 1;
+
+    enum Status {
+        eSuccess = 0;
+        eUnknownError = 3;
+    }
+    Status result_code = 2;
+}
+
 
 service AccountServiceRpc
 {
     rpc Login(C2SLogin) returns(S2CLogin);
+    rpc Register(C2SRegister) returns(S2CRegister);
 }

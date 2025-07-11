@@ -12,6 +12,7 @@ using namespace yy::util;
 using yy::net::TcpConnectionPtr;
 
 using yy::protocol::app::C2SLogin;
+using yy::protocol::app::C2SRegister;
 
 
 template<class T>
@@ -49,7 +50,7 @@ void LoginManager::AppNotifier_Disconnect(const core::UserConnectionPtr& userdat
     YLOG_INFO("↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ 用户<{}>断开连接", userdata->GetUID())
 }
 
-void LoginManager::AppNotifier_Command(const core::UserConnectionPtr & userdata, const core::MessagePtr & message)
+void LoginManager::AppNotifier_Command(const core::UserConnectionPtr & userdata, const core::MessagePtr & message, const MessageType type)
 {
     m_wordThreads.PushTask([this, userdata, message](){
         m_dispatcher.OnProtobufMessage(userdata, message);
@@ -111,8 +112,8 @@ void LoginManager::Init()
         });
 
     m_server->SetNotifier_Command(
-        [this](const core::UserConnectionPtr & userdata, const core::MessagePtr & message) {
-            this->AppNotifier_Command(userdata, message);
+        [this](const core::UserConnectionPtr & userdata, const core::MessagePtr & message, const MessageType type) {
+            this->AppNotifier_Command(userdata, message, type);
         });
 }
 

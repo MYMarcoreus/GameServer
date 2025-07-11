@@ -1,23 +1,36 @@
 add_executable(test testtt.cpp)
-add_executable(test_codec_client test_codec_client.cpp)
-add_executable(test_codec_server test_codec_server.cpp)
-add_executable(test_rpccodec_client test_rpccodec_client.cpp)
-add_executable(test_rpccodec_server test_rpccodec_server.cpp)
-add_executable(test_rpc_client test_rpc_client.cpp)
-add_executable(test_rpc_server test_rpc_server.cpp)
-add_executable(test_echo_server test_echo.cpp)
-add_executable(test_mysql test_mysql.cpp)
-add_executable(test_redis test_redis.cpp)
-add_executable(test_timer test_timer.cpp)
+target_link_libraries(test CommonLibrary)
 
-target_link_libraries(test                  CommonLibrary)
-target_link_libraries(test_codec_client     CommonLibrary)
-target_link_libraries(test_codec_server     CommonLibrary)
-target_link_libraries(test_rpccodec_client  CommonLibrary)
-target_link_libraries(test_rpccodec_server  CommonLibrary)
-target_link_libraries(test_rpc_client       CommonLibrary)
-target_link_libraries(test_rpc_server       CommonLibrary)
-target_link_libraries(test_echo_server      CommonLibrary)
-target_link_libraries(test_mysql            CommonLibrary)
-target_link_libraries(test_redis            CommonLibrary)
-target_link_libraries(test_timer            CommonLibrary)
+add_executable(test_codec_client test_codec_client.cpp)
+target_link_libraries(test_codec_client CommonLibrary)
+
+add_executable(test_codec_server test_codec_server.cpp)
+target_link_libraries(test_codec_server CommonLibrary)
+
+add_executable(test_rpccodec_client test_rpccodec_client.cpp)
+target_link_libraries(test_rpccodec_client CommonLibrary)
+
+add_executable(test_rpccodec_server test_rpccodec_server.cpp)
+target_link_libraries(test_rpccodec_server CommonLibrary)
+
+add_executable(test_rpc_client test_rpc_client.cpp)
+target_link_libraries(test_rpc_client CommonLibrary)
+
+add_executable(test_rpc_server test_rpc_server.cpp)
+target_link_libraries(test_rpc_server CommonLibrary)
+
+add_executable(test_echo_server test_echo.cpp)
+target_link_libraries(test_echo_server CommonLibrary)
+
+add_executable(test_mysql test_mysql.cpp)
+target_link_libraries(test_mysql CommonLibrary)
+
+add_executable(test_redis test_redis.cpp)
+target_link_libraries(test_redis CommonLibrary)
+
+add_executable(test_timer test_timer.cpp)
+target_link_libraries(test_timer CommonLibrary)
+
+add_executable(test_zk test_zk.cpp)
+target_link_libraries(test_zk CommonLibrary)
+

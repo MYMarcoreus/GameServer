@@ -30,11 +30,11 @@ public:
     /* ! 注意：当使用线程池时，不要把recvBuf的引用或指针作为参数传递给另一线程（如线程池中的线程），
        ! MessageCallback需在的调用者线程中（即TcpConnection对象所在线程，即在onMessage中）完成对recvBuf数据的拷贝，
        ! 否则可能在成recvBuf的线程不安全 */
-    void SetMessageCallback(F_UdpMessageCallback cb) { m_MessageCallback = cb; };
+    void SetMessageCallback(F_UdpMessageCallback cb) { m_MessageCallback = std::move(cb); };
 
     EventLoop * GetMainLoop() const { return m_mainLoop; }
 
-    UdpTransport & GetUdpTran() { return * m_udpTran; }
+    UdpTransport & GetUdpTran() { return *m_udpTran; }
 
 private:
     void HandleNewMessage(NetBuffer & recvBuf, IPAddressPtr peerAddr);

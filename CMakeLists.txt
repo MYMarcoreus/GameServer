@@ -132,11 +132,6 @@ include_directories(
 
 
 set(COMMON_SOURCES
-        game/gate/AccountRpcClient.cpp
-        game/gate/AccountRpcClient.h
-        core/zookeeper/ZkServiceManager.cpp
-        core/zookeeper/ZkServiceManager.h
-
 )
 # 调用子目录下的cmake
 add_subdirectory(base)
@@ -149,9 +144,6 @@ add_subdirectory(test)
 
 #! 制作 libCommonLibrary.a 静态库
 add_library(CommonLibrary STATIC ${COMMON_SOURCES}) # STATIC替换为SHARED就为动态库，生成 libCommonLibrary.so
-
-#! 添加多个可执行文件，可在clion选择一个来构建/执行
-add_executable(LogicServer game/logic/main_logic.cpp)
 
 #! 添加系统动态库
 if(CMAKE_HOST_SYSTEM_NAME MATCHES Windows)
@@ -186,8 +178,17 @@ else()
 endif()
 
 
+
+
+
+
+
+#! 添加多个可执行文件，可在clion选择一个来构建/执行
+add_executable(LogicServer game/logic/main_logic.cpp)
 #! 在cmake中指定要链接的动态库的时候，应该将命令写到生成了可执行文件之后，因为是在可执行文件生成后，再将protobuf库链接的
-target_link_libraries(
-        LogicServer
-        CommonLibrary
-)
+target_link_libraries(LogicServer CommonLibrary)
+
+#! 添加多个可执行文件，可在clion选择一个来构建/执行
+add_executable(GateServer game/gate/main_gate.cpp)
+#! 在cmake中指定要链接的动态库的时候，应该将命令写到生成了可执行文件之后，因为是在可执行文件生成后，再将protobuf库链接的
+target_link_libraries(GateServer CommonLibrary)

@@ -63,7 +63,7 @@ private:
 
         {
             YLOG_INFO("消息为：{}\n", message);
-            conn->SendTCP(message);
+            conn->SendRawTCP(message);
         }
     }
 

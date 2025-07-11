@@ -21,14 +21,14 @@ class IServer: util::noncopyable
 public:
     using ptr = std::shared_ptr<IServer>;
     using F_Notifier = std::function<void(const UserConnectionPtr &)>;
-    using F_NotifierCommand = std::function<void(const UserConnectionPtr &, const MessagePtr &)>;
+    using F_NotifierCommand = std::function<void(const UserConnectionPtr &, const MessagePtr &, MessageType)>;
 public:
     IServer() = default;
  
     virtual ~IServer() = default;
 
     /// @brief 开始监听并启动IO线程
-    virtual void Start() = 0;
+    virtual void Start(const net::F_ThreadInitCallback& cb = nullptr) = 0;
 
     /// @brief 结束服务器
     virtual void Stop() = 0;

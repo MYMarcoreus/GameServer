@@ -1,10 +1,10 @@
 #ifndef ZKCLIENT_H
 #define ZKCLIENT_H
 
+#include <zookeeper/zookeeper.h>
 #include <atomic>
 #include <functional>
 #include <shared_mutex>
-#include <zookeeper/zookeeper.h>
 #include <string>
 #include <vector>
 

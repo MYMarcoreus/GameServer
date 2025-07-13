@@ -3,6 +3,7 @@
 #include "log.h"
 #include "NetBuffer.h"
 #include "rpc.pb.h"
+#include "Endian.h"
 
 namespace yy::core
 {
@@ -26,6 +27,7 @@ MessageParseErrorCode RpcHeader::ParseFromBuffer(net::NetBuffer& buf)
 
     // 检查包总长度
     buf.PeekToPodStruct(peekedLen, m_FullLength);
+    m_FullLength = net::network_to_host32(m_FullLength);
     if(m_FullLength < kHeaderSize) {
         return MessageParseErrorCode::eInvalidFullLength;
     }
@@ -51,7 +53,7 @@ bool RpcHeader::AppendIntoBuffer(util::SequentialBuffer& buf)
     }
 
     buf.AppendDataFromCBuffer(m_CheckCode.data(), m_CheckCode.size());
-    buf.AppendDataFromPODStruct(m_FullLength);
+    buf.AppendDataFromPODStruct(net::host_to_network32(m_FullLength));
 
     return true;
 }

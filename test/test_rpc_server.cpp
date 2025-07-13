@@ -1,10 +1,11 @@
 #include "EventLoop.h"
 #include "log.h"
-#include "AccountRpcService.h"
+#include "AccountRpcServiceImpl.h"
 #include "RpcServer.h"
 #include "AppXmlConfig.h"
 #include "ZkServiceManager.h"
 
+#include "Endian.h"
 
 int main()
 {
@@ -14,10 +15,12 @@ int main()
 
     START_YLOG_AFTER_CONFIG()
 
+    yy::net::host_to_network16(16);
+
     yy::net::EventLoop loop{500ms};
     const yy::net::IPAddressPtr listenAddr = std::make_shared<yy::net::IPv4Address>(yy::config::g_app_config->GetValue().rpc_port());
     yy::core::RpcServer server(&loop, listenAddr);
-    server.RegisterService<yy::app::login::AccountRpcService>();
+    server.RegisterService<yy::app::login::AccountRpcServiceImpl>();
     server.Start();
     loop.Loop();
 

@@ -1,11 +1,9 @@
+#pragma once
 #pragma warning(disable:4068)
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "modernize-use-equals-delete"
-#ifndef ____SINGLETON_H
-#define ____SINGLETON_H
 
-#include<memory>
-// #include<ext/new_allocator.h>
+
 #include<mutex>
 
 /// @brief 在首次Instance时会调用子类T的构造函数和析构函数，因此Singleton必须能够调用子类的构造/析构函数,所以子类T必须声明Singleton为其友元
@@ -70,5 +68,4 @@ protected: //! 单例基类的构造或析构需要被子类(T)继承，然而�
 };
 */
 
-#endif // !____SINGLETON_H
 #pragma clang diagnostic pop

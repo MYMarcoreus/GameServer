@@ -8,7 +8,8 @@ set(LocalSrc
         player.pb.cc
         query.pb.cc
         rpc.pb.cc
-        login.pb.cc
+        account.pb.cc
+        center.pb.cc
 )
 
 #! 给本地相对路径添加前缀，变为绝对路径

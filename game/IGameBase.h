@@ -11,7 +11,7 @@ namespace yy::app {
 //     using ptr = std::shared_ptr<IGameBase>;
 // public:
 //
-//     virtual void Init() = 0;
+//     virtual void Start() = 0;
 //
 //     // virtual void StartListenAndIOLoop() = 0;
 // protected:

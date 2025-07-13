@@ -4,7 +4,6 @@
 #include "log.h"
 #include "RpcCodec.h"
 #include "TcpServer.h"
-#include "ZkClient.h"
 
 #include <google/protobuf/message.h>
 #include <google/protobuf/service.h>
@@ -29,7 +28,7 @@ namespace yy::core
 
 // 服务提供方
 class RpcServer {
-    inline static const std::string kServiceRoot = "/services";
+    inline static const std::string kServiceRoot = "/rpc_services";
 public:
     RpcServer(yy::net::EventLoop* accpetorLoop, const yy::net::IPAddressPtr& listenAddr);
     ~RpcServer();
@@ -41,8 +40,15 @@ public:
     void Stop() ;
 
     template <typename ServiceType>
-        requires std::is_base_of_v<google::protobuf::Service, ServiceType>
+    requires requires(ServiceType t) {
+        // 必须继承自 protobuf::Service
+        requires std::derived_from<ServiceType, google::protobuf::Service>;
+        requires (!requires {
+            { t.channel() } -> std::convertible_to<google::protobuf::RpcChannel*>;
+        });
+    }
     void RegisterService();
+
 
 private:
     void OnRpcRequest(const net::TcpConnectionPtr& conn, const RpcMessagePtr& msg);
@@ -60,7 +66,13 @@ private:
 };
 
 template <typename ServiceType>
-    requires std::is_base_of_v<google::protobuf::Service, ServiceType>
+requires requires(ServiceType t) {
+    // 必须继承自 protobuf::Service
+    requires std::derived_from<ServiceType, google::protobuf::Service>;
+    requires (!requires {
+        { t.channel() } -> std::convertible_to<google::protobuf::RpcChannel*>;
+    });
+}
 void RpcServer::RegisterService()
 {
     auto service = std::make_unique<ServiceType>();

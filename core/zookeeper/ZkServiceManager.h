@@ -13,7 +13,7 @@ class ZkServiceManager final : public Singleton<ZkServiceManager> {
     mutable std::once_flag  zk_client_init_flag_;
 public:
     using WatcherCallback = std::function<void(const std::string&, std::vector<yy::net::IPAddressPtr> &&)>;
-    void Init(const std::string & service_root);
+    void Start(const std::string & service_root);
 
     // 注册服务（服务名 + 实例地址）
     bool Register(const std::string& service_name, const std::string& ip, const std::string& port);

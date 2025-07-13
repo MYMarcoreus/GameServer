@@ -1,12 +1,11 @@
 #include "ZkServiceManager.h"
-#include <format>
-
 #include "IPAddress.h"
 #include "log.h"
+#include <format>
 
 namespace yy::core::zk
 {
-void ZkServiceManager::Init(const std::string& service_root)
+void ZkServiceManager::Start(const std::string& service_root)
 {
     std::call_once(zk_client_init_flag_, [this, &service_root]() {
         service_root_ = service_root;

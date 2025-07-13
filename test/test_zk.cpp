@@ -8,7 +8,7 @@
 void testfun1()
 {
     auto & zkma = yy::core::zk::ZkServiceManager::Instance();
-    zkma.Init("/services");
+    zkma.Start("/services");
 
     zkma.Register("test_service1", "127.0.0.1", "114514");
     zkma.Register("test_service1", "127.0.0.2", "13140");
@@ -68,7 +68,7 @@ void testfun1()
 void testfun2()
 {
     auto & zkma = yy::core::zk::ZkServiceManager::Instance();
-    zkma.Init("/services");
+    zkma.Start("/services");
 
     zkma.Register("test_service1", "127.0.0.1", "114514");
     zkma.Register("test_service1", "127.0.0.2", "13140");
@@ -128,7 +128,7 @@ void testfun2()
 void testfun3()
 {
     auto & zkma = yy::core::zk::ZkServiceManager::Instance();
-    zkma.Init("/services");
+    zkma.Start("/services");
 
     zkma.Register("test_service1", "127.0.0.1", "114514");
     zkma.Register("test_service1", "127.0.0.2", "13140");

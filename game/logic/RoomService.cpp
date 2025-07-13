@@ -26,7 +26,7 @@ namespace yy::app::logic {
 
 
 RoomService::RoomService()
-    : m_server{LogicServerManager::Instance().GetServer()}, m_player_pool{m_server->GetAppConfig().app_player_max()},
+    : m_server{LogicServerManager::Instance().GetServer()}, m_player_pool{m_server.GetAppConfig().app_player_max()},
       m_global_id{10000}
 {
     LogicServerManager::Instance().RegisterMessageCallback<C2SEnterScene>( [this](const UserConnectionPtr& user, const Ptr<C2SEnterScene>& msg) { this->OnEnterScene(user, msg); });
@@ -36,7 +36,7 @@ RoomService::RoomService()
     LogicServerManager::Instance().RegisterMessageCallback<C2SPlayerLeave>( [this](const UserConnectionPtr& user, const Ptr<C2SPlayerLeave>& msg) { this->OnLeave(user, msg); });
 
 
-    // m_server->RunTaskEvery(1s, [this]() {
+    // m_server.RunTaskEvery(1s, [this]() {
     //     std::lock_guard lg{this->m_room_players_mutex};
     //
     //     for(auto it = m_room_players.begin(); it != m_room_players.end() ;it++) {
@@ -69,7 +69,7 @@ void RoomService::Update()
     for(auto it = m_room_players.begin() ; it != m_room_players.end() ;)
     {
         auto playerdata = it->second;
-        auto userdata = m_server->FindUser(playerdata->conn_name());
+        auto userdata = m_server.FindUser(playerdata->conn_name());
         if(userdata == nullptr){
             it++;
             continue;
@@ -87,7 +87,7 @@ void RoomService::Update()
             // YLOG_INFO("玩家<{}>离开，数据已保存", playerLeave.uid())
             //
             // // 重置数据，从在线玩家列表中删除，回收至对象池
-            // m_server->DelUser(userdata);
+            // m_server.DelUser(userdata);
             // playerdata->Clear();
             // m_player_pool.push(playerdata);
             //
@@ -127,7 +127,7 @@ void RoomService::Broadcast(const UserConnectionPtr &from, const google::protobu
             continue;
 
         YLOG_TRACE("Broadcast<{}>: from {} to {}, ", data.GetDescriptor()->full_name(), from->GetUID(), to_uid)
-        auto to = m_server->FindUser(to_connid);
+        auto to = m_server.FindUser(to_connid);
         if(to == nullptr) continue;
 
         // to->SendTCP(data);
@@ -164,7 +164,7 @@ void RoomService::LeaveAndSave(UserConnectionPtr leave_user) {
     YLOG_INFO("玩家<{}>离开并保存数据！", leave_user->GetUID());
 
     leave_user->SetState(core::UserConnection::E_UserBaseState::eFree);
-    m_server->DelUser(leave_user->GetConnID());
+    m_server.DelUser(leave_user->GetConnID());
 }
 
 

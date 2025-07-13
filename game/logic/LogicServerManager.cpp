@@ -13,20 +13,17 @@ namespace yy::app::logic {
 
 
 LogicServerManager::LogicServerManager():
-      m_server{},
+      m_server{nullptr},
       m_room_service{},
       m_test_service{},
       m_dispatcher{[this](const core::UserConnectionPtr& userdata, const core::MessagePtr& message) { this->UnkonwnCommand(userdata, message); }},
-      m_accpetorLoop{},
+      m_accpetorLoop{nullptr},
       m_wordThreads("Game Work Thread")
 {
 }
 
 LogicServerManager::~LogicServerManager() {
     m_server->Stop();
-
-    delete m_server;
-    delete m_accpetorLoop;
 }
 
 
@@ -75,12 +72,8 @@ void LogicServerManager::RunApp()
     //! 初始化服务器
     Init();
 
-    //! 启动服务器的监听和IO线程
-    StartListenAndIOLoop();
-
     //! 启动服务器的工作线程
-    m_wordThreads.Start(m_accpetorLoop, config::g_app_config->GetValue().work_thread_num());
-    // this->m_wordThreads.RunTaskEvery( 8333us, [this](){this->m_server->Update();});
+    m_wordThreads.Start(m_accpetorLoop.get(), config::g_app_config->GetValue().work_thread_num());
 
     //! 启动监听线程(即主线程)的
     m_accpetorLoop->Loop();
@@ -96,14 +89,14 @@ void LogicServerManager::Init()
     yy::Ylog::LoggerManager::Instance().ReadConfigs();
 
     //! ③、初始化
-    m_accpetorLoop = new net::EventLoop(500ms);
+    m_accpetorLoop = std::make_unique<net::EventLoop>(500ms);
 
     //! ④、初始化监听的端口和IP地址(IP地址未给出，则使用INADDR_ANY绑定所有IP地址)
-    yy::net::IPAddressPtr listenAddr = std::make_shared<net::IPv4Address>(
+    const yy::net::IPAddressPtr listenAddr = std::make_shared<net::IPv4Address>(
             config::g_app_config->GetValue().app_tcp_port());
 
     //! ⑤、初始化服务器对象（③和④）
-    m_server = new LogicServer(m_accpetorLoop, listenAddr);
+    m_server = std::make_unique<LogicServer>(m_accpetorLoop.get(), listenAddr);
     m_server->SetNotifier_Security(
         [this](const core::UserConnectionPtr& userdata) {
             this->AppNotifier_Secutiry(userdata);
@@ -120,15 +113,13 @@ void LogicServerManager::Init()
         });
 
 
-    m_room_service = &RoomService::Instance();
+    m_room_service = std::make_unique<RoomService>();
     m_room_service->Init();
 
-    m_test_service = &TestService::Instance();
+    m_test_service = std::make_unique<TestService>();
     m_test_service->Init();
-}
 
-void LogicServerManager::StartListenAndIOLoop()
-{
+    //! 启动服务器的监听和IO线程
     m_server->Start();
 }
 

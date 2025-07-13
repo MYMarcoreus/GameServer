@@ -16,6 +16,9 @@ using yy::net::TcpConnectionPtr;
 
 using yy::protocol::app::C2SLogin;
 using yy::protocol::app::C2SRegister;
+using yy::protocol::app::S2CLogin;
+using yy::protocol::app::S2CRegister;
+
 
 template<class T>
 using Ptr = std::shared_ptr<T>;
@@ -29,23 +32,8 @@ GateServerManager::GateServerManager():
     m_dispatcher{[this](const core::UserConnectionPtr& userconn, const core::MessagePtr& message) { this->UnkonwnCommand(userconn, message); }},
     m_workThreads("Gate Work Thread")
 {
-    m_dispatcher.RegisterMessageCallback<C2SLogin>(
-        [this](const UserConnectionPtr& user, const Ptr<C2SLogin>& request) {
-            const bool sucess = m_accountRpcClient->ForwardLogin(request);
-            if (not sucess) {
-                YLOG_WARN("C2SLogin消息转发到 {} 失败", request->GetTypeName(), user->GetConnection()->GetConnID())
-                user->Shutdown();
-            }
-        });
-
-    m_dispatcher.RegisterMessageCallback<C2SRegister>(
-        [this](const UserConnectionPtr& user, const Ptr<C2SRegister>& request) {
-            const bool sucess = m_accountRpcClient->ForwardRegister(request);
-            if (not sucess) {
-                YLOG_WARN("C2SRegister消息转发到 {} 失败", request->GetTypeName(), user->GetConnection()->GetConnID())
-                user->Shutdown();
-            }
-        });
+    RegisterRpcForward<C2SLogin, S2CLogin>();
+    RegisterRpcForward<C2SRegister, S2CRegister>();
 }
 
 GateServerManager::~GateServerManager() {
@@ -90,6 +78,21 @@ void GateServerManager::RunApp()
     m_accpetorLoop->Loop();
 }
 
+void GateServerManager::TestRpcConnectionEstablished(const yy::net::TcpConnectionPtr& conn)
+{
+    YLOG_INFO("连接至<{}:{}>，我方地址为<{}:{}>", conn->GetPeerAddr()->GetIPStr().c_str(), conn->GetPeerAddr()->GetPort()
+                                            , conn->GetLocalAddr()->GetIPStr().c_str(), conn->GetLocalAddr()->GetPort());
+
+    auto req = std::make_shared<yy::protocol::app::C2SLogin>();
+    req->set_username("sadamofn");
+    req->set_password("114514");
+    req->set_session_id(101010);
+    m_accountRpcClient->CallRemoteAsync<yy::protocol::app::C2SLogin, yy::protocol::app::S2CLogin>(req,
+        [](std::unique_ptr<yy::protocol::app::S2CLogin> && response, std::unique_ptr<yy::core::RpcControllerImpl> && controller) {
+            YLOG_INFO("回复：{}", response->token())
+        });
+}
+
 
 void GateServerManager::Init()
 {
@@ -100,6 +103,11 @@ void GateServerManager::Init()
     yy::Ylog::LoggerManager::Instance().ReadConfigs();
 
     m_accountRpcClient = std::make_unique<AccountRpcClient>();
+    m_accountRpcClient->Start(10,
+        [this](const net::TcpConnectionPtr & conn) {
+            this->TestRpcConnectionEstablished(conn);
+        }
+    );
 
     /*********** 启动前端 ***********/
     //! 初始化监听的端口和IP地址(IP地址未给出，则使用INADDR_ANY绑定所有IP地址)

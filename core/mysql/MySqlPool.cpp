@@ -76,7 +76,7 @@ void MySqlPool::check_connection()
         //解锁后做检查/重连逻辑
         if (timestamp - con->last_oper_time >= 5) {
             try {
-                con->conn.sql("SELECT 1").execute();
+                con->conn.sql("SELECT 1").execute().count() > 0;
                 con->last_oper_time = timestamp;
             }
             catch (const mysqlx::Error& e) {

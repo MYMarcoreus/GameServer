@@ -87,10 +87,13 @@ private:
 
     std::array<char, kCheckCodeSize> XorCheckCode(uint8_t xorCode) const;
     // uint32_t    XorClientID(uint8_t xorCode) const;
-    uint32_t    XorFullLength(uint8_t xorCode) const;
-    uint16_t    XorNameLength(uint8_t xorCode) const;
-    std::string XorTypeName(uint8_t xorCode) const;
+    uint32_t    XorNetFullLength(uint8_t xorCode) const;
+    uint16_t    XorNetNameLength(uint8_t xorCode) const;
 
+    uint32_t    XorHostFullLength(uint8_t xorCode) const;
+    uint16_t    XorHostNameLength(uint8_t xorCode) const;
+
+    std::string XorTypeName(uint8_t xorCode) const;
 private:
     std::array<char, kCheckCodeSize> m_CheckCode;      // 2B: 用于验证该包是否是我们规定的游戏协议包
     // uint32_t                         m_ClientID;       // 4B：客户端ID

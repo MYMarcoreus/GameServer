@@ -99,6 +99,8 @@ extern std::chrono::nanoseconds TimespecToDuration(struct timespec spec);
 extern std::string GetLastErrorInfo();
 extern std::string GetErrorInfo(int64_t err);
 
+extern std::string GenerateToken(size_t length = 32);
+
 }
 
 

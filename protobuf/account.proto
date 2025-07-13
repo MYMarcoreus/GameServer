@@ -7,7 +7,7 @@ option cc_generic_services = true;
 message C2SLogin {
     uint64 session_id = 1;
 
-    string account_name = 3;
+    string username = 3;
     string password = 4;
 }
 
@@ -16,20 +16,22 @@ message S2CLogin {
 
     enum Status {
         eSuccess = 0;
-        eAccountNoExist = 1;
+        eAccountNotExist = 1;
         ePasswordError = 2;
         eUnknownError = 3;
     }
     Status result_code = 2;
-    optional uint64 logic_server_id = 3;
-    optional uint64 account_id = 4;
-    optional string account_name = 5;
+
+    optional string username = 3;
+    optional string ip = 4;
+    optional uint32 port = 5;
+    optional string token = 6;
 }
 
 message C2SRegister {
     uint64 session_id = 1;
 
-    string account_name = 3;
+    string username = 3;
     string password = 4;
 }
 

@@ -1,96 +1,14 @@
-#include "RpcClientPool.hpp"
+#include "RpcStubPool.hpp"
 #include "TcpConnection.h"
 #include "EventLoop.h"
 #include "log.h"
 #include "rpc.pb.h"
 #include "RemoteXmlConfig.h"
-#include "login.pb.h"
-#include "RpcController.h"
+#include "account.pb.h"
+#include "RpcControllerImpl.h"
+#include "AccountRpcClient.h"
 
-using yy::protocol::core::RpcMessage;
-using yy::protocol::app::AccountServiceRpc;
-using yy::protocol::app::AccountServiceRpc_Stub;
-using yy::protocol::app::S2CLogin;
-using yy::protocol::app::C2SLogin;
-
-
-
-namespace yy::test
-{
-class AccountRpcClient
-{
-public:
-    explicit AccountRpcClient(yy::net::EventLoop * loop): pool_{10}, loop_{loop}
-    {
-        pool_.SetConnectionEstablishedCallback([this](const yy::net::TcpConnectionPtr& conn) {
-            YLOG_INFO("连接至<{}:{}>，我方地址为<{}:{}>", conn->GetPeerAddr()->GetIPStr().c_str(), conn->GetPeerAddr()->GetPort()
-                                                     , conn->GetLocalAddr()->GetIPStr().c_str(), conn->GetLocalAddr()->GetPort());
-        });
-        pool_.SetServiceChangeCallback([this](std::vector<yy::net::IPAddressPtr>&&) {
-            cur_context_ = pool_.Acquire_AutoConnect();
-        });
-
-        pool_.Start();
-    }
-
-    void Start()
-    {
-        auto timerid = loop_->RunEvery(10ms, [this]() {
-            if (cur_context_ == nullptr) {
-                YLOG_ERROR("不存在有效的服务，服务连接池返回空指针")
-                return;
-            }
-            SendLogin();
-        });
-
-        loop_->RunAfter(300s, [this, timerid]() {
-            this->loop_->CancelTimer(timerid);
-        });
-    }
-
-    void SendLogin()
-    {
-        static std::atomic_size_t cnt_ = 0;
-
-        C2SLogin request;
-        request.set_account_name("nice_client" + std::to_string(cnt_));
-        request.set_password("good_pwd" + std::to_string(cnt_));
-        request.set_session_id(cnt_);
-        ++cnt_;
-
-        auto response = new S2CLogin;
-        auto controller = new yy::core::RpcController;
-        controller->set_wait_for_ready(true);
-        controller->set_timeout(5s);
-
-        cur_context_->Stub().Login(
-            controller,
-            &request,
-            response,
-            yy::core::NewLambdaClosureT([this, response, controller]()  {
-                auto resp = std::unique_ptr<S2CLogin>(response);
-                auto ctrl = std::unique_ptr<yy::core::RpcController>(controller);
-                this->LoginFinished(std::move(resp), std::move(ctrl));
-            })
-        );
-    }
-
-private:
-    void LoginFinished(std::unique_ptr<S2CLogin> && response, std::unique_ptr<yy::core::RpcController> && controller)
-    {
-        if (controller->Failed()) {
-            YLOG_INFO("Login失败！");
-        } else {
-            YLOG_INFO("Login返回结果：{}, {}, {}", response->account_id(), response->account_name(), response->session_id());
-        }
-    }
-
-    yy::core::RpcClientPool<AccountServiceRpc>          pool_;
-    std::shared_ptr<decltype(pool_)::RpcClientContext>  cur_context_;
-    yy::net::EventLoop *                                loop_;
-};
-
-}
+using yy::app::gate::AccountRpcClient;
 
 int main()
 {
@@ -102,10 +20,21 @@ int main()
 
     yy::net::EventLoop loop{200ms};
 
-    std::vector<std::unique_ptr<yy::test::AccountRpcClient>> clients;
+    std::vector<std::unique_ptr<AccountRpcClient>> clients;
     for (int i = 0; i < 10; ++i) {
-        auto client = std::make_unique<yy::test::AccountRpcClient>(&loop);
-        client->Start();
+        auto client = std::make_unique<AccountRpcClient>();
+        client->Start(10, [&client_raw = *client](const yy::net::TcpConnectionPtr & conn) {
+            YLOG_INFO("连接至<{}:{}>，我方地址为<{}:{}>", conn->GetPeerAddr()->GetIPStr().c_str(), conn->GetPeerAddr()->GetPort()
+                                                    , conn->GetLocalAddr()->GetIPStr().c_str(), conn->GetLocalAddr()->GetPort());
+            const auto req = std::make_shared<yy::protocol::app::C2SLogin>();
+            req->set_username("sadamofn");
+            req->set_password("114514");
+            req->set_session_id(101010);
+            client_raw.CallRemoteAsync<yy::protocol::app::C2SLogin, yy::protocol::app::S2CLogin>(req,
+                [](std::unique_ptr<yy::protocol::app::S2CLogin> && response, std::unique_ptr<yy::core::RpcControllerImpl> && controller) {
+                    YLOG_INFO("回复：{}", response->token())
+                });
+        });
         clients.emplace_back(std::move(client));
     }
 

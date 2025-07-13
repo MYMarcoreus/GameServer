@@ -30,14 +30,12 @@ public:
         m_dispatcher.RegisterMessageCallback<T>(callback);
     }
 
-    IServer * GetServer() { return m_server; }
+    IServer& GetServer() const { return *m_server; }
 private:
     LogicServerManager();
     ~LogicServerManager() override;
 
     void Init();
-
-    void StartListenAndIOLoop();
 
     void AppNotifier_Secutiry(const core::UserConnectionPtr& userdata) ;
     void AppNotifier_Disconnect(const core::UserConnectionPtr& userdata) ;
@@ -46,11 +44,11 @@ private:
     void UnkonwnCommand(const core::UserConnectionPtr &, const core::MessagePtr &);
 
 
-    IServer   * m_server;
-    RoomService * m_room_service;
-    TestService   * m_test_service;
+    std::unique_ptr<yy::net::EventLoop>  m_accpetorLoop;
+    std::unique_ptr<IServer> m_server;
+    std::unique_ptr<RoomService> m_room_service;
+    std::unique_ptr<TestService> m_test_service;
     core::ProtobufDispatcher<core::UserConnectionPtr> m_dispatcher; // 处理下层(core层)分发传来的无法处理的消息
-    yy::net::EventLoop * m_accpetorLoop;
 
     yy::net::ThreadPool m_wordThreads;
 };

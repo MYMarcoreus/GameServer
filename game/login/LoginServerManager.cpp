@@ -1,10 +1,14 @@
-#include "LoginMaganer.h"
+#include "LoginServerManager.h"
 #include "log.h"
 #include "EventLoop.h"
 #include "LoginServer.h"
-#include "login.pb.h"
+#include "account.pb.h"
+#include "RpcServer.h"
+#include "AccountRpcServiceImpl.h"
+
 #include <future>
 #include <functional>
+
 
 using namespace std::chrono_literals;
 using namespace yy::core;
@@ -22,42 +26,39 @@ using Ptr = std::shared_ptr<T>;
 namespace yy::app::login {
 
 
-LoginManager::LoginManager():
-      m_server{},
+LoginServerManager::LoginServerManager():
+      m_server{nullptr},
       m_dispatcher{[this](const core::UserConnectionPtr& userdata, const core::MessagePtr& message) { this->UnkonwnCommand(userdata, message); }},
-      m_accpetorLoop{},
+      m_accpetorLoop{nullptr},
       m_wordThreads("Login Work Thread")
 {
-    m_dispatcher.RegisterMessageCallback<C2SLogin>(
-        [this](const UserConnectionPtr& user, const Ptr<C2SLogin>& msg) {
-            // this->OnLogin(user, msg);
-        });
+    // m_dispatcher.RegisterMessageCallback<XXXX>(
+    //     [this](const UserConnectionPtr& user, const Ptr<XXXX>& msg) {
+    //     });
 }
 
-LoginManager::~LoginManager() {
+LoginServerManager::~LoginServerManager() {
     m_server->Stop();
-
-    delete m_server;
-    delete m_accpetorLoop;
+    m_rpcServer->Stop();
 }
 
 
-void LoginManager::AppNotifier_Secutiry(const core::UserConnectionPtr& userdata) {
+void LoginServerManager::AppNotifier_Secutiry(const core::UserConnectionPtr& userdata) {
     userdata->SetState(core::UserConnection::E_UserBaseState::eSecure);
 }
 
-void LoginManager::AppNotifier_Disconnect(const core::UserConnectionPtr& userdata) {
+void LoginServerManager::AppNotifier_Disconnect(const core::UserConnectionPtr& userdata) {
     YLOG_INFO("↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ 用户<{}>断开连接", userdata->GetUID())
 }
 
-void LoginManager::AppNotifier_Command(const core::UserConnectionPtr & userdata, const core::MessagePtr & message, const MessageType type)
+void LoginServerManager::AppNotifier_Command(const core::UserConnectionPtr & userdata, const core::MessagePtr & message, const MessageType type)
 {
     m_wordThreads.PushTask([this, userdata, message](){
         m_dispatcher.OnProtobufMessage(userdata, message);
     });
 }
 
-void LoginManager::UnkonwnCommand(const core::UserConnectionPtr & userdata, const core::MessagePtr & message)
+void LoginServerManager::UnkonwnCommand(const core::UserConnectionPtr & userdata, const core::MessagePtr & message)
 {
     YLOG_DEBUG("未知的消息类型：{}", message->GetDescriptor()->full_name())
     userdata->Shutdown();
@@ -67,24 +68,21 @@ void LoginManager::UnkonwnCommand(const core::UserConnectionPtr & userdata, cons
 
 
 
-void LoginManager::RunApp()
+void LoginServerManager::RunApp()
 {
     //! 初始化服务器
     Init();
 
-    //! 启动服务器的监听和IO线程
-    StartListenAndIOLoop();
-
     //! 启动服务器的工作线程
-    m_wordThreads.Start(m_accpetorLoop, config::g_app_config->GetValue().work_thread_num());
+    m_wordThreads.Start(m_accpetorLoop.get(), config::g_app_config->GetValue().work_thread_num());
     // this->m_wordThreads.RunTaskEvery( 8333us, [this](){this->m_server->Update();});
 
-    //! 启动监听线程(即主线程)的
+    //! 启动监听线程(即主线程)并阻塞在此
     m_accpetorLoop->Loop();
 }
 
 
-void LoginManager::Init()
+void LoginServerManager::Init()
 {
     //! ①、读取配置文件
     yy::config::ConfigManager::LoadXmlConfigs();
@@ -93,14 +91,14 @@ void LoginManager::Init()
     yy::Ylog::LoggerManager::Instance().ReadConfigs();
 
     //! ③、初始化
-    m_accpetorLoop = new net::EventLoop(500ms);
+    m_accpetorLoop = std::make_unique<net::EventLoop>(500ms);
 
     //! ④、初始化监听的端口和IP地址(IP地址未给出，则使用INADDR_ANY绑定所有IP地址)
-    yy::net::IPAddressPtr listenAddr = std::make_shared<net::IPv4Address>(
+    const yy::net::IPAddressPtr listenAddr = std::make_shared<net::IPv4Address>(
             config::g_app_config->GetValue().app_tcp_port());
 
     //! ⑤、初始化服务器对象（③和④）
-    m_server = new LoginServer(m_accpetorLoop, listenAddr);
+    m_server = std::make_unique<LoginServer>(m_accpetorLoop.get(), listenAddr);
     m_server->SetNotifier_Security(
         [this](const core::UserConnectionPtr& userdata) {
             this->AppNotifier_Secutiry(userdata);
@@ -115,11 +113,15 @@ void LoginManager::Init()
         [this](const core::UserConnectionPtr & userdata, const core::MessagePtr & message, const MessageType type) {
             this->AppNotifier_Command(userdata, message, type);
         });
-}
 
-void LoginManager::StartListenAndIOLoop()
-{
+    //! 启动服务器的监听和IO线程
     m_server->Start();
+
+    const yy::net::IPAddressPtr rpcAddr = std::make_shared<net::IPv4Address>(
+            config::g_app_config->GetValue().rpc_port());
+    m_rpcServer = std::make_unique<RpcServer>(m_accpetorLoop.get(), rpcAddr);
+    m_rpcServer->RegisterService<AccountRpcServiceImpl>();
+    m_rpcServer->Start();
 }
 
 

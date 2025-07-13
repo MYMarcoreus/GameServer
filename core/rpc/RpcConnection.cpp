@@ -2,7 +2,7 @@
 #include "log.h"
 #include "RemoteXmlConfig.h"
 #include "rpc.pb.h"
-#include "RpcController.h"
+#include "RpcControllerImpl.h"
 #include "TcpConnection.h"
 
 
@@ -51,7 +51,7 @@ void RpcConnection::CallMethod(const google::protobuf::MethodDescriptor* method,
                                google::protobuf::Message* response, google::protobuf::Closure* done)
 {
     if (conn_ == nullptr or not conn_->IsConnected()) {
-        auto ctrl = dynamic_cast<RpcController*>(controller);
+        auto ctrl = dynamic_cast<RpcControllerImpl*>(controller);
         if (not ctrl->is_wait_for_ready()) {
             ctrl->SetFailed("Connection is not ready");
             if (done) done->Run();

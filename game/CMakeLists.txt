@@ -7,11 +7,11 @@ set(LocalSrc
         logic/LogicServerManager.cpp
         logic/RoomService.cpp
         logic/TestService.cpp
-        login/LoginMaganer.cpp
-        login/AccountRpcService.cpp
+        login/LoginServerManager.cpp
+        login/AccountRpcServiceImpl.cpp
+        login/CenterRpcClient.cpp
         gate/GateServerManager.cpp
         gate/AccountRpcClient.cpp
-        gate/AccountRpcClient.h
 )
 
 #! 给本地相对路径添加前缀，变为绝对路径

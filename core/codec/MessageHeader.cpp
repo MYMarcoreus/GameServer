@@ -3,6 +3,7 @@
 #include "core_definations.h"
 #include "AppXmlConfig.h"
 #include "log.h"
+#include "Endian.h"
 #include <algorithm>
 #include <google/protobuf/message.h>
 #include <array>
@@ -24,26 +25,14 @@ requires requires {
     requires std::is_trivial_v<T>;
     requires !std::is_pointer_v<T>;
 }
-T CalcXor(T val, uint8_t xorCode) {
-    auto p = static_cast<char*>(&val);
+T XorBytes(T val, uint8_t xorCode) {
+    auto p = reinterpret_cast<char*>(&val);
     for (int i = 0; i < sizeof(T); ++i) {
         *p ^= xorCode;
         ++p;
     }
     return val;
 }
-
-template<class T>
-requires requires {
-    requires yy::util::is_iterable_container_v<T>;
-    requires std::is_standard_layout_v<typename T::value_type>;
-    requires std::is_trivial_v<typename T::value_type>;
-}
-T CalcXor(T val, uint8_t xorCode) {
-    std::for_each(std::begin(val), std::end(val), [xorCode](typename T::value_type & ch) { CalcXor(ch, xorCode); });
-    return val;
-}
-
 
 }
 
@@ -76,7 +65,7 @@ MessageParseErrorCode MessageHeader::ParseFromBuffer(net::NetBuffer &buf, uint8_
 
     /**** FullLength ****/
     buf.PeekToPodStruct(peekedLen, m_FullLength);
-    m_FullLength = XorFullLength(xorCode);
+    m_FullLength = XorNetFullLength(xorCode);
     if(m_FullLength < kMinHeaderLen) {
         return MessageParseErrorCode::eInvalidFullLength;
     }
@@ -87,7 +76,7 @@ MessageParseErrorCode MessageHeader::ParseFromBuffer(net::NetBuffer &buf, uint8_
 
     /**** TypeNameLength ****/
     buf.PeekToPodStruct(peekedLen, m_TypeNameLength);
-    m_TypeNameLength = XorNameLength(xorCode);
+    m_TypeNameLength = XorNetNameLength(xorCode);
     if(buf.GetDataSize() < CalcHeaderLen()) { //! TypeName还没接收完全
         return MessageParseErrorCode::eNotReceiveFullHeader;
     }
@@ -118,8 +107,8 @@ bool MessageHeader::AppendIntoBuffer(util::SequentialBuffer& buf, uint8_t xorCod
     }
 
     buf.AppendDataFromCBuffer(XorCheckCode(xorCode).data(), sizeof(m_CheckCode)) ;
-    buf.AppendDataFromPODStruct(XorFullLength(xorCode)) ;
-    buf.AppendDataFromPODStruct(XorNameLength(xorCode)) ;
+    buf.AppendDataFromPODStruct(XorHostFullLength(xorCode)) ;
+    buf.AppendDataFromPODStruct(XorHostNameLength(xorCode)) ;
     buf.AppendDataFromCBuffer(XorTypeName(xorCode).c_str(), m_TypeNameLength);
 
     return true;
@@ -137,7 +126,7 @@ void MessageHeader::SetAllFieldsFromMessage(const google::protobuf::Message &mes
     SetCheckCode(config::g_app_config->GetValue().check_code());
 
     // SetClientID(cid);
-    std::string typeName = message.GetDescriptor()->full_name();
+    const std::string typeName = message.GetDescriptor()->full_name();
     SetTypeNameLength(typeName.length());
     SetTypeName(typeName);
 
@@ -156,17 +145,18 @@ MessageHeader::XorCheckCode(const uint8_t xorCode) const {
 
 // uint32_t MessageHeader::XorClientID(const uint8_t xorCode) const { return m_ClientID ^ xorCode; }
 
-uint32_t MessageHeader::XorFullLength(const uint8_t xorCode) const { return m_FullLength ^ xorCode; }
+uint32_t MessageHeader::XorNetFullLength(const uint8_t xorCode) const { return net::network_to_host32(XorBytes(m_FullLength, xorCode)); }
 
-uint16_t MessageHeader::XorNameLength(const uint8_t xorCode) const { return m_TypeNameLength ^ xorCode; }
+uint16_t MessageHeader::XorNetNameLength(const uint8_t xorCode) const { return net::network_to_host16(XorBytes(m_TypeNameLength, xorCode)); }
+
+uint32_t MessageHeader::XorHostFullLength(const uint8_t xorCode) const { return XorBytes(net::host_to_network32(m_FullLength), xorCode)  ; }
+
+uint16_t MessageHeader::XorHostNameLength(const uint8_t xorCode) const { return XorBytes(net::host_to_network16(m_TypeNameLength), xorCode); }
 
 std::string MessageHeader::XorTypeName(uint8_t xorCode) const {
     std::string val = m_TypeName;
-    std::for_each(std::begin(val), std::end(val), [xorCode](char & ch) { ch ^= xorCode; });
+    std::ranges::for_each(val, [xorCode](char & ch) { ch ^= xorCode; });
     return val;
 }
-
-
-
 
 }

@@ -51,7 +51,7 @@ BackendManager::BackendManager():
 void BackendManager::Init(net::EventLoop * loop)
 {
     //! 服务发现：读取其他服务器的地址
-    m_zk.Init(kServiceRoot);
+    m_zk.Start(kServiceRoot);
     m_routeTable = m_zk.FetchAllRemote();
 
     // 与其它服务器建立连接

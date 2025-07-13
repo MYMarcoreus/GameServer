@@ -13,6 +13,8 @@
 #include <ctime>
 #include <stdexcept>
 #include <system_error>
+#include <random>
+#include <string>
 
 #ifdef ____LINUX
     #include <sys/socket.h>
@@ -266,6 +268,23 @@ std::string GetErrorInfo(int64_t err) {
     auto p = strerrorname_np(err);
     return std::string( p ? p : "" ) + "(" + StrError((int)err) + ")";
 #endif
+}
+
+
+
+std::string GenerateToken(const size_t length) {
+    static constexpr char charset[] =
+        "0123456789"
+        "abcdefghijklmnopqrstuvwxyz"
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    static thread_local std::mt19937 gen{std::random_device{}()};
+    static thread_local std::uniform_int_distribution<> dis(0, sizeof(charset) - 2);
+
+    std::string token;
+    token.reserve(length);
+    for (size_t i = 0; i < length; ++i)
+        token += charset[dis(gen)];
+    return token;
 }
 
 

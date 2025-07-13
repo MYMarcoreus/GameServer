@@ -4,15 +4,16 @@ namespace yy::core {
 
 using namespace sw::redis;
 
-void RedisClient::Init(net::EventLoop * loop, size_t pool_size, const std::string& uri) {
+void RedisClient::Start(net::EventLoop * loop, size_t pool_size, const std::string& uri) {
     if (!pool_) {
         pool_ = std::make_unique<RedisPool>(loop, uri, pool_size);
     }
 }
 
-void RedisClient::Set(const std::string& key, const std::string& value) {
+bool RedisClient::Set(const std::string& key, const std::string& value) {
     auto conn = pool_->Acquire();
-    conn->conn.set(key, value);
+    return conn->conn.set(key, value);
+
 }
 
 std::optional<std::string> RedisClient::Get(const std::string& key) {

@@ -20,6 +20,7 @@ using __socket_type = int;
 #include <sys/time.h> // gettimeofday
 #include <unistd.h>   // readlink
 #include <cassert>
+#include <endian.h>
 
 #else
     #error Platform not supported

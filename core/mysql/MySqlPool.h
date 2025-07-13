@@ -19,7 +19,7 @@ namespace yy::core
 
 class MySqlConnection {
 public:
-	MySqlConnection(mysqlx::Session && sess, int64_t lasttime)
+	MySqlConnection(mysqlx::Session && sess, const int64_t lasttime)
 		: conn(std::move(sess)), last_oper_time(lasttime) {}
 
 	mysqlx::Session conn;

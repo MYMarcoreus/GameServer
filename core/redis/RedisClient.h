@@ -16,10 +16,10 @@ class RedisClient final : public Singleton<RedisClient> {
     SINGLETON_NECESSITY(RedisClient)
 public:
     // 初始化（只应调用一次）
-    void Init(net::EventLoop * loop, size_t pool_size = 5, const std::string& uri = "tcp://127.0.0.1:6379");
+    void Start(net::EventLoop * loop, size_t pool_size = 5, const std::string& uri = "tcp://127.0.0.1:6379");
 
-    // RedisConnType 封装方法示例
-    void Set(const std::string& key, const std::string& value);
+    // 封装方法
+    bool Set(const std::string& key, const std::string& value);
     std::optional<std::string> Get(const std::string& key);
     std::unordered_map<std::string, std::string> HGetAll(const std::string& key);
 

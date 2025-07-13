@@ -1,0 +1,32 @@
+syntax = "proto3";
+package yy.protocol.app;
+
+// 重要，开启该选项才会生成service代码
+option cc_generic_services = true;
+
+message C2SSelectServer {
+    uint64 session_id = 1;
+
+    string username = 4;
+}
+
+message S2CSelectServer {
+    uint64 session_id = 1;
+
+    enum Status {
+        eSuccess = 0;
+        eNoServer = 1;
+    }
+    Status result_code = 2;
+
+    optional string username = 3;
+    optional string ip = 4;
+    optional uint32 port = 5;
+    optional string token = 6;
+}
+
+
+service CenterServiceRpc
+{
+    rpc SelectServer(C2SSelectServer) returns(S2CSelectServer);
+}

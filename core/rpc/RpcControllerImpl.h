@@ -8,9 +8,9 @@
 namespace yy::core
 {
 
-class RpcController final : public google::protobuf::RpcController {
+class RpcControllerImpl final : public google::protobuf::RpcController {
 public:
-    RpcController();
+    RpcControllerImpl();
 
     // 客户端设置项
     auto set_timeout(std::chrono::milliseconds timeout) -> void;
@@ -28,7 +28,7 @@ public:
     auto IsCanceled() const -> bool override;
     auto NotifyOnCancel(google::protobuf::Closure* callback) -> void override;
 
-    virtual ~RpcController() override;
+    virtual ~RpcControllerImpl() override;
 
 private:
     std::chrono::milliseconds timeout_{std::chrono::milliseconds(0)};

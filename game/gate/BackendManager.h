@@ -3,9 +3,9 @@
 #include "AccountRpcClient.h"
 #include "IServer.h"
 #include "IGameBase.h"
-#include "login.pb.h"
+#include "account.pb.h"
 #include "ProtobufDispatcher.h"
-#include "RpcClientPool.hpp"
+#include "RpcStubPool.hpp"
 #include "ThreadPool.h"
 #include "ZkServiceManager.h"
 

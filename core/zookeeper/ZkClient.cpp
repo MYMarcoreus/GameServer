@@ -70,7 +70,7 @@ void ZkClient::Start()
 		网络I/O线程  pthread_create  poll
 		watcher回调线程 pthread_create
 	*/
-    zhandle_ = zookeeper_init(host_.c_str(), ZkClient::global_watcher, 10000, nullptr, this, 0);
+    zhandle_ = zookeeper_init(host_.c_str(), ZkClient::global_watcher, 30000, nullptr, this, 0);
     if (nullptr == zhandle_)
     {
         YLOG_FATAL("[ZkClient] zookeeper_init error!");
@@ -100,7 +100,6 @@ void ZkClient::CreateNode(const std::string& path, const std::string& data, int 
 	}
 
 	// 判断 path 对应的 znode 节点是否存在
-
 	int errcode = zoo_exists(zhandle_, path.c_str(), 0, nullptr);
 	if (errcode != ZNONODE) {
 		if (flags & ZOO_EPHEMERAL) {
@@ -118,7 +117,7 @@ void ZkClient::CreateNode(const std::string& path, const std::string& data, int 
 
 	// 创建节点
 	char path_buffer[128] {};
-	int bufferlen = sizeof(path_buffer);
+	constexpr int bufferlen = sizeof(path_buffer);
 	errcode = zoo_create(zhandle_, path.c_str(), data.c_str(), data.length(),
 						 &ZOO_OPEN_ACL_UNSAFE, flags, path_buffer, bufferlen);
 	if (errcode == ZOK) {

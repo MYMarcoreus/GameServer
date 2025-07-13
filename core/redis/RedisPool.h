@@ -14,7 +14,7 @@ namespace yy::core {
 
 class RedisConnection {
 public:
-    RedisConnection(sw::redis::Redis && r, int64_t lasttime)
+    RedisConnection(sw::redis::Redis && r, const int64_t lasttime)
         : conn(std::move(r)), last_oper_time(lasttime) {}
 
     sw::redis::Redis conn;

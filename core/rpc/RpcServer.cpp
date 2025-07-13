@@ -55,7 +55,7 @@ void RpcServer::Start()
     const auto & port = listenAddr_->GetPortStr();
 
     //! 启动时注册zookeeper服务
-    zk::ZkServiceManager::Instance().Init(kServiceRoot);
+    zk::ZkServiceManager::Instance().Start(kServiceRoot);
     for (auto & [service_name, service] : services_)
     {
         zk::ZkServiceManager::Instance().Register(service_name, ip, port);
@@ -115,7 +115,6 @@ void RpcServer::OnRpcRequest(const net::TcpConnectionPtr& conn, const RpcMessage
                 (this, &RpcServer::SendRpcResponse, conn, std::pair<google::protobuf::Message*, int64_t>{response.get(), id});
 
             // 在框架上根据远端rpc请求，调用当前rpc节点上发布的方法
-            // new UserService().Login(controller, request, response, done)
             service.CallMethod(method, nullptr, request.get(), response.get(), done);
             break;
         }
@@ -157,8 +156,8 @@ void RpcServer::SendRpcResponse(const net::TcpConnectionPtr& conn, const std::pa
     }
 
     // 模拟http的短链接服务，由RpcServer主动断开连接
-    conn->Shutdown();
-    YLOG_TRACE("RPC Server: 断开与<{}:{}>的连接", conn->GetPeerAddr()->GetIPStr(), conn->GetPeerAddr()->GetPortStr())
+    // conn->Shutdown();
+    // YLOG_TRACE("RPC Server: 断开与<{}:{}>的连接", conn->GetPeerAddr()->GetIPStr(), conn->GetPeerAddr()->GetPortStr())
 }
 
 }

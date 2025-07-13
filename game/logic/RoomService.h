@@ -14,18 +14,18 @@ using yy::core::UserConnectionPtr;
 
 namespace yy::app::logic {
 
-class RoomService final: public Singleton<RoomService>
+class RoomService final
 {
-    SINGLETON_NECESSITY(RoomService)
 public:
+    RoomService();
+    ~RoomService();
+
     void Init() ;
 
     // void StartListenAndIOLoop() override;
     void LeaveAndSave(UserConnectionPtr leave_user);
 
 private:
-    RoomService();
-    ~RoomService() override;
 
     /// @brief 玩家发来登录请求，验证，然后将储存的游戏数据发送回玩家
     void OnEnterScene(const UserConnectionPtr& userdata, const Ptr<protocol::app::C2SEnterScene> & request);
@@ -49,7 +49,7 @@ private:
     void Broadcast(const UserConnectionPtr& from, const core::MessagePtr & data);
 
 private:
-    yy::core::IServer *                                                 m_server;
+    yy::core::IServer&                                                 m_server;
     std::unordered_map<UID_t,  uint64_t>                                m_uid_to_connid;
     std::unordered_map<UID_t,  Ptr<yy::protocol::app::PlayerBaseData>>  m_room_players;
     std::mutex                                                          m_room_players_mutex;

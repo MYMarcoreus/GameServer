@@ -13,12 +13,14 @@ namespace yy::app::logic {
 
 
 LogicServerManager::LogicServerManager():
-      m_server{nullptr},
-      m_room_service{},
-      m_test_service{},
-      m_dispatcher{[this](const core::UserConnectionPtr& userdata, const core::MessagePtr& message) { this->UnkonwnCommand(userdata, message); }},
-      m_accpetorLoop{nullptr},
-      m_wordThreads("Game Work Thread")
+    m_server{nullptr},
+    m_room_service{nullptr},
+    m_test_service{nullptr},
+    m_dispatcher{[this](const core::UserConnectionPtr& userdata, const core::MessagePtr& message) { this->UnkonwnCommand(userdata, message); }},
+    m_accpetorLoop{nullptr},
+    m_wordThreads("Game Work Thread"),
+    m_zk{core::zk::ZkServiceManager::Instance()}
+
 {
 }
 
@@ -118,6 +120,9 @@ void LogicServerManager::Init()
 
     m_test_service = std::make_unique<TestService>();
     m_test_service->Init();
+
+    m_zk.Start("/services");
+    m_zk.Register("RoomService", listenAddr->GetIPStr(), listenAddr->GetPortStr());
 
     //! 启动服务器的监听和IO线程
     m_server->Start();

@@ -1,6 +1,4 @@
-#ifndef LINUXGAMESERVER_BUFFER_H
-#define LINUXGAMESERVER_BUFFER_H
-
+#pragma once
 #include <cstring>
 #include <string>
 #include <string_view>
@@ -161,6 +159,3 @@ protected:
 };
 
 }
-
-#endif //LINUXGAMESERVER_BUFFER_H
-

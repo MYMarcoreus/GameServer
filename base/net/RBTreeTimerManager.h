@@ -1,6 +1,4 @@
-#ifndef LINUXGAMESERVER_TIMERMANAGER_H
-#define LINUXGAMESERVER_TIMERMANAGER_H
-
+#pragma once
 #include "Timestamp.h"
 #include "IOChannel.h"
 #include "net_definations.h"
@@ -89,6 +87,3 @@ private:
 };
 
 }
-
-#endif //LINUXGAMESERVER_TIMERMANAGER_H
-

@@ -1,5 +1,4 @@
-#ifndef ____GAMEDATA_H
-#define ____GAMEDATA_H
+#pragma once
 
 #include<cstdint>
 #include<cstring>
@@ -17,6 +16,4 @@ using Ptr = std::shared_ptr<T>;
 
 
 }
-
-#endif //____GAMEDATA_H
 

@@ -1,6 +1,4 @@
-#ifndef LINUXGAMESERVER_TIMESTAMP_H
-#define LINUXGAMESERVER_TIMESTAMP_H
-
+#pragma once
 #include <cstdint>
 #include <string>
 #include <chrono>
@@ -75,6 +73,3 @@ inline bool operator==(const Timestamp a, const Timestamp b)
 
 
 }
-
-#endif //LINUXGAMESERVER_TIMESTAMP_H
-

@@ -1,7 +1,4 @@
-
-#ifndef GAMESERVER_CLASSREGISTER_H
-#define GAMESERVER_CLASSREGISTER_H
-
+#pragma once
 #include "FactoryX.h"  // 引入FactoryX
 #include <any>
 #include <utility>
@@ -22,5 +19,3 @@ public:
 
 
 } // yy::util
-
-#endif //GAMESERVER_CLASSREGISTER_H

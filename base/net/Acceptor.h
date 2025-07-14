@@ -1,6 +1,4 @@
-#ifndef LINUXGAMESERVER_ACCEPTOR_H
-#define LINUXGAMESERVER_ACCEPTOR_H
-
+#pragma once
 #include "Socket.h"
 #include "IOChannel.h"
 #include <functional>
@@ -47,7 +45,4 @@ private:
 };
 
 } // yy::net
-
-
-#endif //LINUXGAMESERVER_ACCEPTOR_H
 

@@ -1,6 +1,4 @@
-#ifndef ____THREADPOOL_H
-#define ____THREADPOOL_H
-
+#pragma once
 #include "BoundedLockedQueue.hpp"
 #include "net_definations.h"
 #include <vector>
@@ -64,6 +62,3 @@ private:
 
 
 } // yy:: util
-
-#endif //____THREADPOOL_H
-

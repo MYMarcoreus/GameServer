@@ -1,6 +1,4 @@
-#ifndef LINUXGAMESERVER_POLLER_H
-#define LINUXGAMESERVER_POLLER_H
-
+#pragma once
 #include <unordered_map>
 #include <vector>
 #include <chrono>
@@ -47,6 +45,3 @@ protected:
 };
 
 } // yy::net
-
-#endif //LINUXGAMESERVER_POLLER_H
-

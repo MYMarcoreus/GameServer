@@ -1,6 +1,4 @@
-#ifndef GAMESERVER_SELECTPOLLER_H
-#define GAMESERVER_SELECTPOLLER_H
-
+#pragma once
 
 #include <set>
 #include "net_definations.h"
@@ -43,7 +41,4 @@ private:
 
 
 }
-
-
-#endif //GAMESERVER_SELECTPOLLER_H
 

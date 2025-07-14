@@ -1,6 +1,4 @@
-#ifndef ____THREAD_SAFE_QUEUE_HPP
-#define ____THREAD_SAFE_QUEUE_HPP
-
+#pragma once
 #include <condition_variable>
 #include <mutex>
 #include <queue>
@@ -182,13 +180,4 @@ public:
 };
 
 }
-
-
-
-
-
-
-
-
-#endif // !____THREAD_SAFE_QUEUE_HPP
 

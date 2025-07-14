@@ -1,6 +1,4 @@
-#ifndef LOGFORMATTER_H
-#define LOGFORMATTER_H
-
+#pragma once
 #include <memory>
 #include <sstream>
 #include <vector>
@@ -51,4 +49,3 @@ private:
 
 }
 
-#endif //LOGFORMATTER_H

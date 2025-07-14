@@ -25,24 +25,16 @@ namespace yy::app::logic {
 
 
 
-RoomService::RoomService()
-    : m_server{LogicServerManager::Instance().GetServer()}, m_player_pool{m_server.GetAppConfig().app_player_max()},
-      m_global_id{10000}
+RoomService::RoomService():
+    m_server{LogicServerManager::Instance().GetServer()},
+    m_player_pool{m_server.GetAppConfig().app_player_max()},
+    m_global_id{10000}
 {
     LogicServerManager::Instance().RegisterMessageCallback<C2SEnterScene>( [this](const UserConnectionPtr& user, const Ptr<C2SEnterScene>& msg) { this->OnEnterScene(user, msg); });
     LogicServerManager::Instance().RegisterMessageCallback<C2SOtherPlayerData>( [this](const UserConnectionPtr& user, const Ptr<C2SOtherPlayerData>& msg) { this->OnC2SOtherPlayerData(user, msg); });
     LogicServerManager::Instance().RegisterMessageCallback<C2SMove>( [this](const UserConnectionPtr& user, const Ptr<C2SMove>& msg) { this->OnC2SMove(user, msg); });
     LogicServerManager::Instance().RegisterMessageCallback<C2SJumpAndGravity>( [this](const UserConnectionPtr& user, const Ptr<C2SJumpAndGravity>& msg) { this->OnC2SJumpAndGravity(user, msg); });
     LogicServerManager::Instance().RegisterMessageCallback<C2SPlayerLeave>( [this](const UserConnectionPtr& user, const Ptr<C2SPlayerLeave>& msg) { this->OnLeave(user, msg); });
-
-
-    // m_server.RunTaskEvery(1s, [this]() {
-    //     std::lock_guard lg{this->m_room_players_mutex};
-    //
-    //     for(auto it = m_room_players.begin(); it != m_room_players.end() ;it++) {
-    //         if()
-    //     }
-    // });
 }
 
 RoomService::~RoomService() // NOLINT(modernize-use-equals-default)

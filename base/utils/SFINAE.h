@@ -1,10 +1,8 @@
+#pragma once
 #pragma warning(disable:4068)
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "NotImplementedFunctions"
 #pragma ide diagnostic ignored "OCUnusedTemplateParameterInspection"
-
-#ifndef LINUXGAMESERVER_SFINAE_H
-#define LINUXGAMESERVER_SFINAE_H
 
 #include <iostream>
 #include <iterator>
@@ -49,9 +47,6 @@ constexpr bool is_iterable_container_v = is_iterable_container<_Tp>::value;
 
 
 }
-
-#endif //LINUXGAMESERVER_SFINAE_H
-
 
 #pragma clang diagnostic pop
 

@@ -1,6 +1,4 @@
-#ifndef LINUXGAMESERVER_TCPCLIENT_H
-#define LINUXGAMESERVER_TCPCLIENT_H
-
+#pragma once
 #include <mutex>
 #include "socket_definations.h"
 #include "net_definations.h"
@@ -68,6 +66,3 @@ private:
 
 
 }
-
-#endif //LINUXGAMESERVER_TCPCLIENT_H
-

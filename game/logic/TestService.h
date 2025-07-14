@@ -1,5 +1,5 @@
-#ifndef ____GAMETESTMANAGER_H
-#define ____GAMETESTMANAGER_H
+#pragma once
+
 
 
 namespace yy::app::logic {
@@ -14,7 +14,3 @@ private:
 };
 
 }
-
-
-#endif //____GAMETESTMANAGER_H
-

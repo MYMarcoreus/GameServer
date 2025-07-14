@@ -1,6 +1,4 @@
-#ifndef LINUXGAMESERVER_TCPCONNECTION_H
-#define LINUXGAMESERVER_TCPCONNECTION_H
-
+#pragma once
 #include "net_definations.h"
 #include "IPAddress.h"
 #include "Timestamp.h"
@@ -145,5 +143,3 @@ private:
 };
 
 }
-#endif //LINUXGAMESERVER_TCPCONNECTION_H
-

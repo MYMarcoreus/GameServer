@@ -1,5 +1,4 @@
-#ifndef LOGINMAGANER_H
-#define LOGINMAGANER_H
+#pragma once
 
 #include "IServer.h"
 #include "IGameBase.h"
@@ -47,5 +46,3 @@ private:
 };
 
 }
-
-#endif //LOGINMAGANER_H

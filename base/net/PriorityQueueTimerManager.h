@@ -1,7 +1,4 @@
-#ifndef GAMESERVER_PRIORITYQUEUETIMERMANAGER_H
-#define GAMESERVER_PRIORITYQUEUETIMERMANAGER_H
-
-
+#pragma once
 #include <vector>
 #include <unordered_map>
 #include <queue>
@@ -64,5 +61,3 @@ private:
 
 
 } // yy::util
-
-#endif //GAMESERVER_PRIORITYQUEUETIMERMANAGER_H

@@ -1,6 +1,4 @@
-#ifndef LINUXGAMESERVER_CHANNEL_H
-#define LINUXGAMESERVER_CHANNEL_H
-
+#pragma once
 #include "PollerEvent.h"
 #include "socket_definations.h"
 #include <cstdint>
@@ -94,6 +92,3 @@ private:
 };
 
 } // yy::net
-
-#endif //LINUXGAMESERVER_CHANNEL_H
-

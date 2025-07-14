@@ -1,6 +1,4 @@
-#ifndef LINUXGAMESERVER_CONNECTOR_H
-#define LINUXGAMESERVER_CONNECTOR_H
-
+#pragma once
 #include "IPAddress.h"
 #include "net_definations.h"
 #include <chrono>
@@ -86,6 +84,3 @@ private:
 
 
 }
-
-#endif //LINUXGAMESERVER_CONNECTOR_H
-

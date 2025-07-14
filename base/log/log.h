@@ -1,5 +1,4 @@
-#ifndef ____YLOG_H
-#define ____YLOG_H
+#pragma once
 
 #include "Singleton.h"
 #include "util_functions.h"
@@ -283,8 +282,3 @@ private:
 
 
 } // namespace yy::Ylog
-
-
-
-#endif // !____YLOG_H
-

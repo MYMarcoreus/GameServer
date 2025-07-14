@@ -1,6 +1,4 @@
-#ifndef ____LOGXMLCONFIG_H
-#define ____LOGXMLCONFIG_H
-
+#pragma once
 
 #include "Singleton.h"
 #include "ConfigManager.h"
@@ -82,6 +80,3 @@ extern ConfigVar<LogXmlConfig>::ptr g_log_config;
 
 
 }
-
-#endif //____LOGXMLCONFIG_H
-

@@ -1,6 +1,4 @@
-#ifndef GAMESERVER_ILOGAPPENDER_H
-#define GAMESERVER_ILOGAPPENDER_H
-
+#pragma once
 #include "LogFormatter.h"
 
 #include <mutex>
@@ -63,4 +61,4 @@ protected:
 
 
 }
-#endif //GAMESERVER_ILOGAPPENDER_H
+

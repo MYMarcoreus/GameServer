@@ -1,8 +1,7 @@
+#pragma once
 #pragma warning(disable:4068)
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
-#ifndef ____CONFIGMANAGER_H
-#define ____CONFIGMANAGER_H
 
 #include "Singleton.h"
 #include "tinyxml/tinyxml2.h"
@@ -607,9 +606,6 @@ private:
 
 
 }
-
-
-#endif //____CONFIGMANAGER_H
 
 #pragma clang diagnostic pop
 

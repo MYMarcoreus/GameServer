@@ -1,6 +1,4 @@
-#ifndef LINUXGAMESERVER_SOCKETAPIWRAPPER_H
-#define LINUXGAMESERVER_SOCKETAPIWRAPPER_H
-
+#pragma once
 #include "noncopyable.h"
 #include "socket_definations.h"
 #include "IPAddress.h"
@@ -103,8 +101,4 @@ acceptAll(socket_t sockfd, bool isNewSockNonBlock)
 
 
 }
-
-
-
-#endif //LINUXGAMESERVER_SOCKETAPIWRAPPER_H
 

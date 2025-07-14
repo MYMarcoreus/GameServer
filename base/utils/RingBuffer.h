@@ -1,6 +1,4 @@
-#ifndef RINGBUFFER_H
-#define RINGBUFFER_H
-
+#pragma once
 #include "copyable.h"
 
 #include <string>
@@ -185,5 +183,3 @@ protected:
 };
 
 }
-
-#endif //RINGBUFFER_H

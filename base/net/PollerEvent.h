@@ -1,6 +1,4 @@
-#ifndef LINUXGAMESERVER_POLLEREVENT_H
-#define LINUXGAMESERVER_POLLEREVENT_H
-
+#pragma once
 #ifdef ____LINUX
 #include <sys/epoll.h>
 #include <poll.h>
@@ -76,6 +74,3 @@ private:
 
 
 }
-
-#endif //LINUXGAMESERVER_POLLEREVENT_H
-

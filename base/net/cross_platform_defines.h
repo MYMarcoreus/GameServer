@@ -1,5 +1,4 @@
-#ifndef GAMESERVER_CROSS_PLATFORM_DEFINES_H
-#define GAMESERVER_CROSS_PLATFORM_DEFINES_H
+#pragma once
 
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
@@ -66,5 +65,5 @@
     #error Platform not supported
 #endif
 
-#endif //GAMESERVER_CROSS_PLATFORM_DEFINES_H
+
 

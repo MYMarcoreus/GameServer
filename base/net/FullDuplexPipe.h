@@ -1,6 +1,4 @@
-#ifndef GAMESERVER_FULLDUPLEXPIPE_H
-#define GAMESERVER_FULLDUPLEXPIPE_H
-
+#pragma once
 #ifdef  ____LINUX
 
 #include<cstdio>
@@ -74,6 +72,3 @@ private:
 
 
 #endif
-
-#endif //GAMESERVER_FULLDUPLEXPIPE_H
-

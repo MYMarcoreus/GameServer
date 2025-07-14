@@ -1,6 +1,4 @@
-#ifndef IOCPPOLLER_H
-#define IOCPPOLLER_H
-
+#pragma once
 #ifdef ____WINDOWS
 
 #include "Poller.h"
@@ -32,5 +30,4 @@ private:
 
 }
 
-#endif
 #endif

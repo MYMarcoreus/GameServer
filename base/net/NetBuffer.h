@@ -1,6 +1,4 @@
-#ifndef NETBUFFER_H
-#define NETBUFFER_H
-
+#pragma once
 #include "net_definations.h"
 #include "socket_definations.h"
 #include "RingBuffer.h"
@@ -22,5 +20,3 @@ public:
 };
 
 }
-
-#endif //NETBUFFER_H

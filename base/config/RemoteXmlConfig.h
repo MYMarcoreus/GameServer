@@ -1,7 +1,4 @@
-
-#ifndef ____REMOTEXMLCONFIG_H
-#define ____REMOTEXMLCONFIG_H
-
+#pragma once
 
 #include "Singleton.h"
 #include "ConfigManager.h"
@@ -75,6 +72,4 @@ extern ConfigVar<RemoteXmlConfig>::ptr g_remote_config;
 
 }
 
-
-#endif //____REMOTEXMLCONFIG_H
 

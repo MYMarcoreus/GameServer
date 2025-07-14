@@ -1,5 +1,4 @@
-#ifndef ZKCLIENT_H
-#define ZKCLIENT_H
+#pragma once
 
 #include <zookeeper/zookeeper.h>
 #include <atomic>
@@ -65,5 +64,3 @@ private:
 
 
 }
-
-#endif

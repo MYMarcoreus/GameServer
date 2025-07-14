@@ -1,5 +1,4 @@
-#ifndef ____GAMEPROTOCOL_H
-#define ____GAMEPROTOCOL_H
+#pragma once
 
 #include <cstddef>
 #include <cstdint>
@@ -31,14 +30,4 @@
     2、发送因自己的控制所产生的数据（因此需要在Controller中调用发送自己数据的函数）
     3、客户端每次Update都会发送心跳包，因此服务器需要接收之，然后也发送一个心跳包
 */
-
-
-namespace yy::core
-{
-
-
-
-
-}
-#endif //____GAMEPROTOCOL_H
 

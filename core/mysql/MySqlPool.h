@@ -1,5 +1,4 @@
-#ifndef MYSQLPOOL_H
-#define MYSQLPOOL_H
+#pragma once
 
 #include "EventLoop.h"
 
@@ -56,5 +55,3 @@ private:
 
 
 }
-
-#endif //MYSQLPOOL_H

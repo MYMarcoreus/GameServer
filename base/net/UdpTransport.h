@@ -1,6 +1,4 @@
-#ifndef LINUXGAMESERVER_UDPSESSION_H
-#define LINUXGAMESERVER_UDPSESSION_H
-
+#pragma once
 #include "net_definations.h"
 #include "Timestamp.h"
 #include "socket_definations.h"
@@ -71,5 +69,3 @@ private:
 };
 
 }
-#endif //LINUXGAMESERVER_UDPSESSION_H
-

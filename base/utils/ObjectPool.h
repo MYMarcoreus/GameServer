@@ -1,6 +1,4 @@
-#ifndef ____OBJECTPOOL_H
-#define ____OBJECTPOOL_H
-
+#pragma once
 #include "UnboundedLockedQueue.hpp"
 #include <memory>
 #include <atomic>
@@ -58,5 +56,3 @@ private:
 };
 
 }
-#endif //____OBJECTPOOL_H
-

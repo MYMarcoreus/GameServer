@@ -1,5 +1,4 @@
-#ifndef ____USER_BASE_DATA_H
-#define ____USER_BASE_DATA_H
+#pragma once
 
 #include <cstring>
 #include <atomic>
@@ -88,7 +87,3 @@ private:
 
 
 }
-
-
-#endif // !____USER_BASE_DATA_H
-

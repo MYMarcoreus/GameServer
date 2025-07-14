@@ -1,6 +1,4 @@
-#ifndef ____NONCOPYABLE_H
-#define ____NONCOPYABLE_H
-
+#pragma once
 namespace yy::util
 {
 
@@ -17,6 +15,3 @@ protected:
 };
 
 }
-
-#endif //____NONCOPYABLE_H
-

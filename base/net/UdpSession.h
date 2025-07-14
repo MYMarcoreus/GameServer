@@ -1,6 +1,4 @@
-#ifndef GAMESERVER_UDPSESSION_H
-#define GAMESERVER_UDPSESSION_H
-
+#pragma once
 #include "net_definations.h"
 
 namespace yy::util
@@ -40,5 +38,3 @@ private:
 };
 
 }
-
-#endif //GAMESERVER_UDPSESSION_H

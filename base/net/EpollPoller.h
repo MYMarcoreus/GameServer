@@ -1,5 +1,4 @@
-#ifndef LINUXGAMESERVER_EPOLLPOLLER_H
-#define LINUXGAMESERVER_EPOLLPOLLER_H
+#pragma once
 #ifdef ____LINUX
 
 
@@ -40,5 +39,3 @@ private:
 }
 
 #endif
-#endif
-

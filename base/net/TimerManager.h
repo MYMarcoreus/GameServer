@@ -1,6 +1,4 @@
-#ifndef GAMESERVER_TIMERMANAGER_H
-#define GAMESERVER_TIMERMANAGER_H
-
+#pragma once
 #include "net_definations.h"
 #include <atomic>
 
@@ -32,5 +30,3 @@ protected:
 
 } // yy
 } // net
-
-#endif //GAMESERVER_TIMERMANAGER_H

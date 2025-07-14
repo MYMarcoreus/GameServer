@@ -1,5 +1,4 @@
-#ifndef REDISCONNECTIONPOOL_H
-#define REDISCONNECTIONPOOL_H
+#pragma once
 
 #include <sw/redis++/redis++.h>
 #include <queue>
@@ -49,5 +48,3 @@ private:
 };
 
 }
-
-#endif

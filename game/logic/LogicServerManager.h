@@ -1,9 +1,9 @@
-#ifndef ____GAMEMANAGER_H
-#define ____GAMEMANAGER_H
+#pragma once
 
 #include "IServer.h"
 #include "ProtobufDispatcher.h"
 #include "ThreadPool.h"
+#include "ZkServiceManager.h"
 
 using yy::core::IServer;
 using std::shared_ptr;
@@ -49,12 +49,11 @@ private:
     std::unique_ptr<RoomService> m_room_service;
     std::unique_ptr<TestService> m_test_service;
     core::ProtobufDispatcher<core::UserConnectionPtr> m_dispatcher; // 处理下层(core层)分发传来的无法处理的消息
+    yy::core::zk::ZkServiceManager & m_zk;
 
     yy::net::ThreadPool m_wordThreads;
 };
 
 
 }
-
-#endif //____GAMEMANAGER_H
 

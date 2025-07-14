@@ -1,6 +1,4 @@
-#ifndef LINUXGAMESERVER_EVENTLOOPTHREADPOOL_H
-#define LINUXGAMESERVER_EVENTLOOPTHREADPOOL_H
-
+#pragma once
 #include <vector>
 #include <functional>
 #include <memory>
@@ -36,7 +34,4 @@ private:
 };
 
 }
-
-
-#endif //LINUXGAMESERVER_EVENTLOOPTHREADPOOL_H
 

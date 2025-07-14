@@ -1,6 +1,4 @@
-#ifndef LINUXGAMESERVER_MESSAGEHEADER_H
-#define LINUXGAMESERVER_MESSAGEHEADER_H
-
+#pragma once
 
 #include <cstdint>
 #include <cstddef>
@@ -118,6 +116,4 @@ public:
 
 }
 
-
-#endif //LINUXGAMESERVER_MESSAGEHEADER_H
 

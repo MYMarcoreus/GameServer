@@ -2,8 +2,8 @@
 <root> this is root
     <app
         appID            = "2000"
-        appTcpPort       = "13333"
-        appUdpPort       = "14444"
+        appTcpPort       = "11111"
+        appUdpPort       = "11112"
         appMaxPlayer     = "30"
         appMaxConnection = "2000"
         appXorCode       = "130"
@@ -20,7 +20,7 @@
         tcpIOThreadNum   = "2"
         udpIOThreadNum   = "2"
         workThreadNum    = "2"
-        rpcPort          = "13334"
+        rpcPort          = "11113"
     />
 
     <remote
@@ -51,33 +51,6 @@
             poolsize  = "10"
             ip      = "127.0.0.1"
             port    = "2181"
-        />
-
-        <remote_node
-            type    = "center"
-            username  = "yy"
-            password  = "0"
-            poolsize  = "10"
-            ip      = "127.0.0.1"
-            port    = "17777"
-        />
-
-        <remote_node
-            type      = "login"
-            username  = "yy"
-            password  = "0"
-            poolsize  = "10"
-            ip        = "127.0.0.1"
-            port      = "18888"
-        />
-
-        <remote_node
-            type      = "login-rpc"
-            username  = "yy"
-            password  = "0"
-            poolsize  = "10"
-            ip        = "127.0.0.1"
-            port      = "18889"
         />
     </remote>
 

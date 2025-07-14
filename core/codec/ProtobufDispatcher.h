@@ -1,5 +1,4 @@
-#ifndef LINUXGAMESERVER_PROTOBUFDISPATCHER_H
-#define LINUXGAMESERVER_PROTOBUFDISPATCHER_H
+#pragma once
 
 #include "core_definations.h"
 #include "net_definations.h"
@@ -108,7 +107,3 @@ private:
 };
 
 }
-
-
-#endif //LINUXGAMESERVER_PROTOBUFDISPATCHER_H
-

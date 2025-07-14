@@ -1,5 +1,4 @@
-#ifndef ____ISERVER_H
-#define ____ISERVER_H
+#pragma once
 
 #include "core_definations.h"
 #include "noncopyable.h"
@@ -54,18 +53,8 @@ public:
 };
 
 // 用于实现跨平台的函数：在此返回LinuxServer的实例
-// extern IServer * get_server_instance();
-
-
 
 
 } // namespace yy
 
 
-
-
-
-
-
-
-#endif // !____ISERVER_H

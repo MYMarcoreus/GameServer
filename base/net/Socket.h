@@ -1,6 +1,4 @@
-#ifndef LINUXGAMESERVER_SOCKET_H
-#define LINUXGAMESERVER_SOCKET_H
-
+#pragma once
 #ifdef ____LINUX
 #include <sys/socket.h>
 #endif
@@ -127,20 +125,4 @@ private:
 };
 
 } // yy::net
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#endif //LINUXGAMESERVER_SOCKET_H
 

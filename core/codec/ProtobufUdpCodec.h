@@ -1,5 +1,4 @@
-#ifndef GAMESERVER_PROTOBUFUDPCODEC_H
-#define GAMESERVER_PROTOBUFUDPCODEC_H
+#pragma once
 
 #include "noncopyable.h"
 #include "core_definations.h"
@@ -73,8 +72,3 @@ private:
 };
 
 }
-
-
-
-
-#endif //GAMESERVER_PROTOBUFUDPCODEC_H

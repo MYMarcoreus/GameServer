@@ -1,7 +1,4 @@
-#ifndef GAMESERVER_FACTORYX_H
-#define GAMESERVER_FACTORYX_H
-
-
+#pragma once
 
 //! C++实现简单的反射机制来完成简单工厂方法（根据类名来生成对象）
 
@@ -48,5 +45,3 @@ private:
 
 
 } // yy::util
-
-#endif //GAMESERVER_FACTORYX_H

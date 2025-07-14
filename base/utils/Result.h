@@ -1,7 +1,6 @@
+#pragma once
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
-#ifndef ____RESULT_H
-#define ____RESULT_H
 
 
 #include <cstdint>
@@ -791,11 +790,5 @@ struct hash<yy::util::Result < T, E>> { // NOLINT(cert-dcl58-cpp)
 
 
 
-
-
-
-
-
-#endif //____RESULT_H
 
 #pragma clang diagnostic pop

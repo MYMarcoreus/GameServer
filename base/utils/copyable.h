@@ -1,6 +1,4 @@
-#ifndef ____COPYABLE_H
-#define ____COPYABLE_H
-
+#pragma once
 namespace yy::util
 {
 
@@ -13,6 +11,3 @@ protected:
 };
 
 }
-
-#endif //____COPYABLE_H
-

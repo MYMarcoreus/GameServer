@@ -1,6 +1,4 @@
-#ifndef LINUXGAMESERVER_TIMER_H
-#define LINUXGAMESERVER_TIMER_H
-
+#pragma once
 #include"Timestamp.h"
 #include<cstdint>
 #include<functional>
@@ -50,7 +48,3 @@ private:
 };
 
 }
-
-
-#endif //LINUXGAMESERVER_TIMER_H
-

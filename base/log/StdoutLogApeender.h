@@ -1,5 +1,4 @@
-#ifndef GAMESERVER_STDOUTLOGAPEENDER_H
-#define GAMESERVER_STDOUTLOGAPEENDER_H
+#pragma once
 
 #include "ILogAppender.h"
 
@@ -30,4 +29,3 @@ private:
 
 }
 
-#endif //GAMESERVER_STDOUTLOGAPEENDER_H

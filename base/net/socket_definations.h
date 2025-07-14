@@ -1,6 +1,4 @@
-#ifndef LINUXGAMESERVER_SOCKET_DEFINATIONS_H
-#define LINUXGAMESERVER_SOCKET_DEFINATIONS_H
-
+#pragma once
 
 #include "cross_platform_defines.h"
 
@@ -118,7 +116,3 @@ private:
 
 
 }
-
-
-#endif //LINUXGAMESERVER_SOCKET_DEFINATIONS_H
-

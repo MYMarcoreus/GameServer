@@ -1,5 +1,4 @@
-#ifndef ____GAMEPLAYERMANAGER_H
-#define ____GAMEPLAYERMANAGER_H
+#pragma once
 
 #include <unordered_map>
 #include "IGameBase.h"
@@ -59,7 +58,3 @@ private:
 };
 
 }
-
-
-#endif //____GAMEPLAYERMANAGER_H
-

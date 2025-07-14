@@ -1,6 +1,4 @@
-#ifndef LINUXGAMESERVER_TCPSERVER_H
-#define LINUXGAMESERVER_TCPSERVER_H
-
+#pragma once
 #include "net_definations.h"
 #include "IPAddress.h"
 #include "AppXmlConfig.h"
@@ -95,5 +93,3 @@ private:
 
 
 }
-#endif //LINUXGAMESERVER_TCPSERVER_H
-

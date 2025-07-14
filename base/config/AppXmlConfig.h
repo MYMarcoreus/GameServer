@@ -1,6 +1,4 @@
-#ifndef ____APPXMLCONFIG_H
-#define ____APPXMLCONFIG_H
-
+#pragma once
 
 #include "Singleton.h"
 #include "ConfigManager.h"
@@ -106,6 +104,3 @@ extern ConfigVar<AppXmlConfig>::ptr g_app_config;
 
 
 }
-
-#endif //____APPXMLCONFIG_H
-

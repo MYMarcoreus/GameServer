@@ -1,6 +1,4 @@
-#ifndef ____BOUNDED_QUEUE_HPP
-#define ____BOUNDED_QUEUE_HPP
-
+#pragma once
 #include <vector>
 #include <atomic>
 #include <memory>
@@ -138,5 +136,3 @@ private:
 
 
 } // yy::util
-
-#endif // ____BOUNDED_QUEUE_HPP

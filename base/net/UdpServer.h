@@ -1,6 +1,4 @@
-#ifndef LINUXGAMESERVER_UDPSERVER_H
-#define LINUXGAMESERVER_UDPSERVER_H
-
+#pragma once
 #include "net_definations.h"
 
 #include <atomic>
@@ -56,5 +54,3 @@ private:
 
 
 }
-#endif //LINUXGAMESERVER_UDPSERVER_H
-

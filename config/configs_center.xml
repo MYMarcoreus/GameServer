@@ -2,8 +2,8 @@
 <root> this is root
     <app
         appID            = "2000"
-        appTcpPort       = "12221"
-        appUdpPort       = "12222"
+        appTcpPort       = "14441"
+        appUdpPort       = "14442"
         appMaxPlayer     = "30"
         appMaxConnection = "2000"
         appXorCode       = "130"
@@ -20,7 +20,7 @@
         tcpIOThreadNum   = "2"
         udpIOThreadNum   = "2"
         workThreadNum    = "2"
-        rpcPort          = "12223"
+        rpcPort          = "14443"
     />
 
     <remote

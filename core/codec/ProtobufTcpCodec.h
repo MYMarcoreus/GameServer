@@ -1,6 +1,4 @@
-#ifndef LINUXGAMESERVER_PROTOBUFTCPCODEC_H
-#define LINUXGAMESERVER_PROTOBUFTCPCODEC_H
-
+#pragma once
 
 #include "noncopyable.h"
 #include "core_definations.h"
@@ -75,6 +73,3 @@ private:
 };
 
 }
-
-#endif //LINUXGAMESERVER_PROTOBUFTCPCODEC_H
-

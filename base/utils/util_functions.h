@@ -1,6 +1,4 @@
-#ifndef ____UTIL_FUNCTION_H
-#define ____UTIL_FUNCTION_H
-
+#pragma once
 #include <string>
 #include <chrono>
 #include <csignal>
@@ -144,8 +142,4 @@ static double ____cnt_time = 0;
 #define INTERVAL_DO(interval , something ) { something }
 #endif
 
-
-
-
-#endif // !____UTIL_FUNCTION_H
 

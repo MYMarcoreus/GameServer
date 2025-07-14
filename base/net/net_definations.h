@@ -1,6 +1,4 @@
-#ifndef LINUXGAMESERVER_NET_DEFINATIONS_H
-#define LINUXGAMESERVER_NET_DEFINATIONS_H
-
+#pragma once
 #include <functional>
 #include <memory>
 #include <chrono>
@@ -58,8 +56,4 @@ using F_UdpMessageCallback = std::function<void(const UdpSessionPtr &, NetBuffer
 
 
 }
-
-
-
-#endif //LINUXGAMESERVER_NET_DEFINATIONS_H
 

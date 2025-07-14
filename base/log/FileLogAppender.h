@@ -1,5 +1,4 @@
-#ifndef GAMESERVER_FILELOGAPPENDER_H
-#define GAMESERVER_FILELOGAPPENDER_H
+#pragma once
 
 #include <condition_variable>
 
@@ -34,6 +33,3 @@ private:
 };
 
 } // namespace yy::Ylog
-
-
-#endif //GAMESERVER_FILELOGAPPENDER_H

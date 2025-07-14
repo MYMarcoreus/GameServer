@@ -1,6 +1,4 @@
-#ifndef LINUXGAMESERVER_EVENTLOOP_H
-#define LINUXGAMESERVER_EVENTLOOP_H
-
+#pragma once
 #include <vector>
 #include <memory>
 #include <thread>
@@ -110,6 +108,3 @@ private:
 };
 
 }
-
-#endif //LINUXGAMESERVER_EVENTLOOP_H
-

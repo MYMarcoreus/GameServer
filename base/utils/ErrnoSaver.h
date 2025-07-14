@@ -1,6 +1,4 @@
-#ifndef ____ERRNOSAVER_H
-#define ____ERRNOSAVER_H
-
+#pragma once
 #include<cerrno>
 
 namespace yy::util {
@@ -18,6 +16,3 @@ private:
 };
 
 } // yy::util
-
-#endif //____ERRNOSAVER_H
-

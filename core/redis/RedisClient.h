@@ -1,5 +1,4 @@
-#ifndef REDISCLIENT_H
-#define REDISCLIENT_H
+#pragma once
 
 #include "Singleton.h"
 #include "RedisPool.h"
@@ -29,4 +28,3 @@ private:
 
 }
 
-#endif //REDISCLIENT_H

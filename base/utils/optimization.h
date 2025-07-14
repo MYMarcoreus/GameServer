@@ -1,6 +1,4 @@
-#ifndef ____OPTIMIZATION_H
-#define ____OPTIMIZATION_H
-
+#pragma once
 
 #if defined __GNUC__ || defined __llvm__
 /// LIKCLY 宏的封装, 告诉编译器优化,条件大概率成立
@@ -11,8 +9,4 @@
 #   define LIKELY(x)      (x)
 #   define UNLIKELY(x)      (x)
 #endif
-
-
-
-#endif //____OPTIMIZATION_H
 

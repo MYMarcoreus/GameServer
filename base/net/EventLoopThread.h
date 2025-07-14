@@ -1,6 +1,4 @@
-#ifndef LINUXGAMESERVER_EVENTLOOPTHREAD_H
-#define LINUXGAMESERVER_EVENTLOOPTHREAD_H
-
+#pragma once
 #include <thread>
 #include <mutex>
 #include <future>
@@ -34,6 +32,3 @@ private:
 };
 
 }
-
-#endif //LINUXGAMESERVER_EVENTLOOPTHREAD_H
-

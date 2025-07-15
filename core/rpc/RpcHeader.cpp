@@ -5,7 +5,7 @@
 #include "rpc.pb.h"
 #include "Endian.h"
 
-namespace yy::core
+namespace yy::core::rpc
 {
 RpcHeader::RpcHeader(const yy::protocol::core::RpcMessage  & rpcmsg):
     m_CheckCode{kCheckCode}, m_FullLength(kHeaderSize + rpcmsg.ByteSizeLong())

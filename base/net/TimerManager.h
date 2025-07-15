@@ -13,6 +13,10 @@ public:
     ///@brief 在定时器列表中新建一个定时器
     virtual TimerID AddTimer(F_TaskCallback cb, Timestamp expiredTime, Microseconds  interval = 0us) = 0;
 
+    virtual TimerID AddTimer(const TimerPtr& timer) = 0;
+
+    virtual TimerPtr CreateTimer(Timestamp expiredTime, Microseconds  interval = 0us) = 0;
+
     ///@brief 按照定时器id来取消定时器
     virtual void CancelTimer(TimerID timerid) = 0;
 

@@ -1,9 +1,14 @@
 #pragma once
 
 #include "account.pb.h"
-
+#include "CenterRpcClient.h"
 #include <google/protobuf/service.h>
 
+
+namespace yy::net
+{
+class EventLoop;
+}
 
 namespace yy::core
 {
@@ -11,17 +16,18 @@ namespace zk
 {
     class ZkServiceManager;
 }
-
+namespace rpc { class RpcServer; }
 class MySqlClient;
 class RedisClient;
+class IServer;
 }
 
-namespace yy::app::login
+namespace yy::app::account
 {
 
 class AccountRpcServiceImpl final : public yy::protocol::app::AccountServiceRpc {
 public:
-    AccountRpcServiceImpl();
+    explicit AccountRpcServiceImpl(net::EventLoop * loop);
 
     void Login(google::protobuf::RpcController* controller,
                const ::yy::protocol::app::C2SLogin* request,
@@ -34,13 +40,11 @@ public:
                   google::protobuf::Closure* done) override;
 
 private:
-    auto GetToken() -> std::string;
-    auto GetLogicServerAddr() -> std::pair<std::string, uint16_t>;
-
+    yy::core::IServer & server_;
+    yy::core::rpc::RpcServer & rpc_server_;
     yy::core::RedisClient& redis_client_;
-    yy::core::MySqlClient& mysql_pool_;
-    yy::core::zk::ZkServiceManager & zk_;
-
+    yy::core::MySqlClient& mysql_client_;
+    CenterRpcClient& center_client_;
 };
 
 }

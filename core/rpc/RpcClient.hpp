@@ -1,77 +1,101 @@
 #pragma once
 #include "log.h"
 #include "RpcControllerImpl.h"
-#include "RpcStubPool.hpp"
+#include "RpcStubConnectionPool.hpp"
+#include "Singleton.h"
+
 
 #include "account.pb.h"
 
 
-namespace yy::core
+namespace yy::core::rpc
 {
-
-
-
-
 
 template<IsValidStub ServiceStub>
-class RpcClient
+class RpcClient final : public Singleton<RpcClient<ServiceStub>>
 {
+    SINGLETON_NECESSITY(RpcClient<ServiceStub>)
 public:
     template <typename Response>
     using FinishedCallback = std::function<void(std::unique_ptr<Response> && response, std::unique_ptr<RpcControllerImpl> && controller)>;
+    using StubConnPoolType = RpcStubConnectionPool<ServiceStub>;
+    using StubConnType = typename StubConnPoolType::StubConnType;
 
-    explicit RpcClient(): pool_{nullptr}, stub_conn_{nullptr}
-    {  }
+    explicit RpcClient() {  }
 
-    void Start(size_t pool_size, net::F_ConnectionEstablishedCallback cb)
+    void Start(const size_t pool_size, typename StubConnType::F_RpcStubConnectionEstablishedCallback cb)
     {
         if (pool_ == nullptr) {
-            pool_ = std::make_unique<RpcStubPool<ServiceStub>>(pool_size, std::move(cb));
-
+            pool_ = std::make_unique<RpcStubConnectionPool<ServiceStub>>(pool_size);
             pool_->SetServiceChangeCallback(
                 [this](const std::string & path, std::vector<yy::net::IPAddressPtr>&&) {
                     YLOG_INFO("ServiceChange to {}", path)
-                    stub_conn_ = pool_->Acquire();
                 });
-
-            pool_->Start();
+            pool_->Start(std::move(cb));
         }
+    }
+
+    ///@brief 请求的发送的同步的，响应的等待是异步的
+    template<typename Request, typename Response>  requires requires {
+        requires std::is_base_of_v<google::protobuf::Message, Request>;  //! Request消息的生命周期由调用者自己管理
+        requires std::is_base_of_v<google::protobuf::Message, Response>; //! Respone消息的生命周期由该函数自动管理
+    }
+    bool CallRemoteAsync(const std::shared_ptr<Request>& request, FinishedCallback<Response> cb)
+    {
+        auto conn = pool_->Acquire(5s);
+        if (conn == nullptr) return false;
+        if (request == nullptr) return false;
+
+        auto response = new Response;
+        // 设置请求参数
+        auto controller = new RpcControllerImpl;
+        controller->set_wait_for_ready(true);
+        controller->set_timeout(5s);
+
+        // 设置响应回调，并使用unique_ptr接管裸指针（响应消息和RpcController的生命周期在此自动管理）
+        auto lambda_closure = core::rpc::NewLambdaClosureT(
+            [this, response, controller, cb = std::move(cb)]() mutable  {
+                if (cb) cb(std::unique_ptr<Response>(response), std::unique_ptr<RpcControllerImpl>(controller));
+            });
+
+        // 通过特化模板函数DoCall调用客户端的`RpcConnection::CallMethod`来同步发送请求
+        DoCall<Request, Response>(conn->Stub(), controller, request.get(), response, lambda_closure);
+
+        return true;
     }
 
     template<typename Request, typename Response>  requires requires {
         requires std::is_base_of_v<google::protobuf::Message, Request>;
         requires std::is_base_of_v<google::protobuf::Message, Response>;
     }
-    bool CallRemoteAsync(const std::shared_ptr<Request>& request, FinishedCallback<Response> cb)
+    bool CallRemoteAsync(Request& request, FinishedCallback<Response> cb)
     {
-        if (stub_conn_ == nullptr) return false;
+        auto conn = pool_->Acquire(5s);
+        if (conn == nullptr) return false;
 
         auto response = new Response;
         auto controller = new RpcControllerImpl;
         controller->set_wait_for_ready(true);
         controller->set_timeout(5s);
 
-        auto lambda_closure = core::NewLambdaClosureT(
-            [this, response, controller, cb = std::move(cb)]() mutable  {
-                auto resp = std::unique_ptr<Response>(response);
-                auto ctrl = std::unique_ptr<RpcControllerImpl>(controller);
-                cb(std::move(resp), std::move(ctrl));
+        auto lambda_closure = core::rpc::NewLambdaClosureT(
+            [this, response, controller, cb = std::move(cb)]() mutable {
+                if (cb) cb(std::unique_ptr<Response>(response), std::unique_ptr<RpcControllerImpl>(controller));
             });
 
-        DoCall<Request, Response>(stub_conn_->Stub(), controller, request.get(), response, lambda_closure);
+        DoCall<Request, Response>(conn->Stub(), controller, &request, response, lambda_closure);
 
         return true;
     }
 
 private:
 
+    ///@brief 调用具体客户端ServiceStub的对应方法，若有新的服务和新的方法，仅需在别的源文件中实现模板特化，调用stub->MethodName即可（如stub->Login或stub->Register等）
     template<typename Request, typename Response>
     void DoCall(ServiceStub& stub, RpcControllerImpl* controller,
             Request* request, Response* response, google::protobuf::Closure* done);
 
-
-    std::unique_ptr<RpcStubPool<ServiceStub>>           pool_;
-    std::shared_ptr<RpcStubConnection<ServiceStub>>     stub_conn_;
+    std::unique_ptr<RpcStubConnectionPool<ServiceStub>>  pool_ = nullptr;
 };
 
 

@@ -7,9 +7,9 @@ set(LocalSrc
         logic/LogicServerManager.cpp
         logic/RoomService.cpp
         logic/TestService.cpp
-        login/LoginServerManager.cpp
-        login/AccountRpcServiceImpl.cpp
-        login/CenterRpcClient.cpp
+        account/AccountServerManager.cpp
+        account/AccountRpcServiceImpl.cpp
+        account/CenterRpcClient.cpp
         gate/GateServerManager.cpp
         gate/AccountRpcClient.cpp
 )

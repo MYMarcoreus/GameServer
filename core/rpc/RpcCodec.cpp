@@ -5,7 +5,7 @@
 #include "log.h"
 #include <google/protobuf/message.h>
 
-namespace yy::core
+namespace yy::core::rpc
 {
 using ::yy::net::NetBuffer;
 using ::yy::net::TcpConnectionPtr;

@@ -165,19 +165,19 @@ const char descriptor_table_protodef_account_2eproto[] PROTOBUF_SECTION_VARIABLE
   "sswordError\020\002\022\021\n\reUnknownError\020\003B\013\n\t_use"
   "rnameB\005\n\003_ipB\007\n\005_portB\010\n\006_token\"E\n\013C2SRe"
   "gister\022\022\n\nsession_id\030\001 \001(\004\022\020\n\010username\030\003"
-  " \001(\t\022\020\n\010password\030\004 \001(\t\"\206\001\n\013S2CRegister\022\022"
+  " \001(\t\022\020\n\010password\030\004 \001(\t\"\240\001\n\013S2CRegister\022\022"
   "\n\nsession_id\030\001 \001(\004\0228\n\013result_code\030\002 \001(\0162"
-  "#.yy.protocol.app.S2CRegister.Status\")\n\006"
-  "Status\022\014\n\010eSuccess\020\000\022\021\n\reUnknownError\020\0032"
-  "\232\001\n\021AccountServiceRpc\022=\n\005Login\022\031.yy.prot"
-  "ocol.app.C2SLogin\032\031.yy.protocol.app.S2CL"
-  "ogin\022F\n\010Register\022\034.yy.protocol.app.C2SRe"
-  "gister\032\034.yy.protocol.app.S2CRegisterB\003\200\001"
-  "\001b\006proto3"
+  "#.yy.protocol.app.S2CRegister.Status\"C\n\006"
+  "Status\022\014\n\010eSuccess\020\000\022\030\n\024eAccountAlreadyE"
+  "xist\020\002\022\021\n\reUnknownError\020\0032\232\001\n\021AccountSer"
+  "viceRpc\022=\n\005Login\022\031.yy.protocol.app.C2SLo"
+  "gin\032\031.yy.protocol.app.S2CLogin\022F\n\010Regist"
+  "er\022\034.yy.protocol.app.C2SRegister\032\034.yy.pr"
+  "otocol.app.S2CRegisterB\003\200\001\001b\006proto3"
   ;
 static ::_pbi::once_flag descriptor_table_account_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_account_2eproto = {
-    false, false, 769, descriptor_table_protodef_account_2eproto,
+    false, false, 795, descriptor_table_protodef_account_2eproto,
     "account.proto",
     &descriptor_table_account_2eproto_once, nullptr, 0, 4,
     schemas, file_default_instances, TableStruct_account_2eproto::offsets,
@@ -225,6 +225,7 @@ const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* S2CRegister_Status_descriptor() {
 bool S2CRegister_Status_IsValid(int value) {
   switch (value) {
     case 0:
+    case 2:
     case 3:
       return true;
     default:
@@ -234,6 +235,7 @@ bool S2CRegister_Status_IsValid(int value) {
 
 #if (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 constexpr S2CRegister_Status S2CRegister::eSuccess;
+constexpr S2CRegister_Status S2CRegister::eAccountAlreadyExist;
 constexpr S2CRegister_Status S2CRegister::eUnknownError;
 constexpr S2CRegister_Status S2CRegister::Status_MIN;
 constexpr S2CRegister_Status S2CRegister::Status_MAX;

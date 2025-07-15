@@ -126,7 +126,7 @@ include_directories(
         game
         game/logic
         game/gate
-        game/login
+        game/account
         ${Protobuf_INCLUDE_DIRS}
 )
 
@@ -135,6 +135,8 @@ set(COMMON_SOURCES
         game/center/CenterRpcServiceImpl.cpp
         game/center/CenterRpcServiceImpl.h
         base/net/Endian.h
+        game/center/CenterServerManager.cpp
+        game/center/CenterServerManager.h
 )
 # 调用子目录下的cmake
 add_subdirectory(base)
@@ -191,12 +193,11 @@ add_executable(LogicServer game/logic/main_logic.cpp)
 #! 在cmake中指定要链接的动态库的时候，应该将命令写到生成了可执行文件之后，因为是在可执行文件生成后，再将protobuf库链接的
 target_link_libraries(LogicServer CommonLibrary)
 
-#! 添加多个可执行文件，可在clion选择一个来构建/执行
 add_executable(GateServer game/gate/main_gate.cpp)
-#! 在cmake中指定要链接的动态库的时候，应该将命令写到生成了可执行文件之后，因为是在可执行文件生成后，再将protobuf库链接的
 target_link_libraries(GateServer CommonLibrary)
 
-#! 添加多个可执行文件，可在clion选择一个来构建/执行
-add_executable(LoginServer game/login/main_login.cpp)
-#! 在cmake中指定要链接的动态库的时候，应该将命令写到生成了可执行文件之后，因为是在可执行文件生成后，再将protobuf库链接的
-target_link_libraries(LoginServer CommonLibrary)
+add_executable(AccountServer game/account/main_account.cpp)
+target_link_libraries(AccountServer CommonLibrary)
+
+add_executable(CenterServer game/center/main_center.cpp)
+target_link_libraries(CenterServer CommonLibrary)

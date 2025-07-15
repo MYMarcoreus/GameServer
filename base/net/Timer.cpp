@@ -16,6 +16,7 @@ Timer::Timer(TimerID id, F_TaskCallback timerCallback, const Timestamp expiredTi
 {}
 
 void Timer::ExecuteCallback() {
+    assert(m_Callback);
     if(m_Callback) {
         YLOG_TRACE("执行定时器回调<{}>！", GetDemangleName(m_Callback.target_type().name()).c_str())
         m_Callback();

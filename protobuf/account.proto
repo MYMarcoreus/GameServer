@@ -40,6 +40,7 @@ message S2CRegister {
 
     enum Status {
         eSuccess = 0;
+        eAccountAlreadyExist = 2;
         eUnknownError = 3;
     }
     Status result_code = 2;

@@ -56,6 +56,13 @@ public:
     TimerID RunAfter(Microseconds delay, F_TaskCallback cb);
     ///@brief 以interval的时间间隔循环执行回调函数cb
     TimerID RunEvery(Microseconds interval, F_TaskCallback cb);
+
+    TimerPtr CreateTimerAt(Timestamp time);
+    TimerPtr CreateTimerAfter(Microseconds delay);
+    TimerPtr CreateTimerEvery(Microseconds interval);
+    TimerID AddTimer(const TimerPtr & timer);
+
+
     ///@brief 撤销id为timerid的定时器
     void CancelTimer(TimerID timerid);
     //End 定时器相关函数

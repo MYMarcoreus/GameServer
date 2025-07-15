@@ -78,25 +78,25 @@ void ThreadPool::PopAndExecuteTask() {
     std::cout << "thread<" << std::this_thread::get_id() << "> finished!\n";
 }
 
-net::TimerID ThreadPool::RunTaskAt(net::Timestamp time, Task cb) {
+net::TimerID ThreadPool::RunTaskAt(const net::Timestamp time, Task cb) {
     assert(m_IsRunning);
     assert(m_TimerLoop);
     return m_TimerLoop->RunAt(time, [this, taskcb = std::move(cb)](){this->PushTask(taskcb);});
 }
 
-net::TimerID ThreadPool::RunTaskAfter(net::Microseconds delay, Task cb) {
+net::TimerID ThreadPool::RunTaskAfter(const net::Microseconds delay, Task cb) {
     assert(m_IsRunning);
     assert(m_TimerLoop);
     return m_TimerLoop->RunAfter(delay, [this, taskcb = std::move(cb)](){this->PushTask(taskcb);});
 }
 
-net::TimerID ThreadPool::RunTaskEvery(net::Microseconds interval, Task cb) {
+net::TimerID ThreadPool::RunTaskEvery(const net::Microseconds interval, Task cb) {
     assert(m_IsRunning);
     assert(m_TimerLoop);
     return m_TimerLoop->RunEvery(interval, [this, taskcb = std::move(cb)](){ this->PushTask(taskcb); });
 }
 
-void ThreadPool::CancelTimer(net::TimerID timerid) {
+void ThreadPool::CancelTimer(const net::TimerID timerid) {
     assert(m_IsRunning);
     assert(m_TimerLoop);
     m_TimerLoop->CancelTimer(timerid);

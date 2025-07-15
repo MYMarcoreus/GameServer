@@ -30,6 +30,10 @@ public:
 
     virtual TimerID AddTimer(F_TaskCallback cb, Timestamp expiredTime, Microseconds  interval = 0us) override;
 
+    TimerID AddTimer(const TimerPtr& timer) override;
+
+    TimerPtr CreateTimer(Timestamp expiredTime, Microseconds interval) override;
+
     virtual void CancelTimer(TimerID timer_id) override;
 
     virtual int HandleExpiredTimersInLoop() override;
@@ -38,7 +42,7 @@ public:
 private:
 
     ///@brief 在AddTimer()中传递给m_OwnerLoop->RunCallbackInLoop()的回调函数，为EventLoop中的pending函数
-    void AddTimerInLoop(Timer * timer);
+    void AddTimerInLoop(const TimerPtr& timer);
 
     ///@brief 在CancelTimer()中传递给m_OwnerLoop->RunCallbackInLoop()的回调函数，为EventLoop中的pending函数
     void CancelTimerInLoop(TimerID);
@@ -46,14 +50,16 @@ private:
     //! 使用优先队列管理Timer。
     //!     如果存储的是Timer类，则可以不传入外置的比较函数，在Timer类中定义比较运算符即可；
     //!     但是这里存储的是Timer*指针，Timer类内的比较运算符只能定义Timer和其它对象的比较，无法定义Timer*自身的比较，因此需定义比较运算符
-    struct TimerComparator {
-        bool operator()(const Timer * a, const Timer * b) const;
+    struct TimerComparator
+    {
+        ///@brief 按照小于号来比较
+        bool operator()(const TimerPtr & a, const TimerPtr & b) const;
     };
-    using TimersContainer = std::priority_queue<Timer*, std::vector<Timer*>, TimerComparator>;
+    using TimersContainer = std::priority_queue<TimerPtr, std::vector<TimerPtr>, TimerComparator>;
 
 private:
-    TimersContainer                 m_timers;  // binary timer heap
-    std::unordered_map<int, Timer*> m_timersref;     // to make O(1) lookup
+    TimersContainer                   m_timers;  // binary timer heap
+    std::unordered_map<int, TimerPtr> m_timersref;     // to make O(1) lookup
     // int                                 next_id_;
 };
 

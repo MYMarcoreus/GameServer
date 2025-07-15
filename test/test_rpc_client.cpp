@@ -1,4 +1,4 @@
-#include "RpcStubPool.hpp"
+#include "RpcStubConnectionPool.hpp"
 #include "TcpConnection.h"
 #include "EventLoop.h"
 #include "log.h"
@@ -8,7 +8,7 @@
 #include "RpcControllerImpl.h"
 #include "AccountRpcClient.h"
 
-using yy::app::gate::AccountRpcClient;
+using yy::app::AccountRpcClient;
 
 int main()
 {

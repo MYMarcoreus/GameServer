@@ -23,21 +23,21 @@ namespace _pbi = _pb::internal;
 namespace yy {
 namespace protocol {
 namespace app {
-PROTOBUF_CONSTEXPR C2SSelectServer::C2SSelectServer(
+PROTOBUF_CONSTEXPR SelectServerReq::SelectServerReq(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_.username_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.session_id_)*/uint64_t{0u}
   , /*decltype(_impl_._cached_size_)*/{}} {}
-struct C2SSelectServerDefaultTypeInternal {
-  PROTOBUF_CONSTEXPR C2SSelectServerDefaultTypeInternal()
+struct SelectServerReqDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR SelectServerReqDefaultTypeInternal()
       : _instance(::_pbi::ConstantInitialized{}) {}
-  ~C2SSelectServerDefaultTypeInternal() {}
+  ~SelectServerReqDefaultTypeInternal() {}
   union {
-    C2SSelectServer _instance;
+    SelectServerReq _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 C2SSelectServerDefaultTypeInternal _C2SSelectServer_default_instance_;
-PROTOBUF_CONSTEXPR S2CSelectServer::S2CSelectServer(
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 SelectServerReqDefaultTypeInternal _SelectServerReq_default_instance_;
+PROTOBUF_CONSTEXPR SelectServerRsp::SelectServerRsp(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_._has_bits_)*/{}
   , /*decltype(_impl_._cached_size_)*/{}
@@ -47,15 +47,15 @@ PROTOBUF_CONSTEXPR S2CSelectServer::S2CSelectServer(
   , /*decltype(_impl_.session_id_)*/uint64_t{0u}
   , /*decltype(_impl_.result_code_)*/0
   , /*decltype(_impl_.port_)*/0u} {}
-struct S2CSelectServerDefaultTypeInternal {
-  PROTOBUF_CONSTEXPR S2CSelectServerDefaultTypeInternal()
+struct SelectServerRspDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR SelectServerRspDefaultTypeInternal()
       : _instance(::_pbi::ConstantInitialized{}) {}
-  ~S2CSelectServerDefaultTypeInternal() {}
+  ~SelectServerRspDefaultTypeInternal() {}
   union {
-    S2CSelectServer _instance;
+    SelectServerRsp _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 S2CSelectServerDefaultTypeInternal _S2CSelectServer_default_instance_;
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 SelectServerRspDefaultTypeInternal _SelectServerRsp_default_instance_;
 }  // namespace app
 }  // namespace protocol
 }  // namespace yy
@@ -65,25 +65,25 @@ static const ::_pb::ServiceDescriptor* file_level_service_descriptors_center_2ep
 
 const uint32_t TableStruct_center_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::C2SSelectServer, _internal_metadata_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::SelectServerReq, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::C2SSelectServer, _impl_.session_id_),
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::C2SSelectServer, _impl_.username_),
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::S2CSelectServer, _impl_._has_bits_),
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::S2CSelectServer, _internal_metadata_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::SelectServerReq, _impl_.session_id_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::SelectServerReq, _impl_.username_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::SelectServerRsp, _impl_._has_bits_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::SelectServerRsp, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::S2CSelectServer, _impl_.session_id_),
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::S2CSelectServer, _impl_.result_code_),
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::S2CSelectServer, _impl_.username_),
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::S2CSelectServer, _impl_.ip_),
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::S2CSelectServer, _impl_.port_),
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::S2CSelectServer, _impl_.token_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::SelectServerRsp, _impl_.session_id_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::SelectServerRsp, _impl_.result_code_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::SelectServerRsp, _impl_.username_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::SelectServerRsp, _impl_.ip_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::SelectServerRsp, _impl_.port_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::SelectServerRsp, _impl_.token_),
   ~0u,
   ~0u,
   0,
@@ -92,28 +92,28 @@ const uint32_t TableStruct_center_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(p
   2,
 };
 static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  { 0, -1, -1, sizeof(::yy::protocol::app::C2SSelectServer)},
-  { 8, 20, -1, sizeof(::yy::protocol::app::S2CSelectServer)},
+  { 0, -1, -1, sizeof(::yy::protocol::app::SelectServerReq)},
+  { 8, 20, -1, sizeof(::yy::protocol::app::SelectServerRsp)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
-  &::yy::protocol::app::_C2SSelectServer_default_instance_._instance,
-  &::yy::protocol::app::_S2CSelectServer_default_instance_._instance,
+  &::yy::protocol::app::_SelectServerReq_default_instance_._instance,
+  &::yy::protocol::app::_SelectServerRsp_default_instance_._instance,
 };
 
 const char descriptor_table_protodef_center_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
-  "\n\014center.proto\022\017yy.protocol.app\"7\n\017C2SSe"
-  "lectServer\022\022\n\nsession_id\030\001 \001(\004\022\020\n\010userna"
-  "me\030\004 \001(\t\"\200\002\n\017S2CSelectServer\022\022\n\nsession_"
+  "\n\014center.proto\022\017yy.protocol.app\"7\n\017Selec"
+  "tServerReq\022\022\n\nsession_id\030\001 \001(\004\022\020\n\010userna"
+  "me\030\004 \001(\t\"\200\002\n\017SelectServerRsp\022\022\n\nsession_"
   "id\030\001 \001(\004\022<\n\013result_code\030\002 \001(\0162\'.yy.proto"
-  "col.app.S2CSelectServer.Status\022\025\n\010userna"
+  "col.app.SelectServerRsp.Status\022\025\n\010userna"
   "me\030\003 \001(\tH\000\210\001\001\022\017\n\002ip\030\004 \001(\tH\001\210\001\001\022\021\n\004port\030\005"
   " \001(\rH\002\210\001\001\022\022\n\005token\030\006 \001(\tH\003\210\001\001\"%\n\006Status\022"
   "\014\n\010eSuccess\020\000\022\r\n\teNoServer\020\001B\013\n\t_usernam"
   "eB\005\n\003_ipB\007\n\005_portB\010\n\006_token2f\n\020CenterSer"
   "viceRpc\022R\n\014SelectServer\022 .yy.protocol.ap"
-  "p.C2SSelectServer\032 .yy.protocol.app.S2CS"
-  "electServerB\003\200\001\001b\006proto3"
+  "p.SelectServerReq\032 .yy.protocol.app.Sele"
+  "ctServerRspB\003\200\001\001b\006proto3"
   ;
 static ::_pbi::once_flag descriptor_table_center_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_center_2eproto = {
@@ -133,11 +133,11 @@ PROTOBUF_ATTRIBUTE_INIT_PRIORITY2 static ::_pbi::AddDescriptorsRunner dynamic_in
 namespace yy {
 namespace protocol {
 namespace app {
-const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* S2CSelectServer_Status_descriptor() {
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* SelectServerRsp_Status_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_center_2eproto);
   return file_level_enum_descriptors_center_2eproto[0];
 }
-bool S2CSelectServer_Status_IsValid(int value) {
+bool SelectServerRsp_Status_IsValid(int value) {
   switch (value) {
     case 0:
     case 1:
@@ -148,28 +148,28 @@ bool S2CSelectServer_Status_IsValid(int value) {
 }
 
 #if (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
-constexpr S2CSelectServer_Status S2CSelectServer::eSuccess;
-constexpr S2CSelectServer_Status S2CSelectServer::eNoServer;
-constexpr S2CSelectServer_Status S2CSelectServer::Status_MIN;
-constexpr S2CSelectServer_Status S2CSelectServer::Status_MAX;
-constexpr int S2CSelectServer::Status_ARRAYSIZE;
+constexpr SelectServerRsp_Status SelectServerRsp::eSuccess;
+constexpr SelectServerRsp_Status SelectServerRsp::eNoServer;
+constexpr SelectServerRsp_Status SelectServerRsp::Status_MIN;
+constexpr SelectServerRsp_Status SelectServerRsp::Status_MAX;
+constexpr int SelectServerRsp::Status_ARRAYSIZE;
 #endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 
 // ===================================================================
 
-class C2SSelectServer::_Internal {
+class SelectServerReq::_Internal {
  public:
 };
 
-C2SSelectServer::C2SSelectServer(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+SelectServerReq::SelectServerReq(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
   SharedCtor(arena, is_message_owned);
-  // @@protoc_insertion_point(arena_constructor:yy.protocol.app.C2SSelectServer)
+  // @@protoc_insertion_point(arena_constructor:yy.protocol.app.SelectServerReq)
 }
-C2SSelectServer::C2SSelectServer(const C2SSelectServer& from)
+SelectServerReq::SelectServerReq(const SelectServerReq& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
-  C2SSelectServer* const _this = this; (void)_this;
+  SelectServerReq* const _this = this; (void)_this;
   new (&_impl_) Impl_{
       decltype(_impl_.username_){}
     , decltype(_impl_.session_id_){}
@@ -185,10 +185,10 @@ C2SSelectServer::C2SSelectServer(const C2SSelectServer& from)
       _this->GetArenaForAllocation());
   }
   _this->_impl_.session_id_ = from._impl_.session_id_;
-  // @@protoc_insertion_point(copy_constructor:yy.protocol.app.C2SSelectServer)
+  // @@protoc_insertion_point(copy_constructor:yy.protocol.app.SelectServerReq)
 }
 
-inline void C2SSelectServer::SharedCtor(
+inline void SelectServerReq::SharedCtor(
     ::_pb::Arena* arena, bool is_message_owned) {
   (void)arena;
   (void)is_message_owned;
@@ -203,8 +203,8 @@ inline void C2SSelectServer::SharedCtor(
   #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
 }
 
-C2SSelectServer::~C2SSelectServer() {
-  // @@protoc_insertion_point(destructor:yy.protocol.app.C2SSelectServer)
+SelectServerReq::~SelectServerReq() {
+  // @@protoc_insertion_point(destructor:yy.protocol.app.SelectServerReq)
   if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
   (void)arena;
     return;
@@ -212,17 +212,17 @@ C2SSelectServer::~C2SSelectServer() {
   SharedDtor();
 }
 
-inline void C2SSelectServer::SharedDtor() {
+inline void SelectServerReq::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
   _impl_.username_.Destroy();
 }
 
-void C2SSelectServer::SetCachedSize(int size) const {
+void SelectServerReq::SetCachedSize(int size) const {
   _impl_._cached_size_.Set(size);
 }
 
-void C2SSelectServer::Clear() {
-// @@protoc_insertion_point(message_clear_start:yy.protocol.app.C2SSelectServer)
+void SelectServerReq::Clear() {
+// @@protoc_insertion_point(message_clear_start:yy.protocol.app.SelectServerReq)
   uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -232,7 +232,7 @@ void C2SSelectServer::Clear() {
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* C2SSelectServer::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+const char* SelectServerReq::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   while (!ctx->Done(&ptr)) {
     uint32_t tag;
@@ -252,7 +252,7 @@ const char* C2SSelectServer::_InternalParse(const char* ptr, ::_pbi::ParseContex
           auto str = _internal_mutable_username();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
-          CHK_(::_pbi::VerifyUTF8(str, "yy.protocol.app.C2SSelectServer.username"));
+          CHK_(::_pbi::VerifyUTF8(str, "yy.protocol.app.SelectServerReq.username"));
         } else
           goto handle_unusual;
         continue;
@@ -279,9 +279,9 @@ failure:
 #undef CHK_
 }
 
-uint8_t* C2SSelectServer::_InternalSerialize(
+uint8_t* SelectServerReq::_InternalSerialize(
     uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:yy.protocol.app.C2SSelectServer)
+  // @@protoc_insertion_point(serialize_to_array_start:yy.protocol.app.SelectServerReq)
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -296,7 +296,7 @@ uint8_t* C2SSelectServer::_InternalSerialize(
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_username().data(), static_cast<int>(this->_internal_username().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "yy.protocol.app.C2SSelectServer.username");
+      "yy.protocol.app.SelectServerReq.username");
     target = stream->WriteStringMaybeAliased(
         4, this->_internal_username(), target);
   }
@@ -305,12 +305,12 @@ uint8_t* C2SSelectServer::_InternalSerialize(
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
-  // @@protoc_insertion_point(serialize_to_array_end:yy.protocol.app.C2SSelectServer)
+  // @@protoc_insertion_point(serialize_to_array_end:yy.protocol.app.SelectServerReq)
   return target;
 }
 
-size_t C2SSelectServer::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:yy.protocol.app.C2SSelectServer)
+size_t SelectServerReq::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:yy.protocol.app.SelectServerReq)
   size_t total_size = 0;
 
   uint32_t cached_has_bits = 0;
@@ -332,17 +332,17 @@ size_t C2SSelectServer::ByteSizeLong() const {
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData C2SSelectServer::_class_data_ = {
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData SelectServerReq::_class_data_ = {
     ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
-    C2SSelectServer::MergeImpl
+    SelectServerReq::MergeImpl
 };
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*C2SSelectServer::GetClassData() const { return &_class_data_; }
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*SelectServerReq::GetClassData() const { return &_class_data_; }
 
 
-void C2SSelectServer::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
-  auto* const _this = static_cast<C2SSelectServer*>(&to_msg);
-  auto& from = static_cast<const C2SSelectServer&>(from_msg);
-  // @@protoc_insertion_point(class_specific_merge_from_start:yy.protocol.app.C2SSelectServer)
+void SelectServerReq::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<SelectServerReq*>(&to_msg);
+  auto& from = static_cast<const SelectServerReq&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:yy.protocol.app.SelectServerReq)
   GOOGLE_DCHECK_NE(&from, _this);
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
@@ -356,18 +356,18 @@ void C2SSelectServer::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const 
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
-void C2SSelectServer::CopyFrom(const C2SSelectServer& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:yy.protocol.app.C2SSelectServer)
+void SelectServerReq::CopyFrom(const SelectServerReq& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:yy.protocol.app.SelectServerReq)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool C2SSelectServer::IsInitialized() const {
+bool SelectServerReq::IsInitialized() const {
   return true;
 }
 
-void C2SSelectServer::InternalSwap(C2SSelectServer* other) {
+void SelectServerReq::InternalSwap(SelectServerReq* other) {
   using std::swap;
   auto* lhs_arena = GetArenaForAllocation();
   auto* rhs_arena = other->GetArenaForAllocation();
@@ -379,7 +379,7 @@ void C2SSelectServer::InternalSwap(C2SSelectServer* other) {
   swap(_impl_.session_id_, other->_impl_.session_id_);
 }
 
-::PROTOBUF_NAMESPACE_ID::Metadata C2SSelectServer::GetMetadata() const {
+::PROTOBUF_NAMESPACE_ID::Metadata SelectServerReq::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_center_2eproto_getter, &descriptor_table_center_2eproto_once,
       file_level_metadata_center_2eproto[0]);
@@ -387,9 +387,9 @@ void C2SSelectServer::InternalSwap(C2SSelectServer* other) {
 
 // ===================================================================
 
-class S2CSelectServer::_Internal {
+class SelectServerRsp::_Internal {
  public:
-  using HasBits = decltype(std::declval<S2CSelectServer>()._impl_._has_bits_);
+  using HasBits = decltype(std::declval<SelectServerRsp>()._impl_._has_bits_);
   static void set_has_username(HasBits* has_bits) {
     (*has_bits)[0] |= 1u;
   }
@@ -404,15 +404,15 @@ class S2CSelectServer::_Internal {
   }
 };
 
-S2CSelectServer::S2CSelectServer(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+SelectServerRsp::SelectServerRsp(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
   SharedCtor(arena, is_message_owned);
-  // @@protoc_insertion_point(arena_constructor:yy.protocol.app.S2CSelectServer)
+  // @@protoc_insertion_point(arena_constructor:yy.protocol.app.SelectServerRsp)
 }
-S2CSelectServer::S2CSelectServer(const S2CSelectServer& from)
+SelectServerRsp::SelectServerRsp(const SelectServerRsp& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
-  S2CSelectServer* const _this = this; (void)_this;
+  SelectServerRsp* const _this = this; (void)_this;
   new (&_impl_) Impl_{
       decltype(_impl_._has_bits_){from._impl_._has_bits_}
     , /*decltype(_impl_._cached_size_)*/{}
@@ -451,10 +451,10 @@ S2CSelectServer::S2CSelectServer(const S2CSelectServer& from)
   ::memcpy(&_impl_.session_id_, &from._impl_.session_id_,
     static_cast<size_t>(reinterpret_cast<char*>(&_impl_.port_) -
     reinterpret_cast<char*>(&_impl_.session_id_)) + sizeof(_impl_.port_));
-  // @@protoc_insertion_point(copy_constructor:yy.protocol.app.S2CSelectServer)
+  // @@protoc_insertion_point(copy_constructor:yy.protocol.app.SelectServerRsp)
 }
 
-inline void S2CSelectServer::SharedCtor(
+inline void SelectServerRsp::SharedCtor(
     ::_pb::Arena* arena, bool is_message_owned) {
   (void)arena;
   (void)is_message_owned;
@@ -482,8 +482,8 @@ inline void S2CSelectServer::SharedCtor(
   #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
 }
 
-S2CSelectServer::~S2CSelectServer() {
-  // @@protoc_insertion_point(destructor:yy.protocol.app.S2CSelectServer)
+SelectServerRsp::~SelectServerRsp() {
+  // @@protoc_insertion_point(destructor:yy.protocol.app.SelectServerRsp)
   if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
   (void)arena;
     return;
@@ -491,19 +491,19 @@ S2CSelectServer::~S2CSelectServer() {
   SharedDtor();
 }
 
-inline void S2CSelectServer::SharedDtor() {
+inline void SelectServerRsp::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
   _impl_.username_.Destroy();
   _impl_.ip_.Destroy();
   _impl_.token_.Destroy();
 }
 
-void S2CSelectServer::SetCachedSize(int size) const {
+void SelectServerRsp::SetCachedSize(int size) const {
   _impl_._cached_size_.Set(size);
 }
 
-void S2CSelectServer::Clear() {
-// @@protoc_insertion_point(message_clear_start:yy.protocol.app.S2CSelectServer)
+void SelectServerRsp::Clear() {
+// @@protoc_insertion_point(message_clear_start:yy.protocol.app.SelectServerRsp)
   uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -528,7 +528,7 @@ void S2CSelectServer::Clear() {
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* S2CSelectServer::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+const char* SelectServerRsp::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   _Internal::HasBits has_bits{};
   while (!ctx->Done(&ptr)) {
@@ -543,12 +543,12 @@ const char* S2CSelectServer::_InternalParse(const char* ptr, ::_pbi::ParseContex
         } else
           goto handle_unusual;
         continue;
-      // .yy.protocol.app.S2CSelectServer.Status result_code = 2;
+      // .yy.protocol.app.SelectServerRsp.Status result_code = 2;
       case 2:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
           uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
-          _internal_set_result_code(static_cast<::yy::protocol::app::S2CSelectServer_Status>(val));
+          _internal_set_result_code(static_cast<::yy::protocol::app::SelectServerRsp_Status>(val));
         } else
           goto handle_unusual;
         continue;
@@ -558,7 +558,7 @@ const char* S2CSelectServer::_InternalParse(const char* ptr, ::_pbi::ParseContex
           auto str = _internal_mutable_username();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
-          CHK_(::_pbi::VerifyUTF8(str, "yy.protocol.app.S2CSelectServer.username"));
+          CHK_(::_pbi::VerifyUTF8(str, "yy.protocol.app.SelectServerRsp.username"));
         } else
           goto handle_unusual;
         continue;
@@ -568,7 +568,7 @@ const char* S2CSelectServer::_InternalParse(const char* ptr, ::_pbi::ParseContex
           auto str = _internal_mutable_ip();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
-          CHK_(::_pbi::VerifyUTF8(str, "yy.protocol.app.S2CSelectServer.ip"));
+          CHK_(::_pbi::VerifyUTF8(str, "yy.protocol.app.SelectServerRsp.ip"));
         } else
           goto handle_unusual;
         continue;
@@ -587,7 +587,7 @@ const char* S2CSelectServer::_InternalParse(const char* ptr, ::_pbi::ParseContex
           auto str = _internal_mutable_token();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
-          CHK_(::_pbi::VerifyUTF8(str, "yy.protocol.app.S2CSelectServer.token"));
+          CHK_(::_pbi::VerifyUTF8(str, "yy.protocol.app.SelectServerRsp.token"));
         } else
           goto handle_unusual;
         continue;
@@ -615,9 +615,9 @@ failure:
 #undef CHK_
 }
 
-uint8_t* S2CSelectServer::_InternalSerialize(
+uint8_t* SelectServerRsp::_InternalSerialize(
     uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:yy.protocol.app.S2CSelectServer)
+  // @@protoc_insertion_point(serialize_to_array_start:yy.protocol.app.SelectServerRsp)
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -627,7 +627,7 @@ uint8_t* S2CSelectServer::_InternalSerialize(
     target = ::_pbi::WireFormatLite::WriteUInt64ToArray(1, this->_internal_session_id(), target);
   }
 
-  // .yy.protocol.app.S2CSelectServer.Status result_code = 2;
+  // .yy.protocol.app.SelectServerRsp.Status result_code = 2;
   if (this->_internal_result_code() != 0) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteEnumToArray(
@@ -639,7 +639,7 @@ uint8_t* S2CSelectServer::_InternalSerialize(
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_username().data(), static_cast<int>(this->_internal_username().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "yy.protocol.app.S2CSelectServer.username");
+      "yy.protocol.app.SelectServerRsp.username");
     target = stream->WriteStringMaybeAliased(
         3, this->_internal_username(), target);
   }
@@ -649,7 +649,7 @@ uint8_t* S2CSelectServer::_InternalSerialize(
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_ip().data(), static_cast<int>(this->_internal_ip().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "yy.protocol.app.S2CSelectServer.ip");
+      "yy.protocol.app.SelectServerRsp.ip");
     target = stream->WriteStringMaybeAliased(
         4, this->_internal_ip(), target);
   }
@@ -665,7 +665,7 @@ uint8_t* S2CSelectServer::_InternalSerialize(
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_token().data(), static_cast<int>(this->_internal_token().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "yy.protocol.app.S2CSelectServer.token");
+      "yy.protocol.app.SelectServerRsp.token");
     target = stream->WriteStringMaybeAliased(
         6, this->_internal_token(), target);
   }
@@ -674,12 +674,12 @@ uint8_t* S2CSelectServer::_InternalSerialize(
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
-  // @@protoc_insertion_point(serialize_to_array_end:yy.protocol.app.S2CSelectServer)
+  // @@protoc_insertion_point(serialize_to_array_end:yy.protocol.app.SelectServerRsp)
   return target;
 }
 
-size_t S2CSelectServer::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:yy.protocol.app.S2CSelectServer)
+size_t SelectServerRsp::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:yy.protocol.app.SelectServerRsp)
   size_t total_size = 0;
 
   uint32_t cached_has_bits = 0;
@@ -715,7 +715,7 @@ size_t S2CSelectServer::ByteSizeLong() const {
     total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_session_id());
   }
 
-  // .yy.protocol.app.S2CSelectServer.Status result_code = 2;
+  // .yy.protocol.app.SelectServerRsp.Status result_code = 2;
   if (this->_internal_result_code() != 0) {
     total_size += 1 +
       ::_pbi::WireFormatLite::EnumSize(this->_internal_result_code());
@@ -729,17 +729,17 @@ size_t S2CSelectServer::ByteSizeLong() const {
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData S2CSelectServer::_class_data_ = {
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData SelectServerRsp::_class_data_ = {
     ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
-    S2CSelectServer::MergeImpl
+    SelectServerRsp::MergeImpl
 };
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*S2CSelectServer::GetClassData() const { return &_class_data_; }
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*SelectServerRsp::GetClassData() const { return &_class_data_; }
 
 
-void S2CSelectServer::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
-  auto* const _this = static_cast<S2CSelectServer*>(&to_msg);
-  auto& from = static_cast<const S2CSelectServer&>(from_msg);
-  // @@protoc_insertion_point(class_specific_merge_from_start:yy.protocol.app.S2CSelectServer)
+void SelectServerRsp::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<SelectServerRsp*>(&to_msg);
+  auto& from = static_cast<const SelectServerRsp&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:yy.protocol.app.SelectServerRsp)
   GOOGLE_DCHECK_NE(&from, _this);
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
@@ -768,18 +768,18 @@ void S2CSelectServer::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const 
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
-void S2CSelectServer::CopyFrom(const S2CSelectServer& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:yy.protocol.app.S2CSelectServer)
+void SelectServerRsp::CopyFrom(const SelectServerRsp& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:yy.protocol.app.SelectServerRsp)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool S2CSelectServer::IsInitialized() const {
+bool SelectServerRsp::IsInitialized() const {
   return true;
 }
 
-void S2CSelectServer::InternalSwap(S2CSelectServer* other) {
+void SelectServerRsp::InternalSwap(SelectServerRsp* other) {
   using std::swap;
   auto* lhs_arena = GetArenaForAllocation();
   auto* rhs_arena = other->GetArenaForAllocation();
@@ -798,14 +798,14 @@ void S2CSelectServer::InternalSwap(S2CSelectServer* other) {
       &other->_impl_.token_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(S2CSelectServer, _impl_.port_)
-      + sizeof(S2CSelectServer::_impl_.port_)
-      - PROTOBUF_FIELD_OFFSET(S2CSelectServer, _impl_.session_id_)>(
+      PROTOBUF_FIELD_OFFSET(SelectServerRsp, _impl_.port_)
+      + sizeof(SelectServerRsp::_impl_.port_)
+      - PROTOBUF_FIELD_OFFSET(SelectServerRsp, _impl_.session_id_)>(
           reinterpret_cast<char*>(&_impl_.session_id_),
           reinterpret_cast<char*>(&other->_impl_.session_id_));
 }
 
-::PROTOBUF_NAMESPACE_ID::Metadata S2CSelectServer::GetMetadata() const {
+::PROTOBUF_NAMESPACE_ID::Metadata SelectServerRsp::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_center_2eproto_getter, &descriptor_table_center_2eproto_once,
       file_level_metadata_center_2eproto[1]);
@@ -825,8 +825,8 @@ const ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor* CenterServiceRpc::GetDescripto
 }
 
 void CenterServiceRpc::SelectServer(::PROTOBUF_NAMESPACE_ID::RpcController* controller,
-                         const ::yy::protocol::app::C2SSelectServer*,
-                         ::yy::protocol::app::S2CSelectServer*,
+                         const ::yy::protocol::app::SelectServerReq*,
+                         ::yy::protocol::app::SelectServerRsp*,
                          ::google::protobuf::Closure* done) {
   controller->SetFailed("Method SelectServer() not implemented.");
   done->Run();
@@ -841,9 +841,9 @@ void CenterServiceRpc::CallMethod(const ::PROTOBUF_NAMESPACE_ID::MethodDescripto
   switch(method->index()) {
     case 0:
       SelectServer(controller,
-             ::PROTOBUF_NAMESPACE_ID::internal::DownCast<const ::yy::protocol::app::C2SSelectServer*>(
+             ::PROTOBUF_NAMESPACE_ID::internal::DownCast<const ::yy::protocol::app::SelectServerReq*>(
                  request),
-             ::PROTOBUF_NAMESPACE_ID::internal::DownCast<::yy::protocol::app::S2CSelectServer*>(
+             ::PROTOBUF_NAMESPACE_ID::internal::DownCast<::yy::protocol::app::SelectServerRsp*>(
                  response),
              done);
       break;
@@ -858,7 +858,7 @@ const ::PROTOBUF_NAMESPACE_ID::Message& CenterServiceRpc::GetRequestPrototype(
   GOOGLE_DCHECK_EQ(method->service(), descriptor());
   switch(method->index()) {
     case 0:
-      return ::yy::protocol::app::C2SSelectServer::default_instance();
+      return ::yy::protocol::app::SelectServerReq::default_instance();
     default:
       GOOGLE_LOG(FATAL) << "Bad method index; this should never happen.";
       return *::PROTOBUF_NAMESPACE_ID::MessageFactory::generated_factory()
@@ -871,7 +871,7 @@ const ::PROTOBUF_NAMESPACE_ID::Message& CenterServiceRpc::GetResponsePrototype(
   GOOGLE_DCHECK_EQ(method->service(), descriptor());
   switch(method->index()) {
     case 0:
-      return ::yy::protocol::app::S2CSelectServer::default_instance();
+      return ::yy::protocol::app::SelectServerRsp::default_instance();
     default:
       GOOGLE_LOG(FATAL) << "Bad method index; this should never happen.";
       return *::PROTOBUF_NAMESPACE_ID::MessageFactory::generated_factory()
@@ -891,8 +891,8 @@ CenterServiceRpc_Stub::~CenterServiceRpc_Stub() {
 }
 
 void CenterServiceRpc_Stub::SelectServer(::PROTOBUF_NAMESPACE_ID::RpcController* controller,
-                              const ::yy::protocol::app::C2SSelectServer* request,
-                              ::yy::protocol::app::S2CSelectServer* response,
+                              const ::yy::protocol::app::SelectServerReq* request,
+                              ::yy::protocol::app::SelectServerRsp* response,
                               ::google::protobuf::Closure* done) {
   channel_->CallMethod(descriptor()->method(0),
                        controller, request, response, done);
@@ -903,13 +903,13 @@ void CenterServiceRpc_Stub::SelectServer(::PROTOBUF_NAMESPACE_ID::RpcController*
 }  // namespace protocol
 }  // namespace yy
 PROTOBUF_NAMESPACE_OPEN
-template<> PROTOBUF_NOINLINE ::yy::protocol::app::C2SSelectServer*
-Arena::CreateMaybeMessage< ::yy::protocol::app::C2SSelectServer >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::yy::protocol::app::C2SSelectServer >(arena);
+template<> PROTOBUF_NOINLINE ::yy::protocol::app::SelectServerReq*
+Arena::CreateMaybeMessage< ::yy::protocol::app::SelectServerReq >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::yy::protocol::app::SelectServerReq >(arena);
 }
-template<> PROTOBUF_NOINLINE ::yy::protocol::app::S2CSelectServer*
-Arena::CreateMaybeMessage< ::yy::protocol::app::S2CSelectServer >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::yy::protocol::app::S2CSelectServer >(arena);
+template<> PROTOBUF_NOINLINE ::yy::protocol::app::SelectServerRsp*
+Arena::CreateMaybeMessage< ::yy::protocol::app::SelectServerRsp >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::yy::protocol::app::SelectServerRsp >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
 

@@ -1,7 +1,7 @@
-#include "LoginServerManager.h"
+#include "AccountServerManager.h"
 #include "log.h"
 #include "EventLoop.h"
-#include "LoginServer.h"
+#include "AccountServer.h"
 #include "account.pb.h"
 #include "RpcServer.h"
 #include "AccountRpcServiceImpl.h"
@@ -23,10 +23,10 @@ template<class T>
 using Ptr = std::shared_ptr<T>;
 
 
-namespace yy::app::login {
+namespace yy::app::account {
 
 
-LoginServerManager::LoginServerManager():
+AccountServerManager::AccountServerManager():
       m_server{nullptr},
       m_dispatcher{[this](const core::UserConnectionPtr& userdata, const core::MessagePtr& message) { this->UnkonwnCommand(userdata, message); }},
       m_accpetorLoop{nullptr},
@@ -37,28 +37,28 @@ LoginServerManager::LoginServerManager():
     //     });
 }
 
-LoginServerManager::~LoginServerManager() {
+AccountServerManager::~AccountServerManager() {
     m_server->Stop();
     m_rpcServer->Stop();
 }
 
 
-void LoginServerManager::AppNotifier_Secutiry(const core::UserConnectionPtr& userdata) {
+void AccountServerManager::AppNotifier_Secutiry(const core::UserConnectionPtr& userdata) {
     userdata->SetState(core::UserConnection::E_UserBaseState::eSecure);
 }
 
-void LoginServerManager::AppNotifier_Disconnect(const core::UserConnectionPtr& userdata) {
+void AccountServerManager::AppNotifier_Disconnect(const core::UserConnectionPtr& userdata) {
     YLOG_INFO("↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ 用户<{}>断开连接", userdata->GetUID())
 }
 
-void LoginServerManager::AppNotifier_Command(const core::UserConnectionPtr & userdata, const core::MessagePtr & message, const MessageType type)
+void AccountServerManager::AppNotifier_Command(const core::UserConnectionPtr & userdata, const core::MessagePtr & message, const MessageType type)
 {
     m_wordThreads.PushTask([this, userdata, message](){
         m_dispatcher.OnProtobufMessage(userdata, message);
     });
 }
 
-void LoginServerManager::UnkonwnCommand(const core::UserConnectionPtr & userdata, const core::MessagePtr & message)
+void AccountServerManager::UnkonwnCommand(const core::UserConnectionPtr & userdata, const core::MessagePtr & message)
 {
     YLOG_DEBUG("未知的消息类型：{}", message->GetDescriptor()->full_name())
     userdata->Shutdown();
@@ -68,7 +68,7 @@ void LoginServerManager::UnkonwnCommand(const core::UserConnectionPtr & userdata
 
 
 
-void LoginServerManager::RunApp()
+void AccountServerManager::RunApp()
 {
     //! 初始化服务器
     Init();
@@ -82,7 +82,7 @@ void LoginServerManager::RunApp()
 }
 
 
-void LoginServerManager::Init()
+void AccountServerManager::Init()
 {
     //! ①、读取配置文件
     yy::config::ConfigManager::LoadXmlConfigs();
@@ -98,7 +98,7 @@ void LoginServerManager::Init()
             config::g_app_config->GetValue().app_tcp_port());
 
     //! ⑤、初始化服务器对象（③和④）
-    m_server = std::make_unique<LoginServer>(m_accpetorLoop.get(), listenAddr);
+    m_server = std::make_unique<AccountServer>(m_accpetorLoop.get(), listenAddr);
     m_server->SetNotifier_Security(
         [this](const core::UserConnectionPtr& userdata) {
             this->AppNotifier_Secutiry(userdata);
@@ -119,9 +119,9 @@ void LoginServerManager::Init()
 
     const yy::net::IPAddressPtr rpcAddr = std::make_shared<net::IPv4Address>(
             config::g_app_config->GetValue().rpc_port());
-    m_rpcServer = std::make_unique<RpcServer>(m_accpetorLoop.get(), rpcAddr);
-    m_rpcServer->RegisterService<AccountRpcServiceImpl>();
-    m_rpcServer->Start();
+    m_rpcServer = std::make_unique<core::rpc::RpcServer>(m_accpetorLoop.get(), rpcAddr);
+    m_rpcServer->RegisterService<AccountRpcServiceImpl>(m_accpetorLoop.get());
+    m_rpcServer->Start(2, 500ms);
 }
 
 

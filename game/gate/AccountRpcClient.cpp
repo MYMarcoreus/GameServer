@@ -1,13 +1,13 @@
 #include "AccountRpcClient.h"
 
 using namespace yy::protocol::app;
-using yy::app::gate::AccountRpcClient;
+using yy::app::AccountRpcClient;
 
 template<>
 template<>
 void AccountRpcClient::DoCall<C2SLogin, S2CLogin>(
     AccountServiceRpc_Stub& stub,
-    yy::core::RpcControllerImpl* controller,
+    yy::core::rpc::RpcControllerImpl* controller,
     C2SLogin* request,
     S2CLogin* response,
     google::protobuf::Closure* done)
@@ -19,7 +19,7 @@ template<>
 template<>
 void AccountRpcClient::DoCall<C2SRegister, S2CRegister>(
     AccountServiceRpc_Stub& stub,
-    yy::core::RpcControllerImpl* controller,
+    yy::core::rpc::RpcControllerImpl* controller,
     C2SRegister* request,
     S2CRegister* response,
     google::protobuf::Closure* done)

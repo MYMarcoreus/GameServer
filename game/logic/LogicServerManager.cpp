@@ -13,21 +13,13 @@ namespace yy::app::logic {
 
 
 LogicServerManager::LogicServerManager():
-    m_server{nullptr},
-    m_room_service{nullptr},
-    m_test_service{nullptr},
     m_dispatcher{[this](const core::UserConnectionPtr& userdata, const core::MessagePtr& message) { this->UnkonwnCommand(userdata, message); }},
-    m_accpetorLoop{nullptr},
-    m_wordThreads("Game Work Thread"),
-    m_zk{core::zk::ZkServiceManager::Instance()}
-
-{
-}
+    m_workThreads("Game Work Thread")
+{ }
 
 LogicServerManager::~LogicServerManager() {
     m_server->Stop();
 }
-
 
 void LogicServerManager::AppNotifier_Secutiry(const core::UserConnectionPtr& userdata) {
     userdata->SetState(core::UserConnection::E_UserBaseState::eSecure);
@@ -54,7 +46,7 @@ void LogicServerManager::AppNotifier_Disconnect(const core::UserConnectionPtr& u
 void LogicServerManager::AppNotifier_Command(const core::UserConnectionPtr & userdata, const core::MessagePtr & message, const core::MessageType type)
 {
     //! 对于游戏游戏，并不在IO线程处理，而是在专门处理游戏数据的工作线程中处理（让Game层的分发器找到该游戏消息所注册的对应的处理函数。）
-    m_wordThreads.PushTask([this, userdata, message](){
+    m_workThreads.PushTask([this, userdata, message](){
         m_dispatcher.OnProtobufMessage(userdata, message);
     });
 }
@@ -66,16 +58,13 @@ void LogicServerManager::UnkonwnCommand(const core::UserConnectionPtr & userdata
 }
 
 
-
-
-
 void LogicServerManager::RunApp()
 {
     //! 初始化服务器
     Init();
 
     //! 启动服务器的工作线程
-    m_wordThreads.Start(m_accpetorLoop.get(), config::g_app_config->GetValue().work_thread_num());
+    m_workThreads.Start(m_accpetorLoop.get(), config::g_app_config->GetValue().work_thread_num());
 
     //! 启动监听线程(即主线程)的
     m_accpetorLoop->Loop();
@@ -103,17 +92,14 @@ void LogicServerManager::Init()
         [this](const core::UserConnectionPtr& userdata) {
             this->AppNotifier_Secutiry(userdata);
         });
-
     m_server->SetNotifier_DisConnect(
         [this](const core::UserConnectionPtr & userdata) {
             this->AppNotifier_Disconnect(userdata);
         });
-
     m_server->SetNotifier_Command(
         [this](const core::UserConnectionPtr & userdata, const core::MessagePtr & message, const core::MessageType type) {
             this->AppNotifier_Command(userdata, message, type);
         });
-
 
     m_room_service = std::make_unique<RoomService>();
     m_room_service->Init();

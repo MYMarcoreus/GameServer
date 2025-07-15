@@ -94,7 +94,7 @@ public:
         return element_ptr;
     }
 
-    void swap(BoundedLockedQueue & other)
+    void swap(BoundedLockedQueue & other) noexcept
     {
         std::lock_guard lock{m_mutex};
         std::swap(m_queue, other.m_queue);

@@ -103,6 +103,7 @@ inline bool S2CLogin_Status_Parse(
 }
 enum S2CRegister_Status : int {
   S2CRegister_Status_eSuccess = 0,
+  S2CRegister_Status_eAccountAlreadyExist = 2,
   S2CRegister_Status_eUnknownError = 3,
   S2CRegister_Status_S2CRegister_Status_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
   S2CRegister_Status_S2CRegister_Status_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
@@ -878,6 +879,8 @@ class S2CRegister final :
   typedef S2CRegister_Status Status;
   static constexpr Status eSuccess =
     S2CRegister_Status_eSuccess;
+  static constexpr Status eAccountAlreadyExist =
+    S2CRegister_Status_eAccountAlreadyExist;
   static constexpr Status eUnknownError =
     S2CRegister_Status_eUnknownError;
   static inline bool Status_IsValid(int value) {

@@ -9,7 +9,7 @@
 #include "TcpClient.h"
 
 
-namespace yy::core
+namespace yy::core::rpc
 {
 
 // RpcClient使用：TcpConnection的包装
@@ -18,19 +18,19 @@ public:
     explicit RpcConnection(yy::net::EventLoop * loop, const net::TcpConnectionPtr & _conn = nullptr);
     ~RpcConnection() override = default;
 
-    ///@brief 调用具体实现的服务时会调用的函数
-    /// @param method	    不可释放（由 Protobuf 框架管理）	一般是全局静态对象，无需管理
-    /// @param controller	由调用方构造，调用方释放			可以异步使用，但不能释放或修改其所有权
+    ///@brief 调用具体实现的服务时会调用的函数，`该函数不进行参数的生命周期管理`
+    /// @param method	    不可释放（由 Protobuf 框架管理）
+    /// @param controller	由调用方构造，调用方释放
     /// @param request	    由调用方构造，调用方释放			通常在 CallMethod 结束前仍有效，异步使用前请拷贝或序列化
     /// @param response	    由调用方构造，调用方持有			负责填充
-    /// @param done	        可为空，调用方构造，调用方释放		只负责在响应结束后 done->Run()，不能 delete
+    /// @param done	        可为空，调用方构造，调用方释放		在响应被填充后应该调用done->Run()，Run()函数调用结束后delete掉done对象自身
     void CallMethod(const google::protobuf::MethodDescriptor* method,
                 google::protobuf::RpcController* controller,
                 const ::google::protobuf::Message* request,
                 google::protobuf::Message* response,
                 google::protobuf::Closure* done) override;
 
-    void Connect(const net::IPAddressPtr& server_addr = nullptr);
+    bool Connect(const net::IPAddressPtr& server_addr = nullptr);
     void Disconnect();
 
 
@@ -39,7 +39,7 @@ public:
     }
 
 private:
-    ///@brief 接收服务提供方发送来的响应
+    ///@brief 接收服务提供方发送来的响应，并调用（请求时设置的）响应回调
     void OnRpcResponse(const net::TcpConnectionPtr& conn, const RpcMessagePtr& msg);
 
     struct PendingCallContext

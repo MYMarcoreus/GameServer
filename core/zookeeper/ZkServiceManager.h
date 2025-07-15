@@ -8,8 +8,7 @@
 namespace yy::core::zk
 {
 
-class ZkServiceManager final : public Singleton<ZkServiceManager> {
-    SINGLETON_NECESSITY(ZkServiceManager)
+class ZkServiceManager final {
     mutable std::once_flag  zk_client_init_flag_;
 public:
     using WatcherCallback = std::function<void(const std::string&, std::vector<yy::net::IPAddressPtr> &&)>;

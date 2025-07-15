@@ -10,14 +10,15 @@ namespace yy::core
 class MySqlClient final : public Singleton<MySqlClient> {
     SINGLETON_NECESSITY(MySqlClient)
 public:
-    void Start(net::EventLoop * loop, const std::string& ip, int port, const std::string& user,
-              const std::string& pwd, const std::string& schema, size_t pool_size);
+    void Start(net::EventLoop * loop, const std::string& schema);
+
+    auto GetConnection() const ->std::shared_ptr<MySqlConnection> { return pool_->Acquire(); }
 
     template<typename... Args>
     mysqlx::SqlResult Execute(const std::string& sql, Args&&... args)
     {
         try {
-            auto conn = pool_->Acquire();
+            const auto conn = pool_->Acquire();
             if (conn == nullptr) {
                 return mysqlx::SqlResult();
             }
@@ -36,7 +37,7 @@ public:
     mysqlx::RowResult Query(const std::string& sql, Args&&... args)
     {
         try {
-            auto conn = pool_->Acquire();
+            const auto conn = pool_->Acquire();
             if (conn == nullptr) {
                 return mysqlx::RowResult();
             }
@@ -48,8 +49,10 @@ public:
             throw;
         }
     }
+
 private:
     std::unique_ptr<MySqlPool> pool_ = nullptr;
+    std::string schema_;
 };
 
 }

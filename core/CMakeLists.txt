@@ -18,7 +18,7 @@ set(LocalSrc
         rpc/RpcHeader.cpp
         rpc/RpcServer.cpp
         rpc/RpcControllerImpl.cpp
-        rpc/RpcStubPool.hpp
+        rpc/RpcStubConnectionPool.hpp
         zookeeper/ZkClient.cpp
         zookeeper/ZkServiceManager.cpp
         BackendServer.cpp

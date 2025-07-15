@@ -3,9 +3,9 @@
 #include "account.pb.h"
 #include "RpcClient.hpp"
 
-namespace yy::app::gate
+namespace yy::app
 {
 
-using AccountRpcClient = core::RpcClient<protocol::app::AccountServiceRpc_Stub>;
+using AccountRpcClient = core::rpc::RpcClient<protocol::app::AccountServiceRpc_Stub>;
 
 }

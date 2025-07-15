@@ -110,8 +110,8 @@ private:
 
 int main()
 {
-    yy::config::ConfigManager::AddFilePath("../config/configs_login.xml");
-    yy::config::ConfigManager::AddFilePath("../../config/configs_login.xml");
+    yy::config::ConfigManager::AddFilePath("../config/configs_account.xml");
+    yy::config::ConfigManager::AddFilePath("../../config/configs_account.xml");
     yy::config::ConfigManager::LoadXmlConfigs();
     yy::Ylog::LoggerManager::Instance().ReadConfigs();
 

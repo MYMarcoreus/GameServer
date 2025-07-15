@@ -5,7 +5,7 @@
 #include "IGameBase.h"
 #include "account.pb.h"
 #include "ProtobufDispatcher.h"
-#include "RpcStubPool.hpp"
+#include "RpcStubConnectionPool.hpp"
 #include "ThreadPool.h"
 #include "ZkServiceManager.h"
 
@@ -65,7 +65,7 @@ private:
     static thread_local BackendPool t_backend;
 
     //
-    core::zk::ZkServiceManager & m_zk;
+    core::zk::ZkServiceManager m_zk;
     std::unordered_map<std::string, std::vector<yy::net::IPAddressPtr>> m_routeTable;
 };
 

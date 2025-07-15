@@ -43,8 +43,7 @@ void BackendSession::OnBackendResponse(const net::TcpConnectionPtr& conn, const 
 }
 
 BackendManager::BackendManager():
-    m_accountRpcClient{},
-    m_zk{core::zk::ZkServiceManager::Instance()}
+    m_accountRpcClient{}
 {
 }
 

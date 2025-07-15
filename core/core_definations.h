@@ -7,14 +7,28 @@
 
 
 namespace google::protobuf {
-class Message;
-class Descriptor;
+class Descriptor;            // descriptor.h
+class ServiceDescriptor;     // descriptor.h
+class MethodDescriptor;      // descriptor.h
+class Message;               // message.h
+class Closure;
+class RpcController;
+class Service;
 }
+
 
 namespace yy::net {
 class Socket;
+class NetBuffer;
 }
 
+namespace yy::protocol::core {
+class RpcMessage;
+}
+
+namespace yy::util {
+class SequentialBuffer;
+}
 
 
 

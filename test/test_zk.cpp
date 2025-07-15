@@ -151,8 +151,8 @@ void testfun3()
 
 int main(int argc, char* argv[])
 {
-    yy::config::ConfigManager::AddFilePath("../config/configs_login.xml");
-    yy::config::ConfigManager::AddFilePath("../../config/configs_login.xml");
+    yy::config::ConfigManager::AddFilePath("../config/configs_account.xml");
+    yy::config::ConfigManager::AddFilePath("../../config/configs_account.xml");
     yy::config::ConfigManager::LoadXmlConfigs();
 
     START_YLOG_AFTER_CONFIG()

@@ -6,7 +6,7 @@
 #include "account.pb.h"
 #include "AccountRpcClient.h"
 #include "ProtobufDispatcher.h"
-#include "RpcStubPool.hpp"
+#include "RpcStubConnectionPool.hpp"
 #include "RpcControllerImpl.h"
 #include "ThreadPool.h"
 
@@ -42,7 +42,10 @@ private:
     }
     void RegisterRpcForward();
 
-    void TestRpcConnectionEstablished(const yy::net::TcpConnectionPtr& conn);
+    void TestLogin1();
+    void TestLogin2();
+    void TestLogin3();
+    void TestRegister1();
 
 
     std::unique_ptr<yy::net::EventLoop>  m_accpetorLoop;
@@ -63,11 +66,13 @@ template<typename Request, typename Response>  requires requires {
 void GateServerManager::RegisterRpcForward()
 {
     m_dispatcher.RegisterMessageCallback<Request>(
-        [this](const core::UserConnectionPtr& user, const std::shared_ptr<Request>& request)
+        [this](const core::UserConnectionPtr& userconn, const std::shared_ptr<Request>& request)
         {
+            // 发起RPC请求
             const bool success = m_accountRpcClient->CallRemoteAsync<Request, Response>(
                 request,
-                [user](std::unique_ptr<Response>&& response, std::unique_ptr<yy::core::RpcControllerImpl>&& controller)
+                // 设置Rpc响应回调
+                [userconn](std::unique_ptr<Response>&& response, std::unique_ptr<yy::core::rpc::RpcControllerImpl>&& controller)
                 {
                     if (!controller || controller->Failed()) {
                         YLOG_INFO("{}失败！", Request::descriptor()->name());
@@ -75,14 +80,15 @@ void GateServerManager::RegisterRpcForward()
                     }
 
                     if (response) {
-                        user->SendTCP(*response);
+                        userconn->SendTCP(*response);
                         YLOG_INFO("{}返回：{}", Response::descriptor()->name(), response->ShortDebugString());
                     }
                 });
 
-            if (!success) {
+            // RPC请求是否发送成功
+            if (not success) {
                 YLOG_WARN("{}转发失败", Request::descriptor()->name());
-                user->Shutdown();
+                userconn->Shutdown();
             }
         });
 }

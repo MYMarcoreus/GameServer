@@ -1,8 +1,5 @@
 #pragma once
 
-#include "EventLoop.h"
-
-#include <thread>
 #include <mutex>
 #include <condition_variable>
 #include <atomic>
@@ -10,6 +7,8 @@
 #include <memory>
 #include <chrono>
 #include <mysqlx/xdevapi.h>
+
+#include "net_definations.h"
 
 
 namespace yy::core

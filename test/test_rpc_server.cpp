@@ -9,19 +9,17 @@
 
 int main()
 {
-    yy::config::ConfigManager::AddFilePath("../config/configs_login.xml");
-    yy::config::ConfigManager::AddFilePath("../../config/configs_login.xml");
+    yy::config::ConfigManager::AddFilePath("../config/configs_account.xml");
+    yy::config::ConfigManager::AddFilePath("../../config/configs_account.xml");
     yy::config::ConfigManager::LoadXmlConfigs();
 
     START_YLOG_AFTER_CONFIG()
 
-    yy::net::host_to_network16(16);
-
     yy::net::EventLoop loop{500ms};
     const yy::net::IPAddressPtr listenAddr = std::make_shared<yy::net::IPv4Address>(yy::config::g_app_config->GetValue().rpc_port());
     yy::core::RpcServer server(&loop, listenAddr);
-    server.RegisterService<yy::app::login::AccountRpcServiceImpl>();
-    server.Start();
+    server.RegisterService<yy::app::account::AccountRpcServiceImpl>(&loop);
+    server.Start(3, 500ms);
     loop.Loop();
 
     CLOSE_YLOG();

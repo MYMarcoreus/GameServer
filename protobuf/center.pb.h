@@ -49,68 +49,68 @@ extern const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table
 namespace yy {
 namespace protocol {
 namespace app {
-class C2SSelectServer;
-struct C2SSelectServerDefaultTypeInternal;
-extern C2SSelectServerDefaultTypeInternal _C2SSelectServer_default_instance_;
-class S2CSelectServer;
-struct S2CSelectServerDefaultTypeInternal;
-extern S2CSelectServerDefaultTypeInternal _S2CSelectServer_default_instance_;
+class SelectServerReq;
+struct SelectServerReqDefaultTypeInternal;
+extern SelectServerReqDefaultTypeInternal _SelectServerReq_default_instance_;
+class SelectServerRsp;
+struct SelectServerRspDefaultTypeInternal;
+extern SelectServerRspDefaultTypeInternal _SelectServerRsp_default_instance_;
 }  // namespace app
 }  // namespace protocol
 }  // namespace yy
 PROTOBUF_NAMESPACE_OPEN
-template<> ::yy::protocol::app::C2SSelectServer* Arena::CreateMaybeMessage<::yy::protocol::app::C2SSelectServer>(Arena*);
-template<> ::yy::protocol::app::S2CSelectServer* Arena::CreateMaybeMessage<::yy::protocol::app::S2CSelectServer>(Arena*);
+template<> ::yy::protocol::app::SelectServerReq* Arena::CreateMaybeMessage<::yy::protocol::app::SelectServerReq>(Arena*);
+template<> ::yy::protocol::app::SelectServerRsp* Arena::CreateMaybeMessage<::yy::protocol::app::SelectServerRsp>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
 namespace yy {
 namespace protocol {
 namespace app {
 
-enum S2CSelectServer_Status : int {
-  S2CSelectServer_Status_eSuccess = 0,
-  S2CSelectServer_Status_eNoServer = 1,
-  S2CSelectServer_Status_S2CSelectServer_Status_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
-  S2CSelectServer_Status_S2CSelectServer_Status_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
+enum SelectServerRsp_Status : int {
+  SelectServerRsp_Status_eSuccess = 0,
+  SelectServerRsp_Status_eNoServer = 1,
+  SelectServerRsp_Status_SelectServerRsp_Status_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
+  SelectServerRsp_Status_SelectServerRsp_Status_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
 };
-bool S2CSelectServer_Status_IsValid(int value);
-constexpr S2CSelectServer_Status S2CSelectServer_Status_Status_MIN = S2CSelectServer_Status_eSuccess;
-constexpr S2CSelectServer_Status S2CSelectServer_Status_Status_MAX = S2CSelectServer_Status_eNoServer;
-constexpr int S2CSelectServer_Status_Status_ARRAYSIZE = S2CSelectServer_Status_Status_MAX + 1;
+bool SelectServerRsp_Status_IsValid(int value);
+constexpr SelectServerRsp_Status SelectServerRsp_Status_Status_MIN = SelectServerRsp_Status_eSuccess;
+constexpr SelectServerRsp_Status SelectServerRsp_Status_Status_MAX = SelectServerRsp_Status_eNoServer;
+constexpr int SelectServerRsp_Status_Status_ARRAYSIZE = SelectServerRsp_Status_Status_MAX + 1;
 
-const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* S2CSelectServer_Status_descriptor();
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* SelectServerRsp_Status_descriptor();
 template<typename T>
-inline const std::string& S2CSelectServer_Status_Name(T enum_t_value) {
-  static_assert(::std::is_same<T, S2CSelectServer_Status>::value ||
+inline const std::string& SelectServerRsp_Status_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, SelectServerRsp_Status>::value ||
     ::std::is_integral<T>::value,
-    "Incorrect type passed to function S2CSelectServer_Status_Name.");
+    "Incorrect type passed to function SelectServerRsp_Status_Name.");
   return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
-    S2CSelectServer_Status_descriptor(), enum_t_value);
+    SelectServerRsp_Status_descriptor(), enum_t_value);
 }
-inline bool S2CSelectServer_Status_Parse(
-    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, S2CSelectServer_Status* value) {
-  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<S2CSelectServer_Status>(
-    S2CSelectServer_Status_descriptor(), name, value);
+inline bool SelectServerRsp_Status_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, SelectServerRsp_Status* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<SelectServerRsp_Status>(
+    SelectServerRsp_Status_descriptor(), name, value);
 }
 // ===================================================================
 
-class C2SSelectServer final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:yy.protocol.app.C2SSelectServer) */ {
+class SelectServerReq final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:yy.protocol.app.SelectServerReq) */ {
  public:
-  inline C2SSelectServer() : C2SSelectServer(nullptr) {}
-  ~C2SSelectServer() override;
-  explicit PROTOBUF_CONSTEXPR C2SSelectServer(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+  inline SelectServerReq() : SelectServerReq(nullptr) {}
+  ~SelectServerReq() override;
+  explicit PROTOBUF_CONSTEXPR SelectServerReq(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
 
-  C2SSelectServer(const C2SSelectServer& from);
-  C2SSelectServer(C2SSelectServer&& from) noexcept
-    : C2SSelectServer() {
+  SelectServerReq(const SelectServerReq& from);
+  SelectServerReq(SelectServerReq&& from) noexcept
+    : SelectServerReq() {
     *this = ::std::move(from);
   }
 
-  inline C2SSelectServer& operator=(const C2SSelectServer& from) {
+  inline SelectServerReq& operator=(const SelectServerReq& from) {
     CopyFrom(from);
     return *this;
   }
-  inline C2SSelectServer& operator=(C2SSelectServer&& from) noexcept {
+  inline SelectServerReq& operator=(SelectServerReq&& from) noexcept {
     if (this == &from) return *this;
     if (GetOwningArena() == from.GetOwningArena()
   #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
@@ -133,20 +133,20 @@ class C2SSelectServer final :
   static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
     return default_instance().GetMetadata().reflection;
   }
-  static const C2SSelectServer& default_instance() {
+  static const SelectServerReq& default_instance() {
     return *internal_default_instance();
   }
-  static inline const C2SSelectServer* internal_default_instance() {
-    return reinterpret_cast<const C2SSelectServer*>(
-               &_C2SSelectServer_default_instance_);
+  static inline const SelectServerReq* internal_default_instance() {
+    return reinterpret_cast<const SelectServerReq*>(
+               &_SelectServerReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
     0;
 
-  friend void swap(C2SSelectServer& a, C2SSelectServer& b) {
+  friend void swap(SelectServerReq& a, SelectServerReq& b) {
     a.Swap(&b);
   }
-  inline void Swap(C2SSelectServer* other) {
+  inline void Swap(SelectServerReq* other) {
     if (other == this) return;
   #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
     if (GetOwningArena() != nullptr &&
@@ -159,7 +159,7 @@ class C2SSelectServer final :
       ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
     }
   }
-  void UnsafeArenaSwap(C2SSelectServer* other) {
+  void UnsafeArenaSwap(SelectServerReq* other) {
     if (other == this) return;
     GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
     InternalSwap(other);
@@ -167,14 +167,14 @@ class C2SSelectServer final :
 
   // implements Message ----------------------------------------------
 
-  C2SSelectServer* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
-    return CreateMaybeMessage<C2SSelectServer>(arena);
+  SelectServerReq* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<SelectServerReq>(arena);
   }
   using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
-  void CopyFrom(const C2SSelectServer& from);
+  void CopyFrom(const SelectServerReq& from);
   using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
-  void MergeFrom( const C2SSelectServer& from) {
-    C2SSelectServer::MergeImpl(*this, from);
+  void MergeFrom( const SelectServerReq& from) {
+    SelectServerReq::MergeImpl(*this, from);
   }
   private:
   static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
@@ -192,15 +192,15 @@ class C2SSelectServer final :
   void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
   void SharedDtor();
   void SetCachedSize(int size) const final;
-  void InternalSwap(C2SSelectServer* other);
+  void InternalSwap(SelectServerReq* other);
 
   private:
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "yy.protocol.app.C2SSelectServer";
+    return "yy.protocol.app.SelectServerReq";
   }
   protected:
-  explicit C2SSelectServer(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+  explicit SelectServerReq(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                        bool is_message_owned = false);
   public:
 
@@ -240,7 +240,7 @@ class C2SSelectServer final :
   void _internal_set_session_id(uint64_t value);
   public:
 
-  // @@protoc_insertion_point(class_scope:yy.protocol.app.C2SSelectServer)
+  // @@protoc_insertion_point(class_scope:yy.protocol.app.SelectServerReq)
  private:
   class _Internal;
 
@@ -257,24 +257,24 @@ class C2SSelectServer final :
 };
 // -------------------------------------------------------------------
 
-class S2CSelectServer final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:yy.protocol.app.S2CSelectServer) */ {
+class SelectServerRsp final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:yy.protocol.app.SelectServerRsp) */ {
  public:
-  inline S2CSelectServer() : S2CSelectServer(nullptr) {}
-  ~S2CSelectServer() override;
-  explicit PROTOBUF_CONSTEXPR S2CSelectServer(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+  inline SelectServerRsp() : SelectServerRsp(nullptr) {}
+  ~SelectServerRsp() override;
+  explicit PROTOBUF_CONSTEXPR SelectServerRsp(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
 
-  S2CSelectServer(const S2CSelectServer& from);
-  S2CSelectServer(S2CSelectServer&& from) noexcept
-    : S2CSelectServer() {
+  SelectServerRsp(const SelectServerRsp& from);
+  SelectServerRsp(SelectServerRsp&& from) noexcept
+    : SelectServerRsp() {
     *this = ::std::move(from);
   }
 
-  inline S2CSelectServer& operator=(const S2CSelectServer& from) {
+  inline SelectServerRsp& operator=(const SelectServerRsp& from) {
     CopyFrom(from);
     return *this;
   }
-  inline S2CSelectServer& operator=(S2CSelectServer&& from) noexcept {
+  inline SelectServerRsp& operator=(SelectServerRsp&& from) noexcept {
     if (this == &from) return *this;
     if (GetOwningArena() == from.GetOwningArena()
   #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
@@ -297,20 +297,20 @@ class S2CSelectServer final :
   static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
     return default_instance().GetMetadata().reflection;
   }
-  static const S2CSelectServer& default_instance() {
+  static const SelectServerRsp& default_instance() {
     return *internal_default_instance();
   }
-  static inline const S2CSelectServer* internal_default_instance() {
-    return reinterpret_cast<const S2CSelectServer*>(
-               &_S2CSelectServer_default_instance_);
+  static inline const SelectServerRsp* internal_default_instance() {
+    return reinterpret_cast<const SelectServerRsp*>(
+               &_SelectServerRsp_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
     1;
 
-  friend void swap(S2CSelectServer& a, S2CSelectServer& b) {
+  friend void swap(SelectServerRsp& a, SelectServerRsp& b) {
     a.Swap(&b);
   }
-  inline void Swap(S2CSelectServer* other) {
+  inline void Swap(SelectServerRsp* other) {
     if (other == this) return;
   #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
     if (GetOwningArena() != nullptr &&
@@ -323,7 +323,7 @@ class S2CSelectServer final :
       ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
     }
   }
-  void UnsafeArenaSwap(S2CSelectServer* other) {
+  void UnsafeArenaSwap(SelectServerRsp* other) {
     if (other == this) return;
     GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
     InternalSwap(other);
@@ -331,14 +331,14 @@ class S2CSelectServer final :
 
   // implements Message ----------------------------------------------
 
-  S2CSelectServer* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
-    return CreateMaybeMessage<S2CSelectServer>(arena);
+  SelectServerRsp* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<SelectServerRsp>(arena);
   }
   using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
-  void CopyFrom(const S2CSelectServer& from);
+  void CopyFrom(const SelectServerRsp& from);
   using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
-  void MergeFrom( const S2CSelectServer& from) {
-    S2CSelectServer::MergeImpl(*this, from);
+  void MergeFrom( const SelectServerRsp& from) {
+    SelectServerRsp::MergeImpl(*this, from);
   }
   private:
   static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
@@ -356,15 +356,15 @@ class S2CSelectServer final :
   void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
   void SharedDtor();
   void SetCachedSize(int size) const final;
-  void InternalSwap(S2CSelectServer* other);
+  void InternalSwap(SelectServerRsp* other);
 
   private:
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "yy.protocol.app.S2CSelectServer";
+    return "yy.protocol.app.SelectServerRsp";
   }
   protected:
-  explicit S2CSelectServer(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+  explicit SelectServerRsp(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                        bool is_message_owned = false);
   public:
 
@@ -375,34 +375,34 @@ class S2CSelectServer final :
 
   // nested types ----------------------------------------------------
 
-  typedef S2CSelectServer_Status Status;
+  typedef SelectServerRsp_Status Status;
   static constexpr Status eSuccess =
-    S2CSelectServer_Status_eSuccess;
+    SelectServerRsp_Status_eSuccess;
   static constexpr Status eNoServer =
-    S2CSelectServer_Status_eNoServer;
+    SelectServerRsp_Status_eNoServer;
   static inline bool Status_IsValid(int value) {
-    return S2CSelectServer_Status_IsValid(value);
+    return SelectServerRsp_Status_IsValid(value);
   }
   static constexpr Status Status_MIN =
-    S2CSelectServer_Status_Status_MIN;
+    SelectServerRsp_Status_Status_MIN;
   static constexpr Status Status_MAX =
-    S2CSelectServer_Status_Status_MAX;
+    SelectServerRsp_Status_Status_MAX;
   static constexpr int Status_ARRAYSIZE =
-    S2CSelectServer_Status_Status_ARRAYSIZE;
+    SelectServerRsp_Status_Status_ARRAYSIZE;
   static inline const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
   Status_descriptor() {
-    return S2CSelectServer_Status_descriptor();
+    return SelectServerRsp_Status_descriptor();
   }
   template<typename T>
   static inline const std::string& Status_Name(T enum_t_value) {
     static_assert(::std::is_same<T, Status>::value ||
       ::std::is_integral<T>::value,
       "Incorrect type passed to function Status_Name.");
-    return S2CSelectServer_Status_Name(enum_t_value);
+    return SelectServerRsp_Status_Name(enum_t_value);
   }
   static inline bool Status_Parse(::PROTOBUF_NAMESPACE_ID::ConstStringParam name,
       Status* value) {
-    return S2CSelectServer_Status_Parse(name, value);
+    return SelectServerRsp_Status_Parse(name, value);
   }
 
   // accessors -------------------------------------------------------
@@ -478,13 +478,13 @@ class S2CSelectServer final :
   void _internal_set_session_id(uint64_t value);
   public:
 
-  // .yy.protocol.app.S2CSelectServer.Status result_code = 2;
+  // .yy.protocol.app.SelectServerRsp.Status result_code = 2;
   void clear_result_code();
-  ::yy::protocol::app::S2CSelectServer_Status result_code() const;
-  void set_result_code(::yy::protocol::app::S2CSelectServer_Status value);
+  ::yy::protocol::app::SelectServerRsp_Status result_code() const;
+  void set_result_code(::yy::protocol::app::SelectServerRsp_Status value);
   private:
-  ::yy::protocol::app::S2CSelectServer_Status _internal_result_code() const;
-  void _internal_set_result_code(::yy::protocol::app::S2CSelectServer_Status value);
+  ::yy::protocol::app::SelectServerRsp_Status _internal_result_code() const;
+  void _internal_set_result_code(::yy::protocol::app::SelectServerRsp_Status value);
   public:
 
   // optional uint32 port = 5;
@@ -500,7 +500,7 @@ class S2CSelectServer final :
   void _internal_set_port(uint32_t value);
   public:
 
-  // @@protoc_insertion_point(class_scope:yy.protocol.app.S2CSelectServer)
+  // @@protoc_insertion_point(class_scope:yy.protocol.app.SelectServerRsp)
  private:
   class _Internal;
 
@@ -536,8 +536,8 @@ class CenterServiceRpc : public ::PROTOBUF_NAMESPACE_ID::Service {
   static const ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor* descriptor();
 
   virtual void SelectServer(::PROTOBUF_NAMESPACE_ID::RpcController* controller,
-                       const ::yy::protocol::app::C2SSelectServer* request,
-                       ::yy::protocol::app::S2CSelectServer* response,
+                       const ::yy::protocol::app::SelectServerReq* request,
+                       ::yy::protocol::app::SelectServerRsp* response,
                        ::google::protobuf::Closure* done);
 
   // implements Service ----------------------------------------------
@@ -569,8 +569,8 @@ class CenterServiceRpc_Stub : public CenterServiceRpc {
   // implements CenterServiceRpc ------------------------------------------
 
   void SelectServer(::PROTOBUF_NAMESPACE_ID::RpcController* controller,
-                       const ::yy::protocol::app::C2SSelectServer* request,
-                       ::yy::protocol::app::S2CSelectServer* response,
+                       const ::yy::protocol::app::SelectServerReq* request,
+                       ::yy::protocol::app::SelectServerRsp* response,
                        ::google::protobuf::Closure* done);
  private:
   ::PROTOBUF_NAMESPACE_ID::RpcChannel* channel_;
@@ -588,64 +588,64 @@ class CenterServiceRpc_Stub : public CenterServiceRpc {
   #pragma GCC diagnostic push
   #pragma GCC diagnostic ignored "-Wstrict-aliasing"
 #endif  // __GNUC__
-// C2SSelectServer
+// SelectServerReq
 
 // uint64 session_id = 1;
-inline void C2SSelectServer::clear_session_id() {
+inline void SelectServerReq::clear_session_id() {
   _impl_.session_id_ = uint64_t{0u};
 }
-inline uint64_t C2SSelectServer::_internal_session_id() const {
+inline uint64_t SelectServerReq::_internal_session_id() const {
   return _impl_.session_id_;
 }
-inline uint64_t C2SSelectServer::session_id() const {
-  // @@protoc_insertion_point(field_get:yy.protocol.app.C2SSelectServer.session_id)
+inline uint64_t SelectServerReq::session_id() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.SelectServerReq.session_id)
   return _internal_session_id();
 }
-inline void C2SSelectServer::_internal_set_session_id(uint64_t value) {
+inline void SelectServerReq::_internal_set_session_id(uint64_t value) {
   
   _impl_.session_id_ = value;
 }
-inline void C2SSelectServer::set_session_id(uint64_t value) {
+inline void SelectServerReq::set_session_id(uint64_t value) {
   _internal_set_session_id(value);
-  // @@protoc_insertion_point(field_set:yy.protocol.app.C2SSelectServer.session_id)
+  // @@protoc_insertion_point(field_set:yy.protocol.app.SelectServerReq.session_id)
 }
 
 // string username = 4;
-inline void C2SSelectServer::clear_username() {
+inline void SelectServerReq::clear_username() {
   _impl_.username_.ClearToEmpty();
 }
-inline const std::string& C2SSelectServer::username() const {
-  // @@protoc_insertion_point(field_get:yy.protocol.app.C2SSelectServer.username)
+inline const std::string& SelectServerReq::username() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.SelectServerReq.username)
   return _internal_username();
 }
 template <typename ArgT0, typename... ArgT>
 inline PROTOBUF_ALWAYS_INLINE
-void C2SSelectServer::set_username(ArgT0&& arg0, ArgT... args) {
+void SelectServerReq::set_username(ArgT0&& arg0, ArgT... args) {
  
  _impl_.username_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:yy.protocol.app.C2SSelectServer.username)
+  // @@protoc_insertion_point(field_set:yy.protocol.app.SelectServerReq.username)
 }
-inline std::string* C2SSelectServer::mutable_username() {
+inline std::string* SelectServerReq::mutable_username() {
   std::string* _s = _internal_mutable_username();
-  // @@protoc_insertion_point(field_mutable:yy.protocol.app.C2SSelectServer.username)
+  // @@protoc_insertion_point(field_mutable:yy.protocol.app.SelectServerReq.username)
   return _s;
 }
-inline const std::string& C2SSelectServer::_internal_username() const {
+inline const std::string& SelectServerReq::_internal_username() const {
   return _impl_.username_.Get();
 }
-inline void C2SSelectServer::_internal_set_username(const std::string& value) {
+inline void SelectServerReq::_internal_set_username(const std::string& value) {
   
   _impl_.username_.Set(value, GetArenaForAllocation());
 }
-inline std::string* C2SSelectServer::_internal_mutable_username() {
+inline std::string* SelectServerReq::_internal_mutable_username() {
   
   return _impl_.username_.Mutable(GetArenaForAllocation());
 }
-inline std::string* C2SSelectServer::release_username() {
-  // @@protoc_insertion_point(field_release:yy.protocol.app.C2SSelectServer.username)
+inline std::string* SelectServerReq::release_username() {
+  // @@protoc_insertion_point(field_release:yy.protocol.app.SelectServerReq.username)
   return _impl_.username_.Release();
 }
-inline void C2SSelectServer::set_allocated_username(std::string* username) {
+inline void SelectServerReq::set_allocated_username(std::string* username) {
   if (username != nullptr) {
     
   } else {
@@ -657,94 +657,94 @@ inline void C2SSelectServer::set_allocated_username(std::string* username) {
     _impl_.username_.Set("", GetArenaForAllocation());
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:yy.protocol.app.C2SSelectServer.username)
+  // @@protoc_insertion_point(field_set_allocated:yy.protocol.app.SelectServerReq.username)
 }
 
 // -------------------------------------------------------------------
 
-// S2CSelectServer
+// SelectServerRsp
 
 // uint64 session_id = 1;
-inline void S2CSelectServer::clear_session_id() {
+inline void SelectServerRsp::clear_session_id() {
   _impl_.session_id_ = uint64_t{0u};
 }
-inline uint64_t S2CSelectServer::_internal_session_id() const {
+inline uint64_t SelectServerRsp::_internal_session_id() const {
   return _impl_.session_id_;
 }
-inline uint64_t S2CSelectServer::session_id() const {
-  // @@protoc_insertion_point(field_get:yy.protocol.app.S2CSelectServer.session_id)
+inline uint64_t SelectServerRsp::session_id() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.SelectServerRsp.session_id)
   return _internal_session_id();
 }
-inline void S2CSelectServer::_internal_set_session_id(uint64_t value) {
+inline void SelectServerRsp::_internal_set_session_id(uint64_t value) {
   
   _impl_.session_id_ = value;
 }
-inline void S2CSelectServer::set_session_id(uint64_t value) {
+inline void SelectServerRsp::set_session_id(uint64_t value) {
   _internal_set_session_id(value);
-  // @@protoc_insertion_point(field_set:yy.protocol.app.S2CSelectServer.session_id)
+  // @@protoc_insertion_point(field_set:yy.protocol.app.SelectServerRsp.session_id)
 }
 
-// .yy.protocol.app.S2CSelectServer.Status result_code = 2;
-inline void S2CSelectServer::clear_result_code() {
+// .yy.protocol.app.SelectServerRsp.Status result_code = 2;
+inline void SelectServerRsp::clear_result_code() {
   _impl_.result_code_ = 0;
 }
-inline ::yy::protocol::app::S2CSelectServer_Status S2CSelectServer::_internal_result_code() const {
-  return static_cast< ::yy::protocol::app::S2CSelectServer_Status >(_impl_.result_code_);
+inline ::yy::protocol::app::SelectServerRsp_Status SelectServerRsp::_internal_result_code() const {
+  return static_cast< ::yy::protocol::app::SelectServerRsp_Status >(_impl_.result_code_);
 }
-inline ::yy::protocol::app::S2CSelectServer_Status S2CSelectServer::result_code() const {
-  // @@protoc_insertion_point(field_get:yy.protocol.app.S2CSelectServer.result_code)
+inline ::yy::protocol::app::SelectServerRsp_Status SelectServerRsp::result_code() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.SelectServerRsp.result_code)
   return _internal_result_code();
 }
-inline void S2CSelectServer::_internal_set_result_code(::yy::protocol::app::S2CSelectServer_Status value) {
+inline void SelectServerRsp::_internal_set_result_code(::yy::protocol::app::SelectServerRsp_Status value) {
   
   _impl_.result_code_ = value;
 }
-inline void S2CSelectServer::set_result_code(::yy::protocol::app::S2CSelectServer_Status value) {
+inline void SelectServerRsp::set_result_code(::yy::protocol::app::SelectServerRsp_Status value) {
   _internal_set_result_code(value);
-  // @@protoc_insertion_point(field_set:yy.protocol.app.S2CSelectServer.result_code)
+  // @@protoc_insertion_point(field_set:yy.protocol.app.SelectServerRsp.result_code)
 }
 
 // optional string username = 3;
-inline bool S2CSelectServer::_internal_has_username() const {
+inline bool SelectServerRsp::_internal_has_username() const {
   bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
   return value;
 }
-inline bool S2CSelectServer::has_username() const {
+inline bool SelectServerRsp::has_username() const {
   return _internal_has_username();
 }
-inline void S2CSelectServer::clear_username() {
+inline void SelectServerRsp::clear_username() {
   _impl_.username_.ClearToEmpty();
   _impl_._has_bits_[0] &= ~0x00000001u;
 }
-inline const std::string& S2CSelectServer::username() const {
-  // @@protoc_insertion_point(field_get:yy.protocol.app.S2CSelectServer.username)
+inline const std::string& SelectServerRsp::username() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.SelectServerRsp.username)
   return _internal_username();
 }
 template <typename ArgT0, typename... ArgT>
 inline PROTOBUF_ALWAYS_INLINE
-void S2CSelectServer::set_username(ArgT0&& arg0, ArgT... args) {
+void SelectServerRsp::set_username(ArgT0&& arg0, ArgT... args) {
  _impl_._has_bits_[0] |= 0x00000001u;
  _impl_.username_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:yy.protocol.app.S2CSelectServer.username)
+  // @@protoc_insertion_point(field_set:yy.protocol.app.SelectServerRsp.username)
 }
-inline std::string* S2CSelectServer::mutable_username() {
+inline std::string* SelectServerRsp::mutable_username() {
   std::string* _s = _internal_mutable_username();
-  // @@protoc_insertion_point(field_mutable:yy.protocol.app.S2CSelectServer.username)
+  // @@protoc_insertion_point(field_mutable:yy.protocol.app.SelectServerRsp.username)
   return _s;
 }
-inline const std::string& S2CSelectServer::_internal_username() const {
+inline const std::string& SelectServerRsp::_internal_username() const {
   return _impl_.username_.Get();
 }
-inline void S2CSelectServer::_internal_set_username(const std::string& value) {
+inline void SelectServerRsp::_internal_set_username(const std::string& value) {
   _impl_._has_bits_[0] |= 0x00000001u;
   _impl_.username_.Set(value, GetArenaForAllocation());
 }
-inline std::string* S2CSelectServer::_internal_mutable_username() {
+inline std::string* SelectServerRsp::_internal_mutable_username() {
   _impl_._has_bits_[0] |= 0x00000001u;
   return _impl_.username_.Mutable(GetArenaForAllocation());
 }
-inline std::string* S2CSelectServer::release_username() {
-  // @@protoc_insertion_point(field_release:yy.protocol.app.S2CSelectServer.username)
+inline std::string* SelectServerRsp::release_username() {
+  // @@protoc_insertion_point(field_release:yy.protocol.app.SelectServerRsp.username)
   if (!_internal_has_username()) {
     return nullptr;
   }
@@ -757,7 +757,7 @@ inline std::string* S2CSelectServer::release_username() {
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   return p;
 }
-inline void S2CSelectServer::set_allocated_username(std::string* username) {
+inline void SelectServerRsp::set_allocated_username(std::string* username) {
   if (username != nullptr) {
     _impl_._has_bits_[0] |= 0x00000001u;
   } else {
@@ -769,50 +769,50 @@ inline void S2CSelectServer::set_allocated_username(std::string* username) {
     _impl_.username_.Set("", GetArenaForAllocation());
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:yy.protocol.app.S2CSelectServer.username)
+  // @@protoc_insertion_point(field_set_allocated:yy.protocol.app.SelectServerRsp.username)
 }
 
 // optional string ip = 4;
-inline bool S2CSelectServer::_internal_has_ip() const {
+inline bool SelectServerRsp::_internal_has_ip() const {
   bool value = (_impl_._has_bits_[0] & 0x00000002u) != 0;
   return value;
 }
-inline bool S2CSelectServer::has_ip() const {
+inline bool SelectServerRsp::has_ip() const {
   return _internal_has_ip();
 }
-inline void S2CSelectServer::clear_ip() {
+inline void SelectServerRsp::clear_ip() {
   _impl_.ip_.ClearToEmpty();
   _impl_._has_bits_[0] &= ~0x00000002u;
 }
-inline const std::string& S2CSelectServer::ip() const {
-  // @@protoc_insertion_point(field_get:yy.protocol.app.S2CSelectServer.ip)
+inline const std::string& SelectServerRsp::ip() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.SelectServerRsp.ip)
   return _internal_ip();
 }
 template <typename ArgT0, typename... ArgT>
 inline PROTOBUF_ALWAYS_INLINE
-void S2CSelectServer::set_ip(ArgT0&& arg0, ArgT... args) {
+void SelectServerRsp::set_ip(ArgT0&& arg0, ArgT... args) {
  _impl_._has_bits_[0] |= 0x00000002u;
  _impl_.ip_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:yy.protocol.app.S2CSelectServer.ip)
+  // @@protoc_insertion_point(field_set:yy.protocol.app.SelectServerRsp.ip)
 }
-inline std::string* S2CSelectServer::mutable_ip() {
+inline std::string* SelectServerRsp::mutable_ip() {
   std::string* _s = _internal_mutable_ip();
-  // @@protoc_insertion_point(field_mutable:yy.protocol.app.S2CSelectServer.ip)
+  // @@protoc_insertion_point(field_mutable:yy.protocol.app.SelectServerRsp.ip)
   return _s;
 }
-inline const std::string& S2CSelectServer::_internal_ip() const {
+inline const std::string& SelectServerRsp::_internal_ip() const {
   return _impl_.ip_.Get();
 }
-inline void S2CSelectServer::_internal_set_ip(const std::string& value) {
+inline void SelectServerRsp::_internal_set_ip(const std::string& value) {
   _impl_._has_bits_[0] |= 0x00000002u;
   _impl_.ip_.Set(value, GetArenaForAllocation());
 }
-inline std::string* S2CSelectServer::_internal_mutable_ip() {
+inline std::string* SelectServerRsp::_internal_mutable_ip() {
   _impl_._has_bits_[0] |= 0x00000002u;
   return _impl_.ip_.Mutable(GetArenaForAllocation());
 }
-inline std::string* S2CSelectServer::release_ip() {
-  // @@protoc_insertion_point(field_release:yy.protocol.app.S2CSelectServer.ip)
+inline std::string* SelectServerRsp::release_ip() {
+  // @@protoc_insertion_point(field_release:yy.protocol.app.SelectServerRsp.ip)
   if (!_internal_has_ip()) {
     return nullptr;
   }
@@ -825,7 +825,7 @@ inline std::string* S2CSelectServer::release_ip() {
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   return p;
 }
-inline void S2CSelectServer::set_allocated_ip(std::string* ip) {
+inline void SelectServerRsp::set_allocated_ip(std::string* ip) {
   if (ip != nullptr) {
     _impl_._has_bits_[0] |= 0x00000002u;
   } else {
@@ -837,78 +837,78 @@ inline void S2CSelectServer::set_allocated_ip(std::string* ip) {
     _impl_.ip_.Set("", GetArenaForAllocation());
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:yy.protocol.app.S2CSelectServer.ip)
+  // @@protoc_insertion_point(field_set_allocated:yy.protocol.app.SelectServerRsp.ip)
 }
 
 // optional uint32 port = 5;
-inline bool S2CSelectServer::_internal_has_port() const {
+inline bool SelectServerRsp::_internal_has_port() const {
   bool value = (_impl_._has_bits_[0] & 0x00000008u) != 0;
   return value;
 }
-inline bool S2CSelectServer::has_port() const {
+inline bool SelectServerRsp::has_port() const {
   return _internal_has_port();
 }
-inline void S2CSelectServer::clear_port() {
+inline void SelectServerRsp::clear_port() {
   _impl_.port_ = 0u;
   _impl_._has_bits_[0] &= ~0x00000008u;
 }
-inline uint32_t S2CSelectServer::_internal_port() const {
+inline uint32_t SelectServerRsp::_internal_port() const {
   return _impl_.port_;
 }
-inline uint32_t S2CSelectServer::port() const {
-  // @@protoc_insertion_point(field_get:yy.protocol.app.S2CSelectServer.port)
+inline uint32_t SelectServerRsp::port() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.SelectServerRsp.port)
   return _internal_port();
 }
-inline void S2CSelectServer::_internal_set_port(uint32_t value) {
+inline void SelectServerRsp::_internal_set_port(uint32_t value) {
   _impl_._has_bits_[0] |= 0x00000008u;
   _impl_.port_ = value;
 }
-inline void S2CSelectServer::set_port(uint32_t value) {
+inline void SelectServerRsp::set_port(uint32_t value) {
   _internal_set_port(value);
-  // @@protoc_insertion_point(field_set:yy.protocol.app.S2CSelectServer.port)
+  // @@protoc_insertion_point(field_set:yy.protocol.app.SelectServerRsp.port)
 }
 
 // optional string token = 6;
-inline bool S2CSelectServer::_internal_has_token() const {
+inline bool SelectServerRsp::_internal_has_token() const {
   bool value = (_impl_._has_bits_[0] & 0x00000004u) != 0;
   return value;
 }
-inline bool S2CSelectServer::has_token() const {
+inline bool SelectServerRsp::has_token() const {
   return _internal_has_token();
 }
-inline void S2CSelectServer::clear_token() {
+inline void SelectServerRsp::clear_token() {
   _impl_.token_.ClearToEmpty();
   _impl_._has_bits_[0] &= ~0x00000004u;
 }
-inline const std::string& S2CSelectServer::token() const {
-  // @@protoc_insertion_point(field_get:yy.protocol.app.S2CSelectServer.token)
+inline const std::string& SelectServerRsp::token() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.SelectServerRsp.token)
   return _internal_token();
 }
 template <typename ArgT0, typename... ArgT>
 inline PROTOBUF_ALWAYS_INLINE
-void S2CSelectServer::set_token(ArgT0&& arg0, ArgT... args) {
+void SelectServerRsp::set_token(ArgT0&& arg0, ArgT... args) {
  _impl_._has_bits_[0] |= 0x00000004u;
  _impl_.token_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:yy.protocol.app.S2CSelectServer.token)
+  // @@protoc_insertion_point(field_set:yy.protocol.app.SelectServerRsp.token)
 }
-inline std::string* S2CSelectServer::mutable_token() {
+inline std::string* SelectServerRsp::mutable_token() {
   std::string* _s = _internal_mutable_token();
-  // @@protoc_insertion_point(field_mutable:yy.protocol.app.S2CSelectServer.token)
+  // @@protoc_insertion_point(field_mutable:yy.protocol.app.SelectServerRsp.token)
   return _s;
 }
-inline const std::string& S2CSelectServer::_internal_token() const {
+inline const std::string& SelectServerRsp::_internal_token() const {
   return _impl_.token_.Get();
 }
-inline void S2CSelectServer::_internal_set_token(const std::string& value) {
+inline void SelectServerRsp::_internal_set_token(const std::string& value) {
   _impl_._has_bits_[0] |= 0x00000004u;
   _impl_.token_.Set(value, GetArenaForAllocation());
 }
-inline std::string* S2CSelectServer::_internal_mutable_token() {
+inline std::string* SelectServerRsp::_internal_mutable_token() {
   _impl_._has_bits_[0] |= 0x00000004u;
   return _impl_.token_.Mutable(GetArenaForAllocation());
 }
-inline std::string* S2CSelectServer::release_token() {
-  // @@protoc_insertion_point(field_release:yy.protocol.app.S2CSelectServer.token)
+inline std::string* SelectServerRsp::release_token() {
+  // @@protoc_insertion_point(field_release:yy.protocol.app.SelectServerRsp.token)
   if (!_internal_has_token()) {
     return nullptr;
   }
@@ -921,7 +921,7 @@ inline std::string* S2CSelectServer::release_token() {
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   return p;
 }
-inline void S2CSelectServer::set_allocated_token(std::string* token) {
+inline void SelectServerRsp::set_allocated_token(std::string* token) {
   if (token != nullptr) {
     _impl_._has_bits_[0] |= 0x00000004u;
   } else {
@@ -933,7 +933,7 @@ inline void S2CSelectServer::set_allocated_token(std::string* token) {
     _impl_.token_.Set("", GetArenaForAllocation());
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:yy.protocol.app.S2CSelectServer.token)
+  // @@protoc_insertion_point(field_set_allocated:yy.protocol.app.SelectServerRsp.token)
 }
 
 #ifdef __GNUC__
@@ -950,10 +950,10 @@ inline void S2CSelectServer::set_allocated_token(std::string* token) {
 
 PROTOBUF_NAMESPACE_OPEN
 
-template <> struct is_proto_enum< ::yy::protocol::app::S2CSelectServer_Status> : ::std::true_type {};
+template <> struct is_proto_enum< ::yy::protocol::app::SelectServerRsp_Status> : ::std::true_type {};
 template <>
-inline const EnumDescriptor* GetEnumDescriptor< ::yy::protocol::app::S2CSelectServer_Status>() {
-  return ::yy::protocol::app::S2CSelectServer_Status_descriptor();
+inline const EnumDescriptor* GetEnumDescriptor< ::yy::protocol::app::SelectServerRsp_Status>() {
+  return ::yy::protocol::app::SelectServerRsp_Status_descriptor();
 }
 
 PROTOBUF_NAMESPACE_CLOSE

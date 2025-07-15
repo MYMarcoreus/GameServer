@@ -18,6 +18,8 @@ public:
 
     bool operator<(const Timer & other) const;
 
+    void SetCallback(F_TaskCallback cb) { m_Callback = std::move(cb); };
+
     ///@brief 直接执行Timer回调函数
     void ExecuteCallback();
 

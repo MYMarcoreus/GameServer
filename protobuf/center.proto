@@ -4,13 +4,13 @@ package yy.protocol.app;
 // 重要，开启该选项才会生成service代码
 option cc_generic_services = true;
 
-message C2SSelectServer {
+message SelectServerReq {
     uint64 session_id = 1;
 
     string username = 4;
 }
 
-message S2CSelectServer {
+message SelectServerRsp {
     uint64 session_id = 1;
 
     enum Status {
@@ -28,5 +28,5 @@ message S2CSelectServer {
 
 service CenterServiceRpc
 {
-    rpc SelectServer(C2SSelectServer) returns(S2CSelectServer);
+    rpc SelectServer(SelectServerReq) returns(SelectServerRsp);
 }

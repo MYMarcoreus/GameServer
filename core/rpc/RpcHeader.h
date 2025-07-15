@@ -1,24 +1,8 @@
 #pragma once
 #include <array>
-#include <cstdint>
-
 #include "core_definations.h"
 
-
-namespace yy::protocol::core {
-class RpcMessage;
-}
-
-namespace yy::net {
-class NetBuffer;
-}
-
-namespace yy::util {
-class SequentialBuffer;
-}
-
-
-namespace yy::core
+namespace yy::core::rpc
 {
 
 class RpcHeader {

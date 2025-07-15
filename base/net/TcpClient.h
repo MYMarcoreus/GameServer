@@ -1,4 +1,5 @@
 #pragma once
+#include <atomic>
 #include <mutex>
 #include "socket_definations.h"
 #include "net_definations.h"
@@ -16,7 +17,8 @@ public:
 
     ~TcpClient();
 
-    void Connect(const IPAddressPtr& server_addr = nullptr);
+    bool Connect(const IPAddressPtr& server_addr = nullptr);
+    bool ConnectSync(const IPAddressPtr& server_addr = nullptr);
     void Disconnect();
     void StopConnecting();
 
@@ -52,6 +54,7 @@ private:
     EventLoop *         m_Loop;
     TcpConnectionPtr    m_Connection;
     ConnectorPtr        m_Connector;
+    std::atomic_bool    m_IsConnected{false};
     std::string         m_Name;
     bool                m_CanAutoRetry;
     bool                m_IsStarted;

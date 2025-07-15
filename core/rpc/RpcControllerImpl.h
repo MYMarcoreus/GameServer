@@ -5,12 +5,12 @@
 #include <chrono>
 #include <atomic>
 
-namespace yy::core
+namespace yy::core::rpc
 {
 
 class RpcControllerImpl final : public google::protobuf::RpcController {
 public:
-    RpcControllerImpl();
+    RpcControllerImpl() = default;
 
     // 客户端设置项
     auto set_timeout(std::chrono::milliseconds timeout) -> void;
@@ -33,9 +33,8 @@ public:
 private:
     std::chrono::milliseconds timeout_{std::chrono::milliseconds(0)};
     bool wait_for_ready_ = false;
-
     std::atomic<bool> failed_{false};
-    std::string error_text_;
+    std::string error_text_{};
     google::protobuf::Closure* cancel_callback_ = nullptr;
 };
 

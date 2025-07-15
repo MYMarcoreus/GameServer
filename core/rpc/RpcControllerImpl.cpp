@@ -1,10 +1,7 @@
 #include "RpcControllerImpl.h"
 
-namespace yy::core
+namespace yy::core::rpc
 {
-
-RpcControllerImpl::RpcControllerImpl() = default;
-
 
 void RpcControllerImpl::set_timeout(const std::chrono::milliseconds timeout) {
     timeout_ = timeout;

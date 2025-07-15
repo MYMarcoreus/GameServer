@@ -333,6 +333,28 @@ TimerID EventLoop::RunEvery(const Microseconds interval, F_TaskCallback cb) {
     return m_TimerManager->AddTimer(std::move(cb), Timestamp::Now() + interval, interval);
 }
 
+TimerPtr EventLoop::CreateTimerAt(const Timestamp time)
+{
+    return m_TimerManager->CreateTimer(time);
+}
+
+TimerPtr EventLoop::CreateTimerAfter(const Microseconds delay)
+{
+    return CreateTimerAt(Timestamp::Now() + delay);
+}
+
+TimerPtr EventLoop::CreateTimerEvery(const Microseconds interval)
+{
+    return m_TimerManager->CreateTimer(Timestamp::Now() + interval, interval);
+}
+
+
+TimerID EventLoop::AddTimer(const TimerPtr& timer)
+{
+    return m_TimerManager->AddTimer(timer);
+}
+
+
 void EventLoop::CancelTimer(const TimerID timerid) {
     m_TimerManager->CancelTimer(timerid);
 }

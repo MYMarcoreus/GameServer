@@ -78,20 +78,110 @@ void GateServerManager::RunApp()
     m_accpetorLoop->Loop();
 }
 
-void GateServerManager::TestRpcConnectionEstablished(const yy::net::TcpConnectionPtr& conn)
+// 测试：正确登录
+void GateServerManager::TestLogin1()
 {
-    YLOG_INFO("连接至<{}:{}>，我方地址为<{}:{}>", conn->GetPeerAddr()->GetIPStr().c_str(), conn->GetPeerAddr()->GetPort()
-                                            , conn->GetLocalAddr()->GetIPStr().c_str(), conn->GetLocalAddr()->GetPort());
-
     auto req = std::make_shared<yy::protocol::app::C2SLogin>();
-    req->set_username("sadamofn");
+    req->set_username("test_yy_name");
     req->set_password("114514");
     req->set_session_id(101010);
     m_accountRpcClient->CallRemoteAsync<yy::protocol::app::C2SLogin, yy::protocol::app::S2CLogin>(req,
-        [](std::unique_ptr<yy::protocol::app::S2CLogin> && response, std::unique_ptr<yy::core::RpcControllerImpl> && controller) {
-            YLOG_INFO("回复：{}", response->token())
-        });
+    [](std::unique_ptr<yy::protocol::app::S2CLogin> && response, std::unique_ptr<yy::core::rpc::RpcControllerImpl> && controller) {
+        switch (response->result_code()) {
+        case protocol::app::S2CLogin_Status_eSuccess:
+            YLOG_INFO("{} 登录成功！token为 {}, ip:{}, port:{}", response->username(), response->token(), response->ip(), response->port())
+            break;
+        case protocol::app::S2CLogin_Status_eAccountNotExist:
+            YLOG_INFO("{} 登录失败：账号不存在", response->username())
+            break;
+        case protocol::app::S2CLogin_Status_ePasswordError:
+            YLOG_INFO("{} 登录失败：密码错误", response->username())
+            break;
+        case protocol::app::S2CLogin_Status_eUnknownError:
+            YLOG_INFO("{} 登录失败：未知错误", response->username())
+            break;
+        default: ;
+        }
+    });
 }
+
+// 测试：账号错误
+void GateServerManager::TestLogin2()
+{
+    auto req = std::make_shared<yy::protocol::app::C2SLogin>();
+    req->set_username("not_exist_name");
+    req->set_password("114514");
+    req->set_session_id(101010);
+    m_accountRpcClient->CallRemoteAsync<yy::protocol::app::C2SLogin, yy::protocol::app::S2CLogin>(req,
+    [](std::unique_ptr<yy::protocol::app::S2CLogin> && response, std::unique_ptr<yy::core::rpc::RpcControllerImpl> && controller) {
+        switch (response->result_code()) {
+        case protocol::app::S2CLogin_Status_eSuccess:
+            YLOG_INFO("{} 登录成功！", response->username())
+            break;
+        case protocol::app::S2CLogin_Status_eAccountNotExist:
+            YLOG_INFO("{} 登录失败：账号不存在", response->username())
+            break;
+        case protocol::app::S2CLogin_Status_ePasswordError:
+            YLOG_INFO("{} 登录失败：密码错误", response->username())
+            break;
+        case protocol::app::S2CLogin_Status_eUnknownError:
+            YLOG_INFO("{} 登录失败：未知错误", response->username())
+            break;
+        default: ;
+        }
+    });
+}
+
+// 测试：密码错误
+void GateServerManager::TestLogin3()
+{
+    auto req = std::make_shared<yy::protocol::app::C2SLogin>();
+    req->set_username("test_yy_name");
+    req->set_password("error_pwd");
+    req->set_session_id(101010);
+    m_accountRpcClient->CallRemoteAsync<yy::protocol::app::C2SLogin, yy::protocol::app::S2CLogin>(req,
+    [](std::unique_ptr<yy::protocol::app::S2CLogin> && response, std::unique_ptr<yy::core::rpc::RpcControllerImpl> && controller) {
+        switch (response->result_code()) {
+        case protocol::app::S2CLogin_Status_eSuccess:
+            YLOG_INFO("{} 登录成功！", response->username())
+            break;
+        case protocol::app::S2CLogin_Status_eAccountNotExist:
+            YLOG_INFO("{} 登录失败：账号不存在", response->username())
+            break;
+        case protocol::app::S2CLogin_Status_ePasswordError:
+            YLOG_INFO("{} 登录失败：密码错误", response->username())
+            break;
+        case protocol::app::S2CLogin_Status_eUnknownError:
+            YLOG_INFO("{} 登录失败：未知错误", response->username())
+            break;
+        default: ;
+        }
+    });
+}
+
+void GateServerManager::TestRegister1()
+{
+    auto req = std::make_shared<yy::protocol::app::C2SRegister>();
+    req->set_session_id(101010);
+    req->set_username("test_yy_name");
+    req->set_password("114514");
+    m_accountRpcClient->CallRemoteAsync<yy::protocol::app::C2SRegister, yy::protocol::app::S2CRegister>(req,
+    [](std::unique_ptr<yy::protocol::app::S2CRegister> && response, std::unique_ptr<yy::core::rpc::RpcControllerImpl> && controller) {
+        switch (response->result_code()) {
+        case protocol::app::S2CRegister_Status_eSuccess:
+            YLOG_INFO("{} 注册成功！", response->session_id())
+            break;
+        case protocol::app::S2CRegister_Status_eAccountAlreadyExist:
+            YLOG_INFO("{} 注册失败：账号已存在", response->session_id())
+            break;
+        case protocol::app::S2CLogin_Status_eUnknownError:
+            YLOG_INFO("{} 注册失败：未知错误", response->session_id())
+            break;
+        default: ;
+        }
+    });
+}
+
 
 
 void GateServerManager::Init()
@@ -103,11 +193,20 @@ void GateServerManager::Init()
     yy::Ylog::LoggerManager::Instance().ReadConfigs();
 
     m_accountRpcClient = std::make_unique<AccountRpcClient>();
-    m_accountRpcClient->Start(10,
+    m_accountRpcClient->Start(3,
         [this](const net::TcpConnectionPtr & conn) {
-            this->TestRpcConnectionEstablished(conn);
+            YLOG_INFO("连接至AccountRpc服务器<{}:{}>，我方地址为<{}:{}>", conn->GetPeerAddr()->GetIPStr().c_str(), conn->GetPeerAddr()->GetPort()
+                                            , conn->GetLocalAddr()->GetIPStr().c_str(), conn->GetLocalAddr()->GetPort());
         }
     );
+
+    m_accpetorLoop->RunEvery(10ms, [this]() {
+        this->TestRegister1();
+        this->TestLogin1();
+        this->TestLogin2();
+        this->TestLogin3();
+    });
+
 
     /*********** 启动前端 ***********/
     //! 初始化监听的端口和IP地址(IP地址未给出，则使用INADDR_ANY绑定所有IP地址)

@@ -44,14 +44,13 @@ private:
     void UnkonwnCommand(const core::UserConnectionPtr &, const core::MessagePtr &);
 
 
-    std::unique_ptr<yy::net::EventLoop>  m_accpetorLoop;
-    std::unique_ptr<IServer> m_server;
-    std::unique_ptr<RoomService> m_room_service;
-    std::unique_ptr<TestService> m_test_service;
+    std::unique_ptr<yy::net::EventLoop>  m_accpetorLoop = nullptr;
+    std::unique_ptr<IServer> m_server = nullptr;
+    std::unique_ptr<RoomService> m_room_service = nullptr;
+    std::unique_ptr<TestService> m_test_service = nullptr;
     core::ProtobufDispatcher<core::UserConnectionPtr> m_dispatcher; // 处理下层(core层)分发传来的无法处理的消息
-    yy::core::zk::ZkServiceManager & m_zk;
-
-    yy::net::ThreadPool m_wordThreads;
+    yy::core::zk::ZkServiceManager m_zk{};
+    yy::net::ThreadPool m_workThreads;
 };
 
 

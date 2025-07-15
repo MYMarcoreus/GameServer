@@ -59,7 +59,7 @@ TcpClient::~TcpClient() {
     }
 }
 
-void TcpClient::Connect(const IPAddressPtr& server_addr) {
+bool TcpClient::Connect(const IPAddressPtr& server_addr) {
     m_IsStarted = true;
 
     if (server_addr) {
@@ -68,7 +68,37 @@ void TcpClient::Connect(const IPAddressPtr& server_addr) {
         m_Connector->SetNewConnectionCallback( [this](const SocketApiWrapper::socket_t sockfd){ this->NewConnection(sockfd); } );
         m_Connector->SetConnectFailedCallback( [this]() { YLOG_WARN("coonect to <{}:{}>", this->m_ServerAddr->GetIPStr().c_str(), m_ServerAddr->GetPort()) } );
     }
+    if (m_ServerAddr == nullptr) {
+        YLOG_ERROR("TcpClient::Connect empty m_ServerAddr!")
+        return false;
+    }
+
     m_Connector->Start();
+    return true;
+}
+
+bool TcpClient::ConnectSync(const IPAddressPtr& server_addr) {
+    m_IsStarted = true;
+
+    if (server_addr) {
+        m_ServerAddr = server_addr;
+        m_Connector = std::make_shared<Connector>(m_Loop, m_ServerAddr);
+        m_Connector->SetNewConnectionCallback( [this](const SocketApiWrapper::socket_t sockfd){ this->NewConnection(sockfd); } );
+        m_Connector->SetConnectFailedCallback( [this]() { YLOG_WARN("coonect to <{}:{}>", this->m_ServerAddr->GetIPStr().c_str(), m_ServerAddr->GetPort()) } );
+    }
+    if (m_ServerAddr == nullptr) {
+        YLOG_ERROR("TcpClient::Connect empty m_ServerAddr!")
+        return false;
+    }
+
+    m_Connector->Start();
+
+    // 阻塞直到连接成功
+    while (m_IsConnected.load(std::memory_order::acquire) == false) {
+        m_IsConnected.wait(false);
+    }
+
+    return true;
 }
 
 void TcpClient::Disconnect() {
@@ -111,16 +141,23 @@ void TcpClient::NewConnection(SocketApiWrapper::socket_t sockfd) {
             m_xorCode
     );
 
+    conn->SetConnectionEstablishedCallback(m_ConnectionEstablishedCallback);
+    conn->SetMessageCallback(m_MessageCallback);
+    conn->SetConnectionWriteCompleteCallback(m_ConnectionWriteCompleteCallback);
+    conn->SetConnectionCloseCallback([this](const TcpConnectionPtr& tcpconn) {
+        this->RemoveConnection(tcpconn);
+        m_IsConnected.store(false, std::memory_order_release);
+    });
+
+    conn->GetIOLoop()->RunCallbackInLoop([this, conn]() {
+        conn->ConnectionEstablished();
+        m_IsConnected.store(true, std::memory_order_release);
+        m_IsConnected.notify_one();
+    });
     {
         util::WriteLockGuard lg{m_ConnectionMutex};
         m_Connection = conn;
     }
-    conn->SetConnectionEstablishedCallback(m_ConnectionEstablishedCallback);
-    conn->SetMessageCallback(m_MessageCallback);
-    conn->SetConnectionWriteCompleteCallback(m_ConnectionWriteCompleteCallback);
-    conn->SetConnectionCloseCallback([this](const TcpConnectionPtr& tcpconn){ this->RemoveConnection(tcpconn); });
-
-    conn->GetIOLoop()->RunCallbackInLoop([conn](){ conn->ConnectionEstablished(); });
 }
 
 void TcpClient::RemoveConnection(TcpConnectionPtr conn) {

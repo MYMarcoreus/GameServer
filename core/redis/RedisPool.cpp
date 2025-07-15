@@ -17,7 +17,6 @@ RedisPool::RedisPool(net::EventLoop * loop, const std::string& uri, size_t pool_
             long long timestamp = std::chrono::duration_cast<std::chrono::seconds>(currentTime).count();
 
             pool_.push(std::make_unique<RedisConnType>(std::move(conn), timestamp));
-
         }
 
         loop_->RunEvery(60s, [this]() {

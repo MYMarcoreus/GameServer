@@ -6,7 +6,7 @@
 #include "noncopyable.h"
 #include "RpcHeader.h"
 
-namespace yy::core
+namespace yy::core::rpc
 {
 using RpcMessagePtr = std::shared_ptr<protocol::core::RpcMessage>;
 

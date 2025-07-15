@@ -1,45 +1,34 @@
 #pragma once
 
+#include "core_definations.h"
 #include "RpcConnection.h"
 #include "log.h"
 #include "RpcCodec.h"
 #include "TcpServer.h"
-
+#include "ZkServiceManager.h"
 #include <google/protobuf/message.h>
 #include <google/protobuf/service.h>
 
 
 
-namespace google::protobuf
-{
-class Descriptor;            // descriptor.h
-class ServiceDescriptor;     // descriptor.h
-class MethodDescriptor;      // descriptor.h
-class Message;               // message.h
 
-class Closure;
 
-class RpcController;
-class Service;
-}
-
-namespace yy::core
+namespace yy::core::rpc
 {
 
 // 服务提供方
 class RpcServer {
-    inline static const std::string kServiceRoot = "/rpc_services";
 public:
-    RpcServer(yy::net::EventLoop* accpetorLoop, const yy::net::IPAddressPtr& listenAddr);
+    RpcServer(yy::net::EventLoop* accpetorLoop, const yy::net::IPAddressPtr& listenAddr, const std::string & service_root = "/rpc_services");
     ~RpcServer();
 
     /// @brief Start Listen & IOLoop
-    void Start() ;
+    void Start(int ioThreadNum, net::Milliseconds ioWaitTimeout, const net::F_ThreadInitCallback& cb = nullptr) ;
 
     /// @brief 结束服务器
     void Stop() ;
 
-    template <typename ServiceType>
+    template <typename ServiceType, typename... Args>
     requires requires(ServiceType t) {
         // 必须继承自 protobuf::Service
         requires std::derived_from<ServiceType, google::protobuf::Service>;
@@ -47,25 +36,30 @@ public:
             { t.channel() } -> std::convertible_to<google::protobuf::RpcChannel*>;
         });
     }
-    void RegisterService();
+    void RegisterService(Args&&... args);
 
+    const std::string & GetServiceRoot() const { return service_root_; }
+
+    zk::ZkServiceManager & GetZkServiceManager() { return zkServiceManager_; };
 
 private:
     void OnRpcRequest(const net::TcpConnectionPtr& conn, const RpcMessagePtr& msg);
-    void SendRpcResponse(const net::TcpConnectionPtr& conn, const std::pair<google::protobuf::Message* , int64_t>& pair_response_id);
+    void SendRpcResponse(net::TcpConnectionPtr conn, std::pair<google::protobuf::Message*, int64_t> pair_response_id);
 
     ///@return 默认情况下，std::optional<T> 不能保存引用，比如std::optional<google::protobuf::Service&>是不合法❌的
     auto GetService(const std::string& name) const -> std::optional<std::reference_wrapper<google::protobuf::Service>>;
 
 
+    const std::string service_root_;
     yy::net::EventLoop* loop_;
     net::TcpServer      server_;
     RpcCodec            codec_;
     std::unordered_map<std::string, std::unique_ptr<google::protobuf::Service>> services_;
     net::IPAddressPtr   listenAddr_;
+    zk::ZkServiceManager zkServiceManager_;
 };
 
-template <typename ServiceType>
+template <typename ServiceType, typename... Args>
 requires requires(ServiceType t) {
     // 必须继承自 protobuf::Service
     requires std::derived_from<ServiceType, google::protobuf::Service>;
@@ -73,9 +67,9 @@ requires requires(ServiceType t) {
         { t.channel() } -> std::convertible_to<google::protobuf::RpcChannel*>;
     });
 }
-void RpcServer::RegisterService()
+void RpcServer::RegisterService(Args&&... args)
 {
-    auto service = std::make_unique<ServiceType>();
+    auto service = std::make_unique<ServiceType>(std::forward<Args>(args)...);
     const auto* service_desc = service->GetDescriptor();
     const std::string service_name = service_desc->name();
 
@@ -83,6 +77,8 @@ void RpcServer::RegisterService()
         YLOG_WARN("RPC Server: Service {} is already exist", service_name);
     } else {
         services_[service_name] = std::move(service);
+        // 注册zookeeper服务
+        zkServiceManager_.Register(service_name, listenAddr_->GetIPStr(), listenAddr_->GetPortStr());
         YLOG_INFO("RPC Server: Registered service {}", service_name);
     }
 }

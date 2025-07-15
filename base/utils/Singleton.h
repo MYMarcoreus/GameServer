@@ -1,8 +1,4 @@
 #pragma once
-#pragma warning(disable:4068)
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "modernize-use-equals-delete"
-
 
 #include<mutex>
 
@@ -68,4 +64,3 @@ protected: //! 单例基类的构造或析构需要被子类(T)继承，然而�
 };
 */
 
-#pragma clang diagnostic pop

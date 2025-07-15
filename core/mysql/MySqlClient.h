@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Singleton.h"
-#include "log.h"
 #include "MySqlPool.h"
+#include "log.h"
 
 namespace yy::core
 {
@@ -51,7 +51,7 @@ public:
     }
 
 private:
-    std::unique_ptr<MySqlPool> pool_ = nullptr;
+    std::unique_ptr<MySqlPool> pool_{};
     std::string schema_;
 };
 

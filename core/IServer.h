@@ -1,12 +1,10 @@
 #pragma once
 
+#include "net_definations.h"
 #include "core_definations.h"
 #include "noncopyable.h"
 #include "ConfigManager.h"
 #include "AppXmlConfig.h"
-#include "net_definations.h"
-
-
 
 
 namespace yy::core {

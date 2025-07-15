@@ -3,7 +3,6 @@
 #include "Singleton.h"
 #include "util_functions.h"
 #include "ConfigManager.h"
-#include "UnboundedLockedQueue.hpp"
 #include "ILogAppender.h"
 
 #include <unordered_map>
@@ -16,7 +15,6 @@
 #include <sstream>  // std::stringstream
 #include <iostream> // std::cout
 #include <thread>
-#include <cstdarg>
 #include <atomic>
 #include <ranges>
 
@@ -24,19 +22,6 @@
 
 #define GET_LOGGER(loggername) yy::Ylog::LoggerManager::Instance().getLogger(loggername)
 
-// #define YLOG_LEVEL(____loggername, ____level, ____format, ...)                                  \
-// {                                                                                                \
-//     if(GET_LOGGER(____loggername)->getLevel() <= ____level)                                       \
-//     {                                                                                              \
-//         char* ____buf = nullptr;                                                                    \
-//         int ____len = ::asprintf(&____buf, ____format, ##__VA_ARGS__);                               \
-//         if (____len != -1)                                                                            \
-//         {                                                                                              \
-//             GET_LOGGER(____loggername)->Log(MAKE_LOG_MESSAGE(____level, std::string(____buf, ____len)));\
-//             free(____buf);                                                                               \
-//         }                                                                                                 \
-//     }                                                                                                      \
-// }
 
 #define YLOG_LEVEL(____loggername, ____level, ____format, ...)                               \
 {                                                                                             \
@@ -215,7 +200,7 @@ private:
 
 /// @brief 日志器不止一个，可由配置文件设置，每一个都可以有自己的名字，
 ///        由一个单例类LoggerManager来进行管理所有的日志器
-class LoggerManager : public Singleton<LoggerManager>
+class LoggerManager final : public Singleton<LoggerManager>
 {
     SINGLETON_NECESSITY(LoggerManager)
     friend void Logger::LogAsync(const LogMessage::ptr&) const;

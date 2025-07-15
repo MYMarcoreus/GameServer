@@ -20,6 +20,7 @@ class Service;
 namespace yy::net {
 class Socket;
 class NetBuffer;
+class EventLoop;
 }
 
 namespace yy::protocol::core {

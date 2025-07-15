@@ -1,14 +1,13 @@
 #pragma once
 
+#include "ZkClient.h"
 #include "net_definations.h"
 #include "RWLock.h"
-#include "Singleton.h"
-#include "ZkClient.h"
 
 namespace yy::core::zk
 {
 
-class ZkServiceManager final {
+class ZkServiceManager  {
     mutable std::once_flag  zk_client_init_flag_;
 public:
     using WatcherCallback = std::function<void(const std::string&, std::vector<yy::net::IPAddressPtr> &&)>;

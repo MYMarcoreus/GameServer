@@ -5,6 +5,10 @@
 #include <memory>
 #include <string>
 
+using std::shared_ptr;
+using std::unique_ptr;
+using std::make_unique;
+using std::make_shared;
 
 namespace google::protobuf {
 class Descriptor;            // descriptor.h
@@ -38,7 +42,7 @@ namespace yy::core {
 
 class UserConnection;
 using UserConnectionPtr = std::shared_ptr<UserConnection>;
-
+using MessagePtr = std::shared_ptr<google::protobuf::Message>;
 
 enum class MessageParseErrorCode {
     eNoError = 0,
@@ -50,7 +54,7 @@ enum class MessageParseErrorCode {
     eUnkonwnMessage = 7,
 };
 
-inline std::string ToString(MessageParseErrorCode code)
+inline std::string ToString(const MessageParseErrorCode code)
 {
     switch (code) {
         case MessageParseErrorCode::eNoError:
@@ -73,13 +77,15 @@ inline std::string ToString(MessageParseErrorCode code)
 }
 
 
-using MessagePtr = std::shared_ptr<google::protobuf::Message>;
 
 enum class MessageType
 {
     TCP = 0,
     UDP = 1
 };
+
+template<typename MsgT>
+concept IsProtobufMessage = std::is_base_of_v<google::protobuf::Message, MsgT>;
 
 }
 

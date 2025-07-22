@@ -20,9 +20,9 @@ int main(int argc, char* argv[])
         const auto ioloop = io_threadpool.GetNextLoop();
         ioloop->RunEvery(1s, [&loop]()
         {
-            yy::core::RedisClient::Instance().Start(loop, 1);
-            yy::core::RedisClient::Instance().Set("key1", "value1");
-            auto val = yy::core::RedisClient::Instance().Get("key1");
+            yy::core::redis::RedisClient::Instance().Start(loop, 1);
+            yy::core::redis::RedisClient::Instance().Set("key1", "value1");
+            auto val = yy::core::redis::RedisClient::Instance().Get("key1");
             if (val) {
                 YLOG_INFO("key1: {}", val.value());
             }

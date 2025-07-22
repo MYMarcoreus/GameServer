@@ -46,23 +46,23 @@ Message的传递路线(Call Callback)：
 */
 class ProtobufTcpCodec: public util::noncopyable {
     using F_ProtobufMessageDispatchCallback = std::function<void(const net::TcpConnectionPtr &, const MessagePtr &)>;
-    using F_ProtobufErrorMessageCallback = std::function<void(const net::TcpConnectionPtr &, yy::net::NetBuffer &, MessageParseErrorCode)>;
+    using F_ProtobufErrorMessageCallback = std::function<void(const net::TcpConnectionPtr &, net::NetBuffer &, MessageParseErrorCode)>;
 
 public:
     explicit ProtobufTcpCodec(const F_ProtobufMessageDispatchCallback& msgCb, const F_ProtobufErrorMessageCallback& errCb = DefaultErrorCallback);
 
     ///@brief TcpConnection接收字节流到输入缓冲以后调用的回调函数，该函数用于处理字节流，解析并创建出消息，然后传递消息给ProtobufDispatcher
-    void OnTcpData(const yy::net::TcpConnectionPtr &conn, yy::net::NetBuffer &buf);
+    void OnTcpData(const net::TcpConnectionPtr &conn, net::NetBuffer &buf);
 
     ///@brief 发送message（加Header后Send）
-    void SendTCP(const yy::net::TcpConnectionPtr &conn, const google::protobuf::Message & message);
+    void SendTCP(const net::TcpConnectionPtr &conn, const google::protobuf::Message & message);
 
 private:
     ///@brief 解析Buffer中的二进制数据，将其解析为protobuf的Message
-    std::pair<MessageHeader, MessagePtr> Parse(const yy::net::TcpConnectionPtr& conn, yy::net::NetBuffer& buf,
+    std::pair<MessageHeader, MessagePtr> Parse(const net::TcpConnectionPtr& conn, net::NetBuffer& buf,
                                                MessageParseErrorCode& outErrCode);
 
-    static void DefaultErrorCallback(const yy::net::TcpConnectionPtr & conn, yy::net::NetBuffer & buf, MessageParseErrorCode);
+    static void DefaultErrorCallback(const net::TcpConnectionPtr & conn, net::NetBuffer & buf, MessageParseErrorCode);
 
     static MessagePtr CreateMessage(const std::string & typeName);
 

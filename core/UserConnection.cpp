@@ -10,10 +10,10 @@
 namespace yy::core {
 
 
-UserConnection::UserConnection(net::TcpConnectionPtr conn, ProtobufTcpCodec & tcpCodec, ProtobufUdpCodec & udpCodec)
-        : m_tcpChannel{conn},
-          m_state{E_UserBaseState::eConnected},
+UserConnection::UserConnection(const TcpConnectionPtr& conn, ProtobufTcpCodec & tcpCodec, ProtobufUdpCodec & udpCodec)
+        : m_state{E_UserBaseState::eConnected},
           m_uid{0},
+          m_tcpChannel{conn},
           m_tcpCodec(tcpCodec),
           m_udpCodec(udpCodec)
 {
@@ -48,23 +48,23 @@ void UserConnection::SendUDP(const google::protobuf::Message &message) {
 }
 
 
-net::TimerID UserConnection::RunAt(net::Timestamp time, net::F_TaskCallback cb) {
+TimerID UserConnection::RunAt(const Timestamp time, F_TaskCallback cb) {
     return m_tcpChannel->GetIOLoop()->RunAt(time, std::move(cb));
 }
 
-net::TimerID UserConnection::RunAfter(net::Microseconds delay, net::F_TaskCallback cb) {
+TimerID UserConnection::RunAfter(const Microseconds delay, F_TaskCallback cb) {
     return m_tcpChannel->GetIOLoop()->RunAfter(delay, std::move(cb));
 }
 
-net::TimerID UserConnection::RunEvery(net::Microseconds interval, net::F_TaskCallback cb) {
+TimerID UserConnection::RunEvery(const Microseconds interval, F_TaskCallback cb) {
     return m_tcpChannel->GetIOLoop()->RunEvery(interval, std::move(cb));
 }
 
-void UserConnection::CancelTimer(net::TimerID timerid) {
+void UserConnection::CancelTimer(const TimerID timerid) {
     m_tcpChannel->GetIOLoop()->CancelTimer(timerid);
 }
 
-void UserConnection::BindUdp(net::UdpSessionPtr u) {
+void UserConnection::BindUdp(const UdpSessionPtr& u) {
     m_udpChannel = u;
 }
 

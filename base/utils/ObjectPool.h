@@ -1,58 +1,123 @@
 #pragma once
-#include "UnboundedLockedQueue.hpp"
 #include <memory>
-#include <atomic>
 #include <algorithm>
+#include <queue>
+#include <mutex>
+#include <condition_variable>
+#include <functional>
+#include <chrono>
+#include <stdexcept>
+
+#include "log.h"
 
 namespace yy::util {
 
 
-/// @brief 线程安全的对象池
-template<class ObjectType>
-class ObjectPool
-{
+
+
+
+template<typename T>
+class ObjectPool {
 public:
-    using ptr = std::shared_ptr<ObjectPool>;
-public:
-    /// @brief
-    explicit ObjectPool(int maxsize): m_size{0}, m_maxsize{maxsize}
-    {
-        // 在线程池中初始化maxsize个对象(使用智能指针管理)
-        for(int i = 0 ; i < maxsize ; ++i) {
-            // m_pool.push( std::make_shared<T>() );
-            m_pool.push(ObjectType{} );
-        }
+    using Ptr = std::shared_ptr<T>;
+    using Creator = std::function<std::unique_ptr<T>()>;
+    using Validator = std::function<bool(const T&)>;
+
+    static ObjectPool& Instance() {
+        static ObjectPool instance;
+        return instance;
     }
 
-    /// @brief 从池中取出对象
-    std::shared_ptr<ObjectType> pop()
-    {
-        std::shared_ptr<ObjectType> obj = m_pool.try_pop();
-        // 如果池中有对象，则取出，否则new一个对象
-        if(obj) {
-            m_size--;
-        } else {
-            obj = std::make_shared<ObjectType>();
-        }
-        return obj;
+    // 只能调用一次的初始化函数
+    static void Init(std::string name, size_t max_size, Creator creator, Validator validator = nullptr) {
+        std::call_once(get_once_flag(), [&]() {
+            auto& inst = Instance();
+            inst.name_ = std::move(name);
+            inst.max_size_ = max_size;
+            if (!creator) {
+                creator = [] { return std::make_unique<T>(); }; // 提供默认创建器
+            }
+            inst.creator_ = std::move(creator);
+            inst.validator_ = std::move(validator);
+            for (size_t i = 0; i < inst.max_size_; ++i) {
+                inst.pool_.emplace(inst.creator_());
+            }
+            inst.is_initialized_ = true;
+        });
     }
 
-    /// @brief 归还对象到池中
-    void push(std::shared_ptr<ObjectType> obj)
-    {
-        if(m_size < m_maxsize) {
-            m_pool.push(obj);
-            m_size++;
+    Ptr Acquire(const std::chrono::milliseconds wait_time) {
+        if (!is_initialized_) {
+            throw std::runtime_error("ObjectPool is not initialized. Call Init() first.");
         }
-        else {
-            obj.reset();
+
+        std::unique_lock lock_acquire(mutex_);
+        if (!cond_.wait_for(lock_acquire, wait_time, [this] { return !pool_.empty() || is_stop_; })) {
+            return nullptr;
         }
+
+        if (is_stop_) {
+            return nullptr;
+        }
+
+        auto obj = std::move(pool_.front());
+        pool_.pop();
+        lock_acquire.unlock();
+
+        if (validator_ && !validator_(*obj)) {
+            obj = creator_();  // 校验失败重新创建
+        }
+
+        auto deleter = [this](T* ptr) {
+            std::unique_lock lock_release(mutex_);
+            if (!is_stop_) {
+                pool_.emplace(std::unique_ptr<T>(ptr));
+                cond_.notify_one();
+            } else {
+                delete ptr;
+            }
+        };
+
+        return Ptr(obj.release(), deleter);
+    }
+
+    void Shutdown() {
+        std::lock_guard lock(mutex_);
+        is_stop_ = true;
+        while (!pool_.empty()) {
+            pool_.pop();
+        }
+        cond_.notify_all();
     }
 
 private:
-    std::atomic_size_t       m_size;
-    const int                m_maxsize;
-    util::UnboundedLockedQueue<ObjectType> m_pool;
+    ObjectPool() = default;
+    ~ObjectPool() {
+        Shutdown();
+    }
+
+    ObjectPool(const ObjectPool&) = delete;
+    ObjectPool& operator=(const ObjectPool&) = delete;
+
+    static std::once_flag& get_once_flag() {
+        static std::once_flag flag;
+        return flag;
+    }
+
+private:
+    std::string name_;
+    std::queue<std::unique_ptr<T>> pool_;
+    Creator creator_;
+    Validator validator_;
+    size_t max_size_ = 0;
+    bool is_initialized_ = false;
+    bool is_stop_ = false;
+
+    std::mutex mutex_;
+    std::condition_variable cond_;
 };
+
+
+
 
 }

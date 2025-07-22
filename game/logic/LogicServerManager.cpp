@@ -13,7 +13,7 @@ namespace yy::app::logic {
 
 
 LogicServerManager::LogicServerManager():
-    m_dispatcher{[this](const core::UserConnectionPtr& userdata, const core::MessagePtr& message) { this->UnkonwnCommand(userdata, message); }},
+    m_dispatcher{[this](const UserConnectionPtr& userdata, const MessagePtr& message) { this->UnkonwnCommand(userdata, message); }},
     m_workThreads("Game Work Thread")
 { }
 
@@ -21,11 +21,11 @@ LogicServerManager::~LogicServerManager() {
     m_server->Stop();
 }
 
-void LogicServerManager::AppNotifier_Secutiry(const core::UserConnectionPtr& userdata) {
-    userdata->SetState(core::UserConnection::E_UserBaseState::eSecure);
+void LogicServerManager::AppNotifier_Secutiry(const UserConnectionPtr& userdata) {
+    userdata->SetState(UserConnection::E_UserBaseState::eSecure);
 }
 
-void LogicServerManager::AppNotifier_Disconnect(const core::UserConnectionPtr& userdata) {
+void LogicServerManager::AppNotifier_Disconnect(const UserConnectionPtr& userdata) {
     YLOG_INFO("↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ 用户<{}>断开连接", userdata->GetUID())
 
     // 已登陆，保存数据
@@ -43,20 +43,19 @@ void LogicServerManager::AppNotifier_Disconnect(const core::UserConnectionPtr& u
     }
 }
 
-void LogicServerManager::AppNotifier_Command(const core::UserConnectionPtr & userdata, const core::MessagePtr & message, const core::MessageType type)
+void LogicServerManager::AppNotifier_Command(const UserConnectionPtr & userdata, const MessagePtr & message, const MessageType type)
 {
     //! 对于游戏游戏，并不在IO线程处理，而是在专门处理游戏数据的工作线程中处理（让Game层的分发器找到该游戏消息所注册的对应的处理函数。）
-    m_workThreads.PushTask([this, userdata, message](){
+    m_workThreads.PushTask([this, userdata, message] { // 注意这里跨线程传输需要拷贝智能指针
         m_dispatcher.OnProtobufMessage(userdata, message);
     });
 }
 
-void LogicServerManager::UnkonwnCommand(const core::UserConnectionPtr & userdata, const core::MessagePtr & message)
+void LogicServerManager::UnkonwnCommand(const UserConnectionPtr & userdata, const MessagePtr & message)
 {
     YLOG_DEBUG("未知的消息类型：{}", message->GetDescriptor()->full_name())
     userdata->Shutdown();
 }
-
 
 void LogicServerManager::RunApp()
 {
@@ -74,37 +73,39 @@ void LogicServerManager::RunApp()
 void LogicServerManager::Init()
 {
     //! ①、读取配置文件
-    yy::config::ConfigManager::LoadXmlConfigs();
+    config::ConfigManager::LoadXmlConfigs();
 
     //! ②、读取日志配置
-    yy::Ylog::LoggerManager::Instance().ReadConfigs();
+    Ylog::LoggerManager::Instance().ReadConfigs();
 
     //! ③、初始化
-    m_accpetorLoop = std::make_unique<net::EventLoop>(500ms);
+    m_accpetorLoop = make_unique<EventLoop>(500ms);
 
     //! ④、初始化监听的端口和IP地址(IP地址未给出，则使用INADDR_ANY绑定所有IP地址)
-    const yy::net::IPAddressPtr listenAddr = std::make_shared<net::IPv4Address>(
-            config::g_app_config->GetValue().app_tcp_port());
+    const IPAddressPtr listenAddr = std::make_shared<IPv4Address>(
+            "192.168.147.128",
+            config::g_app_config->GetValue().app_tcp_port()
+        );
 
     //! ⑤、初始化服务器对象（③和④）
-    m_server = std::make_unique<LogicServer>(m_accpetorLoop.get(), listenAddr);
+    m_server = make_unique<LogicServer>(m_accpetorLoop.get(), listenAddr);
     m_server->SetNotifier_Security(
-        [this](const core::UserConnectionPtr& userdata) {
+        [this](const UserConnectionPtr& userdata) {
             this->AppNotifier_Secutiry(userdata);
         });
     m_server->SetNotifier_DisConnect(
-        [this](const core::UserConnectionPtr & userdata) {
+        [this](const UserConnectionPtr & userdata) {
             this->AppNotifier_Disconnect(userdata);
         });
     m_server->SetNotifier_Command(
-        [this](const core::UserConnectionPtr & userdata, const core::MessagePtr & message, const core::MessageType type) {
+        [this](const UserConnectionPtr & userdata, const MessagePtr & message, const MessageType type) {
             this->AppNotifier_Command(userdata, message, type);
         });
 
-    m_room_service = std::make_unique<RoomService>();
+    m_room_service = make_unique<RoomService>();
     m_room_service->Init();
 
-    m_test_service = std::make_unique<TestService>();
+    m_test_service = make_unique<TestService>();
     m_test_service->Init();
 
     m_zk.Start("/services");

@@ -8,7 +8,7 @@
 #include <string>
 #include "EventLoop.h"
 
-namespace yy::core {
+namespace yy::core::redis {
 
 
 class RedisConnection {

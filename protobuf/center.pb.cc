@@ -25,8 +25,8 @@ namespace protocol {
 namespace app {
 PROTOBUF_CONSTEXPR SelectServerReq::SelectServerReq(
     ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_.username_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
-  , /*decltype(_impl_.session_id_)*/uint64_t{0u}
+    /*decltype(_impl_.session_id_)*/uint64_t{0u}
+  , /*decltype(_impl_.uid_)*/uint64_t{0u}
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct SelectServerReqDefaultTypeInternal {
   PROTOBUF_CONSTEXPR SelectServerReqDefaultTypeInternal()
@@ -41,10 +41,10 @@ PROTOBUF_CONSTEXPR SelectServerRsp::SelectServerRsp(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_._has_bits_)*/{}
   , /*decltype(_impl_._cached_size_)*/{}
-  , /*decltype(_impl_.username_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.ip_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.token_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.session_id_)*/uint64_t{0u}
+  , /*decltype(_impl_.uid_)*/uint64_t{0u}
   , /*decltype(_impl_.result_code_)*/0
   , /*decltype(_impl_.port_)*/0u} {}
 struct SelectServerRspDefaultTypeInternal {
@@ -71,7 +71,7 @@ const uint32_t TableStruct_center_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(p
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
   PROTOBUF_FIELD_OFFSET(::yy::protocol::app::SelectServerReq, _impl_.session_id_),
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::SelectServerReq, _impl_.username_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::SelectServerReq, _impl_.uid_),
   PROTOBUF_FIELD_OFFSET(::yy::protocol::app::SelectServerRsp, _impl_._has_bits_),
   PROTOBUF_FIELD_OFFSET(::yy::protocol::app::SelectServerRsp, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -80,16 +80,16 @@ const uint32_t TableStruct_center_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(p
   ~0u,  // no _inlined_string_donated_
   PROTOBUF_FIELD_OFFSET(::yy::protocol::app::SelectServerRsp, _impl_.session_id_),
   PROTOBUF_FIELD_OFFSET(::yy::protocol::app::SelectServerRsp, _impl_.result_code_),
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::SelectServerRsp, _impl_.username_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::SelectServerRsp, _impl_.uid_),
   PROTOBUF_FIELD_OFFSET(::yy::protocol::app::SelectServerRsp, _impl_.ip_),
   PROTOBUF_FIELD_OFFSET(::yy::protocol::app::SelectServerRsp, _impl_.port_),
   PROTOBUF_FIELD_OFFSET(::yy::protocol::app::SelectServerRsp, _impl_.token_),
   ~0u,
   ~0u,
-  0,
-  1,
-  3,
   2,
+  0,
+  3,
+  1,
 };
 static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::yy::protocol::app::SelectServerReq)},
@@ -102,22 +102,22 @@ static const ::_pb::Message* const file_default_instances[] = {
 };
 
 const char descriptor_table_protodef_center_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
-  "\n\014center.proto\022\017yy.protocol.app\"7\n\017Selec"
-  "tServerReq\022\022\n\nsession_id\030\001 \001(\004\022\020\n\010userna"
-  "me\030\004 \001(\t\"\200\002\n\017SelectServerRsp\022\022\n\nsession_"
-  "id\030\001 \001(\004\022<\n\013result_code\030\002 \001(\0162\'.yy.proto"
-  "col.app.SelectServerRsp.Status\022\025\n\010userna"
-  "me\030\003 \001(\tH\000\210\001\001\022\017\n\002ip\030\004 \001(\tH\001\210\001\001\022\021\n\004port\030\005"
-  " \001(\rH\002\210\001\001\022\022\n\005token\030\006 \001(\tH\003\210\001\001\"%\n\006Status\022"
-  "\014\n\010eSuccess\020\000\022\r\n\teNoServer\020\001B\013\n\t_usernam"
-  "eB\005\n\003_ipB\007\n\005_portB\010\n\006_token2f\n\020CenterSer"
-  "viceRpc\022R\n\014SelectServer\022 .yy.protocol.ap"
-  "p.SelectServerReq\032 .yy.protocol.app.Sele"
-  "ctServerRspB\003\200\001\001b\006proto3"
+  "\n\014center.proto\022\017yy.protocol.app\"2\n\017Selec"
+  "tServerReq\022\022\n\nsession_id\030\001 \001(\004\022\013\n\003uid\030\004 "
+  "\001(\004\"\366\001\n\017SelectServerRsp\022\022\n\nsession_id\030\001 "
+  "\001(\004\022<\n\013result_code\030\002 \001(\0162\'.yy.protocol.a"
+  "pp.SelectServerRsp.Status\022\020\n\003uid\030\003 \001(\004H\000"
+  "\210\001\001\022\017\n\002ip\030\004 \001(\tH\001\210\001\001\022\021\n\004port\030\005 \001(\rH\002\210\001\001\022"
+  "\022\n\005token\030\006 \001(\tH\003\210\001\001\"%\n\006Status\022\014\n\010eSucces"
+  "s\020\000\022\r\n\teNoServer\020\001B\006\n\004_uidB\005\n\003_ipB\007\n\005_po"
+  "rtB\010\n\006_token2f\n\020CenterServiceRpc\022R\n\014Sele"
+  "ctServer\022 .yy.protocol.app.SelectServerR"
+  "eq\032 .yy.protocol.app.SelectServerRspB\003\200\001"
+  "\001b\006proto3"
   ;
 static ::_pbi::once_flag descriptor_table_center_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_center_2eproto = {
-    false, false, 464, descriptor_table_protodef_center_2eproto,
+    false, false, 449, descriptor_table_protodef_center_2eproto,
     "center.proto",
     &descriptor_table_center_2eproto_once, nullptr, 0, 2,
     schemas, file_default_instances, TableStruct_center_2eproto::offsets,
@@ -171,20 +171,14 @@ SelectServerReq::SelectServerReq(const SelectServerReq& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   SelectServerReq* const _this = this; (void)_this;
   new (&_impl_) Impl_{
-      decltype(_impl_.username_){}
-    , decltype(_impl_.session_id_){}
+      decltype(_impl_.session_id_){}
+    , decltype(_impl_.uid_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  _impl_.username_.InitDefault();
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-    _impl_.username_.Set("", GetArenaForAllocation());
-  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (!from._internal_username().empty()) {
-    _this->_impl_.username_.Set(from._internal_username(), 
-      _this->GetArenaForAllocation());
-  }
-  _this->_impl_.session_id_ = from._impl_.session_id_;
+  ::memcpy(&_impl_.session_id_, &from._impl_.session_id_,
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.uid_) -
+    reinterpret_cast<char*>(&_impl_.session_id_)) + sizeof(_impl_.uid_));
   // @@protoc_insertion_point(copy_constructor:yy.protocol.app.SelectServerReq)
 }
 
@@ -193,14 +187,10 @@ inline void SelectServerReq::SharedCtor(
   (void)arena;
   (void)is_message_owned;
   new (&_impl_) Impl_{
-      decltype(_impl_.username_){}
-    , decltype(_impl_.session_id_){uint64_t{0u}}
+      decltype(_impl_.session_id_){uint64_t{0u}}
+    , decltype(_impl_.uid_){uint64_t{0u}}
     , /*decltype(_impl_._cached_size_)*/{}
   };
-  _impl_.username_.InitDefault();
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-    _impl_.username_.Set("", GetArenaForAllocation());
-  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
 }
 
 SelectServerReq::~SelectServerReq() {
@@ -214,7 +204,6 @@ SelectServerReq::~SelectServerReq() {
 
 inline void SelectServerReq::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
-  _impl_.username_.Destroy();
 }
 
 void SelectServerReq::SetCachedSize(int size) const {
@@ -227,8 +216,9 @@ void SelectServerReq::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  _impl_.username_.ClearToEmpty();
-  _impl_.session_id_ = uint64_t{0u};
+  ::memset(&_impl_.session_id_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&_impl_.uid_) -
+      reinterpret_cast<char*>(&_impl_.session_id_)) + sizeof(_impl_.uid_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -246,13 +236,11 @@ const char* SelectServerReq::_InternalParse(const char* ptr, ::_pbi::ParseContex
         } else
           goto handle_unusual;
         continue;
-      // string username = 4;
+      // uint64 uid = 4;
       case 4:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 34)) {
-          auto str = _internal_mutable_username();
-          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 32)) {
+          _impl_.uid_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
-          CHK_(::_pbi::VerifyUTF8(str, "yy.protocol.app.SelectServerReq.username"));
         } else
           goto handle_unusual;
         continue;
@@ -291,14 +279,10 @@ uint8_t* SelectServerReq::_InternalSerialize(
     target = ::_pbi::WireFormatLite::WriteUInt64ToArray(1, this->_internal_session_id(), target);
   }
 
-  // string username = 4;
-  if (!this->_internal_username().empty()) {
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-      this->_internal_username().data(), static_cast<int>(this->_internal_username().length()),
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "yy.protocol.app.SelectServerReq.username");
-    target = stream->WriteStringMaybeAliased(
-        4, this->_internal_username(), target);
+  // uint64 uid = 4;
+  if (this->_internal_uid() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(4, this->_internal_uid(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -317,16 +301,14 @@ size_t SelectServerReq::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // string username = 4;
-  if (!this->_internal_username().empty()) {
-    total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-        this->_internal_username());
-  }
-
   // uint64 session_id = 1;
   if (this->_internal_session_id() != 0) {
     total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_session_id());
+  }
+
+  // uint64 uid = 4;
+  if (this->_internal_uid() != 0) {
+    total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_uid());
   }
 
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
@@ -347,11 +329,11 @@ void SelectServerReq::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const 
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (!from._internal_username().empty()) {
-    _this->_internal_set_username(from._internal_username());
-  }
   if (from._internal_session_id() != 0) {
     _this->_internal_set_session_id(from._internal_session_id());
+  }
+  if (from._internal_uid() != 0) {
+    _this->_internal_set_uid(from._internal_uid());
   }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
@@ -369,14 +351,13 @@ bool SelectServerReq::IsInitialized() const {
 
 void SelectServerReq::InternalSwap(SelectServerReq* other) {
   using std::swap;
-  auto* lhs_arena = GetArenaForAllocation();
-  auto* rhs_arena = other->GetArenaForAllocation();
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
-      &_impl_.username_, lhs_arena,
-      &other->_impl_.username_, rhs_arena
-  );
-  swap(_impl_.session_id_, other->_impl_.session_id_);
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(SelectServerReq, _impl_.uid_)
+      + sizeof(SelectServerReq::_impl_.uid_)
+      - PROTOBUF_FIELD_OFFSET(SelectServerReq, _impl_.session_id_)>(
+          reinterpret_cast<char*>(&_impl_.session_id_),
+          reinterpret_cast<char*>(&other->_impl_.session_id_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata SelectServerReq::GetMetadata() const {
@@ -390,17 +371,17 @@ void SelectServerReq::InternalSwap(SelectServerReq* other) {
 class SelectServerRsp::_Internal {
  public:
   using HasBits = decltype(std::declval<SelectServerRsp>()._impl_._has_bits_);
-  static void set_has_username(HasBits* has_bits) {
-    (*has_bits)[0] |= 1u;
+  static void set_has_uid(HasBits* has_bits) {
+    (*has_bits)[0] |= 4u;
   }
   static void set_has_ip(HasBits* has_bits) {
-    (*has_bits)[0] |= 2u;
+    (*has_bits)[0] |= 1u;
   }
   static void set_has_port(HasBits* has_bits) {
     (*has_bits)[0] |= 8u;
   }
   static void set_has_token(HasBits* has_bits) {
-    (*has_bits)[0] |= 4u;
+    (*has_bits)[0] |= 2u;
   }
 };
 
@@ -416,22 +397,14 @@ SelectServerRsp::SelectServerRsp(const SelectServerRsp& from)
   new (&_impl_) Impl_{
       decltype(_impl_._has_bits_){from._impl_._has_bits_}
     , /*decltype(_impl_._cached_size_)*/{}
-    , decltype(_impl_.username_){}
     , decltype(_impl_.ip_){}
     , decltype(_impl_.token_){}
     , decltype(_impl_.session_id_){}
+    , decltype(_impl_.uid_){}
     , decltype(_impl_.result_code_){}
     , decltype(_impl_.port_){}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  _impl_.username_.InitDefault();
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-    _impl_.username_.Set("", GetArenaForAllocation());
-  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (from._internal_has_username()) {
-    _this->_impl_.username_.Set(from._internal_username(), 
-      _this->GetArenaForAllocation());
-  }
   _impl_.ip_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
     _impl_.ip_.Set("", GetArenaForAllocation());
@@ -461,17 +434,13 @@ inline void SelectServerRsp::SharedCtor(
   new (&_impl_) Impl_{
       decltype(_impl_._has_bits_){}
     , /*decltype(_impl_._cached_size_)*/{}
-    , decltype(_impl_.username_){}
     , decltype(_impl_.ip_){}
     , decltype(_impl_.token_){}
     , decltype(_impl_.session_id_){uint64_t{0u}}
+    , decltype(_impl_.uid_){uint64_t{0u}}
     , decltype(_impl_.result_code_){0}
     , decltype(_impl_.port_){0u}
   };
-  _impl_.username_.InitDefault();
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-    _impl_.username_.Set("", GetArenaForAllocation());
-  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   _impl_.ip_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
     _impl_.ip_.Set("", GetArenaForAllocation());
@@ -493,7 +462,6 @@ SelectServerRsp::~SelectServerRsp() {
 
 inline void SelectServerRsp::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
-  _impl_.username_.Destroy();
   _impl_.ip_.Destroy();
   _impl_.token_.Destroy();
 }
@@ -509,20 +477,17 @@ void SelectServerRsp::Clear() {
   (void) cached_has_bits;
 
   cached_has_bits = _impl_._has_bits_[0];
-  if (cached_has_bits & 0x00000007u) {
+  if (cached_has_bits & 0x00000003u) {
     if (cached_has_bits & 0x00000001u) {
-      _impl_.username_.ClearNonDefaultToEmpty();
-    }
-    if (cached_has_bits & 0x00000002u) {
       _impl_.ip_.ClearNonDefaultToEmpty();
     }
-    if (cached_has_bits & 0x00000004u) {
+    if (cached_has_bits & 0x00000002u) {
       _impl_.token_.ClearNonDefaultToEmpty();
     }
   }
-  ::memset(&_impl_.session_id_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.result_code_) -
-      reinterpret_cast<char*>(&_impl_.session_id_)) + sizeof(_impl_.result_code_));
+  _impl_.session_id_ = uint64_t{0u};
+  _impl_.uid_ = uint64_t{0u};
+  _impl_.result_code_ = 0;
   _impl_.port_ = 0u;
   _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
@@ -552,13 +517,12 @@ const char* SelectServerRsp::_InternalParse(const char* ptr, ::_pbi::ParseContex
         } else
           goto handle_unusual;
         continue;
-      // optional string username = 3;
+      // optional uint64 uid = 3;
       case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
-          auto str = _internal_mutable_username();
-          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 24)) {
+          _Internal::set_has_uid(&has_bits);
+          _impl_.uid_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
-          CHK_(::_pbi::VerifyUTF8(str, "yy.protocol.app.SelectServerRsp.username"));
         } else
           goto handle_unusual;
         continue;
@@ -634,14 +598,10 @@ uint8_t* SelectServerRsp::_InternalSerialize(
       2, this->_internal_result_code(), target);
   }
 
-  // optional string username = 3;
-  if (_internal_has_username()) {
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-      this->_internal_username().data(), static_cast<int>(this->_internal_username().length()),
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "yy.protocol.app.SelectServerRsp.username");
-    target = stream->WriteStringMaybeAliased(
-        3, this->_internal_username(), target);
+  // optional uint64 uid = 3;
+  if (_internal_has_uid()) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(3, this->_internal_uid(), target);
   }
 
   // optional string ip = 4;
@@ -687,23 +647,16 @@ size_t SelectServerRsp::ByteSizeLong() const {
   (void) cached_has_bits;
 
   cached_has_bits = _impl_._has_bits_[0];
-  if (cached_has_bits & 0x00000007u) {
-    // optional string username = 3;
-    if (cached_has_bits & 0x00000001u) {
-      total_size += 1 +
-        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-          this->_internal_username());
-    }
-
+  if (cached_has_bits & 0x00000003u) {
     // optional string ip = 4;
-    if (cached_has_bits & 0x00000002u) {
+    if (cached_has_bits & 0x00000001u) {
       total_size += 1 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
           this->_internal_ip());
     }
 
     // optional string token = 6;
-    if (cached_has_bits & 0x00000004u) {
+    if (cached_has_bits & 0x00000002u) {
       total_size += 1 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
           this->_internal_token());
@@ -713,6 +666,11 @@ size_t SelectServerRsp::ByteSizeLong() const {
   // uint64 session_id = 1;
   if (this->_internal_session_id() != 0) {
     total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_session_id());
+  }
+
+  // optional uint64 uid = 3;
+  if (cached_has_bits & 0x00000004u) {
+    total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_uid());
   }
 
   // .yy.protocol.app.SelectServerRsp.Status result_code = 2;
@@ -745,19 +703,19 @@ void SelectServerRsp::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const 
   (void) cached_has_bits;
 
   cached_has_bits = from._impl_._has_bits_[0];
-  if (cached_has_bits & 0x00000007u) {
+  if (cached_has_bits & 0x00000003u) {
     if (cached_has_bits & 0x00000001u) {
-      _this->_internal_set_username(from._internal_username());
-    }
-    if (cached_has_bits & 0x00000002u) {
       _this->_internal_set_ip(from._internal_ip());
     }
-    if (cached_has_bits & 0x00000004u) {
+    if (cached_has_bits & 0x00000002u) {
       _this->_internal_set_token(from._internal_token());
     }
   }
   if (from._internal_session_id() != 0) {
     _this->_internal_set_session_id(from._internal_session_id());
+  }
+  if (cached_has_bits & 0x00000004u) {
+    _this->_internal_set_uid(from._internal_uid());
   }
   if (from._internal_result_code() != 0) {
     _this->_internal_set_result_code(from._internal_result_code());
@@ -785,10 +743,6 @@ void SelectServerRsp::InternalSwap(SelectServerRsp* other) {
   auto* rhs_arena = other->GetArenaForAllocation();
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
-      &_impl_.username_, lhs_arena,
-      &other->_impl_.username_, rhs_arena
-  );
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
       &_impl_.ip_, lhs_arena,
       &other->_impl_.ip_, rhs_arena

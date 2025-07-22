@@ -1,13 +1,13 @@
 #include "MySqlClient.h"
 #include "RemoteXmlConfig.h"
 
-namespace yy::core
+namespace yy::core::mysql
 {
 void MySqlClient::Start(net::EventLoop* loop, const std::string& schema)
 {
     if (pool_ == nullptr) {
-        decltype(yy::config::g_remote_config->GetValue().m_remote_nodes)::value_type mysql_configs;
-        for (auto & node: yy::config::g_remote_config->GetValue().m_remote_nodes) {
+        decltype(config::g_remote_config->GetValue().m_remote_nodes)::value_type mysql_configs;
+        for (auto & node: config::g_remote_config->GetValue().m_remote_nodes) {
             if (node.type == "mysql") {
                 mysql_configs = node;
             }

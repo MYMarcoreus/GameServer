@@ -5,10 +5,9 @@
 #include <string>
 #include <unordered_map>
 #include <optional>
-#include "EventLoop.h"
 
 
-namespace yy::core {
+namespace yy::core::redis {
 
 
 class RedisClient final : public Singleton<RedisClient> {
@@ -19,8 +18,18 @@ public:
 
     // 封装方法
     bool Set(const std::string& key, const std::string& value);
-    std::optional<std::string> Get(const std::string& key);
-    std::unordered_map<std::string, std::string> HGetAll(const std::string& key);
+    bool SetEx(const std::string& key, const std::string& value, std::chrono::seconds ttl);
+    bool HSet(const std::string& key, const std::string& field, const std::string& value);
+    bool HMSet(const std::string& key, const std::unordered_map<std::string, std::string>& kvs);
+    bool Exists(const std::string& key);
+
+    bool HasHashKey(const std::string& key);
+
+    auto Get(const std::string& key) -> std::optional<std::string>;
+    auto HGetAll(const std::string& key) -> std::unordered_map<std::string, std::string>;
+    auto HGet(const std::string& key, const std::string& field) -> std::optional<std::string>;
+
+    bool Del(const std::string& key);
 
 private:
     std::unique_ptr<RedisPool> pool_ = nullptr;

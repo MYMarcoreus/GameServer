@@ -36,11 +36,8 @@ public:
 };
 
 //! 用于Protobuf
-template<IsNetworkChannelType NetworkChannelType, typename T> requires requires {
-    requires std::is_base_of_v<google::protobuf::Message, T>;
-}
-class CallbackT : public Callback<NetworkChannelType> {
-    static_assert(std::is_base_of_v<google::protobuf::Message, T>, "T must be derived from gpb::Message.");
+template<IsNetworkChannelType NetworkChannelType, IsProtobufMessage T>
+class CallbackT final : public Callback<NetworkChannelType> {
 public:
     //! message的子类回调
     using ProtobufMessageTCallback = std::function<void(
@@ -86,10 +83,7 @@ public:
     }
 
     //! 注册回调：回调传递子类指针CallbackT<T>，保存的是基类指针Callback，从而使得可以保存各种Message子类的回调
-    template<typename T>
-    requires requires {
-        requires std::is_base_of_v<google::protobuf::Message, T>;
-    }
+    template<IsProtobufMessage T>
     void RegisterMessageCallback(const typename CallbackT<NetworkChannelType, T>::ProtobufMessageTCallback & callback) {
         //! 子类指针交给map内的父类指针存储
         m_CallbacksMap[T::descriptor()] = std::make_shared< CallbackT<NetworkChannelType, T> >(callback);

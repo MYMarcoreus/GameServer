@@ -34,6 +34,8 @@ public:
 
     UdpTransport & GetUdpTran() { return *m_udpTran; }
 
+    uint16_t GetPort() const { return m_udp_port; }
+
 private:
     void HandleNewMessage(NetBuffer & recvBuf, IPAddressPtr peerAddr);
 private:

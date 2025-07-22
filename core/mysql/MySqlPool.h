@@ -11,7 +11,7 @@
 
 
 
-namespace yy::core
+namespace yy::core::mysql
 {
 
 
@@ -26,7 +26,7 @@ public:
 
 class MySqlPool {
 public:
-	MySqlPool(yy::net::EventLoop * loop, const std::string& ip, int port, const std::string& user, const std::string& pwd, const std::string& schema, size_t poolSize);
+	MySqlPool(net::EventLoop * loop, const std::string& ip, int port, const std::string& user, const std::string& pwd, const std::string& schema, size_t poolSize);
 
 	~MySqlPool();
 

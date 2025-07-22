@@ -22,13 +22,13 @@ class CenterServerManager final : public Singleton<CenterServerManager> {
 public:
     void RunApp();
 
-    core::rpc::RpcServer& GetRpcServer() const { return *m_rpcServer; };
+    core::rpc::RpcServer& GetRpcServer() const { return *m_rpcServer; }
 private:
     CenterServerManager();
     ~CenterServerManager() override;
 
     std::unique_ptr<core::rpc::RpcServer> m_rpcServer;
-    std::unique_ptr<yy::net::EventLoop> m_accpetorLoop;
+    std::unique_ptr<net::EventLoop> m_accpetorLoop;
 };
 
 }

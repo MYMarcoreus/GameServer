@@ -7,18 +7,18 @@
 
 namespace yy::core::rpc
 {
-using ::yy::net::NetBuffer;
-using ::yy::net::TcpConnectionPtr;
+using net::NetBuffer;
+using net::TcpConnectionPtr;
 
 RpcCodec::RpcCodec(const F_ProtobufMessageDispatchCallback& msgCb, const F_ProtobufErrorMessageCallback& errCb) :
     m_ProtobufMessageDispatchCallback{msgCb},
     m_ProtobufErrorMessageCallback{errCb},
-    m_prototype{&yy::protocol::core::RpcMessage::default_instance()}
+    m_prototype{&protocol::core::RpcMessage::default_instance()}
 {
     //pass
 }
 
-void RpcCodec::OnTcpData(const yy::net::TcpConnectionPtr& conn, yy::net::NetBuffer& buf)
+void RpcCodec::OnTcpData(const TcpConnectionPtr& conn, NetBuffer& buf)
 {
     // 不断解析接收缓冲中的字节流，直到遇到不完整的信息或解析完毕
     while(buf.GetDataSize() >= RpcHeader::kHeaderSize)
@@ -49,7 +49,7 @@ void RpcCodec::OnTcpData(const yy::net::TcpConnectionPtr& conn, yy::net::NetBuff
     }
 }
 
-void RpcCodec::SendTCP(const yy::net::TcpConnectionPtr& conn, const yy::protocol::core::RpcMessage & message)
+void RpcCodec::SendTCP(const TcpConnectionPtr& conn, const protocol::core::RpcMessage & message)
 {
     //! 设置消息头
     RpcHeader header{message};
@@ -72,7 +72,7 @@ void RpcCodec::SendTCP(const yy::net::TcpConnectionPtr& conn, const yy::protocol
     conn->SendRawTCP(std::string_view(buffer.Peek(), buffer.GetDataSize()));
 }
 
-std::pair<RpcHeader, MessagePtr> RpcCodec::Parse(const yy::net::TcpConnectionPtr& conn, yy::net::NetBuffer& buf, MessageParseErrorCode& outErrCode)
+std::pair<RpcHeader, MessagePtr> RpcCodec::Parse(const TcpConnectionPtr& conn, NetBuffer& buf, MessageParseErrorCode& outErrCode)
 {
     RpcHeader header;
 
@@ -112,7 +112,7 @@ std::pair<RpcHeader, MessagePtr> RpcCodec::Parse(const yy::net::TcpConnectionPtr
     return {header, message};
 }
 
-void RpcCodec::DefaultErrorCallback(const yy::net::TcpConnectionPtr& conn, yy::net::NetBuffer& buf, MessageParseErrorCode)
+void RpcCodec::DefaultErrorCallback(const TcpConnectionPtr& conn, NetBuffer& buf, MessageParseErrorCode)
 {
     if(conn and conn->IsConnected()) {
         conn->Shutdown();

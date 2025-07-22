@@ -214,23 +214,9 @@ class SelectServerReq final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kUsernameFieldNumber = 4,
     kSessionIdFieldNumber = 1,
+    kUidFieldNumber = 4,
   };
-  // string username = 4;
-  void clear_username();
-  const std::string& username() const;
-  template <typename ArgT0 = const std::string&, typename... ArgT>
-  void set_username(ArgT0&& arg0, ArgT... args);
-  std::string* mutable_username();
-  PROTOBUF_NODISCARD std::string* release_username();
-  void set_allocated_username(std::string* username);
-  private:
-  const std::string& _internal_username() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_username(const std::string& value);
-  std::string* _internal_mutable_username();
-  public:
-
   // uint64 session_id = 1;
   void clear_session_id();
   uint64_t session_id() const;
@@ -238,6 +224,15 @@ class SelectServerReq final :
   private:
   uint64_t _internal_session_id() const;
   void _internal_set_session_id(uint64_t value);
+  public:
+
+  // uint64 uid = 4;
+  void clear_uid();
+  uint64_t uid() const;
+  void set_uid(uint64_t value);
+  private:
+  uint64_t _internal_uid() const;
+  void _internal_set_uid(uint64_t value);
   public:
 
   // @@protoc_insertion_point(class_scope:yy.protocol.app.SelectServerReq)
@@ -248,8 +243,8 @@ class SelectServerReq final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
-    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr username_;
     uint64_t session_id_;
+    uint64_t uid_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -408,31 +403,13 @@ class SelectServerRsp final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kUsernameFieldNumber = 3,
     kIpFieldNumber = 4,
     kTokenFieldNumber = 6,
     kSessionIdFieldNumber = 1,
+    kUidFieldNumber = 3,
     kResultCodeFieldNumber = 2,
     kPortFieldNumber = 5,
   };
-  // optional string username = 3;
-  bool has_username() const;
-  private:
-  bool _internal_has_username() const;
-  public:
-  void clear_username();
-  const std::string& username() const;
-  template <typename ArgT0 = const std::string&, typename... ArgT>
-  void set_username(ArgT0&& arg0, ArgT... args);
-  std::string* mutable_username();
-  PROTOBUF_NODISCARD std::string* release_username();
-  void set_allocated_username(std::string* username);
-  private:
-  const std::string& _internal_username() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_username(const std::string& value);
-  std::string* _internal_mutable_username();
-  public:
-
   // optional string ip = 4;
   bool has_ip() const;
   private:
@@ -478,6 +455,19 @@ class SelectServerRsp final :
   void _internal_set_session_id(uint64_t value);
   public:
 
+  // optional uint64 uid = 3;
+  bool has_uid() const;
+  private:
+  bool _internal_has_uid() const;
+  public:
+  void clear_uid();
+  uint64_t uid() const;
+  void set_uid(uint64_t value);
+  private:
+  uint64_t _internal_uid() const;
+  void _internal_set_uid(uint64_t value);
+  public:
+
   // .yy.protocol.app.SelectServerRsp.Status result_code = 2;
   void clear_result_code();
   ::yy::protocol::app::SelectServerRsp_Status result_code() const;
@@ -510,10 +500,10 @@ class SelectServerRsp final :
   struct Impl_ {
     ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
-    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr username_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr ip_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr token_;
     uint64_t session_id_;
+    uint64_t uid_;
     int result_code_;
     uint32_t port_;
   };
@@ -610,54 +600,24 @@ inline void SelectServerReq::set_session_id(uint64_t value) {
   // @@protoc_insertion_point(field_set:yy.protocol.app.SelectServerReq.session_id)
 }
 
-// string username = 4;
-inline void SelectServerReq::clear_username() {
-  _impl_.username_.ClearToEmpty();
+// uint64 uid = 4;
+inline void SelectServerReq::clear_uid() {
+  _impl_.uid_ = uint64_t{0u};
 }
-inline const std::string& SelectServerReq::username() const {
-  // @@protoc_insertion_point(field_get:yy.protocol.app.SelectServerReq.username)
-  return _internal_username();
+inline uint64_t SelectServerReq::_internal_uid() const {
+  return _impl_.uid_;
 }
-template <typename ArgT0, typename... ArgT>
-inline PROTOBUF_ALWAYS_INLINE
-void SelectServerReq::set_username(ArgT0&& arg0, ArgT... args) {
- 
- _impl_.username_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:yy.protocol.app.SelectServerReq.username)
+inline uint64_t SelectServerReq::uid() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.SelectServerReq.uid)
+  return _internal_uid();
 }
-inline std::string* SelectServerReq::mutable_username() {
-  std::string* _s = _internal_mutable_username();
-  // @@protoc_insertion_point(field_mutable:yy.protocol.app.SelectServerReq.username)
-  return _s;
-}
-inline const std::string& SelectServerReq::_internal_username() const {
-  return _impl_.username_.Get();
-}
-inline void SelectServerReq::_internal_set_username(const std::string& value) {
+inline void SelectServerReq::_internal_set_uid(uint64_t value) {
   
-  _impl_.username_.Set(value, GetArenaForAllocation());
+  _impl_.uid_ = value;
 }
-inline std::string* SelectServerReq::_internal_mutable_username() {
-  
-  return _impl_.username_.Mutable(GetArenaForAllocation());
-}
-inline std::string* SelectServerReq::release_username() {
-  // @@protoc_insertion_point(field_release:yy.protocol.app.SelectServerReq.username)
-  return _impl_.username_.Release();
-}
-inline void SelectServerReq::set_allocated_username(std::string* username) {
-  if (username != nullptr) {
-    
-  } else {
-    
-  }
-  _impl_.username_.SetAllocated(username, GetArenaForAllocation());
-#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (_impl_.username_.IsDefault()) {
-    _impl_.username_.Set("", GetArenaForAllocation());
-  }
-#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:yy.protocol.app.SelectServerReq.username)
+inline void SelectServerReq::set_uid(uint64_t value) {
+  _internal_set_uid(value);
+  // @@protoc_insertion_point(field_set:yy.protocol.app.SelectServerReq.uid)
 }
 
 // -------------------------------------------------------------------
@@ -704,77 +664,37 @@ inline void SelectServerRsp::set_result_code(::yy::protocol::app::SelectServerRs
   // @@protoc_insertion_point(field_set:yy.protocol.app.SelectServerRsp.result_code)
 }
 
-// optional string username = 3;
-inline bool SelectServerRsp::_internal_has_username() const {
-  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
+// optional uint64 uid = 3;
+inline bool SelectServerRsp::_internal_has_uid() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000004u) != 0;
   return value;
 }
-inline bool SelectServerRsp::has_username() const {
-  return _internal_has_username();
+inline bool SelectServerRsp::has_uid() const {
+  return _internal_has_uid();
 }
-inline void SelectServerRsp::clear_username() {
-  _impl_.username_.ClearToEmpty();
-  _impl_._has_bits_[0] &= ~0x00000001u;
+inline void SelectServerRsp::clear_uid() {
+  _impl_.uid_ = uint64_t{0u};
+  _impl_._has_bits_[0] &= ~0x00000004u;
 }
-inline const std::string& SelectServerRsp::username() const {
-  // @@protoc_insertion_point(field_get:yy.protocol.app.SelectServerRsp.username)
-  return _internal_username();
+inline uint64_t SelectServerRsp::_internal_uid() const {
+  return _impl_.uid_;
 }
-template <typename ArgT0, typename... ArgT>
-inline PROTOBUF_ALWAYS_INLINE
-void SelectServerRsp::set_username(ArgT0&& arg0, ArgT... args) {
- _impl_._has_bits_[0] |= 0x00000001u;
- _impl_.username_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:yy.protocol.app.SelectServerRsp.username)
+inline uint64_t SelectServerRsp::uid() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.SelectServerRsp.uid)
+  return _internal_uid();
 }
-inline std::string* SelectServerRsp::mutable_username() {
-  std::string* _s = _internal_mutable_username();
-  // @@protoc_insertion_point(field_mutable:yy.protocol.app.SelectServerRsp.username)
-  return _s;
+inline void SelectServerRsp::_internal_set_uid(uint64_t value) {
+  _impl_._has_bits_[0] |= 0x00000004u;
+  _impl_.uid_ = value;
 }
-inline const std::string& SelectServerRsp::_internal_username() const {
-  return _impl_.username_.Get();
-}
-inline void SelectServerRsp::_internal_set_username(const std::string& value) {
-  _impl_._has_bits_[0] |= 0x00000001u;
-  _impl_.username_.Set(value, GetArenaForAllocation());
-}
-inline std::string* SelectServerRsp::_internal_mutable_username() {
-  _impl_._has_bits_[0] |= 0x00000001u;
-  return _impl_.username_.Mutable(GetArenaForAllocation());
-}
-inline std::string* SelectServerRsp::release_username() {
-  // @@protoc_insertion_point(field_release:yy.protocol.app.SelectServerRsp.username)
-  if (!_internal_has_username()) {
-    return nullptr;
-  }
-  _impl_._has_bits_[0] &= ~0x00000001u;
-  auto* p = _impl_.username_.Release();
-#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (_impl_.username_.IsDefault()) {
-    _impl_.username_.Set("", GetArenaForAllocation());
-  }
-#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  return p;
-}
-inline void SelectServerRsp::set_allocated_username(std::string* username) {
-  if (username != nullptr) {
-    _impl_._has_bits_[0] |= 0x00000001u;
-  } else {
-    _impl_._has_bits_[0] &= ~0x00000001u;
-  }
-  _impl_.username_.SetAllocated(username, GetArenaForAllocation());
-#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (_impl_.username_.IsDefault()) {
-    _impl_.username_.Set("", GetArenaForAllocation());
-  }
-#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:yy.protocol.app.SelectServerRsp.username)
+inline void SelectServerRsp::set_uid(uint64_t value) {
+  _internal_set_uid(value);
+  // @@protoc_insertion_point(field_set:yy.protocol.app.SelectServerRsp.uid)
 }
 
 // optional string ip = 4;
 inline bool SelectServerRsp::_internal_has_ip() const {
-  bool value = (_impl_._has_bits_[0] & 0x00000002u) != 0;
+  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
   return value;
 }
 inline bool SelectServerRsp::has_ip() const {
@@ -782,7 +702,7 @@ inline bool SelectServerRsp::has_ip() const {
 }
 inline void SelectServerRsp::clear_ip() {
   _impl_.ip_.ClearToEmpty();
-  _impl_._has_bits_[0] &= ~0x00000002u;
+  _impl_._has_bits_[0] &= ~0x00000001u;
 }
 inline const std::string& SelectServerRsp::ip() const {
   // @@protoc_insertion_point(field_get:yy.protocol.app.SelectServerRsp.ip)
@@ -791,7 +711,7 @@ inline const std::string& SelectServerRsp::ip() const {
 template <typename ArgT0, typename... ArgT>
 inline PROTOBUF_ALWAYS_INLINE
 void SelectServerRsp::set_ip(ArgT0&& arg0, ArgT... args) {
- _impl_._has_bits_[0] |= 0x00000002u;
+ _impl_._has_bits_[0] |= 0x00000001u;
  _impl_.ip_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
   // @@protoc_insertion_point(field_set:yy.protocol.app.SelectServerRsp.ip)
 }
@@ -804,11 +724,11 @@ inline const std::string& SelectServerRsp::_internal_ip() const {
   return _impl_.ip_.Get();
 }
 inline void SelectServerRsp::_internal_set_ip(const std::string& value) {
-  _impl_._has_bits_[0] |= 0x00000002u;
+  _impl_._has_bits_[0] |= 0x00000001u;
   _impl_.ip_.Set(value, GetArenaForAllocation());
 }
 inline std::string* SelectServerRsp::_internal_mutable_ip() {
-  _impl_._has_bits_[0] |= 0x00000002u;
+  _impl_._has_bits_[0] |= 0x00000001u;
   return _impl_.ip_.Mutable(GetArenaForAllocation());
 }
 inline std::string* SelectServerRsp::release_ip() {
@@ -816,7 +736,7 @@ inline std::string* SelectServerRsp::release_ip() {
   if (!_internal_has_ip()) {
     return nullptr;
   }
-  _impl_._has_bits_[0] &= ~0x00000002u;
+  _impl_._has_bits_[0] &= ~0x00000001u;
   auto* p = _impl_.ip_.Release();
 #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
   if (_impl_.ip_.IsDefault()) {
@@ -827,9 +747,9 @@ inline std::string* SelectServerRsp::release_ip() {
 }
 inline void SelectServerRsp::set_allocated_ip(std::string* ip) {
   if (ip != nullptr) {
-    _impl_._has_bits_[0] |= 0x00000002u;
+    _impl_._has_bits_[0] |= 0x00000001u;
   } else {
-    _impl_._has_bits_[0] &= ~0x00000002u;
+    _impl_._has_bits_[0] &= ~0x00000001u;
   }
   _impl_.ip_.SetAllocated(ip, GetArenaForAllocation());
 #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
@@ -870,7 +790,7 @@ inline void SelectServerRsp::set_port(uint32_t value) {
 
 // optional string token = 6;
 inline bool SelectServerRsp::_internal_has_token() const {
-  bool value = (_impl_._has_bits_[0] & 0x00000004u) != 0;
+  bool value = (_impl_._has_bits_[0] & 0x00000002u) != 0;
   return value;
 }
 inline bool SelectServerRsp::has_token() const {
@@ -878,7 +798,7 @@ inline bool SelectServerRsp::has_token() const {
 }
 inline void SelectServerRsp::clear_token() {
   _impl_.token_.ClearToEmpty();
-  _impl_._has_bits_[0] &= ~0x00000004u;
+  _impl_._has_bits_[0] &= ~0x00000002u;
 }
 inline const std::string& SelectServerRsp::token() const {
   // @@protoc_insertion_point(field_get:yy.protocol.app.SelectServerRsp.token)
@@ -887,7 +807,7 @@ inline const std::string& SelectServerRsp::token() const {
 template <typename ArgT0, typename... ArgT>
 inline PROTOBUF_ALWAYS_INLINE
 void SelectServerRsp::set_token(ArgT0&& arg0, ArgT... args) {
- _impl_._has_bits_[0] |= 0x00000004u;
+ _impl_._has_bits_[0] |= 0x00000002u;
  _impl_.token_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
   // @@protoc_insertion_point(field_set:yy.protocol.app.SelectServerRsp.token)
 }
@@ -900,11 +820,11 @@ inline const std::string& SelectServerRsp::_internal_token() const {
   return _impl_.token_.Get();
 }
 inline void SelectServerRsp::_internal_set_token(const std::string& value) {
-  _impl_._has_bits_[0] |= 0x00000004u;
+  _impl_._has_bits_[0] |= 0x00000002u;
   _impl_.token_.Set(value, GetArenaForAllocation());
 }
 inline std::string* SelectServerRsp::_internal_mutable_token() {
-  _impl_._has_bits_[0] |= 0x00000004u;
+  _impl_._has_bits_[0] |= 0x00000002u;
   return _impl_.token_.Mutable(GetArenaForAllocation());
 }
 inline std::string* SelectServerRsp::release_token() {
@@ -912,7 +832,7 @@ inline std::string* SelectServerRsp::release_token() {
   if (!_internal_has_token()) {
     return nullptr;
   }
-  _impl_._has_bits_[0] &= ~0x00000004u;
+  _impl_._has_bits_[0] &= ~0x00000002u;
   auto* p = _impl_.token_.Release();
 #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
   if (_impl_.token_.IsDefault()) {
@@ -923,9 +843,9 @@ inline std::string* SelectServerRsp::release_token() {
 }
 inline void SelectServerRsp::set_allocated_token(std::string* token) {
   if (token != nullptr) {
-    _impl_._has_bits_[0] |= 0x00000004u;
+    _impl_._has_bits_[0] |= 0x00000002u;
   } else {
-    _impl_._has_bits_[0] &= ~0x00000004u;
+    _impl_._has_bits_[0] &= ~0x00000002u;
   }
   _impl_.token_.SetAllocated(token, GetArenaForAllocation());
 #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING

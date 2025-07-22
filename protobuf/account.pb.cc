@@ -46,6 +46,7 @@ PROTOBUF_CONSTEXPR S2CLogin::S2CLogin(
   , /*decltype(_impl_.ip_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.token_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.session_id_)*/uint64_t{0u}
+  , /*decltype(_impl_.uid_)*/uint64_t{0u}
   , /*decltype(_impl_.result_code_)*/0
   , /*decltype(_impl_.port_)*/0u} {}
 struct S2CLoginDefaultTypeInternal {
@@ -74,9 +75,11 @@ struct C2SRegisterDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 C2SRegisterDefaultTypeInternal _C2SRegister_default_instance_;
 PROTOBUF_CONSTEXPR S2CRegister::S2CRegister(
     ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_.session_id_)*/uint64_t{0u}
-  , /*decltype(_impl_.result_code_)*/0
-  , /*decltype(_impl_._cached_size_)*/{}} {}
+    /*decltype(_impl_._has_bits_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}
+  , /*decltype(_impl_.session_id_)*/uint64_t{0u}
+  , /*decltype(_impl_.uid_)*/uint64_t{0u}
+  , /*decltype(_impl_.result_code_)*/0} {}
 struct S2CRegisterDefaultTypeInternal {
   PROTOBUF_CONSTEXPR S2CRegisterDefaultTypeInternal()
       : _instance(::_pbi::ConstantInitialized{}) {}
@@ -111,15 +114,17 @@ const uint32_t TableStruct_account_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
   ~0u,  // no _inlined_string_donated_
   PROTOBUF_FIELD_OFFSET(::yy::protocol::app::S2CLogin, _impl_.session_id_),
   PROTOBUF_FIELD_OFFSET(::yy::protocol::app::S2CLogin, _impl_.result_code_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::S2CLogin, _impl_.uid_),
   PROTOBUF_FIELD_OFFSET(::yy::protocol::app::S2CLogin, _impl_.username_),
   PROTOBUF_FIELD_OFFSET(::yy::protocol::app::S2CLogin, _impl_.ip_),
   PROTOBUF_FIELD_OFFSET(::yy::protocol::app::S2CLogin, _impl_.port_),
   PROTOBUF_FIELD_OFFSET(::yy::protocol::app::S2CLogin, _impl_.token_),
   ~0u,
   ~0u,
+  3,
   0,
   1,
-  3,
+  4,
   2,
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::yy::protocol::app::C2SRegister, _internal_metadata_),
@@ -130,7 +135,7 @@ const uint32_t TableStruct_account_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
   PROTOBUF_FIELD_OFFSET(::yy::protocol::app::C2SRegister, _impl_.session_id_),
   PROTOBUF_FIELD_OFFSET(::yy::protocol::app::C2SRegister, _impl_.username_),
   PROTOBUF_FIELD_OFFSET(::yy::protocol::app::C2SRegister, _impl_.password_),
-  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::S2CRegister, _impl_._has_bits_),
   PROTOBUF_FIELD_OFFSET(::yy::protocol::app::S2CRegister, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
@@ -138,12 +143,16 @@ const uint32_t TableStruct_account_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
   ~0u,  // no _inlined_string_donated_
   PROTOBUF_FIELD_OFFSET(::yy::protocol::app::S2CRegister, _impl_.session_id_),
   PROTOBUF_FIELD_OFFSET(::yy::protocol::app::S2CRegister, _impl_.result_code_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::S2CRegister, _impl_.uid_),
+  ~0u,
+  ~0u,
+  0,
 };
 static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::yy::protocol::app::C2SLogin)},
-  { 9, 21, -1, sizeof(::yy::protocol::app::S2CLogin)},
-  { 27, -1, -1, sizeof(::yy::protocol::app::C2SRegister)},
-  { 36, -1, -1, sizeof(::yy::protocol::app::S2CRegister)},
+  { 9, 22, -1, sizeof(::yy::protocol::app::S2CLogin)},
+  { 29, -1, -1, sizeof(::yy::protocol::app::C2SRegister)},
+  { 38, 47, -1, sizeof(::yy::protocol::app::S2CRegister)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -156,28 +165,30 @@ static const ::_pb::Message* const file_default_instances[] = {
 const char descriptor_table_protodef_account_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
   "\n\raccount.proto\022\017yy.protocol.app\"B\n\010C2SL"
   "ogin\022\022\n\nsession_id\030\001 \001(\004\022\020\n\010username\030\003 \001"
-  "(\t\022\020\n\010password\030\004 \001(\t\"\240\002\n\010S2CLogin\022\022\n\nses"
+  "(\t\022\020\n\010password\030\004 \001(\t\"\272\002\n\010S2CLogin\022\022\n\nses"
   "sion_id\030\001 \001(\004\0225\n\013result_code\030\002 \001(\0162 .yy."
-  "protocol.app.S2CLogin.Status\022\025\n\010username"
-  "\030\003 \001(\tH\000\210\001\001\022\017\n\002ip\030\004 \001(\tH\001\210\001\001\022\021\n\004port\030\005 \001"
-  "(\rH\002\210\001\001\022\022\n\005token\030\006 \001(\tH\003\210\001\001\"S\n\006Status\022\014\n"
-  "\010eSuccess\020\000\022\024\n\020eAccountNotExist\020\001\022\022\n\016ePa"
-  "sswordError\020\002\022\021\n\reUnknownError\020\003B\013\n\t_use"
-  "rnameB\005\n\003_ipB\007\n\005_portB\010\n\006_token\"E\n\013C2SRe"
-  "gister\022\022\n\nsession_id\030\001 \001(\004\022\020\n\010username\030\003"
-  " \001(\t\022\020\n\010password\030\004 \001(\t\"\240\001\n\013S2CRegister\022\022"
-  "\n\nsession_id\030\001 \001(\004\0228\n\013result_code\030\002 \001(\0162"
-  "#.yy.protocol.app.S2CRegister.Status\"C\n\006"
-  "Status\022\014\n\010eSuccess\020\000\022\030\n\024eAccountAlreadyE"
-  "xist\020\002\022\021\n\reUnknownError\020\0032\232\001\n\021AccountSer"
-  "viceRpc\022=\n\005Login\022\031.yy.protocol.app.C2SLo"
-  "gin\032\031.yy.protocol.app.S2CLogin\022F\n\010Regist"
-  "er\022\034.yy.protocol.app.C2SRegister\032\034.yy.pr"
-  "otocol.app.S2CRegisterB\003\200\001\001b\006proto3"
+  "protocol.app.S2CLogin.Status\022\020\n\003uid\030\003 \001("
+  "\004H\000\210\001\001\022\025\n\010username\030\004 \001(\tH\001\210\001\001\022\017\n\002ip\030\005 \001("
+  "\tH\002\210\001\001\022\021\n\004port\030\006 \001(\rH\003\210\001\001\022\022\n\005token\030\007 \001(\t"
+  "H\004\210\001\001\"S\n\006Status\022\014\n\010eSuccess\020\000\022\024\n\020eAccoun"
+  "tNotExist\020\001\022\022\n\016ePasswordError\020\002\022\021\n\reUnkn"
+  "ownError\020\003B\006\n\004_uidB\013\n\t_usernameB\005\n\003_ipB\007"
+  "\n\005_portB\010\n\006_token\"E\n\013C2SRegister\022\022\n\nsess"
+  "ion_id\030\001 \001(\004\022\020\n\010username\030\003 \001(\t\022\020\n\010passwo"
+  "rd\030\004 \001(\t\"\272\001\n\013S2CRegister\022\022\n\nsession_id\030\001"
+  " \001(\004\0228\n\013result_code\030\002 \001(\0162#.yy.protocol."
+  "app.S2CRegister.Status\022\020\n\003uid\030\004 \001(\004H\000\210\001\001"
+  "\"C\n\006Status\022\014\n\010eSuccess\020\000\022\030\n\024eAccountAlre"
+  "adyExist\020\002\022\021\n\reUnknownError\020\003B\006\n\004_uid2\232\001"
+  "\n\021AccountServiceRpc\022=\n\005Login\022\031.yy.protoc"
+  "ol.app.C2SLogin\032\031.yy.protocol.app.S2CLog"
+  "in\022F\n\010Register\022\034.yy.protocol.app.C2SRegi"
+  "ster\032\034.yy.protocol.app.S2CRegisterB\003\200\001\001b"
+  "\006proto3"
   ;
 static ::_pbi::once_flag descriptor_table_account_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_account_2eproto = {
-    false, false, 795, descriptor_table_protodef_account_2eproto,
+    false, false, 847, descriptor_table_protodef_account_2eproto,
     "account.proto",
     &descriptor_table_account_2eproto_once, nullptr, 0, 4,
     schemas, file_default_instances, TableStruct_account_2eproto::offsets,
@@ -527,6 +538,9 @@ void C2SLogin::InternalSwap(C2SLogin* other) {
 class S2CLogin::_Internal {
  public:
   using HasBits = decltype(std::declval<S2CLogin>()._impl_._has_bits_);
+  static void set_has_uid(HasBits* has_bits) {
+    (*has_bits)[0] |= 8u;
+  }
   static void set_has_username(HasBits* has_bits) {
     (*has_bits)[0] |= 1u;
   }
@@ -534,7 +548,7 @@ class S2CLogin::_Internal {
     (*has_bits)[0] |= 2u;
   }
   static void set_has_port(HasBits* has_bits) {
-    (*has_bits)[0] |= 8u;
+    (*has_bits)[0] |= 16u;
   }
   static void set_has_token(HasBits* has_bits) {
     (*has_bits)[0] |= 4u;
@@ -557,6 +571,7 @@ S2CLogin::S2CLogin(const S2CLogin& from)
     , decltype(_impl_.ip_){}
     , decltype(_impl_.token_){}
     , decltype(_impl_.session_id_){}
+    , decltype(_impl_.uid_){}
     , decltype(_impl_.result_code_){}
     , decltype(_impl_.port_){}};
 
@@ -602,6 +617,7 @@ inline void S2CLogin::SharedCtor(
     , decltype(_impl_.ip_){}
     , decltype(_impl_.token_){}
     , decltype(_impl_.session_id_){uint64_t{0u}}
+    , decltype(_impl_.uid_){uint64_t{0u}}
     , decltype(_impl_.result_code_){0}
     , decltype(_impl_.port_){0u}
   };
@@ -657,9 +673,9 @@ void S2CLogin::Clear() {
       _impl_.token_.ClearNonDefaultToEmpty();
     }
   }
-  ::memset(&_impl_.session_id_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.result_code_) -
-      reinterpret_cast<char*>(&_impl_.session_id_)) + sizeof(_impl_.result_code_));
+  _impl_.session_id_ = uint64_t{0u};
+  _impl_.uid_ = uint64_t{0u};
+  _impl_.result_code_ = 0;
   _impl_.port_ = 0u;
   _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
@@ -689,9 +705,18 @@ const char* S2CLogin::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx)
         } else
           goto handle_unusual;
         continue;
-      // optional string username = 3;
+      // optional uint64 uid = 3;
       case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 24)) {
+          _Internal::set_has_uid(&has_bits);
+          _impl_.uid_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // optional string username = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 34)) {
           auto str = _internal_mutable_username();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
@@ -699,9 +724,9 @@ const char* S2CLogin::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx)
         } else
           goto handle_unusual;
         continue;
-      // optional string ip = 4;
-      case 4:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 34)) {
+      // optional string ip = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 42)) {
           auto str = _internal_mutable_ip();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
@@ -709,18 +734,18 @@ const char* S2CLogin::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx)
         } else
           goto handle_unusual;
         continue;
-      // optional uint32 port = 5;
-      case 5:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+      // optional uint32 port = 6;
+      case 6:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 48)) {
           _Internal::set_has_port(&has_bits);
           _impl_.port_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // optional string token = 6;
-      case 6:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 50)) {
+      // optional string token = 7;
+      case 7:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 58)) {
           auto str = _internal_mutable_token();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
@@ -771,40 +796,46 @@ uint8_t* S2CLogin::_InternalSerialize(
       2, this->_internal_result_code(), target);
   }
 
-  // optional string username = 3;
+  // optional uint64 uid = 3;
+  if (_internal_has_uid()) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(3, this->_internal_uid(), target);
+  }
+
+  // optional string username = 4;
   if (_internal_has_username()) {
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_username().data(), static_cast<int>(this->_internal_username().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
       "yy.protocol.app.S2CLogin.username");
     target = stream->WriteStringMaybeAliased(
-        3, this->_internal_username(), target);
+        4, this->_internal_username(), target);
   }
 
-  // optional string ip = 4;
+  // optional string ip = 5;
   if (_internal_has_ip()) {
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_ip().data(), static_cast<int>(this->_internal_ip().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
       "yy.protocol.app.S2CLogin.ip");
     target = stream->WriteStringMaybeAliased(
-        4, this->_internal_ip(), target);
+        5, this->_internal_ip(), target);
   }
 
-  // optional uint32 port = 5;
+  // optional uint32 port = 6;
   if (_internal_has_port()) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteUInt32ToArray(5, this->_internal_port(), target);
+    target = ::_pbi::WireFormatLite::WriteUInt32ToArray(6, this->_internal_port(), target);
   }
 
-  // optional string token = 6;
+  // optional string token = 7;
   if (_internal_has_token()) {
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_token().data(), static_cast<int>(this->_internal_token().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
       "yy.protocol.app.S2CLogin.token");
     target = stream->WriteStringMaybeAliased(
-        6, this->_internal_token(), target);
+        7, this->_internal_token(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -825,21 +856,21 @@ size_t S2CLogin::ByteSizeLong() const {
 
   cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x00000007u) {
-    // optional string username = 3;
+    // optional string username = 4;
     if (cached_has_bits & 0x00000001u) {
       total_size += 1 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
           this->_internal_username());
     }
 
-    // optional string ip = 4;
+    // optional string ip = 5;
     if (cached_has_bits & 0x00000002u) {
       total_size += 1 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
           this->_internal_ip());
     }
 
-    // optional string token = 6;
+    // optional string token = 7;
     if (cached_has_bits & 0x00000004u) {
       total_size += 1 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
@@ -852,14 +883,19 @@ size_t S2CLogin::ByteSizeLong() const {
     total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_session_id());
   }
 
+  // optional uint64 uid = 3;
+  if (cached_has_bits & 0x00000008u) {
+    total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_uid());
+  }
+
   // .yy.protocol.app.S2CLogin.Status result_code = 2;
   if (this->_internal_result_code() != 0) {
     total_size += 1 +
       ::_pbi::WireFormatLite::EnumSize(this->_internal_result_code());
   }
 
-  // optional uint32 port = 5;
-  if (cached_has_bits & 0x00000008u) {
+  // optional uint32 port = 6;
+  if (cached_has_bits & 0x00000010u) {
     total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_port());
   }
 
@@ -896,10 +932,13 @@ void S2CLogin::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTO
   if (from._internal_session_id() != 0) {
     _this->_internal_set_session_id(from._internal_session_id());
   }
+  if (cached_has_bits & 0x00000008u) {
+    _this->_internal_set_uid(from._internal_uid());
+  }
   if (from._internal_result_code() != 0) {
     _this->_internal_set_result_code(from._internal_result_code());
   }
-  if (cached_has_bits & 0x00000008u) {
+  if (cached_has_bits & 0x00000010u) {
     _this->_internal_set_port(from._internal_port());
   }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -1232,6 +1271,10 @@ void C2SRegister::InternalSwap(C2SRegister* other) {
 
 class S2CRegister::_Internal {
  public:
+  using HasBits = decltype(std::declval<S2CRegister>()._impl_._has_bits_);
+  static void set_has_uid(HasBits* has_bits) {
+    (*has_bits)[0] |= 1u;
+  }
 };
 
 S2CRegister::S2CRegister(::PROTOBUF_NAMESPACE_ID::Arena* arena,
@@ -1244,9 +1287,11 @@ S2CRegister::S2CRegister(const S2CRegister& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   S2CRegister* const _this = this; (void)_this;
   new (&_impl_) Impl_{
-      decltype(_impl_.session_id_){}
-    , decltype(_impl_.result_code_){}
-    , /*decltype(_impl_._cached_size_)*/{}};
+      decltype(_impl_._has_bits_){from._impl_._has_bits_}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.session_id_){}
+    , decltype(_impl_.uid_){}
+    , decltype(_impl_.result_code_){}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   ::memcpy(&_impl_.session_id_, &from._impl_.session_id_,
@@ -1260,9 +1305,11 @@ inline void S2CRegister::SharedCtor(
   (void)arena;
   (void)is_message_owned;
   new (&_impl_) Impl_{
-      decltype(_impl_.session_id_){uint64_t{0u}}
-    , decltype(_impl_.result_code_){0}
+      decltype(_impl_._has_bits_){}
     , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.session_id_){uint64_t{0u}}
+    , decltype(_impl_.uid_){uint64_t{0u}}
+    , decltype(_impl_.result_code_){0}
   };
 }
 
@@ -1289,14 +1336,16 @@ void S2CRegister::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  ::memset(&_impl_.session_id_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.result_code_) -
-      reinterpret_cast<char*>(&_impl_.session_id_)) + sizeof(_impl_.result_code_));
+  _impl_.session_id_ = uint64_t{0u};
+  _impl_.uid_ = uint64_t{0u};
+  _impl_.result_code_ = 0;
+  _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
 const char* S2CRegister::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  _Internal::HasBits has_bits{};
   while (!ctx->Done(&ptr)) {
     uint32_t tag;
     ptr = ::_pbi::ReadTag(ptr, &tag);
@@ -1318,6 +1367,15 @@ const char* S2CRegister::_InternalParse(const char* ptr, ::_pbi::ParseContext* c
         } else
           goto handle_unusual;
         continue;
+      // optional uint64 uid = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 32)) {
+          _Internal::set_has_uid(&has_bits);
+          _impl_.uid_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
       default:
         goto handle_unusual;
     }  // switch
@@ -1334,6 +1392,7 @@ const char* S2CRegister::_InternalParse(const char* ptr, ::_pbi::ParseContext* c
     CHK_(ptr != nullptr);
   }  // while
 message_done:
+  _impl_._has_bits_.Or(has_bits);
   return ptr;
 failure:
   ptr = nullptr;
@@ -1360,6 +1419,12 @@ uint8_t* S2CRegister::_InternalSerialize(
       2, this->_internal_result_code(), target);
   }
 
+  // optional uint64 uid = 4;
+  if (_internal_has_uid()) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(4, this->_internal_uid(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -1379,6 +1444,12 @@ size_t S2CRegister::ByteSizeLong() const {
   // uint64 session_id = 1;
   if (this->_internal_session_id() != 0) {
     total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_session_id());
+  }
+
+  // optional uint64 uid = 4;
+  cached_has_bits = _impl_._has_bits_[0];
+  if (cached_has_bits & 0x00000001u) {
+    total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_uid());
   }
 
   // .yy.protocol.app.S2CRegister.Status result_code = 2;
@@ -1408,6 +1479,9 @@ void S2CRegister::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PR
   if (from._internal_session_id() != 0) {
     _this->_internal_set_session_id(from._internal_session_id());
   }
+  if (from._internal_has_uid()) {
+    _this->_internal_set_uid(from._internal_uid());
+  }
   if (from._internal_result_code() != 0) {
     _this->_internal_set_result_code(from._internal_result_code());
   }
@@ -1428,6 +1502,7 @@ bool S2CRegister::IsInitialized() const {
 void S2CRegister::InternalSwap(S2CRegister* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
       PROTOBUF_FIELD_OFFSET(S2CRegister, _impl_.result_code_)
       + sizeof(S2CRegister::_impl_.result_code_)

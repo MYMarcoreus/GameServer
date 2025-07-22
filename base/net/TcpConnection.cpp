@@ -17,9 +17,6 @@ using namespace yy::config;
 using yy::SocketApiWrapper::SocketError;
 
 
-static std::atomic<size_t> cnt_new = 0;
-static std::atomic<size_t> cnt_del = 0;
-
 TcpConnection::TcpConnection(uint64_t connid, EventLoop *loop, SocketApiWrapper::socket_t sockfd,
                              const IPAddress::ptr& localAddr, const IPAddress::ptr& peerAddr,
                              const int32_t send_bytes_one, const int32_t send_bytes_max, const int32_t recv_bytes_one, const int32_t recv_bytes_max,
@@ -35,8 +32,8 @@ TcpConnection::TcpConnection(uint64_t connid, EventLoop *loop, SocketApiWrapper:
       m_xorCode{xor_code},
       m_localAddr(localAddr),
       m_peerAddr(peerAddr),
-      m_sendBuf(std::make_unique<NetBuffer>(send_bytes_one)),
-      m_recvBuf(std::make_unique<NetBuffer>(recv_bytes_one))
+      m_sendBuf(std::make_unique<NetBuffer>(m_send_bytes_one)),
+      m_recvBuf(std::make_unique<NetBuffer>(m_recv_bytes_one))
 {
     assert(m_channel);
     assert(m_socket);
@@ -53,11 +50,6 @@ TcpConnection::TcpConnection(uint64_t connid, EventLoop *loop, SocketApiWrapper:
     m_connectedTime.SetNow();
     m_shudownTime.SetNow();
     m_heartTime.SetNow();
-
-    cnt_new++;
-    // if (cnt_new == 1000) {
-    //     std::cout << cnt_new << std::endl;
-    // }
 }
 
 
@@ -68,9 +60,6 @@ TcpConnection::~TcpConnection() {
     // m_Channel->RemoveFromLoop();
 
     YLOG_DEBUG("连接<{}: {}>已被析构！", this->GetSocketFD(), m_connid)
-
-
-    cnt_del++;
 }
 
 SocketApiWrapper::socket_t TcpConnection::GetSocketFD() const {

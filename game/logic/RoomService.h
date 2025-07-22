@@ -1,17 +1,16 @@
 #pragma once
 
-#include <unordered_map>
-#include "IGameBase.h"
-#include "Singleton.h"
 #include "GameData.h"
-#include "UnboundedLockedQueue.hpp"
 #include "IServer.h"
 #include "ObjectPool.h"
 #include "core_definations.h"
+#include "PlayerManager.h"
 
 using yy::core::UserConnectionPtr;
+using namespace yy::protocol::app;
 
 namespace yy::app::logic {
+
 
 class RoomService final
 {
@@ -19,42 +18,39 @@ public:
     RoomService();
     ~RoomService();
 
-    void Init() ;
+    void Init();
 
-    // void StartListenAndIOLoop() override;
-    void LeaveAndSave(UserConnectionPtr leave_user);
+    void LeaveAndSave(const UserConnectionPtr& leave_user);
 
 private:
-
-    /// @brief 玩家发来登录请求，验证，然后将储存的游戏数据发送回玩家
-    void OnEnterScene(const UserConnectionPtr& userdata, const Ptr<protocol::app::C2SEnterScene> & request);
+    //Region 消息回调
+    /// @brief 玩家发来场景进入请求，然后将储存的游戏数据发送回玩家
+    void OnEnterScene(const UserConnectionPtr& self_conn, const Ptr<C2SEnterScene> & request);
 
     /// @brief 玩家退出
-    void OnLeave(const UserConnectionPtr& userdata_self, const Ptr<protocol::app::C2SPlayerLeave> & leave);
+    void OnLeave(const UserConnectionPtr& userdata_self, const Ptr<C2SPlayerLeave> & leave);
 
     /// @brief 玩家移动
-    void OnC2SMove (const UserConnectionPtr& userdata_self, const Ptr<protocol::app::C2SMove> &selfmove);
+    void OnC2SMove (const UserConnectionPtr& userdata_self, const Ptr<C2SMove> &selfmove);
 
     /// @brief　玩家申请获取另一玩家的数据
-    void OnC2SOtherPlayerData(const UserConnectionPtr& userdata_self, const Ptr<protocol::app::C2SOtherPlayerData> &request);
+    void OnC2SOtherPlayerData(const UserConnectionPtr& userdata_self, const Ptr<C2SOtherPlayerData> &request);
 
     /// @brief 玩家跳跃
-    void OnC2SJumpAndGravity(const UserConnectionPtr& userdata_self, const Ptr<protocol::app::C2SJumpAndGravity> &selfJumpAndGravity);
-
-    Ptr<yy::protocol::app::PlayerBaseData> FindPlayerByUID(UID_t onlineid);
-
-    /// @brief 玩家`from`给其他玩家客户端转发数据`data`
-    void Broadcast(const UserConnectionPtr& from, const google::protobuf::Message & data);
-    void Broadcast(const UserConnectionPtr& from, const core::MessagePtr & data);
+    void OnC2SJumpAndGravity(const UserConnectionPtr& userdata_self, const Ptr<C2SJumpAndGravity> &selfJumpAndGravity);
+    //End
 
 private:
-    yy::core::IServer&                                                 m_server;
-    std::unordered_map<UID_t,  uint64_t>                                m_uid_to_connid;
-    std::unordered_map<UID_t,  Ptr<yy::protocol::app::PlayerBaseData>>  m_room_players;
-    std::mutex                                                          m_room_players_mutex;
+    PlayerPtr FindPlayerByUID(UID_t uid);
 
-    yy::util::ObjectPool<yy::protocol::app::PlayerBaseData>             m_player_pool;
-    int                                                                 m_global_id;
+    void InitPlayerData(const PlayerBaseDataPtr & data, uint64_t uid);
+
+    PlayerPtr CreatePlayer(const UserConnectionPtr& conn, const PlayerBaseDataPtr& data);
+
+private:
+    core::IServer&                    server_;
+    PlayerManager                     players_;
+    util::ObjectPool<PlayerBaseData> & m_player_pool;
 };
 
 }

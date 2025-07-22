@@ -4,7 +4,7 @@
 #include <iostream>
 
 
-namespace yy::core {
+namespace yy::core::redis {
 
 RedisPool::RedisPool(net::EventLoop * loop, const std::string& uri, size_t pool_size)
     : loop_(loop), uri_(uri), max_size_(pool_size) {

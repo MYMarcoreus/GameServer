@@ -6,9 +6,7 @@
 #include "net_definations.h"
 #include "socket_definations.h"
 
-namespace yy::net {
-class TcpConnection;
-}
+using namespace yy::net;
 
 namespace yy::core {
 
@@ -18,7 +16,7 @@ class ProtobufTcpCodec;
 class ProtobufUdpCodec;
 
 /// @brief 用户连接数据
-class UserConnection
+class UserConnection: util::noncopyable
 {
 public:
     using ptr = std::shared_ptr<UserConnection>;
@@ -32,8 +30,7 @@ public:
         eSavingData   = 7,
     };
 
-public:
-    UserConnection(net::TcpConnectionPtr conn, ProtobufTcpCodec & tcpCodec, ProtobufUdpCodec & udpCodec);
+    UserConnection(const TcpConnectionPtr& conn, ProtobufTcpCodec & tcpCodec, ProtobufUdpCodec & udpCodec);
 
     void Shutdown();
 
@@ -47,10 +44,10 @@ public:
 
     void SetUID(const uint32_t uid) { m_uid = uid; }
 
-    void BindUdp(net::UdpSessionPtr);
+    void BindUdp(const UdpSessionPtr&);
 
     ///Region GETTER
-    net::TcpConnectionPtr GetConnection() { return m_tcpChannel; }
+    TcpConnectionPtr GetConnection() { return m_tcpChannel; }
 
     /// @brief 是否已连接
     bool IsConnected() const { return m_state != E_UserBaseState::eFree and m_state != E_UserBaseState::eSavingData; }
@@ -69,16 +66,16 @@ public:
     SocketApiWrapper::socket_t GetSocketFD() const;
     ///End GETTER
 
-    net::TimerID RunAt(net::Timestamp time, net::F_TaskCallback cb);
-    net::TimerID RunAfter(net::Microseconds delay, net::F_TaskCallback cb);
-    net::TimerID RunEvery(net::Microseconds interval, net::F_TaskCallback cb);
-    void CancelTimer(net::TimerID timerid);
+    TimerID RunAt(Timestamp time, F_TaskCallback cb);
+    TimerID RunAfter(Microseconds delay, F_TaskCallback cb);
+    TimerID RunEvery(Microseconds interval, F_TaskCallback cb);
+    void CancelTimer(TimerID timerid);
 
 private:
     E_UserBaseState                             m_state;
-    uint32_t                                    m_uid;
-    net::TcpConnectionPtr                       m_tcpChannel;
-    net::UdpSessionPtr                          m_udpChannel;
+    uint64_t                                    m_uid;
+    TcpConnectionPtr                            m_tcpChannel;
+    UdpSessionPtr                               m_udpChannel;
     ProtobufTcpCodec &                          m_tcpCodec;
     ProtobufUdpCodec &                          m_udpCodec;
 };

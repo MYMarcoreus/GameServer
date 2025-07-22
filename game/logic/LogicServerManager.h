@@ -5,9 +5,9 @@
 #include "ThreadPool.h"
 #include "ZkServiceManager.h"
 
-using yy::core::IServer;
-using std::shared_ptr;
 
+using namespace yy::net;
+using namespace yy::core;
 
 // 业务层
 namespace yy::app::logic {
@@ -15,17 +15,30 @@ namespace yy::app::logic {
 class RoomService;
 class TestService;
 
-
-
-
 class LogicServerManager final : public Singleton<LogicServerManager>
 {
     SINGLETON_NECESSITY(LogicServerManager)
 public:
     void RunApp();
 
+    // 假设你的类中有这个成员函数
+    template<IsProtobufMessage MsgT>
+    void RegisterHandler(void (LogicServerManager::*handler)(const UserConnectionPtr&, const shared_ptr<MsgT>&))
+        requires requires(LogicServerManager* self, const UserConnectionPtr& user, const shared_ptr<MsgT>& msg) {
+            (self->*handler)(user, msg);
+        }
+    {
+        this->RegisterMessageCallback<MsgT>(
+            [this, handler](const UserConnectionPtr& user, const shared_ptr<MsgT>& msg) {
+                (this->*handler)(user, msg);
+            }
+        );
+    }
+
+
+
     template<typename T>
-    void RegisterMessageCallback(typename core::CallbackT<core::UserConnectionPtr, T>::ProtobufMessageTCallback callback) {
+    void RegisterMessageCallback(typename CallbackT<UserConnectionPtr, T>::ProtobufMessageTCallback callback) {
         m_dispatcher.RegisterMessageCallback<T>(callback);
     }
 
@@ -36,20 +49,20 @@ private:
 
     void Init();
 
-    void AppNotifier_Secutiry(const core::UserConnectionPtr& userdata) ;
-    void AppNotifier_Disconnect(const core::UserConnectionPtr& userdata) ;
-    void AppNotifier_Command(const core::UserConnectionPtr &, const core::MessagePtr &, const core::MessageType);
+    void AppNotifier_Secutiry(const UserConnectionPtr& userdata) ;
+    void AppNotifier_Disconnect(const UserConnectionPtr& userdata) ;
+    void AppNotifier_Command(const UserConnectionPtr &, const MessagePtr &, MessageType);
 
-    void UnkonwnCommand(const core::UserConnectionPtr &, const core::MessagePtr &);
+    void UnkonwnCommand(const UserConnectionPtr &, const MessagePtr &);
 
 
-    std::unique_ptr<net::EventLoop>  m_accpetorLoop{};
-    std::unique_ptr<IServer> m_server{};
-    std::unique_ptr<RoomService> m_room_service{};
-    std::unique_ptr<TestService> m_test_service{};
-    core::zk::ZkServiceManager m_zk{};
-    core::ProtobufDispatcher<core::UserConnectionPtr> m_dispatcher; // 处理下层(core层)分发传来的无法处理的消息
-    net::ThreadPool m_workThreads;
+    unique_ptr<EventLoop>     m_accpetorLoop{};
+    unique_ptr<IServer>            m_server{};
+    unique_ptr<RoomService>        m_room_service{};
+    unique_ptr<TestService>        m_test_service{};
+    zk::ZkServiceManager          m_zk{};
+    ProtobufDispatcher<UserConnectionPtr> m_dispatcher; // 处理下层(core层)分发传来的无法处理的消息
+    ThreadPool m_workThreads;
 };
 
 

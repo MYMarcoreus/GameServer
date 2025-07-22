@@ -102,10 +102,10 @@ private:
 
 public:
     static constexpr int kMinHeaderLen =
-            sizeof(MessageHeader::m_CheckCode) +
+            sizeof(m_CheckCode) +
             // sizeof(MessageHeader::m_ClientID) +
-            sizeof(MessageHeader::m_FullLength) +
-            sizeof(MessageHeader::m_TypeNameLength);
+            sizeof(m_FullLength) +
+            sizeof(m_TypeNameLength);
     static constexpr int kMaxHeaderLen = 128;
 };
 // #pragma pack(pop, packing) // 恢复字节对齐状态

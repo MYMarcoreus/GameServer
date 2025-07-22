@@ -464,14 +464,15 @@ class S2CLogin final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kUsernameFieldNumber = 3,
-    kIpFieldNumber = 4,
-    kTokenFieldNumber = 6,
+    kUsernameFieldNumber = 4,
+    kIpFieldNumber = 5,
+    kTokenFieldNumber = 7,
     kSessionIdFieldNumber = 1,
+    kUidFieldNumber = 3,
     kResultCodeFieldNumber = 2,
-    kPortFieldNumber = 5,
+    kPortFieldNumber = 6,
   };
-  // optional string username = 3;
+  // optional string username = 4;
   bool has_username() const;
   private:
   bool _internal_has_username() const;
@@ -489,7 +490,7 @@ class S2CLogin final :
   std::string* _internal_mutable_username();
   public:
 
-  // optional string ip = 4;
+  // optional string ip = 5;
   bool has_ip() const;
   private:
   bool _internal_has_ip() const;
@@ -507,7 +508,7 @@ class S2CLogin final :
   std::string* _internal_mutable_ip();
   public:
 
-  // optional string token = 6;
+  // optional string token = 7;
   bool has_token() const;
   private:
   bool _internal_has_token() const;
@@ -534,6 +535,19 @@ class S2CLogin final :
   void _internal_set_session_id(uint64_t value);
   public:
 
+  // optional uint64 uid = 3;
+  bool has_uid() const;
+  private:
+  bool _internal_has_uid() const;
+  public:
+  void clear_uid();
+  uint64_t uid() const;
+  void set_uid(uint64_t value);
+  private:
+  uint64_t _internal_uid() const;
+  void _internal_set_uid(uint64_t value);
+  public:
+
   // .yy.protocol.app.S2CLogin.Status result_code = 2;
   void clear_result_code();
   ::yy::protocol::app::S2CLogin_Status result_code() const;
@@ -543,7 +557,7 @@ class S2CLogin final :
   void _internal_set_result_code(::yy::protocol::app::S2CLogin_Status value);
   public:
 
-  // optional uint32 port = 5;
+  // optional uint32 port = 6;
   bool has_port() const;
   private:
   bool _internal_has_port() const;
@@ -570,6 +584,7 @@ class S2CLogin final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr ip_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr token_;
     uint64_t session_id_;
+    uint64_t uid_;
     int result_code_;
     uint32_t port_;
   };
@@ -912,6 +927,7 @@ class S2CRegister final :
 
   enum : int {
     kSessionIdFieldNumber = 1,
+    kUidFieldNumber = 4,
     kResultCodeFieldNumber = 2,
   };
   // uint64 session_id = 1;
@@ -921,6 +937,19 @@ class S2CRegister final :
   private:
   uint64_t _internal_session_id() const;
   void _internal_set_session_id(uint64_t value);
+  public:
+
+  // optional uint64 uid = 4;
+  bool has_uid() const;
+  private:
+  bool _internal_has_uid() const;
+  public:
+  void clear_uid();
+  uint64_t uid() const;
+  void set_uid(uint64_t value);
+  private:
+  uint64_t _internal_uid() const;
+  void _internal_set_uid(uint64_t value);
   public:
 
   // .yy.protocol.app.S2CRegister.Status result_code = 2;
@@ -940,9 +969,11 @@ class S2CRegister final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
-    uint64_t session_id_;
-    int result_code_;
+    ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+    uint64_t session_id_;
+    uint64_t uid_;
+    int result_code_;
   };
   union { Impl_ _impl_; };
   friend struct ::TableStruct_account_2eproto;
@@ -1189,7 +1220,35 @@ inline void S2CLogin::set_result_code(::yy::protocol::app::S2CLogin_Status value
   // @@protoc_insertion_point(field_set:yy.protocol.app.S2CLogin.result_code)
 }
 
-// optional string username = 3;
+// optional uint64 uid = 3;
+inline bool S2CLogin::_internal_has_uid() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000008u) != 0;
+  return value;
+}
+inline bool S2CLogin::has_uid() const {
+  return _internal_has_uid();
+}
+inline void S2CLogin::clear_uid() {
+  _impl_.uid_ = uint64_t{0u};
+  _impl_._has_bits_[0] &= ~0x00000008u;
+}
+inline uint64_t S2CLogin::_internal_uid() const {
+  return _impl_.uid_;
+}
+inline uint64_t S2CLogin::uid() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.S2CLogin.uid)
+  return _internal_uid();
+}
+inline void S2CLogin::_internal_set_uid(uint64_t value) {
+  _impl_._has_bits_[0] |= 0x00000008u;
+  _impl_.uid_ = value;
+}
+inline void S2CLogin::set_uid(uint64_t value) {
+  _internal_set_uid(value);
+  // @@protoc_insertion_point(field_set:yy.protocol.app.S2CLogin.uid)
+}
+
+// optional string username = 4;
 inline bool S2CLogin::_internal_has_username() const {
   bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
   return value;
@@ -1257,7 +1316,7 @@ inline void S2CLogin::set_allocated_username(std::string* username) {
   // @@protoc_insertion_point(field_set_allocated:yy.protocol.app.S2CLogin.username)
 }
 
-// optional string ip = 4;
+// optional string ip = 5;
 inline bool S2CLogin::_internal_has_ip() const {
   bool value = (_impl_._has_bits_[0] & 0x00000002u) != 0;
   return value;
@@ -1325,9 +1384,9 @@ inline void S2CLogin::set_allocated_ip(std::string* ip) {
   // @@protoc_insertion_point(field_set_allocated:yy.protocol.app.S2CLogin.ip)
 }
 
-// optional uint32 port = 5;
+// optional uint32 port = 6;
 inline bool S2CLogin::_internal_has_port() const {
-  bool value = (_impl_._has_bits_[0] & 0x00000008u) != 0;
+  bool value = (_impl_._has_bits_[0] & 0x00000010u) != 0;
   return value;
 }
 inline bool S2CLogin::has_port() const {
@@ -1335,7 +1394,7 @@ inline bool S2CLogin::has_port() const {
 }
 inline void S2CLogin::clear_port() {
   _impl_.port_ = 0u;
-  _impl_._has_bits_[0] &= ~0x00000008u;
+  _impl_._has_bits_[0] &= ~0x00000010u;
 }
 inline uint32_t S2CLogin::_internal_port() const {
   return _impl_.port_;
@@ -1345,7 +1404,7 @@ inline uint32_t S2CLogin::port() const {
   return _internal_port();
 }
 inline void S2CLogin::_internal_set_port(uint32_t value) {
-  _impl_._has_bits_[0] |= 0x00000008u;
+  _impl_._has_bits_[0] |= 0x00000010u;
   _impl_.port_ = value;
 }
 inline void S2CLogin::set_port(uint32_t value) {
@@ -1353,7 +1412,7 @@ inline void S2CLogin::set_port(uint32_t value) {
   // @@protoc_insertion_point(field_set:yy.protocol.app.S2CLogin.port)
 }
 
-// optional string token = 6;
+// optional string token = 7;
 inline bool S2CLogin::_internal_has_token() const {
   bool value = (_impl_._has_bits_[0] & 0x00000004u) != 0;
   return value;
@@ -1587,6 +1646,34 @@ inline void S2CRegister::_internal_set_result_code(::yy::protocol::app::S2CRegis
 inline void S2CRegister::set_result_code(::yy::protocol::app::S2CRegister_Status value) {
   _internal_set_result_code(value);
   // @@protoc_insertion_point(field_set:yy.protocol.app.S2CRegister.result_code)
+}
+
+// optional uint64 uid = 4;
+inline bool S2CRegister::_internal_has_uid() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
+  return value;
+}
+inline bool S2CRegister::has_uid() const {
+  return _internal_has_uid();
+}
+inline void S2CRegister::clear_uid() {
+  _impl_.uid_ = uint64_t{0u};
+  _impl_._has_bits_[0] &= ~0x00000001u;
+}
+inline uint64_t S2CRegister::_internal_uid() const {
+  return _impl_.uid_;
+}
+inline uint64_t S2CRegister::uid() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.S2CRegister.uid)
+  return _internal_uid();
+}
+inline void S2CRegister::_internal_set_uid(uint64_t value) {
+  _impl_._has_bits_[0] |= 0x00000001u;
+  _impl_.uid_ = value;
+}
+inline void S2CRegister::set_uid(uint64_t value) {
+  _internal_set_uid(value);
+  // @@protoc_insertion_point(field_set:yy.protocol.app.S2CRegister.uid)
 }
 
 #ifdef __GNUC__

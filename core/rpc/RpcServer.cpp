@@ -11,7 +11,7 @@ namespace yy::core::rpc
 {
 using protocol::core::RpcMessage;
 
-RpcServer::RpcServer(yy::net::EventLoop* accpetorLoop, const yy::net::IPAddressPtr& listenAddr, const std::string & service_root) :
+RpcServer::RpcServer(net::EventLoop* accpetorLoop, const net::IPAddressPtr& listenAddr, const std::string & service_root) :
     service_root_(service_root),
     loop_{accpetorLoop},
     server_(accpetorLoop, listenAddr, true,

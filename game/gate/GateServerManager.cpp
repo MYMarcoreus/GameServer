@@ -28,8 +28,8 @@ namespace yy::app::gate {
 
 
 GateServerManager::GateServerManager():
-    m_accpetorLoop{std::make_unique<yy::net::EventLoop>(500ms)},
-    m_dispatcher{[this](const core::UserConnectionPtr& userconn, const core::MessagePtr& message) { this->UnkonwnCommand(userconn, message); }},
+    m_accpetorLoop{std::make_unique<net::EventLoop>(500ms)},
+    m_dispatcher{[this](const UserConnectionPtr& userconn, const MessagePtr& message) { this->UnkonwnCommand(userconn, message); }},
     m_workThreads("Gate Work Thread")
 {
     RegisterRpcForward<C2SLogin, S2CLogin>();
@@ -41,22 +41,22 @@ GateServerManager::~GateServerManager() {
 }
 
 
-void GateServerManager::OnFrontend_Secutiry(const core::UserConnectionPtr& userconn) {
-    userconn->SetState(core::UserConnection::E_UserBaseState::eSecure);
+void GateServerManager::OnFrontend_Secutiry(const UserConnectionPtr& userconn) {
+    userconn->SetState(UserConnection::E_UserBaseState::eSecure);
 }
 
-void GateServerManager::OnFrontend_Disconnect(const core::UserConnectionPtr& userconn) {
+void GateServerManager::OnFrontend_Disconnect(const UserConnectionPtr& userconn) {
     YLOG_INFO("↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ 用户<{}>断开连接", userconn->GetUID())
 }
 
-void GateServerManager::OnFrontend_Message(const core::UserConnectionPtr & userconn, const core::MessagePtr & message, const core::MessageType type)
+void GateServerManager::OnFrontend_Message(const UserConnectionPtr & userconn, const MessagePtr & message, const MessageType type)
 {
     m_workThreads.PushTask([this, userconn, message](){
         m_dispatcher.OnProtobufMessage(userconn, message);
     });
 }
 
-void GateServerManager::UnkonwnCommand(const core::UserConnectionPtr & userconn, const core::MessagePtr & message)
+void GateServerManager::UnkonwnCommand(const UserConnectionPtr & userconn, const MessagePtr & message)
 {
     YLOG_DEBUG("未知的消息类型：{}", message->GetDescriptor()->full_name())
     userconn->Shutdown();
@@ -81,12 +81,12 @@ void GateServerManager::RunApp()
 // 测试：正确登录
 void GateServerManager::TestLogin1()
 {
-    auto req = std::make_shared<yy::protocol::app::C2SLogin>();
+    auto req = std::make_shared<C2SLogin>();
     req->set_username("test_yy_name");
     req->set_password("114514");
     req->set_session_id(101010);
-    m_accountRpcClient->CallRemoteAsync<yy::protocol::app::C2SLogin, yy::protocol::app::S2CLogin>(req,
-    [](std::unique_ptr<yy::protocol::app::S2CLogin> && response, std::unique_ptr<yy::core::rpc::RpcControllerImpl> && controller) {
+    m_accountRpcClient->CallRemoteAsync<C2SLogin, S2CLogin>(req,
+    [](std::unique_ptr<S2CLogin> && response, std::unique_ptr<rpc::RpcControllerImpl> && controller) {
         switch (response->result_code()) {
         case protocol::app::S2CLogin_Status_eSuccess:
             YLOG_INFO("{} 登录成功！token为 {}, ip:{}, port:{}", response->username(), response->token(), response->ip(), response->port())
@@ -108,12 +108,12 @@ void GateServerManager::TestLogin1()
 // 测试：账号错误
 void GateServerManager::TestLogin2()
 {
-    auto req = std::make_shared<yy::protocol::app::C2SLogin>();
+    auto req = std::make_shared<C2SLogin>();
     req->set_username("not_exist_name");
     req->set_password("114514");
     req->set_session_id(101010);
-    m_accountRpcClient->CallRemoteAsync<yy::protocol::app::C2SLogin, yy::protocol::app::S2CLogin>(req,
-    [](std::unique_ptr<yy::protocol::app::S2CLogin> && response, std::unique_ptr<yy::core::rpc::RpcControllerImpl> && controller) {
+    m_accountRpcClient->CallRemoteAsync<C2SLogin, S2CLogin>(req,
+    [](std::unique_ptr<S2CLogin> && response, std::unique_ptr<rpc::RpcControllerImpl> && controller) {
         switch (response->result_code()) {
         case protocol::app::S2CLogin_Status_eSuccess:
             YLOG_INFO("{} 登录成功！", response->username())
@@ -135,12 +135,12 @@ void GateServerManager::TestLogin2()
 // 测试：密码错误
 void GateServerManager::TestLogin3()
 {
-    auto req = std::make_shared<yy::protocol::app::C2SLogin>();
+    auto req = std::make_shared<C2SLogin>();
     req->set_username("test_yy_name");
     req->set_password("error_pwd");
     req->set_session_id(101010);
-    m_accountRpcClient->CallRemoteAsync<yy::protocol::app::C2SLogin, yy::protocol::app::S2CLogin>(req,
-    [](std::unique_ptr<yy::protocol::app::S2CLogin> && response, std::unique_ptr<yy::core::rpc::RpcControllerImpl> && controller) {
+    m_accountRpcClient->CallRemoteAsync<C2SLogin, S2CLogin>(req,
+    [](std::unique_ptr<S2CLogin> && response, std::unique_ptr<rpc::RpcControllerImpl> && controller) {
         switch (response->result_code()) {
         case protocol::app::S2CLogin_Status_eSuccess:
             YLOG_INFO("{} 登录成功！", response->username())
@@ -161,12 +161,12 @@ void GateServerManager::TestLogin3()
 
 void GateServerManager::TestRegister1()
 {
-    auto req = std::make_shared<yy::protocol::app::C2SRegister>();
+    auto req = std::make_shared<C2SRegister>();
     req->set_session_id(101010);
     req->set_username("test_yy_name");
     req->set_password("114514");
-    m_accountRpcClient->CallRemoteAsync<yy::protocol::app::C2SRegister, yy::protocol::app::S2CRegister>(req,
-    [](std::unique_ptr<yy::protocol::app::S2CRegister> && response, std::unique_ptr<yy::core::rpc::RpcControllerImpl> && controller) {
+    m_accountRpcClient->CallRemoteAsync<C2SRegister, S2CRegister>(req,
+    [](std::unique_ptr<S2CRegister> && response, std::unique_ptr<rpc::RpcControllerImpl> && controller) {
         switch (response->result_code()) {
         case protocol::app::S2CRegister_Status_eSuccess:
             YLOG_INFO("{} 注册成功！", response->session_id())
@@ -187,43 +187,46 @@ void GateServerManager::TestRegister1()
 void GateServerManager::Init()
 {
     //! 读取配置文件
-    yy::config::ConfigManager::LoadXmlConfigs();
+    config::ConfigManager::LoadXmlConfigs();
 
     //! 读取日志配置
-    yy::Ylog::LoggerManager::Instance().ReadConfigs();
+    Ylog::LoggerManager::Instance().ReadConfigs();
 
     m_accountRpcClient = std::make_unique<AccountRpcClient>();
     m_accountRpcClient->Start(3,
-        [this](const net::TcpConnectionPtr & conn) {
+        [this](const TcpConnectionPtr & conn) {
             YLOG_INFO("连接至AccountRpc服务器<{}:{}>，我方地址为<{}:{}>", conn->GetPeerAddr()->GetIPStr().c_str(), conn->GetPeerAddr()->GetPort()
                                             , conn->GetLocalAddr()->GetIPStr().c_str(), conn->GetLocalAddr()->GetPort());
         }
     );
 
-    m_accpetorLoop->RunEvery(10ms, [this]() {
-        this->TestRegister1();
-        this->TestLogin1();
-        this->TestLogin2();
-        this->TestLogin3();
-    });
+    // m_accpetorLoop->RunEvery(10ms, [this]() {
+    //     this->TestRegister1();
+    //     this->TestLogin1();
+    //     this->TestLogin2();
+    //     this->TestLogin3();
+    // });
 
 
     /*********** 启动前端 ***********/
     //! 初始化监听的端口和IP地址(IP地址未给出，则使用INADDR_ANY绑定所有IP地址)
-    yy::net::IPAddressPtr listenAddr = std::make_shared<net::IPv4Address>(config::g_app_config->GetValue().app_tcp_port());
+    net::IPAddressPtr listenAddr = std::make_shared<net::IPv4Address>(
+        "192.168.147.128",
+        config::g_app_config->GetValue().app_tcp_port()
+    );
 
     //! 初始化服务器对象
     m_frontend = std::make_unique<GateServer>(m_accpetorLoop.get(), listenAddr);
     m_frontend->SetNotifier_Security(
-        [this](const core::UserConnectionPtr& userconn) {
+        [this](const UserConnectionPtr& userconn) {
             this->OnFrontend_Secutiry(userconn);
         });
     m_frontend->SetNotifier_DisConnect(
-        [this](const core::UserConnectionPtr & userconn) {
+        [this](const UserConnectionPtr & userconn) {
             this->OnFrontend_Disconnect(userconn);
         });
     m_frontend->SetNotifier_Command(
-        [this](const core::UserConnectionPtr & userconn, const core::MessagePtr & message, const core::MessageType type) {
+        [this](const UserConnectionPtr & userconn, const MessagePtr & message, const MessageType type) {
             this->OnFrontend_Message(userconn, message, type);
         });
 

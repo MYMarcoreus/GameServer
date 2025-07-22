@@ -17,18 +17,15 @@ class HeartBody;
 class C2SUdpPortRegister;
 }
 
-using yy::core::UserConnectionPtr;
-using yy::core::MessagePtr;
-
 namespace yy::core {
 
 
-class BackendServer final: public core::IServer{
-    using HeartPtr    = std::shared_ptr<yy::protocol::core::HeartBody> ;
-    using C2SUdpPortRegisterPtr = std::shared_ptr<yy::protocol::core::C2SUdpPortRegister> ;
+class BackendServer final: public IServer{
+    using HeartPtr    = std::shared_ptr<protocol::core::HeartBody> ;
+    using C2SUdpPortRegisterPtr = std::shared_ptr<protocol::core::C2SUdpPortRegister> ;
 
 public:
-    BackendServer(yy::net::EventLoop* accpetorLoop, const yy::net::IPAddressPtr& listenAddr);
+    BackendServer(net::EventLoop* accpetorLoop, const net::IPAddressPtr& listenAddr);
     ~BackendServer() override;
 
     /// @brief Start Listen & IOLoop
@@ -64,23 +61,23 @@ private:
     void AddCheckTimer(const net::TcpConnectionPtr & conn, const UserConnectionPtr & userdata);
     void CheckHeart(const UserConnectionPtr & userdata);
 
-    void OnTcpHeart(const yy::net::TcpConnectionPtr &conn, const HeartPtr & message);
-    void OnUdpHeart(const yy::net::UdpSessionPtr &conn, const HeartPtr & message);
+    void OnTcpHeart(const net::TcpConnectionPtr &conn, const HeartPtr & message);
+    void OnUdpHeart(const net::UdpSessionPtr &conn, const HeartPtr & message);
     void OnUdpPortRegisterRequest(const net::TcpConnectionPtr & conn, const C2SUdpPortRegisterPtr & message);
 
-    void AfterShutdownConnection(const yy::net::TcpConnectionPtr &conn);
+    void AfterShutdownConnection(const net::TcpConnectionPtr &conn);
 
 private:
-    yy::config::ConfigVar<yy::config::AppXmlConfig>::ptr    m_appConfigvar; // 用于获取配置项
-    yy::net::EventLoop *                                    m_accpetorLoop;
+    config::ConfigVar<config::AppXmlConfig>::ptr    m_appConfigvar; // 用于获取配置项
+    net::EventLoop *                                    m_accpetorLoop;
 
-    yy::net::TcpServer                                      m_tcpServer;
-    core::ProtobufDispatcher<yy::net::TcpConnectionPtr>           m_tcpDispatcher; // 处理下层(net层)分发传来的无法处理的消息
-    core::ProtobufTcpCodec                                        m_tcpCodec;
+    net::TcpServer                                      m_tcpServer;
+    ProtobufDispatcher<net::TcpConnectionPtr>           m_tcpDispatcher; // 处理下层(net层)分发传来的无法处理的消息
+    ProtobufTcpCodec                                        m_tcpCodec;
 
-    yy::net::UdpServer                                      m_udpServer;
-    core::ProtobufDispatcher<yy::net::UdpSessionPtr>              m_udpDispatcher; // 处理下层(net层)分发传来的无法处理的消息
-    core::ProtobufUdpCodec                                        m_udpCodec;
+    net::UdpServer                                      m_udpServer;
+    ProtobufDispatcher<net::UdpSessionPtr>              m_udpDispatcher; // 处理下层(net层)分发传来的无法处理的消息
+    ProtobufUdpCodec                                        m_udpCodec;
 
     std::atomic<size_t>                                     m_numSecurity; //安全连接数
     /* 这几个回调函数由业务层实现，然后通过对应的set方法传入设置 */

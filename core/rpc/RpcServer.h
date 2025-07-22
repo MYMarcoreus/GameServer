@@ -19,7 +19,7 @@ namespace yy::core::rpc
 // 服务提供方
 class RpcServer {
 public:
-    RpcServer(yy::net::EventLoop* accpetorLoop, const yy::net::IPAddressPtr& listenAddr, const std::string & service_root = "/rpc_services");
+    RpcServer(net::EventLoop* accpetorLoop, const net::IPAddressPtr& listenAddr, const std::string & service_root = "/rpc_services");
     ~RpcServer();
 
     /// @brief Start Listen & IOLoop
@@ -51,7 +51,7 @@ private:
 
 
     const std::string service_root_;
-    yy::net::EventLoop* loop_;
+    net::EventLoop* loop_;
     net::TcpServer      server_;
     RpcCodec            codec_;
     std::unordered_map<std::string, std::unique_ptr<google::protobuf::Service>> services_;

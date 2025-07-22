@@ -1,35 +1,19 @@
+#include <functional>
 #include "RoomService.h"
 #include "LogicServerManager.h"
 #include "log.h"
-#include <functional>
+#include "UserConnection.h"
 
 using namespace yy::core;
 using namespace yy::util;
-using yy::net::TcpConnectionPtr;
-
-using yy::protocol::app::C2SEnterScene;
-using yy::protocol::app::C2SOtherPlayerData;
-using yy::protocol::app::C2SMove;
-using yy::protocol::app::C2SJumpAndGravity;
-using yy::protocol::app::C2SPlayerLeave;
-
-using yy::protocol::app::S2CMove;
-using yy::protocol::app::S2CJumpAndGravity;
-
-
-using yy::protocol::app::S2COtherPlayerData;
-using yy::protocol::app::PlayerBaseData;
-using yy::protocol::app::PlayerMove;
+using namespace yy::protocol::app;
 
 namespace yy::app::logic {
-
-
-
 RoomService::RoomService():
-    m_server{LogicServerManager::Instance().GetServer()},
-    m_player_pool{m_server.GetAppConfig().app_player_max()},
-    m_global_id{10000}
+    server_{LogicServerManager::Instance().GetServer()},
+    m_player_pool{ObjectPool<PlayerBaseData>::Instance()}
 {
+    m_player_pool.Init("玩家对象池", server_.GetAppConfig().app_player_max(), nullptr, nullptr);
     LogicServerManager::Instance().RegisterMessageCallback<C2SEnterScene>( [this](const UserConnectionPtr& user, const Ptr<C2SEnterScene>& msg) { this->OnEnterScene(user, msg); });
     LogicServerManager::Instance().RegisterMessageCallback<C2SOtherPlayerData>( [this](const UserConnectionPtr& user, const Ptr<C2SOtherPlayerData>& msg) { this->OnC2SOtherPlayerData(user, msg); });
     LogicServerManager::Instance().RegisterMessageCallback<C2SMove>( [this](const UserConnectionPtr& user, const Ptr<C2SMove>& msg) { this->OnC2SMove(user, msg); });
@@ -37,10 +21,7 @@ RoomService::RoomService():
     LogicServerManager::Instance().RegisterMessageCallback<C2SPlayerLeave>( [this](const UserConnectionPtr& user, const Ptr<C2SPlayerLeave>& msg) { this->OnLeave(user, msg); });
 }
 
-RoomService::~RoomService() // NOLINT(modernize-use-equals-default)
-{
-    // todo
-}
+RoomService::~RoomService() = default;
 
 
 void RoomService::Init()
@@ -61,7 +42,7 @@ void RoomService::Update()
     for(auto it = m_room_players.begin() ; it != m_room_players.end() ;)
     {
         auto playerdata = it->second;
-        auto userdata = m_server.FindUser(playerdata->conn_name());
+        auto userdata = server_.FindUser(playerdata->conn_name());
         if(userdata == nullptr){
             it++;
             continue;
@@ -79,7 +60,7 @@ void RoomService::Update()
             // YLOG_INFO("玩家<{}>离开，数据已保存", playerLeave.uid())
             //
             // // 重置数据，从在线玩家列表中删除，回收至对象池
-            // m_server.DelUser(userdata);
+            // server_.DelUser(userdata);
             // playerdata->Clear();
             // m_player_pool.push(playerdata);
             //
@@ -92,71 +73,44 @@ void RoomService::Update()
 }
 #endif
 
-Ptr<yy::protocol::app::PlayerBaseData> RoomService::FindPlayerByUID(UID_t onlineid)
+PlayerPtr RoomService::FindPlayerByUID(const UID_t uid)
 {
-    std::lock_guard lg{m_room_players_mutex};
-
-    auto it = m_room_players.find(onlineid);
-    if(it==m_room_players.end()) {
-        return nullptr;
-    }
-    else {
-        return it->second;
-    }
+    return players_.GetPlayer(uid);
 }
 
-void RoomService::Broadcast(const UserConnectionPtr &from, const google::protobuf::Message &data) {
-    decltype(m_uid_to_connid) players_conns;
-    {
-        std::lock_guard lg{m_room_players_mutex};
-        players_conns = m_uid_to_connid;
-    }
-
-    for(const auto& p: players_conns)
-    {
-        auto [to_uid, to_connid] = p;
-        if(to_uid == from->GetUID())
-            continue;
-
-        YLOG_TRACE("Broadcast<{}>: from {} to {}, ", data.GetDescriptor()->full_name(), from->GetUID(), to_uid)
-        auto to = m_server.FindUser(to_connid);
-        if(to == nullptr) continue;
-
-        // to->SendTCP(data);
-        to->SendUDP(data);
-    }
-}
-
-void RoomService::Broadcast(const UserConnectionPtr& from, const MessagePtr &data)
+void RoomService::InitPlayerData(const PlayerBaseDataPtr & data, const uint64_t uid)
 {
-    if(from and data) {
-        Broadcast(from, *data);
-    }
+    data->set_uid(uid);
+    data->set_hp_current(100);
+    data->set_hp_max(100);
+    PlayerMove move;
+    move.set_position("");  // todo 可进一步替换为默认初始坐标
+    move.set_rotation("");
+    data->mutable_movement()->CopyFrom(move);
 }
 
-void RoomService::LeaveAndSave(UserConnectionPtr leave_user) {
+PlayerPtr RoomService::CreatePlayer(const UserConnectionPtr& conn, const PlayerBaseDataPtr& data)
+{
+    return std::make_shared<Player>(conn, data);
+}
+
+void RoomService::LeaveAndSave(const UserConnectionPtr& leave_user) {
     // 给其他玩家客户端发送离线通告
-    yy::protocol::app::C2SPlayerLeave playerLeave;
+    C2SPlayerLeave playerLeave;
     playerLeave.set_leaver_uid(leave_user->GetUID());
-    Broadcast(leave_user, playerLeave);
+    players_.Broadcast(FindPlayerByUID(leave_user->GetUID()), playerLeave);
     YLOG_INFO("玩家<{}>离开", playerLeave.leaver_uid())
 
-    leave_user->SetState(core::UserConnection::E_UserBaseState::eSavingData);
+    leave_user->SetState(UserConnection::E_UserBaseState::eSavingData);
 
-    auto playerdata = FindPlayerByUID(leave_user->GetUID());
-    // 重置数据，从在线玩家列表中删除，回收至对象池
-    {
-        std::lock_guard lg{m_room_players_mutex};
-        m_room_players.erase(playerdata->uid());
-    }
-    playerdata->Clear();
+    // 删除玩家并将玩家数据归还对象池
+    auto removed_player = players_.RemovePlayer(leave_user->GetUID());
+    removed_player->GetBaseData()->Clear();
+    removed_player.reset();
 
-    m_player_pool.push(playerdata);
-
+    leave_user->SetState(UserConnection::E_UserBaseState::eFree);
+    server_.DelUser(leave_user->GetConnID());
     YLOG_INFO("玩家<{}>离开并保存数据！", leave_user->GetUID());
-
-    leave_user->SetState(core::UserConnection::E_UserBaseState::eFree);
-    m_server.DelUser(leave_user->GetConnID());
 }
 
 
@@ -170,94 +124,57 @@ void RoomService::LeaveAndSave(UserConnectionPtr leave_user) {
 
 
 
-void RoomService::OnEnterScene(const UserConnectionPtr& userdata, const Ptr<protocol::app::C2SEnterScene> &) //NOLINT
+void RoomService::OnEnterScene(const UserConnectionPtr& self_conn, const Ptr<protocol::app::C2SEnterScene> & req) //NOLINT
 {
-    if(userdata->IsLoggedIn()) {
+    auto SendEnterSceneFailed = [&](std::string_view reason) {
+        YLOG_ERROR("进入场景失败: {}", reason);
+        S2CEnterScene resp;
+        resp.set_result(false);
+        self_conn->SendTCP(resp);
+    };
+
+    // 防止同个连接重复进入场景
+    if(self_conn->IsLoggedIn()) {
+        SendEnterSceneFailed("当前连接已在场景中，无需重复进入");
         return;
     }
 
-    yy::protocol::app::S2CEnterScene loginResponse;
+    // 初始化进入玩家对象，加入玩家数据列表
+    self_conn->SetUID(req->uid());
+    const auto self_data = m_player_pool.Acquire(2s);
+    if(self_data == nullptr) {
+        SendEnterSceneFailed("玩家对象池资源不足，不准进入场景！");
+        return;
+    }
+    InitPlayerData(self_data, req->uid());
+    const PlayerPtr self_player = CreatePlayer(self_conn, self_data);
+    players_.AddPlayer(self_data->uid(), self_player);
 
-    // ①进入请求：设置登录结果
+    // 进入请求：填充其他玩家数据
+    S2CEnterScene loginResponse;
+    for (const PlayerPtr & other_player : players_.GetAllPlayers() | std::views::values) {
+        if(other_player->GetUID() == self_player->GetUID())
+            continue;
+        // add_othersdata为repeated字段增加元素，返回值就是该元素的指针
+        PlayerBaseData* other_data = loginResponse.add_other_datas();
+        other_data->CopyFrom(*other_player->GetBaseData()); // 复制
+    }
     loginResponse.set_result(true);
+    loginResponse.mutable_self_data()->CopyFrom(*self_data);
 
-    // ②进入请求：初始化进入玩家对象，加入玩家数据列表
-    userdata->SetUID(m_global_id++);
-    m_uid_to_connid[userdata->GetUID()] = userdata->GetConnID();
-    auto selfdata = m_player_pool.pop();
-    assert(selfdata != nullptr);
-
-    // ③进入请求：
-    selfdata->set_uid(userdata->GetUID());
-    selfdata->set_hp_current(100);
-    selfdata->set_hp_max(100);
-
-    // ④进入请求：设置movement(初始position和rotation)
-    {
-        //! 若使用set_allocated，则需要主动传递堆空间，set_allocated会接管这片堆内存的管理权
-        // PlayerMove  selfMove = new PlayerMove();
-        // selfMove->set_position("");
-        // selfMove->set_rotation("");
-        // selfdata->set_allocated_player_move(selfMove);
-
-        //! 使用mutable和*运算符进行赋值，让protobuf自己创建堆内存，算是一个小trick
-        PlayerMove selfMove;
-        selfMove.set_position("");
-        selfMove.set_rotation("");
-        *selfdata->mutable_movement() = selfMove;
-    }
-
-    // ⑤进入请求：
-    {
-        decltype(m_room_players) players;
-        {
-            std::lock_guard lg{m_room_players_mutex};
-            players = m_room_players;
-        }
-
-        // ②进入请求：填充其他玩家数据
-        for (const auto &p: players) {
-            const auto &otherdata = *p.second;
-            if(otherdata.uid() == selfdata->uid())
-                continue;
-
-            // add_othersdata为repeated字段增加元素，返回值就是该元素的指针
-            auto data = loginResponse.add_other_datas();
-            data->CopyFrom(otherdata); // 复制
-        }
-
-        {
-            std::lock_guard lg{m_room_players_mutex};
-            m_room_players.insert({selfdata->uid(), selfdata});
-        }
-    }
-
-    *loginResponse.mutable_self_data() = *selfdata;
-
-
-
-    YLOG_INFO("发送loginResponse = {}, {}, {}, {}; size = {}",
-              loginResponse.self_data().uid(),
-              loginResponse.self_data().state(),
-              loginResponse.self_data().hp_current(),
-              loginResponse.self_data().hp_max(),
-              loginResponse.ByteSizeLong()
-    );
-
+    YLOG_INFO("发送loginResponse: {}", loginResponse.DebugString());
 
     // 转换状态
     // 返回给登录用户自己的信息和其他人的信息
-    userdata->SendTCP(loginResponse);
-    userdata->SetState(core::UserConnection::E_UserBaseState::eLoggedIn);
+    self_conn->SendTCP(loginResponse);
+    self_conn->SetState(UserConnection::E_UserBaseState::eLoggedIn);
 
     // 返回登录用户的信息给其他用户
     S2COtherPlayerData otherPlayerDataResponse;
-    *otherPlayerDataResponse.mutable_other_data() = *selfdata;
-    YLOG_INFO("S2COtherPlayerData = {}",
-              otherPlayerDataResponse.other_data().uid());
-    // Broadcast(userdata,  otherPlayerDataResponse);
+    otherPlayerDataResponse.mutable_other_data()->CopyFrom(*self_data);
+    players_.Broadcast(self_player,  otherPlayerDataResponse);
 
-    YLOG_INFO("玩家<{}:{}>登录", userdata->GetConnID(), selfdata->uid())
+    YLOG_INFO("玩家<{}>进入场景", self_data->uid())
 }
 
 void RoomService::OnLeave(const UserConnectionPtr& userdata_self, const Ptr<protocol::app::C2SPlayerLeave> & leave) //NOLINT
@@ -269,55 +186,51 @@ void RoomService::OnLeave(const UserConnectionPtr& userdata_self, const Ptr<prot
 /// 当userdata_self收到其他人的移动的数据时，便会申请获取id为id_other的用户的玩家数据
 void RoomService::OnC2SOtherPlayerData(const UserConnectionPtr& userdata_self, const Ptr<protocol::app::C2SOtherPlayerData> & request) //NOLINT
 {
-    auto player_other = FindPlayerByUID(request->requested_uid());
+    const auto player_other = FindPlayerByUID(request->requested_uid());
     if(player_other == nullptr) {
         YLOG_WARN("Get playerdata<{}> not found", request->requested_uid())
         return;
     }
-    // auto userdata_other = m_server.FindUserBySockfd(player_other->sockfd);
-    // return_if(userdata_other == nullptr);
     S2COtherPlayerData response;
-    *response.mutable_other_data() = *player_other;
+    response.mutable_other_data()->CopyFrom(*player_other->GetBaseData());
     userdata_self->SendTCP(response);
 }
 
-void RoomService::OnC2SMove(const UserConnectionPtr& userdata_self, const Ptr<protocol::app::C2SMove> & selfmove)
+void RoomService::OnC2SMove(const UserConnectionPtr& userdata_self, const Ptr<C2SMove> & selfmove)
 {
-    auto playerdata_self = FindPlayerByUID(selfmove->uid());
-    if(playerdata_self == nullptr) {
+    const auto player_self = FindPlayerByUID(selfmove->uid());
+    if(player_self == nullptr) {
         YLOG_WARN("Get playerdata<{}> not found", selfmove->uid())
         return;
     }
 
-    // playerdata_self->set_allocated_player_move(new PlayerMove(selfmove->self_move()));
-    *playerdata_self->mutable_movement() = selfmove->movement();
+    player_self->GetBaseData()->mutable_movement()->CopyFrom(selfmove->movement());
     userdata_self->SendTCP(selfmove);
 
-    S2CMove othermove;
-    othermove.set_uid(selfmove->uid());
-    *othermove.mutable_movement() = selfmove->movement();
+    S2CMove to_other_move;
+    to_other_move.set_uid(selfmove->uid());
+    to_other_move.mutable_movement()->CopyFrom(selfmove->movement());
 
-    Broadcast(userdata_self, othermove);
+    players_.Broadcast(player_self, to_other_move);
 }
 
 void RoomService::OnC2SJumpAndGravity(const UserConnectionPtr& userdata_self, const Ptr<protocol::app::C2SJumpAndGravity> & selfJumpAndGravity) //NOLINT
 {
-    auto playerdata_self = FindPlayerByUID(selfJumpAndGravity->uid());
-    if(playerdata_self == nullptr) {
+    const auto player_self = FindPlayerByUID(selfJumpAndGravity->uid());
+    if(player_self == nullptr) {
         YLOG_WARN("Jump playerdata<{}> not found", selfJumpAndGravity->uid())
         return;
     }
 
     // 记录玩家状态
-    // playerdata_self->mutable_ani_jump_and_gravity()->CopyFrom(selfJumpAndGravity->self_jump_and_gravity());
-    *playerdata_self->mutable_jump_and_gravity() = selfJumpAndGravity->jump_and_gravity();
+    player_self->GetBaseData()->mutable_jump_and_gravity()->CopyFrom(selfJumpAndGravity->jump_and_gravity());
     userdata_self->SendTCP(selfJumpAndGravity);
 
     S2CJumpAndGravity otherJumpAndGravity;
     otherJumpAndGravity.set_uid(selfJumpAndGravity->uid());
     *otherJumpAndGravity.mutable_jump_and_gravity() = selfJumpAndGravity->jump_and_gravity();
 
-    Broadcast(userdata_self, otherJumpAndGravity);
+    players_.Broadcast(player_self, otherJumpAndGravity);
 }
 
 

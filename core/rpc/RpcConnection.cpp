@@ -10,21 +10,21 @@ using yy::protocol::core::RpcMessage;
 
 namespace yy::core::rpc
 {
-RpcConnection::RpcConnection(yy::net::EventLoop * loop, const net::TcpConnectionPtr& _conn):
+RpcConnection::RpcConnection(net::EventLoop * loop, const net::TcpConnectionPtr& _conn):
     loop_(loop),
     conn_(_conn),
     codec_([this](const net::TcpConnectionPtr& conn, const RpcMessagePtr& buf) {
         this->OnRpcResponse(conn, buf);
     }),
-    tcp_client_{std::make_unique<yy::net::TcpClient>(loop,
-        yy::config::g_remote_config->GetValue().sendBytesOne,
-        yy::config::g_remote_config->GetValue().sendBytesMax,
-        yy::config::g_remote_config->GetValue().recvBytesOne,
-        yy::config::g_remote_config->GetValue().recvBytesMax,
-        yy::config::g_remote_config->GetValue().appXorCode)}
+    tcp_client_{std::make_unique<net::TcpClient>(loop,
+        config::g_remote_config->GetValue().sendBytesOne,
+        config::g_remote_config->GetValue().sendBytesMax,
+        config::g_remote_config->GetValue().recvBytesOne,
+        config::g_remote_config->GetValue().recvBytesMax,
+        config::g_remote_config->GetValue().appXorCode)}
 {
     tcp_client_->SetMessageCallback(
-        [this](const yy::net::TcpConnectionPtr& conn, yy::net::NetBuffer & buf) {
+        [this](const net::TcpConnectionPtr& conn, net::NetBuffer & buf) {
             codec_.OnTcpData(conn, buf);
         });
 

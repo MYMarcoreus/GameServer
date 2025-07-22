@@ -17,7 +17,7 @@ using yy::core::MessageHeader;
 namespace yy::core {
 
 BackendServer::BackendServer(EventLoop *accpetorLoop, const IPAddressPtr& listenAddr) :
-    m_appConfigvar(yy::config::g_app_config),
+    m_appConfigvar(config::g_app_config),
     m_accpetorLoop{accpetorLoop},
     m_tcpServer(accpetorLoop, listenAddr, true,
         m_appConfigvar->GetValue().send_bytes_one(),
@@ -44,9 +44,9 @@ BackendServer::BackendServer(EventLoop *accpetorLoop, const IPAddressPtr& listen
     })
 {
     //! 消息回调注册
-    m_tcpDispatcher.RegisterMessageCallback<yy::protocol::core::HeartBody>( [this](const TcpConnectionPtr& conn, const HeartPtr& msg) { this->OnTcpHeart(conn, msg); });
-    m_tcpDispatcher.RegisterMessageCallback<yy::protocol::core::C2SUdpPortRegister>( [this](const TcpConnectionPtr& conn, const C2SUdpPortRegisterPtr& msg) { this->OnUdpPortRegisterRequest(conn, msg); });
-    m_udpDispatcher.RegisterMessageCallback<yy::protocol::core::HeartBody>( [this](const UdpSessionPtr& conn, const HeartPtr& msg) { this->OnUdpHeart(conn, msg); });
+    m_tcpDispatcher.RegisterMessageCallback<protocol::core::HeartBody>( [this](const TcpConnectionPtr& conn, const HeartPtr& msg) { this->OnTcpHeart(conn, msg); });
+    m_tcpDispatcher.RegisterMessageCallback<protocol::core::C2SUdpPortRegister>( [this](const TcpConnectionPtr& conn, const C2SUdpPortRegisterPtr& msg) { this->OnUdpPortRegisterRequest(conn, msg); });
+    m_udpDispatcher.RegisterMessageCallback<protocol::core::HeartBody>( [this](const UdpSessionPtr& conn, const HeartPtr& msg) { this->OnUdpHeart(conn, msg); });
 
     m_tcpServer.SetMessageCallback(
         [this](const TcpConnectionPtr& conn, NetBuffer& buf) {
@@ -158,7 +158,7 @@ void BackendServer::OnTcpHeart(const TcpConnectionPtr & conn, const HeartPtr & m
     assert(conn != nullptr);
     YLOG_DEBUG("收到TCP心跳包");
     // 只需发一个只有消息头的包
-    yy::protocol::core::HeartBody heartBody;
+    protocol::core::HeartBody heartBody;
     m_tcpCodec.SendTCP(conn, heartBody);
 }
 
@@ -166,7 +166,7 @@ void BackendServer::OnUdpHeart(const UdpSessionPtr & conn, const HeartPtr & mess
     assert(conn != nullptr);
     YLOG_DEBUG("收到UDP心跳包");
     // 只需发一个只有消息头的包
-    yy::protocol::core::HeartBody heartBody;
+    protocol::core::HeartBody heartBody;
     m_udpCodec.SendUDP(conn, heartBody);
 }
 
@@ -179,13 +179,13 @@ void BackendServer::OnUdpPortRegisterRequest(const TcpConnectionPtr & conn, cons
 
     auto client_ip   = message->client_udp_ip();
     auto client_port = message->client_udp_port();
-    net::IPAddressPtr udpAddr = std::make_shared<net::IPv4Address>(client_ip, client_port);
+    IPAddressPtr udpAddr = std::make_shared<IPv4Address>(client_ip, client_port);
     YLOG_INFO("<{}>客户端Udp地址[{}:{}]", conn->GetConnID(), client_ip, client_port);
 
-    UdpSessionPtr udpSession = std::make_unique<net::UdpSession>(conn->GetConnID(), m_udpServer.GetUdpTran(), udpAddr, m_appConfigvar->GetValue().app_xor_code());
+    UdpSessionPtr udpSession = std::make_unique<UdpSession>(conn->GetConnID(), m_udpServer.GetUdpTran(), udpAddr, m_appConfigvar->GetValue().app_xor_code());
     FindUser(conn->GetConnID())->BindUdp(udpSession);
 
-    yy::protocol::core::S2CUdpPortRegister response;
+    protocol::core::S2CUdpPortRegister response;
     response.set_session_id(conn->GetConnID());
     response.set_status(protocol::core::S2CUdpPortRegister_Status_eSuccess);
     m_tcpCodec.SendTCP(conn, response);
@@ -195,19 +195,19 @@ void BackendServer::OnUdpPortRegisterRequest(const TcpConnectionPtr & conn, cons
 
 
 
-net::TimerID BackendServer::RunAt(net::Timestamp time, net::F_TaskCallback cb) {
+TimerID BackendServer::RunAt(Timestamp time, F_TaskCallback cb) {
     return m_accpetorLoop->RunAt(time, std::move(cb));
 }
 
-net::TimerID BackendServer::RunAfter(net::Microseconds delay, net::F_TaskCallback cb) {
+TimerID BackendServer::RunAfter(Microseconds delay, F_TaskCallback cb) {
     return m_accpetorLoop->RunAfter(delay, std::move(cb));
 }
 
-net::TimerID BackendServer::RunEvery(net::Microseconds interval, net::F_TaskCallback cb) {
+TimerID BackendServer::RunEvery(Microseconds interval, F_TaskCallback cb) {
     return m_accpetorLoop->RunEvery(interval, std::move(cb));
 }
 
-void BackendServer::CancelTimer(net::TimerID timerid) {
+void BackendServer::CancelTimer(TimerID timerid) {
     m_accpetorLoop->CancelTimer(timerid);
 }
 

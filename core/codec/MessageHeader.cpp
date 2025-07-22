@@ -130,14 +130,14 @@ void MessageHeader::SetAllFieldsFromMessage(const google::protobuf::Message &mes
     SetTypeNameLength(typeName.length());
     SetTypeName(typeName);
 
-    const int fullLen = MessageHeader::kMinHeaderLen + typeName.length() + message.ByteSizeLong();
+    const int fullLen = kMinHeaderLen + typeName.length() + message.ByteSizeLong();
     SetFullLength(fullLen);
 }
 
 
 std::array<char, MessageHeader::kCheckCodeSize>
 MessageHeader::XorCheckCode(const uint8_t xorCode) const {
-    std::array<char, MessageHeader::kCheckCodeSize> result = m_CheckCode;
+    std::array<char, kCheckCodeSize> result = m_CheckCode;
     result[0] ^= xorCode;
     result[1] ^= xorCode;
     return result;

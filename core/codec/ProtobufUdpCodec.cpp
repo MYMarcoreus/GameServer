@@ -9,13 +9,13 @@
 
 namespace yy::core {
 
-using ::yy::net::NetBuffer;
-using ::yy::net::UdpSessionPtr;
+using net::NetBuffer;
+using net::UdpSessionPtr;
 
 
 
-ProtobufUdpCodec::ProtobufUdpCodec(ProtobufUdpCodec::F_ProtobufMessageDispatchCallback  msgCb,
-                                   ProtobufUdpCodec::F_ProtobufErrorMessageCallback     errCb)
+ProtobufUdpCodec::ProtobufUdpCodec(F_ProtobufMessageDispatchCallback  msgCb,
+                                   F_ProtobufErrorMessageCallback     errCb)
     : m_ProtobufMessageDispatchCallback{msgCb},
       m_ProtobufErrorMessageCallback{errCb}
 { }

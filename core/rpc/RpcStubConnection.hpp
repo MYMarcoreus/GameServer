@@ -21,8 +21,8 @@ class RpcStubConnection
 public:
     // using F_RpcStubConnectionEstablishedCallback = std::function<void(const std::shared_ptr<RpcStubConnection>& )>;
     using F_RpcStubConnectionEstablishedCallback = std::function<void(const net::TcpConnectionPtr & )>;
-    explicit RpcStubConnection(yy::net::EventLoop * loop):
-        rpc_conn_{new yy::core::rpc::RpcConnection(loop)},
+    explicit RpcStubConnection(net::EventLoop * loop):
+        rpc_conn_{new RpcConnection(loop)},
         stub_{std::make_unique<ServiceType_Stub>(rpc_conn_, google::protobuf::Service::STUB_OWNS_CHANNEL)}
     {
         assert(rpc_conn_ != nullptr);
@@ -55,7 +55,7 @@ public:
     }
 
 private:
-    yy::core::rpc::RpcConnection *           rpc_conn_;
+    RpcConnection *           rpc_conn_;
     std::unique_ptr<ServiceType_Stub>   stub_;
 };
 

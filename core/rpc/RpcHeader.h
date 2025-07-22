@@ -12,7 +12,7 @@ public:
     static constexpr int kHeaderSize =  kCheckCodeSize + sizeof(uint32_t);
 
     RpcHeader() = default;
-    explicit RpcHeader(const yy::protocol::core::RpcMessage & rpcmsg);
+    explicit RpcHeader(const protocol::core::RpcMessage & rpcmsg);
 
     MessageParseErrorCode ParseFromBuffer(net::NetBuffer &buf);
 

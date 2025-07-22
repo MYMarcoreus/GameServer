@@ -6,12 +6,7 @@
 #include "ConfigManager.h"
 #include "AppXmlConfig.h"
 
-
 namespace yy::core {
-
-
-//! 因为F_Notifier需要传入服务器的this指针，不要使用智能指针去接收this指针，这也许会带来许多麻烦/bug
-//! 因此尽量使用引用接收*this
 
 class IServer: util::noncopyable
 {
@@ -31,13 +26,12 @@ public:
     virtual void Stop() = 0;
 
     virtual UserConnectionPtr FindUser(uint64_t conn_id) = 0;
-    virtual void            DelUser(uint64_t conn_id) = 0;
-    virtual void            AddUser (uint64_t conn_id, const UserConnectionPtr &) = 0;
+    virtual void              DelUser(uint64_t conn_id) = 0;
+    virtual void              AddUser (uint64_t conn_id, const UserConnectionPtr &) = 0;
 
     virtual bool IsRunning() const = 0;
 
     virtual const config::AppXmlConfig & GetAppConfig() = 0;
-
 
     /* 在实现类中定义四个回调函数成员，下面这四个函数将会设置其对应的回调函数，而回调函数将由业务层定义并传入 */
     virtual void SetNotifier_Security  (F_Notifier e) = 0;

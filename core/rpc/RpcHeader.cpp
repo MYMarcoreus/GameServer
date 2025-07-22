@@ -7,7 +7,7 @@
 
 namespace yy::core::rpc
 {
-RpcHeader::RpcHeader(const yy::protocol::core::RpcMessage  & rpcmsg):
+RpcHeader::RpcHeader(const protocol::core::RpcMessage  & rpcmsg):
     m_CheckCode{kCheckCode}, m_FullLength(kHeaderSize + rpcmsg.ByteSizeLong())
 {}
 

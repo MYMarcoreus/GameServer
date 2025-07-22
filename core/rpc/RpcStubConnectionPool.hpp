@@ -44,7 +44,7 @@ public:
     using StubConnType =  RpcStubConnection<ServiceType_Stub>;
 
     explicit RpcStubConnectionPool(const size_t poolsize, const std::string & service_root = "/rpc_services", const bool CanRetry = true) :
-        thread_{std::make_unique<yy::net::EventLoopThread>(nullptr, 500ms)},
+        thread_{std::make_unique<net::EventLoopThread>(nullptr, 500ms)},
         loop_{thread_->CreateLoop()},
         service_root_(service_root),
         pool_size_{poolsize == 0 ? 1 : poolsize}
@@ -95,7 +95,7 @@ public:
         }
 
         // 监听zookeeper在服务根目录下的变化，首次调用时会拉取服务下的所有可用地址
-        zkServiceManager_.Watch(service_name_, [this](const std::string& service_path, std::vector<yy::net::IPAddressPtr> && endpoints) {
+        zkServiceManager_.Watch(service_name_, [this](const std::string& service_path, std::vector<net::IPAddressPtr> && endpoints) {
             rr_idx_.store(0, std::memory_order_release);
 
             if (m_ServiceChangeCallback)
@@ -129,7 +129,7 @@ public:
     }
 
 private:
-    auto SelectAddrByRoundRobin() -> yy::net::IPAddressPtr
+    auto SelectAddrByRoundRobin() -> net::IPAddressPtr
     {
         const auto endpoints = zkServiceManager_.FetchLocalCache(service_name_);
         if (endpoints.size() == 0) {
@@ -137,12 +137,12 @@ private:
             return nullptr;
         }
         const size_t idx = rr_idx_.fetch_add(1, std::memory_order_acq_rel);
-        yy::net::IPAddressPtr addr = endpoints[idx % endpoints.size()];
+        net::IPAddressPtr addr = endpoints[idx % endpoints.size()];
         return addr;
     }
 
-    std::unique_ptr<yy::net::EventLoopThread>   thread_;
-    yy::net::EventLoop *                        loop_;
+    std::unique_ptr<net::EventLoopThread>   thread_;
+    net::EventLoop *                        loop_;
     std::string         service_name_;
     std::string         service_root_ ;
 

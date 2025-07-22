@@ -50,7 +50,7 @@ void ZkClient::Start()
 	if (host_ == "") {
 		std::string ip;
 		std::string port;
-		for (auto & node: yy::config::g_remote_config->GetValue().m_remote_nodes) {
+		for (auto & node: config::g_remote_config->GetValue().m_remote_nodes) {
 			if (node.type == "zookeeper") {
 				ip = node.ip;
 				port = std::to_string(node.port);
@@ -70,7 +70,7 @@ void ZkClient::Start()
 		网络I/O线程  pthread_create  poll
 		watcher回调线程 pthread_create
 	*/
-    zhandle_ = zookeeper_init(host_.c_str(), ZkClient::global_watcher, 30000, nullptr, this, 0);
+    zhandle_ = zookeeper_init(host_.c_str(), global_watcher, 30000, nullptr, this, 0);
     if (nullptr == zhandle_)
     {
         YLOG_FATAL("[ZkClient] zookeeper_init error!");
@@ -202,7 +202,7 @@ void ZkClient::OnChildrenChanged(const std::string& path)
 std::vector<std::string> ZkClient::GetNodeChildren(const std::string& path)
 {
 	struct String_vector children;
-	const int ret = zoo_wget_children(zhandle_, path.c_str(), ZkClient::child_watcher, this, &children);
+	const int ret = zoo_wget_children(zhandle_, path.c_str(), child_watcher, this, &children);
 	if (ret != ZOK) {
 		YLOG_WARN("[ZkClient] Failed to get children for path: {}, error: {}", path, ret);
 		return {};
@@ -221,7 +221,6 @@ void ZkClient::child_watcher(zhandle_t* zh, int type, int state, const char* pat
 	if (type == ZOO_CHILD_EVENT && state == ZOO_CONNECTED_STATE) {
 		auto* zk_client = static_cast<ZkClient*>(watcherCtx);
 		if (zk_client && path) {
-			YLOG_WARN("[ZkClient] child_watcher: {}, {}, {}", path, type, state);
 			zk_client->OnChildrenChanged(path); // 再次获取最新子节点并触发业务回调
 		}
 	}

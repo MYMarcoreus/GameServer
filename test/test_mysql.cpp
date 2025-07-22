@@ -24,7 +24,7 @@ int main(int argc, char* argv[])
 
     loop->RunEvery(1s, [&loop]()
     {
-        auto & mysql_client = yy::core::MySqlClient::Instance();
+        auto & mysql_client = yy::core::mysql::MySqlClient::Instance();
         mysql_client.Start(loop, "gameserver");
         auto result1 = mysql_client.Query("SELECT * FROM account WHERE uid = ?;", "1");
         YLOG_INFO("SELECT = {}", result1.count());

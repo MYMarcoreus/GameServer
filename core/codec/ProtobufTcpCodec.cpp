@@ -7,13 +7,13 @@
 
 namespace yy::core {
 
-using ::yy::net::NetBuffer;
-using ::yy::net::TcpConnectionPtr;
+using net::NetBuffer;
+using net::TcpConnectionPtr;
 
 
 
-ProtobufTcpCodec::ProtobufTcpCodec(const ProtobufTcpCodec::F_ProtobufMessageDispatchCallback& msgCb,
-                                   const ProtobufTcpCodec::F_ProtobufErrorMessageCallback& errCb)
+ProtobufTcpCodec::ProtobufTcpCodec(const F_ProtobufMessageDispatchCallback& msgCb,
+                                   const F_ProtobufErrorMessageCallback& errCb)
     : m_ProtobufMessageDispatchCallback{msgCb},
       m_ProtobufErrorMessageCallback{errCb}
 { }

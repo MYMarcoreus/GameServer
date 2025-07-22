@@ -28,7 +28,7 @@ public:
         if (pool_ == nullptr) {
             pool_ = std::make_unique<RpcStubConnectionPool<ServiceStub>>(pool_size);
             pool_->SetServiceChangeCallback(
-                [this](const std::string & path, std::vector<yy::net::IPAddressPtr>&&) {
+                [this](const std::string & path, std::vector<net::IPAddressPtr>&&) {
                     YLOG_INFO("ServiceChange to {}", path)
                 });
             pool_->Start(std::move(cb));
@@ -36,10 +36,9 @@ public:
     }
 
     ///@brief 请求的发送的同步的，响应的等待是异步的
-    template<typename Request, typename Response>  requires requires {
-        requires std::is_base_of_v<google::protobuf::Message, Request>;  //! Request消息的生命周期由调用者自己管理
-        requires std::is_base_of_v<google::protobuf::Message, Response>; //! Respone消息的生命周期由该函数自动管理
-    }
+    /// Request消息的生命周期由调用者自己管理
+    /// Respone消息的生命周期由该函数自动管理
+    template<IsProtobufMessage Request, IsProtobufMessage Response>
     bool CallRemoteAsync(const std::shared_ptr<Request>& request, FinishedCallback<Response> cb)
     {
         auto conn = pool_->Acquire(5s);
@@ -53,7 +52,7 @@ public:
         controller->set_timeout(5s);
 
         // 设置响应回调，并使用unique_ptr接管裸指针（响应消息和RpcController的生命周期在此自动管理）
-        auto lambda_closure = core::rpc::NewLambdaClosureT(
+        auto lambda_closure = rpc::NewLambdaClosureT(
             [this, response, controller, cb = std::move(cb)]() mutable  {
                 if (cb) cb(std::unique_ptr<Response>(response), std::unique_ptr<RpcControllerImpl>(controller));
             });
@@ -64,10 +63,7 @@ public:
         return true;
     }
 
-    template<typename Request, typename Response>  requires requires {
-        requires std::is_base_of_v<google::protobuf::Message, Request>;
-        requires std::is_base_of_v<google::protobuf::Message, Response>;
-    }
+    template<IsProtobufMessage Request, IsProtobufMessage Response>
     bool CallRemoteAsync(Request& request, FinishedCallback<Response> cb)
     {
         auto conn = pool_->Acquire(5s);
@@ -78,7 +74,7 @@ public:
         controller->set_wait_for_ready(true);
         controller->set_timeout(5s);
 
-        auto lambda_closure = core::rpc::NewLambdaClosureT(
+        auto lambda_closure = rpc::NewLambdaClosureT(
             [this, response, controller, cb = std::move(cb)]() mutable {
                 if (cb) cb(std::unique_ptr<Response>(response), std::unique_ptr<RpcControllerImpl>(controller));
             });

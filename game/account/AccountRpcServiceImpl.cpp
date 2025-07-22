@@ -16,8 +16,8 @@ namespace yy::app::account
 AccountRpcServiceImpl::AccountRpcServiceImpl(net::EventLoop * loop):
     server_(AccountServerManager::Instance().GetServer()),
     rpc_server_(AccountServerManager::Instance().GetRpcServer()),
-    redis_client_(core::RedisClient::Instance()),
-    mysql_client_(core::MySqlClient::Instance()),
+    redis_client_(core::redis::RedisClient::Instance()),
+    mysql_client_(core::mysql::MySqlClient::Instance()),
     center_client_(CenterRpcClient::Instance())
 {
     // 初始化Redis
@@ -31,48 +31,57 @@ AccountRpcServiceImpl::AccountRpcServiceImpl(net::EventLoop * loop):
 }
 
 // 该函数仅需填充response并调用done->Run()
-void AccountRpcServiceImpl::Login(google::protobuf::RpcController* controller, const yy::protocol::app::C2SLogin* request,
-                              yy::protocol::app::S2CLogin* response, google::protobuf::Closure* done)
+void AccountRpcServiceImpl::Login(google::protobuf::RpcController* controller, const protocol::app::C2SLogin* request,
+                              protocol::app::S2CLogin* response, google::protobuf::Closure* done)
 {
     YLOG_INFO("正在执行 AccountRpcServiceImpl::Login 服务，填充响应体")
 
-    SelectServerReq select_server_req;
-    select_server_req.set_session_id(request->session_id());
-    select_server_req.set_username(request->username());
 
-     yy::protocol::app::S2CLogin_Status login_status = protocol::app::S2CLogin_Status_eSuccess;
+
+    protocol::app::S2CLogin_Status login_status = protocol::app::S2CLogin_Status_eSuccess;
+    uint64_t uid = 0;
+
+
+    // key不存在或类型不对，先清理或者创建哈希
+    if (not redis_client_.HasHashKey(request->username())) {
+        redis_client_.Del(request->username());
+    }
 
     // 验证账号密码
-    const auto redi_pwd = redis_client_.Get(request->username());
-    if (redi_pwd.has_value()) {
+    const auto redi_pwd = redis_client_.HGet(request->username(), PWD_field);
+    const auto redi_uid = redis_client_.HGet(request->username(), UID_field);
+    if (redi_pwd.has_value() and redi_uid.has_value()) {
         // 验证密码
         if (redi_pwd.value() == request->password()) {
             login_status = protocol::app::S2CLogin_Status_eSuccess;
+            uid = std::stoul(redi_uid.value());
         } else {
             login_status = protocol::app::S2CLogin_Status_ePasswordError;
         }
     } else {
         try {
             // redis中没有该用户的信息，便去mysql去取
-            // auto rst = mysql_client_.Query("SELECT password FROM account WHERE username == ?", request->username());
             const auto mysql_conn = mysql_client_.GetConnection();
             auto row_rst = mysql_conn->conn.getDefaultSchema()
                 .getTable("account")
-                .select("password")
+                .select(PWD_field, UID_field)
                 .where("username = :usrname")
                 .bind("usrname", request->username())
             .execute();
-            auto row = row_rst.fetchOne();
 
+            auto row = row_rst.fetchOne();
             if (row.isNull()) {
                 // mysql账号不存在
                 login_status = protocol::app::S2CLogin_Status_eAccountNotExist;
             } else {
                 // 验证密码
                 const auto mysql_pwd = row[0].get<std::string>();
+                const auto mysql_uid = row[1].get<uint64_t>();
                 if (mysql_pwd == request->password()) {
                     login_status = protocol::app::S2CLogin_Status_eSuccess;
-                    redis_client_.Set(request->username(), request->password());
+                    redis_client_.HSet(request->username(), PWD_field, mysql_pwd);
+                    redis_client_.HSet(request->username(), UID_field, std::to_string(mysql_uid));
+                    uid = mysql_uid;
                 } else {
                     login_status = protocol::app::S2CLogin_Status_ePasswordError;
                 }
@@ -92,16 +101,21 @@ void AccountRpcServiceImpl::Login(google::protobuf::RpcController* controller, c
         return;
     }
 
+    SelectServerReq select_server_req;
+    select_server_req.set_session_id(request->session_id());
+    select_server_req.set_uid(uid);
+
     // 账号密码验证成功，发起异步远程调用，获取后端分配给客户端的服务器
-    center_client_.CallRemoteAsync<SelectServerReq, SelectServerRsp>(select_server_req,
+    response->set_username(request->username());
+    center_client_.CallRemoteAsync<SelectServerReq, SelectServerRsp>(
+        select_server_req,
         // 异步函数，需要复制数据
         [this, response, done](std::unique_ptr<SelectServerRsp> && resp, std::unique_ptr<core::rpc::RpcControllerImpl> && controller) {
             switch (resp->result_code()) {
             case protocol::app::SelectServerRsp_Status_eSuccess:
                 response->set_session_id(resp->session_id());
                 response->set_result_code(protocol::app::S2CLogin_Status_eSuccess);
-
-                response->set_username(resp->username());
+                response->set_uid(resp->uid());
                 response->set_ip(resp->ip());
                 response->set_port(resp->port());
                 response->set_token(resp->token());
@@ -118,12 +132,12 @@ void AccountRpcServiceImpl::Login(google::protobuf::RpcController* controller, c
         });
 }
 
-void AccountRpcServiceImpl::Register(google::protobuf::RpcController* controller, const yy::protocol::app::C2SRegister* request,
-    yy::protocol::app::S2CRegister* response, google::protobuf::Closure* done)
+void AccountRpcServiceImpl::Register(google::protobuf::RpcController* controller, const protocol::app::C2SRegister* request,
+    protocol::app::S2CRegister* response, google::protobuf::Closure* done)
 {
     YLOG_TRACE("正在执行 AccountRpcServiceImpl::Register 服务，填充响应体")
 
-    yy::protocol::app::S2CRegister_Status reg_status = protocol::app::S2CRegister_Status_eSuccess;
+    protocol::app::S2CRegister_Status reg_status = protocol::app::S2CRegister_Status_eSuccess;
 
     const auto mysql_conn = mysql_client_.GetConnection();
 

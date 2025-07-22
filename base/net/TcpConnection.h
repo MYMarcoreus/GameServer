@@ -15,7 +15,7 @@ class IOChannel;
 class EventLoop;
 class Socket;
 
-class TcpConnection: public std::enable_shared_from_this<TcpConnection> {
+class TcpConnection: public std::enable_shared_from_this<TcpConnection>, util::noncopyable {
 /*
  * Disconnected ━━▶ Connecting ━━▶ Connected ━━▶ Shutdown
  *      ▲                                            ┃
@@ -32,6 +32,15 @@ class TcpConnection: public std::enable_shared_from_this<TcpConnection> {
 
 public:
     ///@brief Acceptor接受用户连接后，在NewConnection回调函数（由TcpServer定义）中创建的数据结构
+    ///@param loop
+    ///@param sockfd
+    ///@param localAddr
+    ///@param peerAddr
+    ///@param send_bytes_one 发送缓冲区初始化时的大小
+    ///@param send_bytes_max todo 发送缓冲区最大能有的大小（因为发送缓冲区支持不断扩容，这里设置的是扩容的上限）
+    ///@param recv_bytes_one 接收缓冲区初始化时的大小
+    ///@param recv_bytes_max todo 接收缓冲区最大能有的大小（因为接收缓冲区支持不断扩容，这里设置的是扩容的上限）
+    ///@param xor_code
     TcpConnection(uint64_t connid, EventLoop *loop, SocketApiWrapper::socket_t sockfd,
                   const IPAddress::ptr& localAddr, const IPAddress::ptr& peerAddr,
                   int32_t send_bytes_one, int32_t send_bytes_max, int32_t recv_bytes_one, int32_t recv_bytes_max,
@@ -56,7 +65,7 @@ public:
 
 
     ///Region GETTER
-    uint64_t                    GetConnID()          const { return m_connid; }
+    uint64_t                    GetConnID()        const { return m_connid; }
     EventLoop *                 GetIOLoop()        const { return m_ioLoop; }
     const IPAddress::ptr &      GetLocalAddr()     const { return m_localAddr; }
     const IPAddress::ptr &      GetPeerAddr()      const { return m_peerAddr; }

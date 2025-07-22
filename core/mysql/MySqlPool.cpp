@@ -5,9 +5,9 @@
 
 using namespace std::chrono_literals;
 
-namespace yy::core
+namespace yy::core::mysql
 {
-MySqlPool::MySqlPool(yy::net::EventLoop * loop, const std::string& ip, const int port, const std::string& user, const std::string& pwd, const std::string& schema, const size_t poolSize)
+MySqlPool::MySqlPool(net::EventLoop * loop, const std::string& ip, const int port, const std::string& user, const std::string& pwd, const std::string& schema, const size_t poolSize)
     : loop_(loop), ip_(ip), port_(port), user_(user), pass_(pwd), schema_(schema), max_size_(poolSize), _fail_count(0)
 {
     try {

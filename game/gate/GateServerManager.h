@@ -1,6 +1,6 @@
 #pragma once
 
-
+#include "core_definations.h"
 #include "IServer.h"
 #include "IGameBase.h"
 #include "account.pb.h"
@@ -10,9 +10,9 @@
 #include "RpcControllerImpl.h"
 #include "ThreadPool.h"
 
-using yy::core::IServer;
+using namespace yy::net;
+using namespace yy::core;
 using std::shared_ptr;
-
 
 namespace yy::app::gate
 {
@@ -30,16 +30,13 @@ private:
 
     void Init();
 
-    void OnFrontend_Secutiry(const core::UserConnectionPtr& userconn) ;
-    void OnFrontend_Disconnect(const core::UserConnectionPtr& userconn) ;
-    void OnFrontend_Message(const core::UserConnectionPtr &, const core::MessagePtr &, core::MessageType type);
+    void OnFrontend_Secutiry(const UserConnectionPtr& userconn) ;
+    void OnFrontend_Disconnect(const UserConnectionPtr& userconn) ;
+    void OnFrontend_Message(const UserConnectionPtr &, const MessagePtr &, MessageType type);
 
-    void UnkonwnCommand(const core::UserConnectionPtr &, const core::MessagePtr &);
+    void UnkonwnCommand(const UserConnectionPtr &, const MessagePtr &);
 
-    template<typename Request, typename Response>  requires requires {
-        requires std::is_base_of_v<google::protobuf::Message, Request>;
-        requires std::is_base_of_v<google::protobuf::Message, Response>;
-    }
+    template<IsProtobufMessage Request, IsProtobufMessage Response>
     void RegisterRpcForward();
 
     void TestLogin1();
@@ -48,31 +45,28 @@ private:
     void TestRegister1();
 
 
-    std::unique_ptr<yy::net::EventLoop>  m_accpetorLoop;
+    std::unique_ptr<EventLoop>  m_accpetorLoop;
     std::unique_ptr<IServer> m_frontend;
-    core::ProtobufDispatcher<core::UserConnectionPtr> m_dispatcher; // 处理下层(core层)分发传来的无法处理的消息
+    ProtobufDispatcher<UserConnectionPtr> m_dispatcher; // 处理下层(core层)分发传来的无法处理的消息
     std::unique_ptr<AccountRpcClient>   m_accountRpcClient;
 
-    yy::net::ThreadPool m_workThreads;
+    ThreadPool m_workThreads;
 };
 
 
 
 
-template<typename Request, typename Response>  requires requires {
-    requires std::is_base_of_v<google::protobuf::Message, Request>;
-    requires std::is_base_of_v<google::protobuf::Message, Response>;
-}
+template<IsProtobufMessage Request, IsProtobufMessage Response>
 void GateServerManager::RegisterRpcForward()
 {
     m_dispatcher.RegisterMessageCallback<Request>(
-        [this](const core::UserConnectionPtr& userconn, const std::shared_ptr<Request>& request)
+        [this](const UserConnectionPtr& userconn, const std::shared_ptr<Request>& request)
         {
             // 发起RPC请求
             const bool success = m_accountRpcClient->CallRemoteAsync<Request, Response>(
                 request,
                 // 设置Rpc响应回调
-                [userconn](std::unique_ptr<Response>&& response, std::unique_ptr<yy::core::rpc::RpcControllerImpl>&& controller)
+                [userconn](std::unique_ptr<Response>&& response, std::unique_ptr<rpc::RpcControllerImpl>&& controller)
                 {
                     if (!controller || controller->Failed()) {
                         YLOG_INFO("{}失败！", Request::descriptor()->name());

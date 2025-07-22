@@ -4,6 +4,6 @@
 
 namespace yy::app::account
 {
-using CenterServer = yy::core::FrontendServer;
+using CenterServer = core::FrontendServer;
 }
 

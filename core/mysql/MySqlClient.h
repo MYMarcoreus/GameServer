@@ -4,7 +4,7 @@
 #include "MySqlPool.h"
 #include "log.h"
 
-namespace yy::core
+namespace yy::core::mysql
 {
 
 class MySqlClient final : public Singleton<MySqlClient> {

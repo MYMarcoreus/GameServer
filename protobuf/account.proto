@@ -22,10 +22,11 @@ message S2CLogin {
     }
     Status result_code = 2;
 
-    optional string username = 3;
-    optional string ip = 4;
-    optional uint32 port = 5;
-    optional string token = 6;
+    optional uint64 uid = 3;
+    optional string username = 4;
+    optional string ip = 5;
+    optional uint32 port = 6;
+    optional string token = 7;
 }
 
 message C2SRegister {
@@ -44,6 +45,7 @@ message S2CRegister {
         eUnknownError = 3;
     }
     Status result_code = 2;
+    optional uint64 uid = 4;
 }
 
 

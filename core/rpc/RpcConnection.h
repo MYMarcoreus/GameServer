@@ -13,9 +13,9 @@ namespace yy::core::rpc
 {
 
 // RpcClient使用：TcpConnection的包装
-class RpcConnection final : public ::google::protobuf::RpcChannel {
+class RpcConnection final : public google::protobuf::RpcChannel {
 public:
-    explicit RpcConnection(yy::net::EventLoop * loop, const net::TcpConnectionPtr & _conn = nullptr);
+    explicit RpcConnection(net::EventLoop * loop, const net::TcpConnectionPtr & _conn = nullptr);
     ~RpcConnection() override = default;
 
     ///@brief 调用具体实现的服务时会调用的函数，`该函数不进行参数的生命周期管理`
@@ -26,7 +26,7 @@ public:
     /// @param done	        可为空，调用方构造，调用方释放		在响应被填充后应该调用done->Run()，Run()函数调用结束后delete掉done对象自身
     void CallMethod(const google::protobuf::MethodDescriptor* method,
                 google::protobuf::RpcController* controller,
-                const ::google::protobuf::Message* request,
+                const google::protobuf::Message* request,
                 google::protobuf::Message* response,
                 google::protobuf::Closure* done) override;
 
@@ -34,7 +34,7 @@ public:
     void Disconnect();
 
 
-    void SetConnectionEstablishedCallback(const yy::net::F_ConnectionEstablishedCallback &connectionEstablishedCallback) {
+    void SetConnectionEstablishedCallback(const net::F_ConnectionEstablishedCallback &connectionEstablishedCallback) {
         connectionEstablishedCallback_ = connectionEstablishedCallback;
     }
 
@@ -50,7 +50,7 @@ private:
         net::Timestamp                      sendTime;
     };
 
-    yy::net::EventLoop *    loop_;
+    net::EventLoop *    loop_;
     net::TcpConnectionPtr   conn_;
     RpcCodec                codec_;
 
@@ -62,8 +62,8 @@ private:
     std::mutex                              pending_call_mutex_;
     std::map<int64_t, PendingCallContext>   pending_calls_ ;
 
-    yy::net::F_ConnectionEstablishedCallback connectionEstablishedCallback_;
-    std::unique_ptr<yy::net::TcpClient> tcp_client_;
+    net::F_ConnectionEstablishedCallback connectionEstablishedCallback_;
+    std::unique_ptr<net::TcpClient> tcp_client_;
 };
 
 }

@@ -224,12 +224,12 @@ TimerPtr RBTreeTimerManager::GetEarliestExpriredTimer() {
 
 
 void RBTreeTimerManager::CancelTimer(TimerID timerid) {
-    m_loop->RunCallbackInLoop([this, timerid]{ RBTreeTimerManager::CancelTimerInLoop(timerid); });
+    m_loop->RunCallbackInLoop([this, timerid]{ CancelTimerInLoop(timerid); });
 }
 
 void RBTreeTimerManager::CancelTimerInLoop(TimerID timerid) {
     //! 按照ID来查找，如果查找到有效的timer，那么将其从定时器列表中删除，
-    auto it = m_TimeridMap.find(timerid);
+    const auto it = m_TimeridMap.find(timerid);
     TimerPtr timer = nullptr;
     if(it != m_TimeridMap.end()) {
         timer = it->second;
@@ -246,8 +246,6 @@ void RBTreeTimerManager::CancelTimerInLoop(TimerID timerid) {
         m_CancelingTimerList.insert({timerid, timer});
     }
 }
-
-
 
 
 //! Linux系统timerfd的计时器到时的回调函数

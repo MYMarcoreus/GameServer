@@ -1,10 +1,11 @@
 #pragma once
 
-#include "IServer.h"
+#include "Singleton.h"
+#include "core_definations.h"
 #include "ProtobufDispatcher.h"
-#include "ThreadPool.h"
-#include "ZkServiceManager.h"
 
+
+namespace yy::core::zk { class ZkServiceManager; }
 
 using namespace yy::net;
 using namespace yy::core;
@@ -15,6 +16,7 @@ namespace yy::app::logic {
 class RoomService;
 class TestService;
 
+
 class LogicServerManager final : public Singleton<LogicServerManager>
 {
     SINGLETON_NECESSITY(LogicServerManager)
@@ -22,24 +24,14 @@ public:
     void RunApp();
 
     // 假设你的类中有这个成员函数
-    template<IsProtobufMessage MsgT>
-    void RegisterHandler(void (LogicServerManager::*handler)(const UserConnectionPtr&, const shared_ptr<MsgT>&))
-        requires requires(LogicServerManager* self, const UserConnectionPtr& user, const shared_ptr<MsgT>& msg) {
-            (self->*handler)(user, msg);
-        }
+    template<IsProtobufMessage MsgT, typename ClassT> requires MessageHandlerInvocable<ClassT, MsgT>
+    void RegisterHandler(ClassT* self, void (ClassT::*handler)(const UserConnectionPtr&, const shared_ptr<MsgT>&))
     {
-        this->RegisterMessageCallback<MsgT>(
-            [this, handler](const UserConnectionPtr& user, const shared_ptr<MsgT>& msg) {
-                (this->*handler)(user, msg);
+        this->m_dispatcher.RegisterMessageCallback<MsgT>(
+            [self, handler](const UserConnectionPtr& user, const shared_ptr<MsgT>& msg) {
+                (self->*handler)(user, msg);
             }
         );
-    }
-
-
-
-    template<typename T>
-    void RegisterMessageCallback(typename CallbackT<UserConnectionPtr, T>::ProtobufMessageTCallback callback) {
-        m_dispatcher.RegisterMessageCallback<T>(callback);
     }
 
     IServer& GetServer() const { return *m_server; }
@@ -56,13 +48,13 @@ private:
     void UnkonwnCommand(const UserConnectionPtr &, const MessagePtr &);
 
 
-    unique_ptr<EventLoop>     m_accpetorLoop{};
-    unique_ptr<IServer>            m_server{};
-    unique_ptr<RoomService>        m_room_service{};
-    unique_ptr<TestService>        m_test_service{};
-    zk::ZkServiceManager          m_zk{};
+    unique_ptr<EventLoop>               m_accpetorLoop{};
+    unique_ptr<IServer>                 m_server{};
+    unique_ptr<RoomService>             m_room_service{};
+    unique_ptr<TestService>             m_test_service{};
+    unique_ptr<zk::ZkServiceManager>    m_zk{};
+    unique_ptr<ThreadPool>              m_workThreads;
     ProtobufDispatcher<UserConnectionPtr> m_dispatcher; // 处理下层(core层)分发传来的无法处理的消息
-    ThreadPool m_workThreads;
 };
 
 

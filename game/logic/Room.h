@@ -6,7 +6,7 @@ namespace yy::app::logic
 {
 
 // 管理一个房间内的玩家
-class PlayerManager {
+class Room {
 public:
     void AddPlayer(UID_t uid, const PlayerPtr & player);
 
@@ -18,8 +18,10 @@ public:
     void Broadcast(const PlayerPtr& from, const core::MessagePtr &data);
 
 private:
+    UID_t                                   room_owner_;
     std::unordered_map<UID_t, PlayerPtr>    room_players_;
     util::RWMutex                           mutex_;
+
 };
 
 }

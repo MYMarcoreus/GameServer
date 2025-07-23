@@ -2,10 +2,12 @@
 #include "log.h"
 #include "EventLoop.h"
 #include "GateServer.h"
-#include "player.pb.h"
+#include "room.pb.h"
 #include "future"
 #include "IPAddress.h"
 #include "AccountRpcClient.h"
+#include "ThreadPool.h"
+#include "RpcControllerImpl.h"
 
 #include <functional>
 
@@ -28,9 +30,9 @@ namespace yy::app::gate {
 
 
 GateServerManager::GateServerManager():
-    m_accpetorLoop{std::make_unique<net::EventLoop>(500ms)},
+    m_accpetorLoop{std::make_unique<EventLoop>(500ms)},
     m_dispatcher{[this](const UserConnectionPtr& userconn, const MessagePtr& message) { this->UnkonwnCommand(userconn, message); }},
-    m_workThreads("Gate Work Thread")
+    m_workThreads(std::make_unique<ThreadPool>("Gate Work Thread"))
 {
     RegisterRpcForward<C2SLogin, S2CLogin>();
     RegisterRpcForward<C2SRegister, S2CRegister>();
@@ -51,7 +53,7 @@ void GateServerManager::OnFrontend_Disconnect(const UserConnectionPtr& userconn)
 
 void GateServerManager::OnFrontend_Message(const UserConnectionPtr & userconn, const MessagePtr & message, const MessageType type)
 {
-    m_workThreads.PushTask([this, userconn, message](){
+    m_workThreads->PushTask([this, userconn, message](){
         m_dispatcher.OnProtobufMessage(userconn, message);
     });
 }
@@ -72,7 +74,7 @@ void GateServerManager::RunApp()
     Init();
 
     //! 启动服务器的工作线程
-    m_workThreads.Start(m_accpetorLoop.get(), config::g_app_config->GetValue().work_thread_num());
+    m_workThreads->Start(m_accpetorLoop.get(), config::g_app_config->GetValue().work_thread_num());
 
     //! 启动监听线程(即主线程)的
     m_accpetorLoop->Loop();
@@ -210,7 +212,7 @@ void GateServerManager::Init()
 
     /*********** 启动前端 ***********/
     //! 初始化监听的端口和IP地址(IP地址未给出，则使用INADDR_ANY绑定所有IP地址)
-    net::IPAddressPtr listenAddr = std::make_shared<net::IPv4Address>(
+    IPAddressPtr listenAddr = std::make_shared<IPv4Address>(
         "192.168.147.128",
         config::g_app_config->GetValue().app_tcp_port()
     );

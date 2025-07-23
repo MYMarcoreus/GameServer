@@ -1,7 +1,3 @@
-cmake_minimum_required(VERSION 3.22)
-project(GameServer)
-set(CMAKE_CXX_STANDARD 20)
-
 set(LocalSrc
         md5/md5.cpp
         tinyxml/tinyxml2.cpp

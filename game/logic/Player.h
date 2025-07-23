@@ -1,6 +1,6 @@
 #pragma once
 #include "core_definations.h"
-#include "player.pb.h"
+#include "room.pb.h"
 
 namespace yy::app::logic
 {

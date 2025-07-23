@@ -1,5 +1,5 @@
-add_executable(test testtt.cpp)
-target_link_libraries(test CommonLibrary)
+add_executable(testtt testtt.cpp)
+target_link_libraries(testtt PRIVATE CommonLibrary GTest::gtest GTest::gtest_main)
 
 add_executable(test_codec_client test_codec_client.cpp)
 target_link_libraries(test_codec_client CommonLibrary)

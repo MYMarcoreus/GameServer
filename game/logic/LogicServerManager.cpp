@@ -4,7 +4,9 @@
 #include "log.h"
 #include "EventLoop.h"
 #include "LogicServer.h"
-#include "future"
+#include "ThreadPool.h"
+#include "ZkServiceManager.h"
+#include <future>
 #include <functional>
 
 using namespace std::chrono_literals;
@@ -13,8 +15,9 @@ namespace yy::app::logic {
 
 
 LogicServerManager::LogicServerManager():
-    m_dispatcher{[this](const UserConnectionPtr& userdata, const MessagePtr& message) { this->UnkonwnCommand(userdata, message); }},
-    m_workThreads("Game Work Thread")
+    m_zk(std::make_unique<zk::ZkServiceManager>()),
+    m_workThreads(std::make_unique<ThreadPool>("Game Work Thread")),
+    m_dispatcher{[this](const UserConnectionPtr& userdata, const MessagePtr& message) { this->UnkonwnCommand(userdata, message); }}
 { }
 
 LogicServerManager::~LogicServerManager() {
@@ -46,7 +49,7 @@ void LogicServerManager::AppNotifier_Disconnect(const UserConnectionPtr& userdat
 void LogicServerManager::AppNotifier_Command(const UserConnectionPtr & userdata, const MessagePtr & message, const MessageType type)
 {
     //! 对于游戏游戏，并不在IO线程处理，而是在专门处理游戏数据的工作线程中处理（让Game层的分发器找到该游戏消息所注册的对应的处理函数。）
-    m_workThreads.PushTask([this, userdata, message] { // 注意这里跨线程传输需要拷贝智能指针
+    m_workThreads->PushTask([this, userdata, message] { // 注意这里跨线程传输需要拷贝智能指针
         m_dispatcher.OnProtobufMessage(userdata, message);
     });
 }
@@ -63,7 +66,7 @@ void LogicServerManager::RunApp()
     Init();
 
     //! 启动服务器的工作线程
-    m_workThreads.Start(m_accpetorLoop.get(), config::g_app_config->GetValue().work_thread_num());
+    m_workThreads->Start(m_accpetorLoop.get(), config::g_app_config->GetValue().work_thread_num());
 
     //! 启动监听线程(即主线程)的
     m_accpetorLoop->Loop();
@@ -108,8 +111,8 @@ void LogicServerManager::Init()
     m_test_service = make_unique<TestService>();
     m_test_service->Init();
 
-    m_zk.Start("/services");
-    m_zk.Register("RoomService", listenAddr->GetIPStr(), listenAddr->GetPortStr());
+    m_zk->Start("/services");
+    m_zk->Register("RoomService", listenAddr->GetIPStr(), listenAddr->GetPortStr());
 
     //! 启动服务器的监听和IO线程
     m_server->Start();

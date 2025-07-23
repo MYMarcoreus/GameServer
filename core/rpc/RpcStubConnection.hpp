@@ -49,9 +49,9 @@ public:
         rpc_conn_->SetConnectionEstablishedCallback(connectionEstablishedCallback);
     }
 
-    std::string GetServiceName()
+    static std::string GetServiceName()
     {
-        return stub_->GetDescriptor()->name();
+        return ServiceType_Stub::descriptor()->name();
     }
 
 private:

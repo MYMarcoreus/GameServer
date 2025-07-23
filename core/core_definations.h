@@ -25,6 +25,7 @@ namespace yy::net {
 class Socket;
 class NetBuffer;
 class EventLoop;
+class ThreadPool;
 }
 
 namespace yy::protocol::core {
@@ -38,8 +39,7 @@ class SequentialBuffer;
 
 
 namespace yy::core {
-
-
+class IServer;
 class UserConnection;
 using UserConnectionPtr = std::shared_ptr<UserConnection>;
 using MessagePtr = std::shared_ptr<google::protobuf::Message>;
@@ -86,6 +86,17 @@ enum class MessageType
 
 template<typename MsgT>
 concept IsProtobufMessage = std::is_base_of_v<google::protobuf::Message, MsgT>;
+
+template<typename ClassT, typename MsgT>
+concept MessageHandlerInvocable = requires(
+    ClassT* self,
+    const UserConnectionPtr& user,
+    const std::shared_ptr<MsgT>& msg,
+    void (ClassT::*handler)(const UserConnectionPtr&, const std::shared_ptr<MsgT>&))
+{
+    (self->*handler)(user, msg);
+};
+
 
 }
 

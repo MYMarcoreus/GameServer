@@ -2,11 +2,10 @@
 
 #ifdef ____LINUX
 
+#include "FullDuplexPipe.h"
 #include <functional>
 #include <memory>
 #include <csignal>
-
-#include "FullDuplexPipe.h"
 
 namespace yy::net
 {
@@ -14,11 +13,11 @@ class EventLoop;
 class IOChannel;
 }
 
+using namespace yy::net;
+
 namespace yy::util
 {
 
-using yy::net::EventLoop;
-using yy::net::IOChannel;
 
 class SignalManager {
 public:

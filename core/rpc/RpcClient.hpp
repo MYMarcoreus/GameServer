@@ -35,6 +35,11 @@ public:
         }
     }
 
+    void Start(typename StubConnType::F_RpcStubConnectionEstablishedCallback cb)
+    {
+        Start(0, std::move(cb));
+    }
+
     ///@brief 请求的发送的同步的，响应的等待是异步的
     /// Request消息的生命周期由调用者自己管理
     /// Respone消息的生命周期由该函数自动管理

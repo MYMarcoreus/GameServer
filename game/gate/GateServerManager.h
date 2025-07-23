@@ -1,14 +1,12 @@
 #pragma once
 
 #include "core_definations.h"
-#include "IServer.h"
-#include "IGameBase.h"
 #include "account.pb.h"
 #include "AccountRpcClient.h"
 #include "ProtobufDispatcher.h"
 #include "RpcStubConnectionPool.hpp"
-#include "RpcControllerImpl.h"
-#include "ThreadPool.h"
+#include "UserConnection.h"
+
 
 using namespace yy::net;
 using namespace yy::core;
@@ -49,8 +47,7 @@ private:
     std::unique_ptr<IServer> m_frontend;
     ProtobufDispatcher<UserConnectionPtr> m_dispatcher; // 处理下层(core层)分发传来的无法处理的消息
     std::unique_ptr<AccountRpcClient>   m_accountRpcClient;
-
-    ThreadPool m_workThreads;
+    std::unique_ptr<ThreadPool> m_workThreads;
 };
 
 
@@ -63,6 +60,7 @@ void GateServerManager::RegisterRpcForward()
         [this](const UserConnectionPtr& userconn, const std::shared_ptr<Request>& request)
         {
             // 发起RPC请求
+            YLOG_INFO("RPC转发：{}发送：{}", Request::descriptor()->name(), request->ShortDebugString());
             const bool success = m_accountRpcClient->CallRemoteAsync<Request, Response>(
                 request,
                 // 设置Rpc响应回调
@@ -75,7 +73,7 @@ void GateServerManager::RegisterRpcForward()
 
                     if (response) {
                         userconn->SendTCP(*response);
-                        YLOG_INFO("{}返回：{}", Response::descriptor()->name(), response->ShortDebugString());
+                        YLOG_INFO("RPC转发：{}返回：{}", Response::descriptor()->name(), response->ShortDebugString());
                     }
                 });
 

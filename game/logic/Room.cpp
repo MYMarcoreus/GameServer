@@ -1,16 +1,16 @@
-#include "PlayerManager.h"
+#include "Room.h"
 #include "UserConnection.h"
 #include "log.h"
 
 namespace yy::app::logic
 {
-void PlayerManager::AddPlayer(const UID_t uid, const PlayerPtr& player)
+void Room::AddPlayer(const UID_t uid, const PlayerPtr& player)
 {
     util::WriteLockGuard lg{mutex_};
     room_players_.emplace(uid, player);
 }
 
-PlayerPtr PlayerManager::RemovePlayer(const UID_t uid)
+PlayerPtr Room::RemovePlayer(const UID_t uid)
 {
     util::WriteLockGuard lg{mutex_};
     const auto it = room_players_.find(uid);
@@ -22,7 +22,7 @@ PlayerPtr PlayerManager::RemovePlayer(const UID_t uid)
     return player;
 }
 
-PlayerPtr PlayerManager::GetPlayer(const UID_t uid)
+PlayerPtr Room::GetPlayer(const UID_t uid)
 {
     util::ReadLockGuard lg{mutex_};
     const auto it = room_players_.find(uid);
@@ -32,7 +32,7 @@ PlayerPtr PlayerManager::GetPlayer(const UID_t uid)
     return it->second;
 }
 
-std::unordered_map<UID_t, PlayerPtr> PlayerManager::GetAllPlayers()
+std::unordered_map<UID_t, PlayerPtr> Room::GetAllPlayers()
 {
     std::unordered_map<UID_t, PlayerPtr> result;
     {
@@ -42,13 +42,13 @@ std::unordered_map<UID_t, PlayerPtr> PlayerManager::GetAllPlayers()
     return result;
 }
 
-bool PlayerManager::HasPlayer(const UID_t uid)
+bool Room::HasPlayer(const UID_t uid)
 {
     util::ReadLockGuard lg{mutex_};
     return room_players_.contains(uid);
 }
 
-void PlayerManager::Broadcast(const PlayerPtr& from, const google::protobuf::Message& data)
+void Room::Broadcast(const PlayerPtr& from, const google::protobuf::Message& data)
 {
     util::ReadLockGuard lg{mutex_};
     auto values = room_players_ | std::views::values;
@@ -65,7 +65,7 @@ void PlayerManager::Broadcast(const PlayerPtr& from, const google::protobuf::Mes
     }
 }
 
-void PlayerManager::Broadcast(const PlayerPtr& from, const core::MessagePtr& data)
+void Room::Broadcast(const PlayerPtr& from, const core::MessagePtr& data)
 {
     if (from and data) {
         this->Broadcast(from, *data);

@@ -3,7 +3,6 @@
 #include "net_definations.h"
 #include "core_definations.h"
 #include "noncopyable.h"
-#include "ConfigManager.h"
 #include "AppXmlConfig.h"
 
 namespace yy::core {

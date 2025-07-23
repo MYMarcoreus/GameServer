@@ -1,6 +1,7 @@
 #include "CenterServerManager.h"
 #include "log.h"
 #include "ConfigManager.h"
+#include <google/protobuf/message_lite.h>
 
 using namespace std::chrono_literals;
 

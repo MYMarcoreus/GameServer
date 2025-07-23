@@ -30,7 +30,7 @@ public:
 
     // 只能调用一次的初始化函数
     static void Init(std::string name, size_t max_size, Creator creator, Validator validator = nullptr) {
-        std::call_once(get_once_flag(), [&]() {
+        std::call_once(get_once_flag(), [&] {
             auto& inst = Instance();
             inst.name_ = std::move(name);
             inst.max_size_ = max_size;

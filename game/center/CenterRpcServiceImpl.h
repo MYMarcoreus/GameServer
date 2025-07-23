@@ -1,16 +1,12 @@
 #pragma once
 
-#include "ZkServiceManager.h"
-#include "MySqlClient.h"
-#include "RpcServer.h"
-#include "RedisClient.h"
 #include "center.pb.h"
 
-
-namespace yy::net
-{
-class EventLoop;
-}
+namespace yy::net { class EventLoop; }
+namespace yy::core::rpc   { class RpcServer; }
+namespace yy::core::redis { class RedisClient; }
+namespace yy::core::mysql { class MySqlClient; }
+namespace yy::core::zk    { class ZkServiceManager; }
 
 namespace yy::app::center
 {
@@ -26,10 +22,10 @@ private:
     auto GetToken() -> std::string;
     auto GetLogicServerAddr() -> std::pair<std::string, uint16_t>;
 
-    core::rpc::RpcServer&                       rpc_server_;
-    core::redis::RedisClient&                          redis_client_;
-    core::mysql::MySqlClient&                          mysql_pool_;
-    std::unique_ptr<core::zk::ZkServiceManager> zk_service_;
+    core::rpc::RpcServer&                           rpc_server_;
+    core::redis::RedisClient&                       redis_client_;
+    core::mysql::MySqlClient&                       mysql_pool_;
+    std::unique_ptr<core::zk::ZkServiceManager>     zk_service_;
 };
 
 }

@@ -13,7 +13,7 @@ class EventLoop;
 
 class ThreadPool {
 public:
-    using Task = net::F_TaskCallback; //! 必须是`std::function<void ()>`，否则lambda函数/std::bind函数无法传入带捕获列表/多参数函数
+    using Task = F_TaskCallback; //! 必须是`std::function<void ()>`，否则lambda函数/std::bind函数无法传入带捕获列表/多参数函数
 
 public:
     ///@param name 线程池的用途
@@ -23,7 +23,7 @@ public:
     ~ThreadPool();
 
     ///@brief 启动所有线程，但是并没有任务，所以一开始会wait任务
-    void Start(net::EventLoop * timerloop, int threadNum = static_cast<int>(std::thread::hardware_concurrency()) / 2);
+    void Start(EventLoop * timerloop, int threadNum = static_cast<int>(std::thread::hardware_concurrency()) / 2);
 
     ///@brief 不会立即停止所有线程，而是等待它们将任务队列中的余下任务完成后再停止
     void Stop();
@@ -40,10 +40,10 @@ public:
     int TaskQueueSize() const { return m_Queue.size(); }
 
 
-    net::TimerID RunTaskAt(net::Timestamp time, Task cb);
-    net::TimerID RunTaskAfter(net::Microseconds delay, Task cb);
-    net::TimerID RunTaskEvery(net::Microseconds interval, Task cb);
-    void CancelTimer(net::TimerID timerid);
+    TimerID RunTaskAt(Timestamp time, Task cb);
+    TimerID RunTaskAfter(Microseconds delay, Task cb);
+    TimerID RunTaskEvery(Microseconds interval, Task cb);
+    void CancelTimer(TimerID timerid);
 
 
 private:
@@ -51,11 +51,12 @@ private:
     void PopAndExecuteTask();
 
 private:
-    std::string                m_name;
-    util::BoundedLockedQueue<Task>   m_Queue;     // 任务队列
-    std::vector<std::thread>   m_Threads;   // 管理线程
-    bool                       m_IsRunning;
-    net::EventLoop *           m_TimerLoop;
+    std::string                         m_name;
+    util::BoundedLockedQueue<Task>      m_Queue;     // 任务队列
+    std::vector<std::thread>            m_Threads;   // 管理线程
+    bool                                m_IsRunning;
+    EventLoop *                         m_TimerLoop;
+    std::vector<TimerID>                m_runningTimerIDs;
 };
 
 

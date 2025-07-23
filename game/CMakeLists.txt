@@ -1,17 +1,17 @@
-cmake_minimum_required(VERSION 3.22)
-project(GameServer)
-set(CMAKE_CXX_STANDARD 20)
-
-
 set(LocalSrc
         logic/LogicServerManager.cpp
         logic/RoomService.cpp
         logic/TestService.cpp
+        logic/Room.cpp
+        logic/Player.cpp
+        logic/Player.h
         account/AccountServerManager.cpp
         account/AccountRpcServiceImpl.cpp
         account/CenterRpcClient.cpp
         gate/GateServerManager.cpp
         gate/AccountRpcClient.cpp
+        center/CenterRpcServiceImpl.cpp
+        center/CenterServerManager.cpp
 )
 
 #! 给本地相对路径添加前缀，变为绝对路径

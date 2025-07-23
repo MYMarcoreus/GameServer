@@ -7,7 +7,7 @@ namespace net {
 
 class TimerManager {
 public:
-    TimerManager(EventLoop * loop): m_loop{loop}, m_TimerCounter{0} {}
+    TimerManager(EventLoop * loop): m_loop{loop}, m_TimerCounter{10000} {}
     virtual ~TimerManager() = default;
 
     ///@brief 在定时器列表中新建一个定时器

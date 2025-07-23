@@ -8,9 +8,9 @@
 
 
 using namespace std::chrono_literals;
+using namespace yy::net;
 using namespace yy::core;
 using namespace yy::util;
-using yy::net::TcpConnectionPtr;
 
 using yy::protocol::app::SelectServerReq;
 using yy::protocol::app::SelectServerRsp;
@@ -29,20 +29,17 @@ CenterServerManager::~CenterServerManager() {
 
 void CenterServerManager::RunApp()
 {
-    //! ①、读取配置文件
+    //! 读取配置文件
     config::ConfigManager::LoadXmlConfigs();
-    //! ②、读取日志配置
+    //! 读取日志配置
     Ylog::LoggerManager::Instance().ReadConfigs();
-
-
-    //! ④、初始化监听的端口和IP地址(IP地址未给出，则使用INADDR_ANY绑定所有IP地址)
-    const net::IPAddressPtr rpcAddr = std::make_shared<net::IPv4Address>(config::g_app_config->GetValue().rpc_port());
-    //! ⑤、初始化服务器对象（③和④）
-    m_accpetorLoop = std::make_unique<net::EventLoop>(500ms);
+    //! 初始化监听的端口和IP地址(IP地址未给出，则使用INADDR_ANY绑定所有IP地址)
+    const IPAddressPtr rpcAddr = std::make_shared<IPv4Address>(config::g_app_config->GetValue().rpc_port());
+    //! 初始化服务器对象
+    m_accpetorLoop = std::make_unique<EventLoop>(500ms);
     m_rpcServer = std::make_unique<rpc::RpcServer>(m_accpetorLoop.get(), rpcAddr);
     m_rpcServer->RegisterService<CenterRpcServiceImpl>(m_accpetorLoop.get());
     m_rpcServer->Start(2, 500ms);
-
     //! 启动监听线程(即主线程)并阻塞在此
     m_accpetorLoop->Loop();
 }

@@ -1,16 +1,13 @@
 #pragma once
 
-#include "IServer.h"
-#include "IGameBase.h"
-#include "ProtobufDispatcher.h"
-#include "ThreadPool.h"
+#include <memory>
+#include "Singleton.h"
 
-namespace yy::core::rpc
-{
-class RpcServer;
-}
+namespace yy::core::rpc { class RpcServer; }
+namespace yy::net { class EventLoop; }
 
-using yy::core::IServer;
+using namespace yy::net;
+using namespace yy::core;
 using std::shared_ptr;
 
 
@@ -22,13 +19,13 @@ class CenterServerManager final : public Singleton<CenterServerManager> {
 public:
     void RunApp();
 
-    core::rpc::RpcServer& GetRpcServer() const { return *m_rpcServer; }
+    rpc::RpcServer& GetRpcServer() const { return *m_rpcServer; }
 private:
     CenterServerManager();
     ~CenterServerManager() override;
 
-    std::unique_ptr<core::rpc::RpcServer> m_rpcServer;
-    std::unique_ptr<net::EventLoop> m_accpetorLoop;
+    std::unique_ptr<rpc::RpcServer> m_rpcServer;
+    std::unique_ptr<EventLoop> m_accpetorLoop;
 };
 
 }

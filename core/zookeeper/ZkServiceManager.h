@@ -24,6 +24,7 @@ public:
     auto FetchAllLocalCache() -> std::unordered_map<std::string, std::vector<net::IPAddressPtr>>;
     auto FetchRemote(const std::string& service_name) -> std::vector<net::IPAddressPtr>;
     auto FetchAllRemote() -> std::unordered_map<std::string, std::vector<net::IPAddressPtr>>;
+    size_t EndpointSize(const std::string& service_name);
 
     void Watch(const std::string& service_name, WatcherCallback && cb);
 

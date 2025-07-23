@@ -12,6 +12,8 @@
 #include <queue>
 #include <functional>
 
+#include "ThreadPool.h"
+
 namespace yy::core::rpc
 {
 
@@ -47,8 +49,18 @@ public:
         thread_{std::make_unique<net::EventLoopThread>(nullptr, 500ms)},
         loop_{thread_->CreateLoop()},
         service_root_(service_root),
-        pool_size_{poolsize == 0 ? 1 : poolsize}
+        service_name_{GetServiceName()},
+        pool_size_{poolsize}
     { }
+
+    explicit RpcStubConnectionPool(const std::string & service_root = "/rpc_services", const bool CanRetry = true)
+        : RpcStubConnectionPool(0, service_root, CanRetry)
+    { }
+
+    static std::string GetServiceName()
+    {
+        return ServiceType_Stub::descriptor()->name();
+    }
 
     void SetServiceChangeCallback (const zk::ZkServiceManager::WatcherCallback & cb)
     {
@@ -59,40 +71,53 @@ public:
     {
         assert(m_ServiceChangeCallback);
 
+        // 启动获取所有服务的地址
         zkServiceManager_.Start(service_root_);
-
-        for (int i = 0; i < pool_size_; ++i) {
-            std::unique_ptr<StubConnType> stub_conn = std::make_unique<StubConnType>(loop_);
-            if (i == 0) {
-                service_name_ = stub_conn->GetServiceName();
-            }
-
-            stub_conn->SetConnectionEstablishedCallback(cb);
-            if (auto addr = SelectAddrByRoundRobin(); !addr or not stub_conn->Connect(addr)) {
-                YLOG_ERROR("RpcStubPool未找到服务{}", stub_conn->GetServiceName())
-
-                // 在Rpc连接池独占的线程中定时尝试连接服务端
-                auto timer = loop_->CreateTimerEvery(1s);
-                timer->SetCallback([this, _id = timer->GetID(), _loop = loop_, _cb = cb]()
-                {
-                    std::unique_ptr<StubConnType> _stub_conn = std::make_unique<StubConnType>(_loop);
-                    YLOG_INFO("RpcStubPool重试寻找服务{}", _stub_conn->GetServiceName())
-                    _stub_conn->SetConnectionEstablishedCallback(_cb);
-
-                    // 如果找到地址则阻塞在此直到连接成功，将连接加入池中并取消定时器；没找到地址则等待下一次定时器到
-                    if (auto _addr = SelectAddrByRoundRobin(); _addr and _stub_conn->Connect(_addr)) {
-                        std::unique_lock  _lg(pool_mutex_);
-                        pool_.emplace(std::move(_stub_conn));
-                        _lg.unlock();
-                        _loop->CancelTimer(_id);
-                    }
-                });
-                loop_->AddTimer(timer);
-            } else {
-                std::lock_guard lg(pool_mutex_);
-                pool_.emplace(std::move(stub_conn));
-            }
+        if (pool_size_ == 0) {
+            pool_size_ = zkServiceManager_.EndpointSize(service_name_);
         }
+
+        // 启动连接任务线程池
+        net::ThreadPool temp_thread_pool("temp connect_thread_pool");
+        temp_thread_pool.Start(loop_, pool_size_);
+        // 连接任务：阻塞直到连接成功
+        auto connect_task = [this, cb]() -> bool
+        {
+            // 创建连接
+            std::unique_ptr<StubConnType> stub_conn = std::make_unique<StubConnType>(loop_);
+            stub_conn->SetConnectionEstablishedCallback(cb);
+
+            // 寻找并连接服务
+            auto addr = SelectAddrByRoundRobin();
+            if (addr == nullptr) {
+                YLOG_ERROR("RpcStubPool未找到服务{}", stub_conn->GetServiceName())
+                return false;
+            }
+            if (not stub_conn->Connect(addr)) {
+                YLOG_ERROR("RpcStubPool无法连接服务{}", stub_conn->GetServiceName())
+                return false;
+            }
+            // 连接成功将连接加入连接池中
+            std::lock_guard lg(pool_mutex_);
+            pool_.emplace(std::move(stub_conn));
+            return true;
+        };
+        YLOG_INFO("{}RPC连接池大小 = {}", GetServiceName(), pool_size_)
+        // 启动并发连接任务，n个连接启动n个线程，每个线程负责一个连接定时任务
+        for (int i = 0; i < pool_size_ ;++i) {
+            // 循环任务控制，若任务完成则取消循环任务，否则继续执行该任务
+            auto fun = [connect_task]
+            {
+                while (connect_task() == false) {
+                    YLOG_ERROR("RpcStubPool连接失败，再次尝试连接{}", GetServiceName())
+                }
+
+            };
+            temp_thread_pool.PushTask(fun);
+        }
+
+        // 阻塞直到所有连接完成
+        while (temp_thread_pool.TaskQueueSize() > 0) { /* spin */ }
 
         // 监听zookeeper在服务根目录下的变化，首次调用时会拉取服务下的所有可用地址
         zkServiceManager_.Watch(service_name_, [this](const std::string& service_path, std::vector<net::IPAddressPtr> && endpoints) {
@@ -143,8 +168,8 @@ private:
 
     std::unique_ptr<net::EventLoopThread>   thread_;
     net::EventLoop *                        loop_;
-    std::string         service_name_;
     std::string         service_root_ ;
+    std::string         service_name_;
 
     std::queue<std::unique_ptr<StubConnType>>   pool_;
     std::mutex                                  pool_mutex_;

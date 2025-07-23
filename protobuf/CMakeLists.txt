@@ -1,11 +1,6 @@
-cmake_minimum_required(VERSION 3.22)
-project(GameServer)
-set(CMAKE_CXX_STANDARD 20)
-
-
 set(LocalSrc
         connection.pb.cc
-        player.pb.cc
+        room.pb.cc
         query.pb.cc
         rpc.pb.cc
         account.pb.cc

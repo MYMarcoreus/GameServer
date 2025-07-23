@@ -23,7 +23,7 @@ ThreadPool::~ThreadPool() {
     }
 }
 
-void ThreadPool::Start(net::EventLoop * timerloop, const int threadNum) {
+void ThreadPool::Start(EventLoop * timerloop, const int threadNum) {
     m_IsRunning = true;
     m_Threads.resize(threadNum);
 
@@ -40,6 +40,11 @@ void ThreadPool::Stop() {
     if(m_IsRunning) {
         m_IsRunning = false;
 
+        // 取消定时任务
+        for (const auto timerid: m_runningTimerIDs) {
+            CancelTimer(timerid);
+        }
+
         // 唤醒所有线程，然后所有线程检查pop出来的是否为不合法的元素，如果是，检查m_IsRunning
         for (int i = 0; i < m_Threads.size(); ++i) {
             m_Queue.try_push(nullptr);
@@ -48,11 +53,14 @@ void ThreadPool::Stop() {
         // 等待所有线程执行完
         for(std::thread & work_thread: m_Threads)
         {
-            if(work_thread.joinable())
+            //!FIXEDBUG 防止work_thread在自己执行的task中来析构ThreadPool并执行了Stop，执行work_thread.join()时可能存在自我join的问题，从而导致以下问题：
+            //! terminate called after throwing an instance of 'std::system_error' : what():  Resource deadlock avoided
+            //! 以上问题发生在自取消的定时任务中
+            if (work_thread.joinable() && work_thread.get_id() != std::this_thread::get_id()) {
                 work_thread.join();
+            }
         }
     }
-
 }
 
 void ThreadPool::PushTask(Task task) {
@@ -75,29 +83,34 @@ void ThreadPool::PopAndExecuteTask() {
             task();
     }
 
-    std::cout << "thread<" << std::this_thread::get_id() << "> finished!\n";
+    YLOG_INFO("结束线程池[{}]线程<{}>", m_name, CastThreadIDToStr(std::this_thread::get_id()))
 }
 
-net::TimerID ThreadPool::RunTaskAt(const net::Timestamp time, Task cb) {
+TimerID ThreadPool::RunTaskAt(const Timestamp time, Task cb) {
     assert(m_IsRunning);
     assert(m_TimerLoop);
-    return m_TimerLoop->RunAt(time, [this, taskcb = std::move(cb)](){this->PushTask(taskcb);});
+    auto timerid = m_TimerLoop->RunAt(time, [this, taskcb = std::move(cb)]{this->PushTask(taskcb);});
+    m_runningTimerIDs.emplace_back(timerid);
+    return timerid;
 }
 
-net::TimerID ThreadPool::RunTaskAfter(const net::Microseconds delay, Task cb) {
+TimerID ThreadPool::RunTaskAfter(const Microseconds delay, Task cb) {
     assert(m_IsRunning);
     assert(m_TimerLoop);
-    return m_TimerLoop->RunAfter(delay, [this, taskcb = std::move(cb)](){this->PushTask(taskcb);});
+    auto timerid = m_TimerLoop->RunAfter(delay, [this, taskcb = std::move(cb)](){this->PushTask(taskcb);});
+    m_runningTimerIDs.emplace_back(timerid);
+    return timerid;
 }
 
-net::TimerID ThreadPool::RunTaskEvery(const net::Microseconds interval, Task cb) {
+TimerID ThreadPool::RunTaskEvery(const Microseconds interval, Task cb) {
     assert(m_IsRunning);
     assert(m_TimerLoop);
-    return m_TimerLoop->RunEvery(interval, [this, taskcb = std::move(cb)](){ this->PushTask(taskcb); });
+    auto timerid = m_TimerLoop->RunEvery(interval, [this, taskcb = std::move(cb)](){ this->PushTask(taskcb); });
+    m_runningTimerIDs.emplace_back(timerid);
+    return timerid;
 }
 
-void ThreadPool::CancelTimer(const net::TimerID timerid) {
-    assert(m_IsRunning);
+void ThreadPool::CancelTimer(const TimerID timerid) {
     assert(m_TimerLoop);
     m_TimerLoop->CancelTimer(timerid);
 }

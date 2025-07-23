@@ -83,6 +83,15 @@ auto ZkServiceManager::FetchAllRemote() -> std::unordered_map<std::string, std::
     }
 }
 
+size_t ZkServiceManager::EndpointSize(const std::string& service_name)
+{
+    const auto service_base = std::format("{}/{}", service_root_, service_name);
+
+    util::ReadLockGuard lg(service_endpoint_mutex_);
+    const auto it = service_endpoint_map_.find(service_base);
+    return it != service_endpoint_map_.end() ? it->second.size() : 0;
+}
+
 
 void ZkServiceManager::Watch(const std::string& service_name, WatcherCallback && cb)
 {

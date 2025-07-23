@@ -13,11 +13,11 @@ using yy::protocol::app::SelectServerRsp;
 
 namespace yy::app::account
 {
-AccountRpcServiceImpl::AccountRpcServiceImpl(net::EventLoop * loop):
+AccountRpcServiceImpl::AccountRpcServiceImpl(EventLoop * loop):
     server_(AccountServerManager::Instance().GetServer()),
     rpc_server_(AccountServerManager::Instance().GetRpcServer()),
-    redis_client_(core::redis::RedisClient::Instance()),
-    mysql_client_(core::mysql::MySqlClient::Instance()),
+    redis_client_(redis::RedisClient::Instance()),
+    mysql_client_(mysql::MySqlClient::Instance()),
     center_client_(CenterRpcClient::Instance())
 {
     // 初始化Redis
@@ -25,7 +25,7 @@ AccountRpcServiceImpl::AccountRpcServiceImpl(net::EventLoop * loop):
     // 初始化MySql
     mysql_client_.Start(loop, "gameserver");
     // 初始化ZkClient
-    center_client_.Start(5, [](const net::TcpConnectionPtr & conn) {
+    center_client_.Start(3, [](const TcpConnectionPtr & conn) {
         YLOG_INFO("连接至CenterRpc服务器！");
     });
 }
@@ -110,7 +110,7 @@ void AccountRpcServiceImpl::Login(google::protobuf::RpcController* controller, c
     center_client_.CallRemoteAsync<SelectServerReq, SelectServerRsp>(
         select_server_req,
         // 异步函数，需要复制数据
-        [this, response, done](std::unique_ptr<SelectServerRsp> && resp, std::unique_ptr<core::rpc::RpcControllerImpl> && controller) {
+        [this, response, done](std::unique_ptr<SelectServerRsp> && resp, std::unique_ptr<rpc::RpcControllerImpl> && controller) {
             switch (resp->result_code()) {
             case protocol::app::SelectServerRsp_Status_eSuccess:
                 response->set_session_id(resp->session_id());

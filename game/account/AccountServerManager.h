@@ -1,16 +1,14 @@
 #pragma once
 
-#include "IServer.h"
-#include "IGameBase.h"
+#include "Singleton.h"
 #include "ProtobufDispatcher.h"
-#include "ThreadPool.h"
 
-namespace yy::core::rpc
-{
-class RpcServer;
-}
+namespace yy::net{ class ThreadPool; }
+namespace yy::core{ class IServer; }
+namespace yy::core::rpc{ class RpcServer;}
 
-using yy::core::IServer;
+using namespace yy::net;
+using namespace yy::core;
 using std::shared_ptr;
 
 
@@ -23,27 +21,25 @@ public:
     void RunApp();
 
     IServer&            GetServer() const { return *m_server; }
-    core::rpc::RpcServer&    GetRpcServer() const { return *m_rpcServer; }
+    rpc::RpcServer&     GetRpcServer() const { return *m_rpcServer; }
 private:
     AccountServerManager();
     ~AccountServerManager() override;
 
     void Init();
 
-    void AppNotifier_Secutiry(const core::UserConnectionPtr& userdata) ;
-    void AppNotifier_Disconnect(const core::UserConnectionPtr& userdata) ;
-    void AppNotifier_Command(const core::UserConnectionPtr &, const core::MessagePtr &, const core::MessageType);
+    void AppNotifier_Secutiry(const UserConnectionPtr& userdata) ;
+    void AppNotifier_Disconnect(const UserConnectionPtr& userdata) ;
+    void AppNotifier_Command(const UserConnectionPtr &, const MessagePtr &, const MessageType);
 
-    void UnkonwnCommand(const core::UserConnectionPtr &, const core::MessagePtr &);
+    void UnkonwnCommand(const UserConnectionPtr &, const MessagePtr &);
 
 
     std::unique_ptr<IServer> m_server;
-    std::unique_ptr<core::rpc::RpcServer> m_rpcServer;
-    core::ProtobufDispatcher<core::UserConnectionPtr> m_dispatcher; // 处理下层(core层)分发传来的无法处理的消息
-    std::unique_ptr<yy::net::EventLoop> m_accpetorLoop;
-
-
-    yy::net::ThreadPool m_wordThreads;
+    std::unique_ptr<rpc::RpcServer> m_rpcServer;
+    ProtobufDispatcher<UserConnectionPtr> m_dispatcher; // 处理下层(core层)分发传来的无法处理的消息
+    std::unique_ptr<EventLoop> m_accpetorLoop;
+    std::unique_ptr<ThreadPool> m_wordThreads;
 };
 
 }

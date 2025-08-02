@@ -97,7 +97,7 @@ std::pair<RpcHeader, MessagePtr> RpcCodec::Parse(const TcpConnectionPtr& conn, N
     //! 解析消息体
     MessagePtr message = CreateRpcMessage();
     if(message) {
-        bool isOk = buf.PopDataToProtobuf(message, header.CalcBodyLen());
+        const bool isOk = buf.PopDataToProtobuf(message, header.CalcBodyLen());
         //! 解析消息体失败！
         if(!isOk) {
             outErrCode = MessageParseErrorCode::eParseError;

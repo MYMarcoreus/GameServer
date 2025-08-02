@@ -1,10 +1,14 @@
 set(LocalSrc
         connection.pb.cc
-        room.pb.cc
-        query.pb.cc
         rpc.pb.cc
         account.pb.cc
-        center.pb.cc
+        account_data.pb.cc
+        room.pb.cc
+        room_data.pb.cc
+        game.pb.cc
+        game_data.pb.cc
+        inner_room.pb.cc
+        msg_cmd.pb.cc
 )
 
 #! 给本地相对路径添加前缀，变为绝对路径

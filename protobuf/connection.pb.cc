@@ -23,19 +23,19 @@ namespace _pbi = _pb::internal;
 namespace yy {
 namespace protocol {
 namespace core {
-PROTOBUF_CONSTEXPR S2CXorBody::S2CXorBody(
+PROTOBUF_CONSTEXPR XorBodyRsp::XorBodyRsp(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_.xor_code_)*/0u
   , /*decltype(_impl_._cached_size_)*/{}} {}
-struct S2CXorBodyDefaultTypeInternal {
-  PROTOBUF_CONSTEXPR S2CXorBodyDefaultTypeInternal()
+struct XorBodyRspDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR XorBodyRspDefaultTypeInternal()
       : _instance(::_pbi::ConstantInitialized{}) {}
-  ~S2CXorBodyDefaultTypeInternal() {}
+  ~XorBodyRspDefaultTypeInternal() {}
   union {
-    S2CXorBody _instance;
+    XorBodyRsp _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 S2CXorBodyDefaultTypeInternal _S2CXorBody_default_instance_;
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 XorBodyRspDefaultTypeInternal _XorBodyRsp_default_instance_;
 PROTOBUF_CONSTEXPR HeartBody::HeartBody(
     ::_pbi::ConstantInitialized) {}
 struct HeartBodyDefaultTypeInternal {
@@ -47,66 +47,66 @@ struct HeartBodyDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 HeartBodyDefaultTypeInternal _HeartBody_default_instance_;
-PROTOBUF_CONSTEXPR C2SSecurityBody::C2SSecurityBody(
+PROTOBUF_CONSTEXPR SecurityCheckReq::SecurityCheckReq(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_.app_md5_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.app_id_)*/0u
   , /*decltype(_impl_.app_version_)*/0u
   , /*decltype(_impl_._cached_size_)*/{}} {}
-struct C2SSecurityBodyDefaultTypeInternal {
-  PROTOBUF_CONSTEXPR C2SSecurityBodyDefaultTypeInternal()
+struct SecurityCheckReqDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR SecurityCheckReqDefaultTypeInternal()
       : _instance(::_pbi::ConstantInitialized{}) {}
-  ~C2SSecurityBodyDefaultTypeInternal() {}
+  ~SecurityCheckReqDefaultTypeInternal() {}
   union {
-    C2SSecurityBody _instance;
+    SecurityCheckReq _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 C2SSecurityBodyDefaultTypeInternal _C2SSecurityBody_default_instance_;
-PROTOBUF_CONSTEXPR S2CSecurityBody::S2CSecurityBody(
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 SecurityCheckReqDefaultTypeInternal _SecurityCheckReq_default_instance_;
+PROTOBUF_CONSTEXPR SecurityCheckRsp::SecurityCheckRsp(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_._has_bits_)*/{}
   , /*decltype(_impl_._cached_size_)*/{}
   , /*decltype(_impl_.result_code_)*/0
   , /*decltype(_impl_.server_udp_port_)*/0u
   , /*decltype(_impl_.session_id_)*/uint64_t{0u}} {}
-struct S2CSecurityBodyDefaultTypeInternal {
-  PROTOBUF_CONSTEXPR S2CSecurityBodyDefaultTypeInternal()
+struct SecurityCheckRspDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR SecurityCheckRspDefaultTypeInternal()
       : _instance(::_pbi::ConstantInitialized{}) {}
-  ~S2CSecurityBodyDefaultTypeInternal() {}
+  ~SecurityCheckRspDefaultTypeInternal() {}
   union {
-    S2CSecurityBody _instance;
+    SecurityCheckRsp _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 S2CSecurityBodyDefaultTypeInternal _S2CSecurityBody_default_instance_;
-PROTOBUF_CONSTEXPR C2SUdpPortRegister::C2SUdpPortRegister(
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 SecurityCheckRspDefaultTypeInternal _SecurityCheckRsp_default_instance_;
+PROTOBUF_CONSTEXPR UdpPortRegisterReq::UdpPortRegisterReq(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_.client_udp_ip_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.session_id_)*/uint64_t{0u}
   , /*decltype(_impl_.client_udp_port_)*/0u
   , /*decltype(_impl_._cached_size_)*/{}} {}
-struct C2SUdpPortRegisterDefaultTypeInternal {
-  PROTOBUF_CONSTEXPR C2SUdpPortRegisterDefaultTypeInternal()
+struct UdpPortRegisterReqDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR UdpPortRegisterReqDefaultTypeInternal()
       : _instance(::_pbi::ConstantInitialized{}) {}
-  ~C2SUdpPortRegisterDefaultTypeInternal() {}
+  ~UdpPortRegisterReqDefaultTypeInternal() {}
   union {
-    C2SUdpPortRegister _instance;
+    UdpPortRegisterReq _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 C2SUdpPortRegisterDefaultTypeInternal _C2SUdpPortRegister_default_instance_;
-PROTOBUF_CONSTEXPR S2CUdpPortRegister::S2CUdpPortRegister(
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 UdpPortRegisterReqDefaultTypeInternal _UdpPortRegisterReq_default_instance_;
+PROTOBUF_CONSTEXPR UdpPortRegisterRsp::UdpPortRegisterRsp(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_.session_id_)*/uint64_t{0u}
   , /*decltype(_impl_.status_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
-struct S2CUdpPortRegisterDefaultTypeInternal {
-  PROTOBUF_CONSTEXPR S2CUdpPortRegisterDefaultTypeInternal()
+struct UdpPortRegisterRspDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR UdpPortRegisterRspDefaultTypeInternal()
       : _instance(::_pbi::ConstantInitialized{}) {}
-  ~S2CUdpPortRegisterDefaultTypeInternal() {}
+  ~UdpPortRegisterRspDefaultTypeInternal() {}
   union {
-    S2CUdpPortRegister _instance;
+    UdpPortRegisterRsp _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 S2CUdpPortRegisterDefaultTypeInternal _S2CUdpPortRegister_default_instance_;
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 UdpPortRegisterRspDefaultTypeInternal _UdpPortRegisterRsp_default_instance_;
 }  // namespace core
 }  // namespace protocol
 }  // namespace yy
@@ -116,12 +116,12 @@ static constexpr ::_pb::ServiceDescriptor const** file_level_service_descriptors
 
 const uint32_t TableStruct_connection_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::core::S2CXorBody, _internal_metadata_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::core::XorBodyRsp, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::core::S2CXorBody, _impl_.xor_code_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::core::XorBodyRsp, _impl_.xor_code_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::yy::protocol::core::HeartBody, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -129,84 +129,84 @@ const uint32_t TableStruct_connection_2eproto::offsets[] PROTOBUF_SECTION_VARIAB
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::core::C2SSecurityBody, _internal_metadata_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::core::SecurityCheckReq, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::core::C2SSecurityBody, _impl_.app_id_),
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::core::C2SSecurityBody, _impl_.app_version_),
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::core::C2SSecurityBody, _impl_.app_md5_),
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::core::S2CSecurityBody, _impl_._has_bits_),
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::core::S2CSecurityBody, _internal_metadata_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::core::SecurityCheckReq, _impl_.app_id_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::core::SecurityCheckReq, _impl_.app_version_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::core::SecurityCheckReq, _impl_.app_md5_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::core::SecurityCheckRsp, _impl_._has_bits_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::core::SecurityCheckRsp, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::core::S2CSecurityBody, _impl_.result_code_),
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::core::S2CSecurityBody, _impl_.server_udp_port_),
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::core::S2CSecurityBody, _impl_.session_id_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::core::SecurityCheckRsp, _impl_.result_code_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::core::SecurityCheckRsp, _impl_.server_udp_port_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::core::SecurityCheckRsp, _impl_.session_id_),
   ~0u,
   0,
   1,
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::core::C2SUdpPortRegister, _internal_metadata_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::core::UdpPortRegisterReq, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::core::C2SUdpPortRegister, _impl_.session_id_),
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::core::C2SUdpPortRegister, _impl_.client_udp_ip_),
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::core::C2SUdpPortRegister, _impl_.client_udp_port_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::core::UdpPortRegisterReq, _impl_.session_id_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::core::UdpPortRegisterReq, _impl_.client_udp_ip_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::core::UdpPortRegisterReq, _impl_.client_udp_port_),
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::core::S2CUdpPortRegister, _internal_metadata_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::core::UdpPortRegisterRsp, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::core::S2CUdpPortRegister, _impl_.session_id_),
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::core::S2CUdpPortRegister, _impl_.status_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::core::UdpPortRegisterRsp, _impl_.session_id_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::core::UdpPortRegisterRsp, _impl_.status_),
 };
 static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  { 0, -1, -1, sizeof(::yy::protocol::core::S2CXorBody)},
+  { 0, -1, -1, sizeof(::yy::protocol::core::XorBodyRsp)},
   { 7, -1, -1, sizeof(::yy::protocol::core::HeartBody)},
-  { 13, -1, -1, sizeof(::yy::protocol::core::C2SSecurityBody)},
-  { 22, 31, -1, sizeof(::yy::protocol::core::S2CSecurityBody)},
-  { 34, -1, -1, sizeof(::yy::protocol::core::C2SUdpPortRegister)},
-  { 43, -1, -1, sizeof(::yy::protocol::core::S2CUdpPortRegister)},
+  { 13, -1, -1, sizeof(::yy::protocol::core::SecurityCheckReq)},
+  { 22, 31, -1, sizeof(::yy::protocol::core::SecurityCheckRsp)},
+  { 34, -1, -1, sizeof(::yy::protocol::core::UdpPortRegisterReq)},
+  { 43, -1, -1, sizeof(::yy::protocol::core::UdpPortRegisterRsp)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
-  &::yy::protocol::core::_S2CXorBody_default_instance_._instance,
+  &::yy::protocol::core::_XorBodyRsp_default_instance_._instance,
   &::yy::protocol::core::_HeartBody_default_instance_._instance,
-  &::yy::protocol::core::_C2SSecurityBody_default_instance_._instance,
-  &::yy::protocol::core::_S2CSecurityBody_default_instance_._instance,
-  &::yy::protocol::core::_C2SUdpPortRegister_default_instance_._instance,
-  &::yy::protocol::core::_S2CUdpPortRegister_default_instance_._instance,
+  &::yy::protocol::core::_SecurityCheckReq_default_instance_._instance,
+  &::yy::protocol::core::_SecurityCheckRsp_default_instance_._instance,
+  &::yy::protocol::core::_UdpPortRegisterReq_default_instance_._instance,
+  &::yy::protocol::core::_UdpPortRegisterRsp_default_instance_._instance,
 };
 
 const char descriptor_table_protodef_connection_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
   "\n\020connection.proto\022\020yy.protocol.core\"\036\n\n"
-  "S2CXorBody\022\020\n\010xor_code\030\001 \001(\r\"\013\n\tHeartBod"
-  "y\"G\n\017C2SSecurityBody\022\016\n\006app_id\030\001 \001(\r\022\023\n\013"
-  "app_version\030\002 \001(\r\022\017\n\007app_md5\030\003 \001(\t\"\361\001\n\017S"
-  "2CSecurityBody\022A\n\013result_code\030\001 \001(\0162,.yy"
-  ".protocol.core.S2CSecurityBody.ResultCod"
-  "e\022\034\n\017server_udp_port\030\002 \001(\rH\000\210\001\001\022\027\n\nsessi"
-  "on_id\030\003 \001(\004H\001\210\001\001\"A\n\nResultCode\022\014\n\010eSucce"
-  "ss\020\000\022\025\n\021eAppVersionFailed\020\001\022\016\n\neMd5Faile"
-  "d\020\002B\022\n\020_server_udp_portB\r\n\013_session_id\"X"
-  "\n\022C2SUdpPortRegister\022\022\n\nsession_id\030\001 \001(\004"
-  "\022\025\n\rclient_udp_ip\030\002 \001(\t\022\027\n\017client_udp_po"
-  "rt\030\003 \001(\r\"\243\001\n\022S2CUdpPortRegister\022\022\n\nsessi"
-  "on_id\030\001 \001(\004\022;\n\006status\030\002 \001(\0162+.yy.protoco"
-  "l.core.S2CUdpPortRegister.Status\"<\n\006Stat"
-  "us\022\014\n\010eSuccess\020\000\022\020\n\014eInvalidPort\020\001\022\022\n\016eD"
-  "uplicatePort\020\002b\006proto3"
+  "XorBodyRsp\022\020\n\010xor_code\030\001 \001(\r\"\013\n\tHeartBod"
+  "y\"H\n\020SecurityCheckReq\022\016\n\006app_id\030\001 \001(\r\022\023\n"
+  "\013app_version\030\002 \001(\r\022\017\n\007app_md5\030\003 \001(\t\"\363\001\n\020"
+  "SecurityCheckRsp\022B\n\013result_code\030\001 \001(\0162-."
+  "yy.protocol.core.SecurityCheckRsp.Result"
+  "Code\022\034\n\017server_udp_port\030\002 \001(\rH\000\210\001\001\022\027\n\nse"
+  "ssion_id\030\003 \001(\004H\001\210\001\001\"A\n\nResultCode\022\014\n\010eSu"
+  "ccess\020\000\022\025\n\021eAppVersionFailed\020\001\022\016\n\neMd5Fa"
+  "iled\020\002B\022\n\020_server_udp_portB\r\n\013_session_i"
+  "d\"X\n\022UdpPortRegisterReq\022\022\n\nsession_id\030\001 "
+  "\001(\004\022\025\n\rclient_udp_ip\030\002 \001(\t\022\027\n\017client_udp"
+  "_port\030\003 \001(\r\"\243\001\n\022UdpPortRegisterRsp\022\022\n\nse"
+  "ssion_id\030\001 \001(\004\022;\n\006status\030\002 \001(\0162+.yy.prot"
+  "ocol.core.UdpPortRegisterRsp.Status\"<\n\006S"
+  "tatus\022\014\n\010eSuccess\020\000\022\020\n\014eInvalidPort\020\001\022\022\n"
+  "\016eDuplicatePort\020\002b\006proto3"
   ;
 static ::_pbi::once_flag descriptor_table_connection_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_connection_2eproto = {
-    false, false, 662, descriptor_table_protodef_connection_2eproto,
+    false, false, 665, descriptor_table_protodef_connection_2eproto,
     "connection.proto",
     &descriptor_table_connection_2eproto_once, nullptr, 0, 6,
     schemas, file_default_instances, TableStruct_connection_2eproto::offsets,
@@ -222,11 +222,11 @@ PROTOBUF_ATTRIBUTE_INIT_PRIORITY2 static ::_pbi::AddDescriptorsRunner dynamic_in
 namespace yy {
 namespace protocol {
 namespace core {
-const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* S2CSecurityBody_ResultCode_descriptor() {
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* SecurityCheckRsp_ResultCode_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_connection_2eproto);
   return file_level_enum_descriptors_connection_2eproto[0];
 }
-bool S2CSecurityBody_ResultCode_IsValid(int value) {
+bool SecurityCheckRsp_ResultCode_IsValid(int value) {
   switch (value) {
     case 0:
     case 1:
@@ -238,18 +238,18 @@ bool S2CSecurityBody_ResultCode_IsValid(int value) {
 }
 
 #if (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
-constexpr S2CSecurityBody_ResultCode S2CSecurityBody::eSuccess;
-constexpr S2CSecurityBody_ResultCode S2CSecurityBody::eAppVersionFailed;
-constexpr S2CSecurityBody_ResultCode S2CSecurityBody::eMd5Failed;
-constexpr S2CSecurityBody_ResultCode S2CSecurityBody::ResultCode_MIN;
-constexpr S2CSecurityBody_ResultCode S2CSecurityBody::ResultCode_MAX;
-constexpr int S2CSecurityBody::ResultCode_ARRAYSIZE;
+constexpr SecurityCheckRsp_ResultCode SecurityCheckRsp::eSuccess;
+constexpr SecurityCheckRsp_ResultCode SecurityCheckRsp::eAppVersionFailed;
+constexpr SecurityCheckRsp_ResultCode SecurityCheckRsp::eMd5Failed;
+constexpr SecurityCheckRsp_ResultCode SecurityCheckRsp::ResultCode_MIN;
+constexpr SecurityCheckRsp_ResultCode SecurityCheckRsp::ResultCode_MAX;
+constexpr int SecurityCheckRsp::ResultCode_ARRAYSIZE;
 #endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
-const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* S2CUdpPortRegister_Status_descriptor() {
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* UdpPortRegisterRsp_Status_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_connection_2eproto);
   return file_level_enum_descriptors_connection_2eproto[1];
 }
-bool S2CUdpPortRegister_Status_IsValid(int value) {
+bool UdpPortRegisterRsp_Status_IsValid(int value) {
   switch (value) {
     case 0:
     case 1:
@@ -261,39 +261,39 @@ bool S2CUdpPortRegister_Status_IsValid(int value) {
 }
 
 #if (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
-constexpr S2CUdpPortRegister_Status S2CUdpPortRegister::eSuccess;
-constexpr S2CUdpPortRegister_Status S2CUdpPortRegister::eInvalidPort;
-constexpr S2CUdpPortRegister_Status S2CUdpPortRegister::eDuplicatePort;
-constexpr S2CUdpPortRegister_Status S2CUdpPortRegister::Status_MIN;
-constexpr S2CUdpPortRegister_Status S2CUdpPortRegister::Status_MAX;
-constexpr int S2CUdpPortRegister::Status_ARRAYSIZE;
+constexpr UdpPortRegisterRsp_Status UdpPortRegisterRsp::eSuccess;
+constexpr UdpPortRegisterRsp_Status UdpPortRegisterRsp::eInvalidPort;
+constexpr UdpPortRegisterRsp_Status UdpPortRegisterRsp::eDuplicatePort;
+constexpr UdpPortRegisterRsp_Status UdpPortRegisterRsp::Status_MIN;
+constexpr UdpPortRegisterRsp_Status UdpPortRegisterRsp::Status_MAX;
+constexpr int UdpPortRegisterRsp::Status_ARRAYSIZE;
 #endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 
 // ===================================================================
 
-class S2CXorBody::_Internal {
+class XorBodyRsp::_Internal {
  public:
 };
 
-S2CXorBody::S2CXorBody(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+XorBodyRsp::XorBodyRsp(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
   SharedCtor(arena, is_message_owned);
-  // @@protoc_insertion_point(arena_constructor:yy.protocol.core.S2CXorBody)
+  // @@protoc_insertion_point(arena_constructor:yy.protocol.core.XorBodyRsp)
 }
-S2CXorBody::S2CXorBody(const S2CXorBody& from)
+XorBodyRsp::XorBodyRsp(const XorBodyRsp& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
-  S2CXorBody* const _this = this; (void)_this;
+  XorBodyRsp* const _this = this; (void)_this;
   new (&_impl_) Impl_{
       decltype(_impl_.xor_code_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   _this->_impl_.xor_code_ = from._impl_.xor_code_;
-  // @@protoc_insertion_point(copy_constructor:yy.protocol.core.S2CXorBody)
+  // @@protoc_insertion_point(copy_constructor:yy.protocol.core.XorBodyRsp)
 }
 
-inline void S2CXorBody::SharedCtor(
+inline void XorBodyRsp::SharedCtor(
     ::_pb::Arena* arena, bool is_message_owned) {
   (void)arena;
   (void)is_message_owned;
@@ -303,8 +303,8 @@ inline void S2CXorBody::SharedCtor(
   };
 }
 
-S2CXorBody::~S2CXorBody() {
-  // @@protoc_insertion_point(destructor:yy.protocol.core.S2CXorBody)
+XorBodyRsp::~XorBodyRsp() {
+  // @@protoc_insertion_point(destructor:yy.protocol.core.XorBodyRsp)
   if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
   (void)arena;
     return;
@@ -312,16 +312,16 @@ S2CXorBody::~S2CXorBody() {
   SharedDtor();
 }
 
-inline void S2CXorBody::SharedDtor() {
+inline void XorBodyRsp::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
 }
 
-void S2CXorBody::SetCachedSize(int size) const {
+void XorBodyRsp::SetCachedSize(int size) const {
   _impl_._cached_size_.Set(size);
 }
 
-void S2CXorBody::Clear() {
-// @@protoc_insertion_point(message_clear_start:yy.protocol.core.S2CXorBody)
+void XorBodyRsp::Clear() {
+// @@protoc_insertion_point(message_clear_start:yy.protocol.core.XorBodyRsp)
   uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -330,7 +330,7 @@ void S2CXorBody::Clear() {
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* S2CXorBody::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+const char* XorBodyRsp::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   while (!ctx->Done(&ptr)) {
     uint32_t tag;
@@ -367,9 +367,9 @@ failure:
 #undef CHK_
 }
 
-uint8_t* S2CXorBody::_InternalSerialize(
+uint8_t* XorBodyRsp::_InternalSerialize(
     uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:yy.protocol.core.S2CXorBody)
+  // @@protoc_insertion_point(serialize_to_array_start:yy.protocol.core.XorBodyRsp)
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -383,12 +383,12 @@ uint8_t* S2CXorBody::_InternalSerialize(
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
-  // @@protoc_insertion_point(serialize_to_array_end:yy.protocol.core.S2CXorBody)
+  // @@protoc_insertion_point(serialize_to_array_end:yy.protocol.core.XorBodyRsp)
   return target;
 }
 
-size_t S2CXorBody::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:yy.protocol.core.S2CXorBody)
+size_t XorBodyRsp::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:yy.protocol.core.XorBodyRsp)
   size_t total_size = 0;
 
   uint32_t cached_has_bits = 0;
@@ -403,17 +403,17 @@ size_t S2CXorBody::ByteSizeLong() const {
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData S2CXorBody::_class_data_ = {
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData XorBodyRsp::_class_data_ = {
     ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
-    S2CXorBody::MergeImpl
+    XorBodyRsp::MergeImpl
 };
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*S2CXorBody::GetClassData() const { return &_class_data_; }
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*XorBodyRsp::GetClassData() const { return &_class_data_; }
 
 
-void S2CXorBody::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
-  auto* const _this = static_cast<S2CXorBody*>(&to_msg);
-  auto& from = static_cast<const S2CXorBody&>(from_msg);
-  // @@protoc_insertion_point(class_specific_merge_from_start:yy.protocol.core.S2CXorBody)
+void XorBodyRsp::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<XorBodyRsp*>(&to_msg);
+  auto& from = static_cast<const XorBodyRsp&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:yy.protocol.core.XorBodyRsp)
   GOOGLE_DCHECK_NE(&from, _this);
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
@@ -424,24 +424,24 @@ void S2CXorBody::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PRO
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
-void S2CXorBody::CopyFrom(const S2CXorBody& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:yy.protocol.core.S2CXorBody)
+void XorBodyRsp::CopyFrom(const XorBodyRsp& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:yy.protocol.core.XorBodyRsp)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool S2CXorBody::IsInitialized() const {
+bool XorBodyRsp::IsInitialized() const {
   return true;
 }
 
-void S2CXorBody::InternalSwap(S2CXorBody* other) {
+void XorBodyRsp::InternalSwap(XorBodyRsp* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   swap(_impl_.xor_code_, other->_impl_.xor_code_);
 }
 
-::PROTOBUF_NAMESPACE_ID::Metadata S2CXorBody::GetMetadata() const {
+::PROTOBUF_NAMESPACE_ID::Metadata XorBodyRsp::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_connection_2eproto_getter, &descriptor_table_connection_2eproto_once,
       file_level_metadata_connection_2eproto[0]);
@@ -489,19 +489,19 @@ const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*HeartBody::GetClassData() cons
 
 // ===================================================================
 
-class C2SSecurityBody::_Internal {
+class SecurityCheckReq::_Internal {
  public:
 };
 
-C2SSecurityBody::C2SSecurityBody(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+SecurityCheckReq::SecurityCheckReq(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
   SharedCtor(arena, is_message_owned);
-  // @@protoc_insertion_point(arena_constructor:yy.protocol.core.C2SSecurityBody)
+  // @@protoc_insertion_point(arena_constructor:yy.protocol.core.SecurityCheckReq)
 }
-C2SSecurityBody::C2SSecurityBody(const C2SSecurityBody& from)
+SecurityCheckReq::SecurityCheckReq(const SecurityCheckReq& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
-  C2SSecurityBody* const _this = this; (void)_this;
+  SecurityCheckReq* const _this = this; (void)_this;
   new (&_impl_) Impl_{
       decltype(_impl_.app_md5_){}
     , decltype(_impl_.app_id_){}
@@ -520,10 +520,10 @@ C2SSecurityBody::C2SSecurityBody(const C2SSecurityBody& from)
   ::memcpy(&_impl_.app_id_, &from._impl_.app_id_,
     static_cast<size_t>(reinterpret_cast<char*>(&_impl_.app_version_) -
     reinterpret_cast<char*>(&_impl_.app_id_)) + sizeof(_impl_.app_version_));
-  // @@protoc_insertion_point(copy_constructor:yy.protocol.core.C2SSecurityBody)
+  // @@protoc_insertion_point(copy_constructor:yy.protocol.core.SecurityCheckReq)
 }
 
-inline void C2SSecurityBody::SharedCtor(
+inline void SecurityCheckReq::SharedCtor(
     ::_pb::Arena* arena, bool is_message_owned) {
   (void)arena;
   (void)is_message_owned;
@@ -539,8 +539,8 @@ inline void C2SSecurityBody::SharedCtor(
   #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
 }
 
-C2SSecurityBody::~C2SSecurityBody() {
-  // @@protoc_insertion_point(destructor:yy.protocol.core.C2SSecurityBody)
+SecurityCheckReq::~SecurityCheckReq() {
+  // @@protoc_insertion_point(destructor:yy.protocol.core.SecurityCheckReq)
   if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
   (void)arena;
     return;
@@ -548,17 +548,17 @@ C2SSecurityBody::~C2SSecurityBody() {
   SharedDtor();
 }
 
-inline void C2SSecurityBody::SharedDtor() {
+inline void SecurityCheckReq::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
   _impl_.app_md5_.Destroy();
 }
 
-void C2SSecurityBody::SetCachedSize(int size) const {
+void SecurityCheckReq::SetCachedSize(int size) const {
   _impl_._cached_size_.Set(size);
 }
 
-void C2SSecurityBody::Clear() {
-// @@protoc_insertion_point(message_clear_start:yy.protocol.core.C2SSecurityBody)
+void SecurityCheckReq::Clear() {
+// @@protoc_insertion_point(message_clear_start:yy.protocol.core.SecurityCheckReq)
   uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -570,7 +570,7 @@ void C2SSecurityBody::Clear() {
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* C2SSecurityBody::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+const char* SecurityCheckReq::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   while (!ctx->Done(&ptr)) {
     uint32_t tag;
@@ -598,7 +598,7 @@ const char* C2SSecurityBody::_InternalParse(const char* ptr, ::_pbi::ParseContex
           auto str = _internal_mutable_app_md5();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
-          CHK_(::_pbi::VerifyUTF8(str, "yy.protocol.core.C2SSecurityBody.app_md5"));
+          CHK_(::_pbi::VerifyUTF8(str, "yy.protocol.core.SecurityCheckReq.app_md5"));
         } else
           goto handle_unusual;
         continue;
@@ -625,9 +625,9 @@ failure:
 #undef CHK_
 }
 
-uint8_t* C2SSecurityBody::_InternalSerialize(
+uint8_t* SecurityCheckReq::_InternalSerialize(
     uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:yy.protocol.core.C2SSecurityBody)
+  // @@protoc_insertion_point(serialize_to_array_start:yy.protocol.core.SecurityCheckReq)
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -648,7 +648,7 @@ uint8_t* C2SSecurityBody::_InternalSerialize(
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_app_md5().data(), static_cast<int>(this->_internal_app_md5().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "yy.protocol.core.C2SSecurityBody.app_md5");
+      "yy.protocol.core.SecurityCheckReq.app_md5");
     target = stream->WriteStringMaybeAliased(
         3, this->_internal_app_md5(), target);
   }
@@ -657,12 +657,12 @@ uint8_t* C2SSecurityBody::_InternalSerialize(
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
-  // @@protoc_insertion_point(serialize_to_array_end:yy.protocol.core.C2SSecurityBody)
+  // @@protoc_insertion_point(serialize_to_array_end:yy.protocol.core.SecurityCheckReq)
   return target;
 }
 
-size_t C2SSecurityBody::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:yy.protocol.core.C2SSecurityBody)
+size_t SecurityCheckReq::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:yy.protocol.core.SecurityCheckReq)
   size_t total_size = 0;
 
   uint32_t cached_has_bits = 0;
@@ -689,17 +689,17 @@ size_t C2SSecurityBody::ByteSizeLong() const {
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData C2SSecurityBody::_class_data_ = {
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData SecurityCheckReq::_class_data_ = {
     ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
-    C2SSecurityBody::MergeImpl
+    SecurityCheckReq::MergeImpl
 };
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*C2SSecurityBody::GetClassData() const { return &_class_data_; }
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*SecurityCheckReq::GetClassData() const { return &_class_data_; }
 
 
-void C2SSecurityBody::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
-  auto* const _this = static_cast<C2SSecurityBody*>(&to_msg);
-  auto& from = static_cast<const C2SSecurityBody&>(from_msg);
-  // @@protoc_insertion_point(class_specific_merge_from_start:yy.protocol.core.C2SSecurityBody)
+void SecurityCheckReq::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<SecurityCheckReq*>(&to_msg);
+  auto& from = static_cast<const SecurityCheckReq&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:yy.protocol.core.SecurityCheckReq)
   GOOGLE_DCHECK_NE(&from, _this);
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
@@ -716,18 +716,18 @@ void C2SSecurityBody::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const 
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
-void C2SSecurityBody::CopyFrom(const C2SSecurityBody& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:yy.protocol.core.C2SSecurityBody)
+void SecurityCheckReq::CopyFrom(const SecurityCheckReq& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:yy.protocol.core.SecurityCheckReq)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool C2SSecurityBody::IsInitialized() const {
+bool SecurityCheckReq::IsInitialized() const {
   return true;
 }
 
-void C2SSecurityBody::InternalSwap(C2SSecurityBody* other) {
+void SecurityCheckReq::InternalSwap(SecurityCheckReq* other) {
   using std::swap;
   auto* lhs_arena = GetArenaForAllocation();
   auto* rhs_arena = other->GetArenaForAllocation();
@@ -737,14 +737,14 @@ void C2SSecurityBody::InternalSwap(C2SSecurityBody* other) {
       &other->_impl_.app_md5_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(C2SSecurityBody, _impl_.app_version_)
-      + sizeof(C2SSecurityBody::_impl_.app_version_)
-      - PROTOBUF_FIELD_OFFSET(C2SSecurityBody, _impl_.app_id_)>(
+      PROTOBUF_FIELD_OFFSET(SecurityCheckReq, _impl_.app_version_)
+      + sizeof(SecurityCheckReq::_impl_.app_version_)
+      - PROTOBUF_FIELD_OFFSET(SecurityCheckReq, _impl_.app_id_)>(
           reinterpret_cast<char*>(&_impl_.app_id_),
           reinterpret_cast<char*>(&other->_impl_.app_id_));
 }
 
-::PROTOBUF_NAMESPACE_ID::Metadata C2SSecurityBody::GetMetadata() const {
+::PROTOBUF_NAMESPACE_ID::Metadata SecurityCheckReq::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_connection_2eproto_getter, &descriptor_table_connection_2eproto_once,
       file_level_metadata_connection_2eproto[2]);
@@ -752,9 +752,9 @@ void C2SSecurityBody::InternalSwap(C2SSecurityBody* other) {
 
 // ===================================================================
 
-class S2CSecurityBody::_Internal {
+class SecurityCheckRsp::_Internal {
  public:
-  using HasBits = decltype(std::declval<S2CSecurityBody>()._impl_._has_bits_);
+  using HasBits = decltype(std::declval<SecurityCheckRsp>()._impl_._has_bits_);
   static void set_has_server_udp_port(HasBits* has_bits) {
     (*has_bits)[0] |= 1u;
   }
@@ -763,15 +763,15 @@ class S2CSecurityBody::_Internal {
   }
 };
 
-S2CSecurityBody::S2CSecurityBody(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+SecurityCheckRsp::SecurityCheckRsp(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
   SharedCtor(arena, is_message_owned);
-  // @@protoc_insertion_point(arena_constructor:yy.protocol.core.S2CSecurityBody)
+  // @@protoc_insertion_point(arena_constructor:yy.protocol.core.SecurityCheckRsp)
 }
-S2CSecurityBody::S2CSecurityBody(const S2CSecurityBody& from)
+SecurityCheckRsp::SecurityCheckRsp(const SecurityCheckRsp& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
-  S2CSecurityBody* const _this = this; (void)_this;
+  SecurityCheckRsp* const _this = this; (void)_this;
   new (&_impl_) Impl_{
       decltype(_impl_._has_bits_){from._impl_._has_bits_}
     , /*decltype(_impl_._cached_size_)*/{}
@@ -783,10 +783,10 @@ S2CSecurityBody::S2CSecurityBody(const S2CSecurityBody& from)
   ::memcpy(&_impl_.result_code_, &from._impl_.result_code_,
     static_cast<size_t>(reinterpret_cast<char*>(&_impl_.session_id_) -
     reinterpret_cast<char*>(&_impl_.result_code_)) + sizeof(_impl_.session_id_));
-  // @@protoc_insertion_point(copy_constructor:yy.protocol.core.S2CSecurityBody)
+  // @@protoc_insertion_point(copy_constructor:yy.protocol.core.SecurityCheckRsp)
 }
 
-inline void S2CSecurityBody::SharedCtor(
+inline void SecurityCheckRsp::SharedCtor(
     ::_pb::Arena* arena, bool is_message_owned) {
   (void)arena;
   (void)is_message_owned;
@@ -799,8 +799,8 @@ inline void S2CSecurityBody::SharedCtor(
   };
 }
 
-S2CSecurityBody::~S2CSecurityBody() {
-  // @@protoc_insertion_point(destructor:yy.protocol.core.S2CSecurityBody)
+SecurityCheckRsp::~SecurityCheckRsp() {
+  // @@protoc_insertion_point(destructor:yy.protocol.core.SecurityCheckRsp)
   if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
   (void)arena;
     return;
@@ -808,16 +808,16 @@ S2CSecurityBody::~S2CSecurityBody() {
   SharedDtor();
 }
 
-inline void S2CSecurityBody::SharedDtor() {
+inline void SecurityCheckRsp::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
 }
 
-void S2CSecurityBody::SetCachedSize(int size) const {
+void SecurityCheckRsp::SetCachedSize(int size) const {
   _impl_._cached_size_.Set(size);
 }
 
-void S2CSecurityBody::Clear() {
-// @@protoc_insertion_point(message_clear_start:yy.protocol.core.S2CSecurityBody)
+void SecurityCheckRsp::Clear() {
+// @@protoc_insertion_point(message_clear_start:yy.protocol.core.SecurityCheckRsp)
   uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -833,19 +833,19 @@ void S2CSecurityBody::Clear() {
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* S2CSecurityBody::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+const char* SecurityCheckRsp::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   _Internal::HasBits has_bits{};
   while (!ctx->Done(&ptr)) {
     uint32_t tag;
     ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // .yy.protocol.core.S2CSecurityBody.ResultCode result_code = 1;
+      // .yy.protocol.core.SecurityCheckRsp.ResultCode result_code = 1;
       case 1:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
           uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
-          _internal_set_result_code(static_cast<::yy::protocol::core::S2CSecurityBody_ResultCode>(val));
+          _internal_set_result_code(static_cast<::yy::protocol::core::SecurityCheckRsp_ResultCode>(val));
         } else
           goto handle_unusual;
         continue;
@@ -891,13 +891,13 @@ failure:
 #undef CHK_
 }
 
-uint8_t* S2CSecurityBody::_InternalSerialize(
+uint8_t* SecurityCheckRsp::_InternalSerialize(
     uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:yy.protocol.core.S2CSecurityBody)
+  // @@protoc_insertion_point(serialize_to_array_start:yy.protocol.core.SecurityCheckRsp)
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // .yy.protocol.core.S2CSecurityBody.ResultCode result_code = 1;
+  // .yy.protocol.core.SecurityCheckRsp.ResultCode result_code = 1;
   if (this->_internal_result_code() != 0) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteEnumToArray(
@@ -920,19 +920,19 @@ uint8_t* S2CSecurityBody::_InternalSerialize(
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
-  // @@protoc_insertion_point(serialize_to_array_end:yy.protocol.core.S2CSecurityBody)
+  // @@protoc_insertion_point(serialize_to_array_end:yy.protocol.core.SecurityCheckRsp)
   return target;
 }
 
-size_t S2CSecurityBody::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:yy.protocol.core.S2CSecurityBody)
+size_t SecurityCheckRsp::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:yy.protocol.core.SecurityCheckRsp)
   size_t total_size = 0;
 
   uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // .yy.protocol.core.S2CSecurityBody.ResultCode result_code = 1;
+  // .yy.protocol.core.SecurityCheckRsp.ResultCode result_code = 1;
   if (this->_internal_result_code() != 0) {
     total_size += 1 +
       ::_pbi::WireFormatLite::EnumSize(this->_internal_result_code());
@@ -954,17 +954,17 @@ size_t S2CSecurityBody::ByteSizeLong() const {
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData S2CSecurityBody::_class_data_ = {
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData SecurityCheckRsp::_class_data_ = {
     ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
-    S2CSecurityBody::MergeImpl
+    SecurityCheckRsp::MergeImpl
 };
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*S2CSecurityBody::GetClassData() const { return &_class_data_; }
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*SecurityCheckRsp::GetClassData() const { return &_class_data_; }
 
 
-void S2CSecurityBody::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
-  auto* const _this = static_cast<S2CSecurityBody*>(&to_msg);
-  auto& from = static_cast<const S2CSecurityBody&>(from_msg);
-  // @@protoc_insertion_point(class_specific_merge_from_start:yy.protocol.core.S2CSecurityBody)
+void SecurityCheckRsp::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<SecurityCheckRsp*>(&to_msg);
+  auto& from = static_cast<const SecurityCheckRsp&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:yy.protocol.core.SecurityCheckRsp)
   GOOGLE_DCHECK_NE(&from, _this);
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
@@ -985,30 +985,30 @@ void S2CSecurityBody::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const 
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
-void S2CSecurityBody::CopyFrom(const S2CSecurityBody& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:yy.protocol.core.S2CSecurityBody)
+void SecurityCheckRsp::CopyFrom(const SecurityCheckRsp& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:yy.protocol.core.SecurityCheckRsp)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool S2CSecurityBody::IsInitialized() const {
+bool SecurityCheckRsp::IsInitialized() const {
   return true;
 }
 
-void S2CSecurityBody::InternalSwap(S2CSecurityBody* other) {
+void SecurityCheckRsp::InternalSwap(SecurityCheckRsp* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(S2CSecurityBody, _impl_.session_id_)
-      + sizeof(S2CSecurityBody::_impl_.session_id_)
-      - PROTOBUF_FIELD_OFFSET(S2CSecurityBody, _impl_.result_code_)>(
+      PROTOBUF_FIELD_OFFSET(SecurityCheckRsp, _impl_.session_id_)
+      + sizeof(SecurityCheckRsp::_impl_.session_id_)
+      - PROTOBUF_FIELD_OFFSET(SecurityCheckRsp, _impl_.result_code_)>(
           reinterpret_cast<char*>(&_impl_.result_code_),
           reinterpret_cast<char*>(&other->_impl_.result_code_));
 }
 
-::PROTOBUF_NAMESPACE_ID::Metadata S2CSecurityBody::GetMetadata() const {
+::PROTOBUF_NAMESPACE_ID::Metadata SecurityCheckRsp::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_connection_2eproto_getter, &descriptor_table_connection_2eproto_once,
       file_level_metadata_connection_2eproto[3]);
@@ -1016,19 +1016,19 @@ void S2CSecurityBody::InternalSwap(S2CSecurityBody* other) {
 
 // ===================================================================
 
-class C2SUdpPortRegister::_Internal {
+class UdpPortRegisterReq::_Internal {
  public:
 };
 
-C2SUdpPortRegister::C2SUdpPortRegister(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+UdpPortRegisterReq::UdpPortRegisterReq(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
   SharedCtor(arena, is_message_owned);
-  // @@protoc_insertion_point(arena_constructor:yy.protocol.core.C2SUdpPortRegister)
+  // @@protoc_insertion_point(arena_constructor:yy.protocol.core.UdpPortRegisterReq)
 }
-C2SUdpPortRegister::C2SUdpPortRegister(const C2SUdpPortRegister& from)
+UdpPortRegisterReq::UdpPortRegisterReq(const UdpPortRegisterReq& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
-  C2SUdpPortRegister* const _this = this; (void)_this;
+  UdpPortRegisterReq* const _this = this; (void)_this;
   new (&_impl_) Impl_{
       decltype(_impl_.client_udp_ip_){}
     , decltype(_impl_.session_id_){}
@@ -1047,10 +1047,10 @@ C2SUdpPortRegister::C2SUdpPortRegister(const C2SUdpPortRegister& from)
   ::memcpy(&_impl_.session_id_, &from._impl_.session_id_,
     static_cast<size_t>(reinterpret_cast<char*>(&_impl_.client_udp_port_) -
     reinterpret_cast<char*>(&_impl_.session_id_)) + sizeof(_impl_.client_udp_port_));
-  // @@protoc_insertion_point(copy_constructor:yy.protocol.core.C2SUdpPortRegister)
+  // @@protoc_insertion_point(copy_constructor:yy.protocol.core.UdpPortRegisterReq)
 }
 
-inline void C2SUdpPortRegister::SharedCtor(
+inline void UdpPortRegisterReq::SharedCtor(
     ::_pb::Arena* arena, bool is_message_owned) {
   (void)arena;
   (void)is_message_owned;
@@ -1066,8 +1066,8 @@ inline void C2SUdpPortRegister::SharedCtor(
   #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
 }
 
-C2SUdpPortRegister::~C2SUdpPortRegister() {
-  // @@protoc_insertion_point(destructor:yy.protocol.core.C2SUdpPortRegister)
+UdpPortRegisterReq::~UdpPortRegisterReq() {
+  // @@protoc_insertion_point(destructor:yy.protocol.core.UdpPortRegisterReq)
   if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
   (void)arena;
     return;
@@ -1075,17 +1075,17 @@ C2SUdpPortRegister::~C2SUdpPortRegister() {
   SharedDtor();
 }
 
-inline void C2SUdpPortRegister::SharedDtor() {
+inline void UdpPortRegisterReq::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
   _impl_.client_udp_ip_.Destroy();
 }
 
-void C2SUdpPortRegister::SetCachedSize(int size) const {
+void UdpPortRegisterReq::SetCachedSize(int size) const {
   _impl_._cached_size_.Set(size);
 }
 
-void C2SUdpPortRegister::Clear() {
-// @@protoc_insertion_point(message_clear_start:yy.protocol.core.C2SUdpPortRegister)
+void UdpPortRegisterReq::Clear() {
+// @@protoc_insertion_point(message_clear_start:yy.protocol.core.UdpPortRegisterReq)
   uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -1097,7 +1097,7 @@ void C2SUdpPortRegister::Clear() {
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* C2SUdpPortRegister::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+const char* UdpPortRegisterReq::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   while (!ctx->Done(&ptr)) {
     uint32_t tag;
@@ -1117,7 +1117,7 @@ const char* C2SUdpPortRegister::_InternalParse(const char* ptr, ::_pbi::ParseCon
           auto str = _internal_mutable_client_udp_ip();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
-          CHK_(::_pbi::VerifyUTF8(str, "yy.protocol.core.C2SUdpPortRegister.client_udp_ip"));
+          CHK_(::_pbi::VerifyUTF8(str, "yy.protocol.core.UdpPortRegisterReq.client_udp_ip"));
         } else
           goto handle_unusual;
         continue;
@@ -1152,9 +1152,9 @@ failure:
 #undef CHK_
 }
 
-uint8_t* C2SUdpPortRegister::_InternalSerialize(
+uint8_t* UdpPortRegisterReq::_InternalSerialize(
     uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:yy.protocol.core.C2SUdpPortRegister)
+  // @@protoc_insertion_point(serialize_to_array_start:yy.protocol.core.UdpPortRegisterReq)
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -1169,7 +1169,7 @@ uint8_t* C2SUdpPortRegister::_InternalSerialize(
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_client_udp_ip().data(), static_cast<int>(this->_internal_client_udp_ip().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "yy.protocol.core.C2SUdpPortRegister.client_udp_ip");
+      "yy.protocol.core.UdpPortRegisterReq.client_udp_ip");
     target = stream->WriteStringMaybeAliased(
         2, this->_internal_client_udp_ip(), target);
   }
@@ -1184,12 +1184,12 @@ uint8_t* C2SUdpPortRegister::_InternalSerialize(
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
-  // @@protoc_insertion_point(serialize_to_array_end:yy.protocol.core.C2SUdpPortRegister)
+  // @@protoc_insertion_point(serialize_to_array_end:yy.protocol.core.UdpPortRegisterReq)
   return target;
 }
 
-size_t C2SUdpPortRegister::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:yy.protocol.core.C2SUdpPortRegister)
+size_t UdpPortRegisterReq::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:yy.protocol.core.UdpPortRegisterReq)
   size_t total_size = 0;
 
   uint32_t cached_has_bits = 0;
@@ -1216,17 +1216,17 @@ size_t C2SUdpPortRegister::ByteSizeLong() const {
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData C2SUdpPortRegister::_class_data_ = {
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData UdpPortRegisterReq::_class_data_ = {
     ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
-    C2SUdpPortRegister::MergeImpl
+    UdpPortRegisterReq::MergeImpl
 };
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*C2SUdpPortRegister::GetClassData() const { return &_class_data_; }
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*UdpPortRegisterReq::GetClassData() const { return &_class_data_; }
 
 
-void C2SUdpPortRegister::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
-  auto* const _this = static_cast<C2SUdpPortRegister*>(&to_msg);
-  auto& from = static_cast<const C2SUdpPortRegister&>(from_msg);
-  // @@protoc_insertion_point(class_specific_merge_from_start:yy.protocol.core.C2SUdpPortRegister)
+void UdpPortRegisterReq::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<UdpPortRegisterReq*>(&to_msg);
+  auto& from = static_cast<const UdpPortRegisterReq&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:yy.protocol.core.UdpPortRegisterReq)
   GOOGLE_DCHECK_NE(&from, _this);
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
@@ -1243,18 +1243,18 @@ void C2SUdpPortRegister::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, con
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
-void C2SUdpPortRegister::CopyFrom(const C2SUdpPortRegister& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:yy.protocol.core.C2SUdpPortRegister)
+void UdpPortRegisterReq::CopyFrom(const UdpPortRegisterReq& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:yy.protocol.core.UdpPortRegisterReq)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool C2SUdpPortRegister::IsInitialized() const {
+bool UdpPortRegisterReq::IsInitialized() const {
   return true;
 }
 
-void C2SUdpPortRegister::InternalSwap(C2SUdpPortRegister* other) {
+void UdpPortRegisterReq::InternalSwap(UdpPortRegisterReq* other) {
   using std::swap;
   auto* lhs_arena = GetArenaForAllocation();
   auto* rhs_arena = other->GetArenaForAllocation();
@@ -1264,14 +1264,14 @@ void C2SUdpPortRegister::InternalSwap(C2SUdpPortRegister* other) {
       &other->_impl_.client_udp_ip_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(C2SUdpPortRegister, _impl_.client_udp_port_)
-      + sizeof(C2SUdpPortRegister::_impl_.client_udp_port_)
-      - PROTOBUF_FIELD_OFFSET(C2SUdpPortRegister, _impl_.session_id_)>(
+      PROTOBUF_FIELD_OFFSET(UdpPortRegisterReq, _impl_.client_udp_port_)
+      + sizeof(UdpPortRegisterReq::_impl_.client_udp_port_)
+      - PROTOBUF_FIELD_OFFSET(UdpPortRegisterReq, _impl_.session_id_)>(
           reinterpret_cast<char*>(&_impl_.session_id_),
           reinterpret_cast<char*>(&other->_impl_.session_id_));
 }
 
-::PROTOBUF_NAMESPACE_ID::Metadata C2SUdpPortRegister::GetMetadata() const {
+::PROTOBUF_NAMESPACE_ID::Metadata UdpPortRegisterReq::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_connection_2eproto_getter, &descriptor_table_connection_2eproto_once,
       file_level_metadata_connection_2eproto[4]);
@@ -1279,19 +1279,19 @@ void C2SUdpPortRegister::InternalSwap(C2SUdpPortRegister* other) {
 
 // ===================================================================
 
-class S2CUdpPortRegister::_Internal {
+class UdpPortRegisterRsp::_Internal {
  public:
 };
 
-S2CUdpPortRegister::S2CUdpPortRegister(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+UdpPortRegisterRsp::UdpPortRegisterRsp(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
   SharedCtor(arena, is_message_owned);
-  // @@protoc_insertion_point(arena_constructor:yy.protocol.core.S2CUdpPortRegister)
+  // @@protoc_insertion_point(arena_constructor:yy.protocol.core.UdpPortRegisterRsp)
 }
-S2CUdpPortRegister::S2CUdpPortRegister(const S2CUdpPortRegister& from)
+UdpPortRegisterRsp::UdpPortRegisterRsp(const UdpPortRegisterRsp& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
-  S2CUdpPortRegister* const _this = this; (void)_this;
+  UdpPortRegisterRsp* const _this = this; (void)_this;
   new (&_impl_) Impl_{
       decltype(_impl_.session_id_){}
     , decltype(_impl_.status_){}
@@ -1301,10 +1301,10 @@ S2CUdpPortRegister::S2CUdpPortRegister(const S2CUdpPortRegister& from)
   ::memcpy(&_impl_.session_id_, &from._impl_.session_id_,
     static_cast<size_t>(reinterpret_cast<char*>(&_impl_.status_) -
     reinterpret_cast<char*>(&_impl_.session_id_)) + sizeof(_impl_.status_));
-  // @@protoc_insertion_point(copy_constructor:yy.protocol.core.S2CUdpPortRegister)
+  // @@protoc_insertion_point(copy_constructor:yy.protocol.core.UdpPortRegisterRsp)
 }
 
-inline void S2CUdpPortRegister::SharedCtor(
+inline void UdpPortRegisterRsp::SharedCtor(
     ::_pb::Arena* arena, bool is_message_owned) {
   (void)arena;
   (void)is_message_owned;
@@ -1315,8 +1315,8 @@ inline void S2CUdpPortRegister::SharedCtor(
   };
 }
 
-S2CUdpPortRegister::~S2CUdpPortRegister() {
-  // @@protoc_insertion_point(destructor:yy.protocol.core.S2CUdpPortRegister)
+UdpPortRegisterRsp::~UdpPortRegisterRsp() {
+  // @@protoc_insertion_point(destructor:yy.protocol.core.UdpPortRegisterRsp)
   if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
   (void)arena;
     return;
@@ -1324,16 +1324,16 @@ S2CUdpPortRegister::~S2CUdpPortRegister() {
   SharedDtor();
 }
 
-inline void S2CUdpPortRegister::SharedDtor() {
+inline void UdpPortRegisterRsp::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
 }
 
-void S2CUdpPortRegister::SetCachedSize(int size) const {
+void UdpPortRegisterRsp::SetCachedSize(int size) const {
   _impl_._cached_size_.Set(size);
 }
 
-void S2CUdpPortRegister::Clear() {
-// @@protoc_insertion_point(message_clear_start:yy.protocol.core.S2CUdpPortRegister)
+void UdpPortRegisterRsp::Clear() {
+// @@protoc_insertion_point(message_clear_start:yy.protocol.core.UdpPortRegisterRsp)
   uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -1344,7 +1344,7 @@ void S2CUdpPortRegister::Clear() {
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* S2CUdpPortRegister::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+const char* UdpPortRegisterRsp::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   while (!ctx->Done(&ptr)) {
     uint32_t tag;
@@ -1358,12 +1358,12 @@ const char* S2CUdpPortRegister::_InternalParse(const char* ptr, ::_pbi::ParseCon
         } else
           goto handle_unusual;
         continue;
-      // .yy.protocol.core.S2CUdpPortRegister.Status status = 2;
+      // .yy.protocol.core.UdpPortRegisterRsp.Status status = 2;
       case 2:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
           uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
-          _internal_set_status(static_cast<::yy::protocol::core::S2CUdpPortRegister_Status>(val));
+          _internal_set_status(static_cast<::yy::protocol::core::UdpPortRegisterRsp_Status>(val));
         } else
           goto handle_unusual;
         continue;
@@ -1390,9 +1390,9 @@ failure:
 #undef CHK_
 }
 
-uint8_t* S2CUdpPortRegister::_InternalSerialize(
+uint8_t* UdpPortRegisterRsp::_InternalSerialize(
     uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:yy.protocol.core.S2CUdpPortRegister)
+  // @@protoc_insertion_point(serialize_to_array_start:yy.protocol.core.UdpPortRegisterRsp)
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -1402,7 +1402,7 @@ uint8_t* S2CUdpPortRegister::_InternalSerialize(
     target = ::_pbi::WireFormatLite::WriteUInt64ToArray(1, this->_internal_session_id(), target);
   }
 
-  // .yy.protocol.core.S2CUdpPortRegister.Status status = 2;
+  // .yy.protocol.core.UdpPortRegisterRsp.Status status = 2;
   if (this->_internal_status() != 0) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteEnumToArray(
@@ -1413,12 +1413,12 @@ uint8_t* S2CUdpPortRegister::_InternalSerialize(
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
-  // @@protoc_insertion_point(serialize_to_array_end:yy.protocol.core.S2CUdpPortRegister)
+  // @@protoc_insertion_point(serialize_to_array_end:yy.protocol.core.UdpPortRegisterRsp)
   return target;
 }
 
-size_t S2CUdpPortRegister::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:yy.protocol.core.S2CUdpPortRegister)
+size_t UdpPortRegisterRsp::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:yy.protocol.core.UdpPortRegisterRsp)
   size_t total_size = 0;
 
   uint32_t cached_has_bits = 0;
@@ -1430,7 +1430,7 @@ size_t S2CUdpPortRegister::ByteSizeLong() const {
     total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_session_id());
   }
 
-  // .yy.protocol.core.S2CUdpPortRegister.Status status = 2;
+  // .yy.protocol.core.UdpPortRegisterRsp.Status status = 2;
   if (this->_internal_status() != 0) {
     total_size += 1 +
       ::_pbi::WireFormatLite::EnumSize(this->_internal_status());
@@ -1439,17 +1439,17 @@ size_t S2CUdpPortRegister::ByteSizeLong() const {
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData S2CUdpPortRegister::_class_data_ = {
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData UdpPortRegisterRsp::_class_data_ = {
     ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
-    S2CUdpPortRegister::MergeImpl
+    UdpPortRegisterRsp::MergeImpl
 };
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*S2CUdpPortRegister::GetClassData() const { return &_class_data_; }
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*UdpPortRegisterRsp::GetClassData() const { return &_class_data_; }
 
 
-void S2CUdpPortRegister::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
-  auto* const _this = static_cast<S2CUdpPortRegister*>(&to_msg);
-  auto& from = static_cast<const S2CUdpPortRegister&>(from_msg);
-  // @@protoc_insertion_point(class_specific_merge_from_start:yy.protocol.core.S2CUdpPortRegister)
+void UdpPortRegisterRsp::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<UdpPortRegisterRsp*>(&to_msg);
+  auto& from = static_cast<const UdpPortRegisterRsp&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:yy.protocol.core.UdpPortRegisterRsp)
   GOOGLE_DCHECK_NE(&from, _this);
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
@@ -1463,29 +1463,29 @@ void S2CUdpPortRegister::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, con
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
-void S2CUdpPortRegister::CopyFrom(const S2CUdpPortRegister& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:yy.protocol.core.S2CUdpPortRegister)
+void UdpPortRegisterRsp::CopyFrom(const UdpPortRegisterRsp& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:yy.protocol.core.UdpPortRegisterRsp)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool S2CUdpPortRegister::IsInitialized() const {
+bool UdpPortRegisterRsp::IsInitialized() const {
   return true;
 }
 
-void S2CUdpPortRegister::InternalSwap(S2CUdpPortRegister* other) {
+void UdpPortRegisterRsp::InternalSwap(UdpPortRegisterRsp* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(S2CUdpPortRegister, _impl_.status_)
-      + sizeof(S2CUdpPortRegister::_impl_.status_)
-      - PROTOBUF_FIELD_OFFSET(S2CUdpPortRegister, _impl_.session_id_)>(
+      PROTOBUF_FIELD_OFFSET(UdpPortRegisterRsp, _impl_.status_)
+      + sizeof(UdpPortRegisterRsp::_impl_.status_)
+      - PROTOBUF_FIELD_OFFSET(UdpPortRegisterRsp, _impl_.session_id_)>(
           reinterpret_cast<char*>(&_impl_.session_id_),
           reinterpret_cast<char*>(&other->_impl_.session_id_));
 }
 
-::PROTOBUF_NAMESPACE_ID::Metadata S2CUdpPortRegister::GetMetadata() const {
+::PROTOBUF_NAMESPACE_ID::Metadata UdpPortRegisterRsp::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_connection_2eproto_getter, &descriptor_table_connection_2eproto_once,
       file_level_metadata_connection_2eproto[5]);
@@ -1496,29 +1496,29 @@ void S2CUdpPortRegister::InternalSwap(S2CUdpPortRegister* other) {
 }  // namespace protocol
 }  // namespace yy
 PROTOBUF_NAMESPACE_OPEN
-template<> PROTOBUF_NOINLINE ::yy::protocol::core::S2CXorBody*
-Arena::CreateMaybeMessage< ::yy::protocol::core::S2CXorBody >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::yy::protocol::core::S2CXorBody >(arena);
+template<> PROTOBUF_NOINLINE ::yy::protocol::core::XorBodyRsp*
+Arena::CreateMaybeMessage< ::yy::protocol::core::XorBodyRsp >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::yy::protocol::core::XorBodyRsp >(arena);
 }
 template<> PROTOBUF_NOINLINE ::yy::protocol::core::HeartBody*
 Arena::CreateMaybeMessage< ::yy::protocol::core::HeartBody >(Arena* arena) {
   return Arena::CreateMessageInternal< ::yy::protocol::core::HeartBody >(arena);
 }
-template<> PROTOBUF_NOINLINE ::yy::protocol::core::C2SSecurityBody*
-Arena::CreateMaybeMessage< ::yy::protocol::core::C2SSecurityBody >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::yy::protocol::core::C2SSecurityBody >(arena);
+template<> PROTOBUF_NOINLINE ::yy::protocol::core::SecurityCheckReq*
+Arena::CreateMaybeMessage< ::yy::protocol::core::SecurityCheckReq >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::yy::protocol::core::SecurityCheckReq >(arena);
 }
-template<> PROTOBUF_NOINLINE ::yy::protocol::core::S2CSecurityBody*
-Arena::CreateMaybeMessage< ::yy::protocol::core::S2CSecurityBody >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::yy::protocol::core::S2CSecurityBody >(arena);
+template<> PROTOBUF_NOINLINE ::yy::protocol::core::SecurityCheckRsp*
+Arena::CreateMaybeMessage< ::yy::protocol::core::SecurityCheckRsp >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::yy::protocol::core::SecurityCheckRsp >(arena);
 }
-template<> PROTOBUF_NOINLINE ::yy::protocol::core::C2SUdpPortRegister*
-Arena::CreateMaybeMessage< ::yy::protocol::core::C2SUdpPortRegister >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::yy::protocol::core::C2SUdpPortRegister >(arena);
+template<> PROTOBUF_NOINLINE ::yy::protocol::core::UdpPortRegisterReq*
+Arena::CreateMaybeMessage< ::yy::protocol::core::UdpPortRegisterReq >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::yy::protocol::core::UdpPortRegisterReq >(arena);
 }
-template<> PROTOBUF_NOINLINE ::yy::protocol::core::S2CUdpPortRegister*
-Arena::CreateMaybeMessage< ::yy::protocol::core::S2CUdpPortRegister >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::yy::protocol::core::S2CUdpPortRegister >(arena);
+template<> PROTOBUF_NOINLINE ::yy::protocol::core::UdpPortRegisterRsp*
+Arena::CreateMaybeMessage< ::yy::protocol::core::UdpPortRegisterRsp >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::yy::protocol::core::UdpPortRegisterRsp >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
 

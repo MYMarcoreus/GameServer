@@ -21,13 +21,23 @@ bool RedisClient::Set(const std::string& key, const std::string& value) {
 bool RedisClient::SetEx(const std::string& key, const std::string& value, const std::chrono::seconds ttl)
 {
     const auto conn = pool_->Acquire();
-    return conn->conn.set(key, value, ttl);;
+    return conn->conn.set(key, value, ttl);
 }
 
 bool RedisClient::HSet(const std::string& key, const std::string& field, const std::string& value)
 {
     const auto conn = pool_->Acquire();
     return conn->conn.hset(key, field, value);
+}
+
+bool RedisClient::HSetEx(const std::string& key, const std::string& field, const std::string& value, const std::chrono::seconds ttl)
+{
+    const auto conn = pool_->Acquire();
+    if (not conn->conn.hset(key, field, value))
+        return false;
+
+    // 设置过期时间（单位：秒）
+    return conn->conn.expire(key, ttl);
 }
 
 bool RedisClient::HMSet(const std::string& key, const std::unordered_map<std::string, std::string>& kvs)
@@ -41,6 +51,12 @@ bool RedisClient::Exists(const std::string& key)
 {
     const auto conn = pool_->Acquire();
     return conn->conn.exists(key);
+}
+
+bool RedisClient::Expire(const std::string& key, std::chrono::seconds ttl)
+{
+    const auto conn = pool_->Acquire();
+    return conn->conn.expire(key, ttl);
 }
 
 bool RedisClient::HasHashKey(const std::string& key)
@@ -68,6 +84,18 @@ auto RedisClient::HGet(const std::string& key, const std::string& field) -> std:
     const auto conn = pool_->Acquire();
     if (auto val = conn->conn.hget(key, field))
         return *val;
+    return std::nullopt;
+}
+
+auto RedisClient::GetAndRefreshEx(const std::string& key, const std::chrono::seconds ttl) -> std::optional<std::string>
+{
+    const auto conn = pool_->Acquire();
+    if (auto val = conn->conn.get(key)) {
+        // 成功取值后，刷新该 key 的过期时间
+        if (conn->conn.expire(key, ttl))
+            return *val;
+        return std::nullopt;
+    }
     return std::nullopt;
 }
 

@@ -20,14 +20,17 @@ public:
     bool Set(const std::string& key, const std::string& value);
     bool SetEx(const std::string& key, const std::string& value, std::chrono::seconds ttl);
     bool HSet(const std::string& key, const std::string& field, const std::string& value);
+    bool HSetEx(const std::string& key, const std::string& field, const std::string& value, std::chrono::seconds ttl);
     bool HMSet(const std::string& key, const std::unordered_map<std::string, std::string>& kvs);
     bool Exists(const std::string& key);
+    bool Expire(const std::string& key, std::chrono::seconds ttl);
 
     bool HasHashKey(const std::string& key);
 
     auto Get(const std::string& key) -> std::optional<std::string>;
     auto HGetAll(const std::string& key) -> std::unordered_map<std::string, std::string>;
     auto HGet(const std::string& key, const std::string& field) -> std::optional<std::string>;
+    auto GetAndRefreshEx(const std::string& key, std::chrono::seconds expire_seconds) -> std::optional<std::string>;
 
     bool Del(const std::string& key);
 

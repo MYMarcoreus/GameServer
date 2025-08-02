@@ -3,7 +3,6 @@
 #include "log.h"
 #include "EventLoop.h"
 #include "RpcServer.h"
-#include "center.pb.h"
 
 
 
@@ -11,9 +10,6 @@ using namespace std::chrono_literals;
 using namespace yy::net;
 using namespace yy::core;
 using namespace yy::util;
-
-using yy::protocol::app::SelectServerReq;
-using yy::protocol::app::SelectServerRsp;
 
 
 namespace yy::app::center {
@@ -39,7 +35,7 @@ void CenterServerManager::RunApp()
     m_accpetorLoop = std::make_unique<EventLoop>(500ms);
     m_rpcServer = std::make_unique<rpc::RpcServer>(m_accpetorLoop.get(), rpcAddr);
     m_rpcServer->RegisterService<CenterRpcServiceImpl>(m_accpetorLoop.get());
-    m_rpcServer->Start(2, 500ms);
+    m_rpcServer->Start(2, 100ms);
     //! 启动监听线程(即主线程)并阻塞在此
     m_accpetorLoop->Loop();
 }

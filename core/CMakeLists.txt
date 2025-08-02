@@ -1,9 +1,12 @@
 set(LocalSrc
         UserConnection.cpp
-        codec/ProtobufTcpCodec.cpp
         codec/ProtobufDispatcher.cpp
-        codec/MessageHeader.cpp
-        codec/ProtobufUdpCodec.cpp
+        codec/MessageHeader_Name.cpp
+        codec/ProtobufTcpCodec_Name.cpp
+        codec/ProtobufUdpCodec_Name.cpp
+        codec/MessageHeader_Cmd.cpp
+        codec/ProtobufTcpCodec_Cmd.cpp
+        codec/ProtobufUdpCodec_Cmd.cpp
         redis/RedisClient.cpp
         redis/RedisPool.cpp
         mysql/MySqlPool.cpp
@@ -15,8 +18,7 @@ set(LocalSrc
         rpc/RpcControllerImpl.cpp
         rpc/RpcStubConnectionPool.hpp
         zookeeper/ZkClient.cpp
-        zookeeper/ZkServiceManager.cpp
-        BackendServer.cpp
+        zookeeper/ZkServiceClient.cpp
         FrontendServer.cpp
 )
 

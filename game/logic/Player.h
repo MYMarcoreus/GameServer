@@ -1,6 +1,6 @@
 #pragma once
 #include "core_definations.h"
-#include "room.pb.h"
+#include "game.pb.h"
 
 namespace yy::app::logic
 {
@@ -14,7 +14,7 @@ class Player {
 public:
     Player(const UserConnectionPtr& conn, const PlayerBaseDataPtr& basedata): conn_{conn}, basedata_{basedata} { }
 
-    UID_t GetUID() const { return basedata_->uid(); }
+    UID_t GetUID() const { return basedata_->account_data().uid(); }
     UserConnectionPtr GetConn() const { return conn_; }
     PlayerBaseDataPtr GetBaseData() const { return basedata_; }
 private:

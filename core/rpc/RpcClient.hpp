@@ -4,10 +4,6 @@
 #include "RpcStubConnectionPool.hpp"
 #include "Singleton.h"
 
-
-#include "account.pb.h"
-
-
 namespace yy::core::rpc
 {
 
@@ -22,6 +18,11 @@ public:
     using StubConnType = typename StubConnPoolType::StubConnType;
 
     explicit RpcClient() {  }
+
+    static std::string GetServiceName()
+    {
+        return RpcStubConnectionPool<ServiceStub>::GetServiceName();
+    }
 
     void Start(const size_t pool_size, typename StubConnType::F_RpcStubConnectionEstablishedCallback cb)
     {
@@ -40,13 +41,19 @@ public:
         Start(0, std::move(cb));
     }
 
+    auto GetServerNames() -> std::vector<std::pair<std::string, net::IPAddressPtr>>
+    {
+        return pool_->GetServerNames();
+    }
+
     ///@brief 请求的发送的同步的，响应的等待是异步的
     /// Request消息的生命周期由调用者自己管理
     /// Respone消息的生命周期由该函数自动管理
     template<IsProtobufMessage Request, IsProtobufMessage Response>
-    bool CallRemoteAsync(const std::shared_ptr<Request>& request, FinishedCallback<Response> cb)
+    bool CallRemoteAsync_Random(const std::shared_ptr<Request>& request, FinishedCallback<Response> cb)
     {
-        auto conn = pool_->Acquire(5s);
+        assert(pool_ != nullptr);
+        auto conn = pool_->Acquire_Random(5s);
         if (conn == nullptr) return false;
         if (request == nullptr) return false;
 
@@ -69,9 +76,10 @@ public:
     }
 
     template<IsProtobufMessage Request, IsProtobufMessage Response>
-    bool CallRemoteAsync(Request& request, FinishedCallback<Response> cb)
+    bool CallRemoteAsync_Random(Request& request, FinishedCallback<Response> cb)
     {
-        auto conn = pool_->Acquire(5s);
+        assert(pool_ != nullptr);
+        auto conn = pool_->Acquire_Random(5s);
         if (conn == nullptr) return false;
 
         auto response = new Response;
@@ -89,8 +97,60 @@ public:
         return true;
     }
 
-private:
+    ///@brief 请求的发送的同步的，响应的等待是异步的
+    /// Request消息的生命周期由调用者自己管理
+    /// Respone消息的生命周期由该函数自动管理
+    template<IsProtobufMessage Request, IsProtobufMessage Response>
+    bool CallRemoteAsync_From(std::string server_name, const std::shared_ptr<Request>& request, FinishedCallback<Response> cb)
+    {
+        assert(pool_ != nullptr);
+        auto conn = pool_->Acquire_From(server_name, 5s);
+        if (conn == nullptr) return false;
+        if (request == nullptr) return false;
 
+        auto response = new Response;
+        // 设置请求参数
+        auto controller = new RpcControllerImpl;
+        controller->set_wait_for_ready(true);
+        controller->set_timeout(5s);
+
+        // 设置响应回调，并使用unique_ptr接管裸指针（响应消息和RpcController的生命周期在此自动管理）
+        auto lambda_closure = rpc::NewLambdaClosureT(
+            [this, response, controller, cb = std::move(cb)]() mutable  {
+                if (cb) cb(std::unique_ptr<Response>(response), std::unique_ptr<RpcControllerImpl>(controller));
+            });
+
+        // 通过特化模板函数DoCall调用客户端的`RpcConnection::CallMethod`来同步发送请求
+        DoCall<Request, Response>(conn->Stub(), controller, request.get(), response, lambda_closure);
+
+        return true;
+    }
+
+    template<IsProtobufMessage Request, IsProtobufMessage Response>
+    bool CallRemoteAsync_From(const std::string & server_name, Request& request, FinishedCallback<Response> cb)
+    {
+        assert(pool_ != nullptr);
+        auto conn = pool_->Acquire_From(server_name, 5s);
+        if (conn == nullptr) return false;
+
+        auto response = new Response;
+        auto controller = new RpcControllerImpl;
+        controller->set_wait_for_ready(true);
+        controller->set_timeout(5s);
+
+        auto lambda_closure = rpc::NewLambdaClosureT(
+            [this, response, controller, cb = std::move(cb)]() mutable {
+                if (cb) cb(std::unique_ptr<Response>(response), std::unique_ptr<RpcControllerImpl>(controller));
+            });
+
+        DoCall<Request, Response>(conn->Stub(), controller, &request, response, lambda_closure);
+
+        return true;
+    }
+
+
+
+private:
     ///@brief 调用具体客户端ServiceStub的对应方法，若有新的服务和新的方法，仅需在别的源文件中实现模板特化，调用stub->MethodName即可（如stub->Login或stub->Register等）
     template<typename Request, typename Response>
     void DoCall(ServiceStub& stub, RpcControllerImpl* controller,

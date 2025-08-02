@@ -23,72 +23,63 @@ namespace _pbi = _pb::internal;
 namespace yy {
 namespace protocol {
 namespace app {
-PROTOBUF_CONSTEXPR C2SLogin::C2SLogin(
+PROTOBUF_CONSTEXPR LoginReq::LoginReq(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_.username_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.password_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
-  , /*decltype(_impl_.session_id_)*/uint64_t{0u}
   , /*decltype(_impl_._cached_size_)*/{}} {}
-struct C2SLoginDefaultTypeInternal {
-  PROTOBUF_CONSTEXPR C2SLoginDefaultTypeInternal()
+struct LoginReqDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR LoginReqDefaultTypeInternal()
       : _instance(::_pbi::ConstantInitialized{}) {}
-  ~C2SLoginDefaultTypeInternal() {}
+  ~LoginReqDefaultTypeInternal() {}
   union {
-    C2SLogin _instance;
+    LoginReq _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 C2SLoginDefaultTypeInternal _C2SLogin_default_instance_;
-PROTOBUF_CONSTEXPR S2CLogin::S2CLogin(
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 LoginReqDefaultTypeInternal _LoginReq_default_instance_;
+PROTOBUF_CONSTEXPR LoginRsp::LoginRsp(
     ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_._has_bits_)*/{}
-  , /*decltype(_impl_._cached_size_)*/{}
-  , /*decltype(_impl_.username_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
-  , /*decltype(_impl_.ip_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
-  , /*decltype(_impl_.token_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
-  , /*decltype(_impl_.session_id_)*/uint64_t{0u}
-  , /*decltype(_impl_.uid_)*/uint64_t{0u}
+    /*decltype(_impl_.token_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_.account_data_)*/nullptr
   , /*decltype(_impl_.result_code_)*/0
-  , /*decltype(_impl_.port_)*/0u} {}
-struct S2CLoginDefaultTypeInternal {
-  PROTOBUF_CONSTEXPR S2CLoginDefaultTypeInternal()
+  , /*decltype(_impl_._cached_size_)*/{}} {}
+struct LoginRspDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR LoginRspDefaultTypeInternal()
       : _instance(::_pbi::ConstantInitialized{}) {}
-  ~S2CLoginDefaultTypeInternal() {}
+  ~LoginRspDefaultTypeInternal() {}
   union {
-    S2CLogin _instance;
+    LoginRsp _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 S2CLoginDefaultTypeInternal _S2CLogin_default_instance_;
-PROTOBUF_CONSTEXPR C2SRegister::C2SRegister(
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 LoginRspDefaultTypeInternal _LoginRsp_default_instance_;
+PROTOBUF_CONSTEXPR RegisterReq::RegisterReq(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_.username_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.password_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
-  , /*decltype(_impl_.session_id_)*/uint64_t{0u}
   , /*decltype(_impl_._cached_size_)*/{}} {}
-struct C2SRegisterDefaultTypeInternal {
-  PROTOBUF_CONSTEXPR C2SRegisterDefaultTypeInternal()
+struct RegisterReqDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR RegisterReqDefaultTypeInternal()
       : _instance(::_pbi::ConstantInitialized{}) {}
-  ~C2SRegisterDefaultTypeInternal() {}
+  ~RegisterReqDefaultTypeInternal() {}
   union {
-    C2SRegister _instance;
+    RegisterReq _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 C2SRegisterDefaultTypeInternal _C2SRegister_default_instance_;
-PROTOBUF_CONSTEXPR S2CRegister::S2CRegister(
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 RegisterReqDefaultTypeInternal _RegisterReq_default_instance_;
+PROTOBUF_CONSTEXPR RegisterRsp::RegisterRsp(
     ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_._has_bits_)*/{}
-  , /*decltype(_impl_._cached_size_)*/{}
-  , /*decltype(_impl_.session_id_)*/uint64_t{0u}
-  , /*decltype(_impl_.uid_)*/uint64_t{0u}
-  , /*decltype(_impl_.result_code_)*/0} {}
-struct S2CRegisterDefaultTypeInternal {
-  PROTOBUF_CONSTEXPR S2CRegisterDefaultTypeInternal()
+    /*decltype(_impl_.uid_)*/uint64_t{0u}
+  , /*decltype(_impl_.result_code_)*/0
+  , /*decltype(_impl_._cached_size_)*/{}} {}
+struct RegisterRspDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR RegisterRspDefaultTypeInternal()
       : _instance(::_pbi::ConstantInitialized{}) {}
-  ~S2CRegisterDefaultTypeInternal() {}
+  ~RegisterRspDefaultTypeInternal() {}
   union {
-    S2CRegister _instance;
+    RegisterRsp _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 S2CRegisterDefaultTypeInternal _S2CRegister_default_instance_;
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 RegisterRspDefaultTypeInternal _RegisterRsp_default_instance_;
 }  // namespace app
 }  // namespace protocol
 }  // namespace yy
@@ -98,99 +89,81 @@ static const ::_pb::ServiceDescriptor* file_level_service_descriptors_account_2e
 
 const uint32_t TableStruct_account_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::C2SLogin, _internal_metadata_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::LoginReq, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::C2SLogin, _impl_.session_id_),
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::C2SLogin, _impl_.username_),
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::C2SLogin, _impl_.password_),
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::S2CLogin, _impl_._has_bits_),
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::S2CLogin, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::S2CLogin, _impl_.session_id_),
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::S2CLogin, _impl_.result_code_),
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::S2CLogin, _impl_.uid_),
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::S2CLogin, _impl_.username_),
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::S2CLogin, _impl_.ip_),
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::S2CLogin, _impl_.port_),
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::S2CLogin, _impl_.token_),
-  ~0u,
-  ~0u,
-  3,
-  0,
-  1,
-  4,
-  2,
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::LoginReq, _impl_.username_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::LoginReq, _impl_.password_),
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::C2SRegister, _internal_metadata_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::LoginRsp, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::C2SRegister, _impl_.session_id_),
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::C2SRegister, _impl_.username_),
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::C2SRegister, _impl_.password_),
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::S2CRegister, _impl_._has_bits_),
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::S2CRegister, _internal_metadata_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::LoginRsp, _impl_.result_code_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::LoginRsp, _impl_.account_data_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::LoginRsp, _impl_.token_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::RegisterReq, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::S2CRegister, _impl_.session_id_),
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::S2CRegister, _impl_.result_code_),
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::S2CRegister, _impl_.uid_),
-  ~0u,
-  ~0u,
-  0,
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::RegisterReq, _impl_.username_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::RegisterReq, _impl_.password_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::RegisterRsp, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::RegisterRsp, _impl_.result_code_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::RegisterRsp, _impl_.uid_),
 };
 static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  { 0, -1, -1, sizeof(::yy::protocol::app::C2SLogin)},
-  { 9, 22, -1, sizeof(::yy::protocol::app::S2CLogin)},
-  { 29, -1, -1, sizeof(::yy::protocol::app::C2SRegister)},
-  { 38, 47, -1, sizeof(::yy::protocol::app::S2CRegister)},
+  { 0, -1, -1, sizeof(::yy::protocol::app::LoginReq)},
+  { 8, -1, -1, sizeof(::yy::protocol::app::LoginRsp)},
+  { 17, -1, -1, sizeof(::yy::protocol::app::RegisterReq)},
+  { 25, -1, -1, sizeof(::yy::protocol::app::RegisterRsp)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
-  &::yy::protocol::app::_C2SLogin_default_instance_._instance,
-  &::yy::protocol::app::_S2CLogin_default_instance_._instance,
-  &::yy::protocol::app::_C2SRegister_default_instance_._instance,
-  &::yy::protocol::app::_S2CRegister_default_instance_._instance,
+  &::yy::protocol::app::_LoginReq_default_instance_._instance,
+  &::yy::protocol::app::_LoginRsp_default_instance_._instance,
+  &::yy::protocol::app::_RegisterReq_default_instance_._instance,
+  &::yy::protocol::app::_RegisterRsp_default_instance_._instance,
 };
 
 const char descriptor_table_protodef_account_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
-  "\n\raccount.proto\022\017yy.protocol.app\"B\n\010C2SL"
-  "ogin\022\022\n\nsession_id\030\001 \001(\004\022\020\n\010username\030\003 \001"
-  "(\t\022\020\n\010password\030\004 \001(\t\"\272\002\n\010S2CLogin\022\022\n\nses"
-  "sion_id\030\001 \001(\004\0225\n\013result_code\030\002 \001(\0162 .yy."
-  "protocol.app.S2CLogin.Status\022\020\n\003uid\030\003 \001("
-  "\004H\000\210\001\001\022\025\n\010username\030\004 \001(\tH\001\210\001\001\022\017\n\002ip\030\005 \001("
-  "\tH\002\210\001\001\022\021\n\004port\030\006 \001(\rH\003\210\001\001\022\022\n\005token\030\007 \001(\t"
-  "H\004\210\001\001\"S\n\006Status\022\014\n\010eSuccess\020\000\022\024\n\020eAccoun"
-  "tNotExist\020\001\022\022\n\016ePasswordError\020\002\022\021\n\reUnkn"
-  "ownError\020\003B\006\n\004_uidB\013\n\t_usernameB\005\n\003_ipB\007"
-  "\n\005_portB\010\n\006_token\"E\n\013C2SRegister\022\022\n\nsess"
-  "ion_id\030\001 \001(\004\022\020\n\010username\030\003 \001(\t\022\020\n\010passwo"
-  "rd\030\004 \001(\t\"\272\001\n\013S2CRegister\022\022\n\nsession_id\030\001"
-  " \001(\004\0228\n\013result_code\030\002 \001(\0162#.yy.protocol."
-  "app.S2CRegister.Status\022\020\n\003uid\030\004 \001(\004H\000\210\001\001"
-  "\"C\n\006Status\022\014\n\010eSuccess\020\000\022\030\n\024eAccountAlre"
-  "adyExist\020\002\022\021\n\reUnknownError\020\003B\006\n\004_uid2\232\001"
-  "\n\021AccountServiceRpc\022=\n\005Login\022\031.yy.protoc"
-  "ol.app.C2SLogin\032\031.yy.protocol.app.S2CLog"
-  "in\022F\n\010Register\022\034.yy.protocol.app.C2SRegi"
-  "ster\032\034.yy.protocol.app.S2CRegisterB\003\200\001\001b"
-  "\006proto3"
+  "\n\raccount.proto\022\017yy.protocol.app\032\022accoun"
+  "t_data.proto\".\n\010LoginReq\022\020\n\010username\030\003 \001"
+  "(\t\022\020\n\010password\030\004 \001(\t\"\335\001\n\010LoginRsp\0225\n\013res"
+  "ult_code\030\001 \001(\0162 .yy.protocol.app.LoginRs"
+  "p.Status\0226\n\014account_data\030\002 \001(\0132 .yy.prot"
+  "ocol.app.AccountBaseData\022\r\n\005token\030\003 \001(\t\""
+  "S\n\006Status\022\014\n\010eSuccess\020\000\022\024\n\020eAccountNotEx"
+  "ist\020\001\022\022\n\016ePasswordError\020\002\022\021\n\reUnknownErr"
+  "or\020\003\"1\n\013RegisterReq\022\020\n\010username\030\003 \001(\t\022\020\n"
+  "\010password\030\004 \001(\t\"\231\001\n\013RegisterRsp\0228\n\013resul"
+  "t_code\030\002 \001(\0162#.yy.protocol.app.RegisterR"
+  "sp.Status\022\013\n\003uid\030\004 \001(\004\"C\n\006Status\022\014\n\010eSuc"
+  "cess\020\000\022\030\n\024eAccountAlreadyExist\020\002\022\021\n\reUnk"
+  "nownError\020\0032\232\001\n\021AccountServiceRpc\022=\n\005Log"
+  "in\022\031.yy.protocol.app.LoginReq\032\031.yy.proto"
+  "col.app.LoginRsp\022F\n\010Register\022\034.yy.protoc"
+  "ol.app.RegisterReq\032\034.yy.protocol.app.Reg"
+  "isterRspB\003\200\001\001b\006proto3"
   ;
+static const ::_pbi::DescriptorTable* const descriptor_table_account_2eproto_deps[1] = {
+  &::descriptor_table_account_5fdata_2eproto,
+};
 static ::_pbi::once_flag descriptor_table_account_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_account_2eproto = {
-    false, false, 847, descriptor_table_protodef_account_2eproto,
+    false, false, 701, descriptor_table_protodef_account_2eproto,
     "account.proto",
-    &descriptor_table_account_2eproto_once, nullptr, 0, 4,
+    &descriptor_table_account_2eproto_once, descriptor_table_account_2eproto_deps, 1, 4,
     schemas, file_default_instances, TableStruct_account_2eproto::offsets,
     file_level_metadata_account_2eproto, file_level_enum_descriptors_account_2eproto,
     file_level_service_descriptors_account_2eproto,
@@ -204,11 +177,11 @@ PROTOBUF_ATTRIBUTE_INIT_PRIORITY2 static ::_pbi::AddDescriptorsRunner dynamic_in
 namespace yy {
 namespace protocol {
 namespace app {
-const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* S2CLogin_Status_descriptor() {
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* LoginRsp_Status_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_account_2eproto);
   return file_level_enum_descriptors_account_2eproto[0];
 }
-bool S2CLogin_Status_IsValid(int value) {
+bool LoginRsp_Status_IsValid(int value) {
   switch (value) {
     case 0:
     case 1:
@@ -221,19 +194,19 @@ bool S2CLogin_Status_IsValid(int value) {
 }
 
 #if (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
-constexpr S2CLogin_Status S2CLogin::eSuccess;
-constexpr S2CLogin_Status S2CLogin::eAccountNotExist;
-constexpr S2CLogin_Status S2CLogin::ePasswordError;
-constexpr S2CLogin_Status S2CLogin::eUnknownError;
-constexpr S2CLogin_Status S2CLogin::Status_MIN;
-constexpr S2CLogin_Status S2CLogin::Status_MAX;
-constexpr int S2CLogin::Status_ARRAYSIZE;
+constexpr LoginRsp_Status LoginRsp::eSuccess;
+constexpr LoginRsp_Status LoginRsp::eAccountNotExist;
+constexpr LoginRsp_Status LoginRsp::ePasswordError;
+constexpr LoginRsp_Status LoginRsp::eUnknownError;
+constexpr LoginRsp_Status LoginRsp::Status_MIN;
+constexpr LoginRsp_Status LoginRsp::Status_MAX;
+constexpr int LoginRsp::Status_ARRAYSIZE;
 #endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
-const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* S2CRegister_Status_descriptor() {
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* RegisterRsp_Status_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_account_2eproto);
   return file_level_enum_descriptors_account_2eproto[1];
 }
-bool S2CRegister_Status_IsValid(int value) {
+bool RegisterRsp_Status_IsValid(int value) {
   switch (value) {
     case 0:
     case 2:
@@ -245,33 +218,32 @@ bool S2CRegister_Status_IsValid(int value) {
 }
 
 #if (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
-constexpr S2CRegister_Status S2CRegister::eSuccess;
-constexpr S2CRegister_Status S2CRegister::eAccountAlreadyExist;
-constexpr S2CRegister_Status S2CRegister::eUnknownError;
-constexpr S2CRegister_Status S2CRegister::Status_MIN;
-constexpr S2CRegister_Status S2CRegister::Status_MAX;
-constexpr int S2CRegister::Status_ARRAYSIZE;
+constexpr RegisterRsp_Status RegisterRsp::eSuccess;
+constexpr RegisterRsp_Status RegisterRsp::eAccountAlreadyExist;
+constexpr RegisterRsp_Status RegisterRsp::eUnknownError;
+constexpr RegisterRsp_Status RegisterRsp::Status_MIN;
+constexpr RegisterRsp_Status RegisterRsp::Status_MAX;
+constexpr int RegisterRsp::Status_ARRAYSIZE;
 #endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 
 // ===================================================================
 
-class C2SLogin::_Internal {
+class LoginReq::_Internal {
  public:
 };
 
-C2SLogin::C2SLogin(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+LoginReq::LoginReq(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
   SharedCtor(arena, is_message_owned);
-  // @@protoc_insertion_point(arena_constructor:yy.protocol.app.C2SLogin)
+  // @@protoc_insertion_point(arena_constructor:yy.protocol.app.LoginReq)
 }
-C2SLogin::C2SLogin(const C2SLogin& from)
+LoginReq::LoginReq(const LoginReq& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
-  C2SLogin* const _this = this; (void)_this;
+  LoginReq* const _this = this; (void)_this;
   new (&_impl_) Impl_{
       decltype(_impl_.username_){}
     , decltype(_impl_.password_){}
-    , decltype(_impl_.session_id_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -291,18 +263,16 @@ C2SLogin::C2SLogin(const C2SLogin& from)
     _this->_impl_.password_.Set(from._internal_password(), 
       _this->GetArenaForAllocation());
   }
-  _this->_impl_.session_id_ = from._impl_.session_id_;
-  // @@protoc_insertion_point(copy_constructor:yy.protocol.app.C2SLogin)
+  // @@protoc_insertion_point(copy_constructor:yy.protocol.app.LoginReq)
 }
 
-inline void C2SLogin::SharedCtor(
+inline void LoginReq::SharedCtor(
     ::_pb::Arena* arena, bool is_message_owned) {
   (void)arena;
   (void)is_message_owned;
   new (&_impl_) Impl_{
       decltype(_impl_.username_){}
     , decltype(_impl_.password_){}
-    , decltype(_impl_.session_id_){uint64_t{0u}}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.username_.InitDefault();
@@ -315,8 +285,8 @@ inline void C2SLogin::SharedCtor(
   #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
 }
 
-C2SLogin::~C2SLogin() {
-  // @@protoc_insertion_point(destructor:yy.protocol.app.C2SLogin)
+LoginReq::~LoginReq() {
+  // @@protoc_insertion_point(destructor:yy.protocol.app.LoginReq)
   if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
   (void)arena;
     return;
@@ -324,49 +294,40 @@ C2SLogin::~C2SLogin() {
   SharedDtor();
 }
 
-inline void C2SLogin::SharedDtor() {
+inline void LoginReq::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
   _impl_.username_.Destroy();
   _impl_.password_.Destroy();
 }
 
-void C2SLogin::SetCachedSize(int size) const {
+void LoginReq::SetCachedSize(int size) const {
   _impl_._cached_size_.Set(size);
 }
 
-void C2SLogin::Clear() {
-// @@protoc_insertion_point(message_clear_start:yy.protocol.app.C2SLogin)
+void LoginReq::Clear() {
+// @@protoc_insertion_point(message_clear_start:yy.protocol.app.LoginReq)
   uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
   _impl_.username_.ClearToEmpty();
   _impl_.password_.ClearToEmpty();
-  _impl_.session_id_ = uint64_t{0u};
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* C2SLogin::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+const char* LoginReq::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   while (!ctx->Done(&ptr)) {
     uint32_t tag;
     ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // uint64 session_id = 1;
-      case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
-          _impl_.session_id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
-          CHK_(ptr);
-        } else
-          goto handle_unusual;
-        continue;
       // string username = 3;
       case 3:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
           auto str = _internal_mutable_username();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
-          CHK_(::_pbi::VerifyUTF8(str, "yy.protocol.app.C2SLogin.username"));
+          CHK_(::_pbi::VerifyUTF8(str, "yy.protocol.app.LoginReq.username"));
         } else
           goto handle_unusual;
         continue;
@@ -376,7 +337,7 @@ const char* C2SLogin::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx)
           auto str = _internal_mutable_password();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
-          CHK_(::_pbi::VerifyUTF8(str, "yy.protocol.app.C2SLogin.password"));
+          CHK_(::_pbi::VerifyUTF8(str, "yy.protocol.app.LoginReq.password"));
         } else
           goto handle_unusual;
         continue;
@@ -403,24 +364,18 @@ failure:
 #undef CHK_
 }
 
-uint8_t* C2SLogin::_InternalSerialize(
+uint8_t* LoginReq::_InternalSerialize(
     uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:yy.protocol.app.C2SLogin)
+  // @@protoc_insertion_point(serialize_to_array_start:yy.protocol.app.LoginReq)
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
-
-  // uint64 session_id = 1;
-  if (this->_internal_session_id() != 0) {
-    target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(1, this->_internal_session_id(), target);
-  }
 
   // string username = 3;
   if (!this->_internal_username().empty()) {
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_username().data(), static_cast<int>(this->_internal_username().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "yy.protocol.app.C2SLogin.username");
+      "yy.protocol.app.LoginReq.username");
     target = stream->WriteStringMaybeAliased(
         3, this->_internal_username(), target);
   }
@@ -430,7 +385,7 @@ uint8_t* C2SLogin::_InternalSerialize(
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_password().data(), static_cast<int>(this->_internal_password().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "yy.protocol.app.C2SLogin.password");
+      "yy.protocol.app.LoginReq.password");
     target = stream->WriteStringMaybeAliased(
         4, this->_internal_password(), target);
   }
@@ -439,12 +394,12 @@ uint8_t* C2SLogin::_InternalSerialize(
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
-  // @@protoc_insertion_point(serialize_to_array_end:yy.protocol.app.C2SLogin)
+  // @@protoc_insertion_point(serialize_to_array_end:yy.protocol.app.LoginReq)
   return target;
 }
 
-size_t C2SLogin::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:yy.protocol.app.C2SLogin)
+size_t LoginReq::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:yy.protocol.app.LoginReq)
   size_t total_size = 0;
 
   uint32_t cached_has_bits = 0;
@@ -465,25 +420,20 @@ size_t C2SLogin::ByteSizeLong() const {
         this->_internal_password());
   }
 
-  // uint64 session_id = 1;
-  if (this->_internal_session_id() != 0) {
-    total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_session_id());
-  }
-
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData C2SLogin::_class_data_ = {
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData LoginReq::_class_data_ = {
     ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
-    C2SLogin::MergeImpl
+    LoginReq::MergeImpl
 };
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*C2SLogin::GetClassData() const { return &_class_data_; }
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*LoginReq::GetClassData() const { return &_class_data_; }
 
 
-void C2SLogin::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
-  auto* const _this = static_cast<C2SLogin*>(&to_msg);
-  auto& from = static_cast<const C2SLogin&>(from_msg);
-  // @@protoc_insertion_point(class_specific_merge_from_start:yy.protocol.app.C2SLogin)
+void LoginReq::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<LoginReq*>(&to_msg);
+  auto& from = static_cast<const LoginReq&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:yy.protocol.app.LoginReq)
   GOOGLE_DCHECK_NE(&from, _this);
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
@@ -494,24 +444,21 @@ void C2SLogin::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTO
   if (!from._internal_password().empty()) {
     _this->_internal_set_password(from._internal_password());
   }
-  if (from._internal_session_id() != 0) {
-    _this->_internal_set_session_id(from._internal_session_id());
-  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
-void C2SLogin::CopyFrom(const C2SLogin& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:yy.protocol.app.C2SLogin)
+void LoginReq::CopyFrom(const LoginReq& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:yy.protocol.app.LoginReq)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool C2SLogin::IsInitialized() const {
+bool LoginReq::IsInitialized() const {
   return true;
 }
 
-void C2SLogin::InternalSwap(C2SLogin* other) {
+void LoginReq::InternalSwap(LoginReq* other) {
   using std::swap;
   auto* lhs_arena = GetArenaForAllocation();
   auto* rhs_arena = other->GetArenaForAllocation();
@@ -524,10 +471,9 @@ void C2SLogin::InternalSwap(C2SLogin* other) {
       &_impl_.password_, lhs_arena,
       &other->_impl_.password_, rhs_arena
   );
-  swap(_impl_.session_id_, other->_impl_.session_id_);
 }
 
-::PROTOBUF_NAMESPACE_ID::Metadata C2SLogin::GetMetadata() const {
+::PROTOBUF_NAMESPACE_ID::Metadata LoginReq::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_account_2eproto_getter, &descriptor_table_account_2eproto_once,
       file_level_metadata_account_2eproto[0]);
@@ -535,108 +481,70 @@ void C2SLogin::InternalSwap(C2SLogin* other) {
 
 // ===================================================================
 
-class S2CLogin::_Internal {
+class LoginRsp::_Internal {
  public:
-  using HasBits = decltype(std::declval<S2CLogin>()._impl_._has_bits_);
-  static void set_has_uid(HasBits* has_bits) {
-    (*has_bits)[0] |= 8u;
-  }
-  static void set_has_username(HasBits* has_bits) {
-    (*has_bits)[0] |= 1u;
-  }
-  static void set_has_ip(HasBits* has_bits) {
-    (*has_bits)[0] |= 2u;
-  }
-  static void set_has_port(HasBits* has_bits) {
-    (*has_bits)[0] |= 16u;
-  }
-  static void set_has_token(HasBits* has_bits) {
-    (*has_bits)[0] |= 4u;
-  }
+  static const ::yy::protocol::app::AccountBaseData& account_data(const LoginRsp* msg);
 };
 
-S2CLogin::S2CLogin(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+const ::yy::protocol::app::AccountBaseData&
+LoginRsp::_Internal::account_data(const LoginRsp* msg) {
+  return *msg->_impl_.account_data_;
+}
+void LoginRsp::clear_account_data() {
+  if (GetArenaForAllocation() == nullptr && _impl_.account_data_ != nullptr) {
+    delete _impl_.account_data_;
+  }
+  _impl_.account_data_ = nullptr;
+}
+LoginRsp::LoginRsp(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
   SharedCtor(arena, is_message_owned);
-  // @@protoc_insertion_point(arena_constructor:yy.protocol.app.S2CLogin)
+  // @@protoc_insertion_point(arena_constructor:yy.protocol.app.LoginRsp)
 }
-S2CLogin::S2CLogin(const S2CLogin& from)
+LoginRsp::LoginRsp(const LoginRsp& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
-  S2CLogin* const _this = this; (void)_this;
+  LoginRsp* const _this = this; (void)_this;
   new (&_impl_) Impl_{
-      decltype(_impl_._has_bits_){from._impl_._has_bits_}
-    , /*decltype(_impl_._cached_size_)*/{}
-    , decltype(_impl_.username_){}
-    , decltype(_impl_.ip_){}
-    , decltype(_impl_.token_){}
-    , decltype(_impl_.session_id_){}
-    , decltype(_impl_.uid_){}
+      decltype(_impl_.token_){}
+    , decltype(_impl_.account_data_){nullptr}
     , decltype(_impl_.result_code_){}
-    , decltype(_impl_.port_){}};
+    , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  _impl_.username_.InitDefault();
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-    _impl_.username_.Set("", GetArenaForAllocation());
-  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (from._internal_has_username()) {
-    _this->_impl_.username_.Set(from._internal_username(), 
-      _this->GetArenaForAllocation());
-  }
-  _impl_.ip_.InitDefault();
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-    _impl_.ip_.Set("", GetArenaForAllocation());
-  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (from._internal_has_ip()) {
-    _this->_impl_.ip_.Set(from._internal_ip(), 
-      _this->GetArenaForAllocation());
-  }
   _impl_.token_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
     _impl_.token_.Set("", GetArenaForAllocation());
   #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (from._internal_has_token()) {
+  if (!from._internal_token().empty()) {
     _this->_impl_.token_.Set(from._internal_token(), 
       _this->GetArenaForAllocation());
   }
-  ::memcpy(&_impl_.session_id_, &from._impl_.session_id_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.port_) -
-    reinterpret_cast<char*>(&_impl_.session_id_)) + sizeof(_impl_.port_));
-  // @@protoc_insertion_point(copy_constructor:yy.protocol.app.S2CLogin)
+  if (from._internal_has_account_data()) {
+    _this->_impl_.account_data_ = new ::yy::protocol::app::AccountBaseData(*from._impl_.account_data_);
+  }
+  _this->_impl_.result_code_ = from._impl_.result_code_;
+  // @@protoc_insertion_point(copy_constructor:yy.protocol.app.LoginRsp)
 }
 
-inline void S2CLogin::SharedCtor(
+inline void LoginRsp::SharedCtor(
     ::_pb::Arena* arena, bool is_message_owned) {
   (void)arena;
   (void)is_message_owned;
   new (&_impl_) Impl_{
-      decltype(_impl_._has_bits_){}
-    , /*decltype(_impl_._cached_size_)*/{}
-    , decltype(_impl_.username_){}
-    , decltype(_impl_.ip_){}
-    , decltype(_impl_.token_){}
-    , decltype(_impl_.session_id_){uint64_t{0u}}
-    , decltype(_impl_.uid_){uint64_t{0u}}
+      decltype(_impl_.token_){}
+    , decltype(_impl_.account_data_){nullptr}
     , decltype(_impl_.result_code_){0}
-    , decltype(_impl_.port_){0u}
+    , /*decltype(_impl_._cached_size_)*/{}
   };
-  _impl_.username_.InitDefault();
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-    _impl_.username_.Set("", GetArenaForAllocation());
-  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  _impl_.ip_.InitDefault();
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-    _impl_.ip_.Set("", GetArenaForAllocation());
-  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   _impl_.token_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
     _impl_.token_.Set("", GetArenaForAllocation());
   #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
 }
 
-S2CLogin::~S2CLogin() {
-  // @@protoc_insertion_point(destructor:yy.protocol.app.S2CLogin)
+LoginRsp::~LoginRsp() {
+  // @@protoc_insertion_point(destructor:yy.protocol.app.LoginRsp)
   if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
   (void)arena;
     return;
@@ -644,112 +552,61 @@ S2CLogin::~S2CLogin() {
   SharedDtor();
 }
 
-inline void S2CLogin::SharedDtor() {
+inline void LoginRsp::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
-  _impl_.username_.Destroy();
-  _impl_.ip_.Destroy();
   _impl_.token_.Destroy();
+  if (this != internal_default_instance()) delete _impl_.account_data_;
 }
 
-void S2CLogin::SetCachedSize(int size) const {
+void LoginRsp::SetCachedSize(int size) const {
   _impl_._cached_size_.Set(size);
 }
 
-void S2CLogin::Clear() {
-// @@protoc_insertion_point(message_clear_start:yy.protocol.app.S2CLogin)
+void LoginRsp::Clear() {
+// @@protoc_insertion_point(message_clear_start:yy.protocol.app.LoginRsp)
   uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  cached_has_bits = _impl_._has_bits_[0];
-  if (cached_has_bits & 0x00000007u) {
-    if (cached_has_bits & 0x00000001u) {
-      _impl_.username_.ClearNonDefaultToEmpty();
-    }
-    if (cached_has_bits & 0x00000002u) {
-      _impl_.ip_.ClearNonDefaultToEmpty();
-    }
-    if (cached_has_bits & 0x00000004u) {
-      _impl_.token_.ClearNonDefaultToEmpty();
-    }
+  _impl_.token_.ClearToEmpty();
+  if (GetArenaForAllocation() == nullptr && _impl_.account_data_ != nullptr) {
+    delete _impl_.account_data_;
   }
-  _impl_.session_id_ = uint64_t{0u};
-  _impl_.uid_ = uint64_t{0u};
+  _impl_.account_data_ = nullptr;
   _impl_.result_code_ = 0;
-  _impl_.port_ = 0u;
-  _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* S2CLogin::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+const char* LoginRsp::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
-  _Internal::HasBits has_bits{};
   while (!ctx->Done(&ptr)) {
     uint32_t tag;
     ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // uint64 session_id = 1;
+      // .yy.protocol.app.LoginRsp.Status result_code = 1;
       case 1:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
-          _impl_.session_id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
-          CHK_(ptr);
-        } else
-          goto handle_unusual;
-        continue;
-      // .yy.protocol.app.S2CLogin.Status result_code = 2;
-      case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
           uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
-          _internal_set_result_code(static_cast<::yy::protocol::app::S2CLogin_Status>(val));
+          _internal_set_result_code(static_cast<::yy::protocol::app::LoginRsp_Status>(val));
         } else
           goto handle_unusual;
         continue;
-      // optional uint64 uid = 3;
+      // .yy.protocol.app.AccountBaseData account_data = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
+          ptr = ctx->ParseMessage(_internal_mutable_account_data(), ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // string token = 3;
       case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 24)) {
-          _Internal::set_has_uid(&has_bits);
-          _impl_.uid_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
-          CHK_(ptr);
-        } else
-          goto handle_unusual;
-        continue;
-      // optional string username = 4;
-      case 4:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 34)) {
-          auto str = _internal_mutable_username();
-          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(ptr);
-          CHK_(::_pbi::VerifyUTF8(str, "yy.protocol.app.S2CLogin.username"));
-        } else
-          goto handle_unusual;
-        continue;
-      // optional string ip = 5;
-      case 5:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 42)) {
-          auto str = _internal_mutable_ip();
-          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(ptr);
-          CHK_(::_pbi::VerifyUTF8(str, "yy.protocol.app.S2CLogin.ip"));
-        } else
-          goto handle_unusual;
-        continue;
-      // optional uint32 port = 6;
-      case 6:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 48)) {
-          _Internal::set_has_port(&has_bits);
-          _impl_.port_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
-          CHK_(ptr);
-        } else
-          goto handle_unusual;
-        continue;
-      // optional string token = 7;
-      case 7:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 58)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
           auto str = _internal_mutable_token();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
-          CHK_(::_pbi::VerifyUTF8(str, "yy.protocol.app.S2CLogin.token"));
+          CHK_(::_pbi::VerifyUTF8(str, "yy.protocol.app.LoginRsp.token"));
         } else
           goto handle_unusual;
         continue;
@@ -769,7 +626,6 @@ const char* S2CLogin::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx)
     CHK_(ptr != nullptr);
   }  // while
 message_done:
-  _impl_._has_bits_.Or(has_bits);
   return ptr;
 failure:
   ptr = nullptr;
@@ -777,211 +633,132 @@ failure:
 #undef CHK_
 }
 
-uint8_t* S2CLogin::_InternalSerialize(
+uint8_t* LoginRsp::_InternalSerialize(
     uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:yy.protocol.app.S2CLogin)
+  // @@protoc_insertion_point(serialize_to_array_start:yy.protocol.app.LoginRsp)
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // uint64 session_id = 1;
-  if (this->_internal_session_id() != 0) {
-    target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(1, this->_internal_session_id(), target);
-  }
-
-  // .yy.protocol.app.S2CLogin.Status result_code = 2;
+  // .yy.protocol.app.LoginRsp.Status result_code = 1;
   if (this->_internal_result_code() != 0) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteEnumToArray(
-      2, this->_internal_result_code(), target);
+      1, this->_internal_result_code(), target);
   }
 
-  // optional uint64 uid = 3;
-  if (_internal_has_uid()) {
-    target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(3, this->_internal_uid(), target);
+  // .yy.protocol.app.AccountBaseData account_data = 2;
+  if (this->_internal_has_account_data()) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(2, _Internal::account_data(this),
+        _Internal::account_data(this).GetCachedSize(), target, stream);
   }
 
-  // optional string username = 4;
-  if (_internal_has_username()) {
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-      this->_internal_username().data(), static_cast<int>(this->_internal_username().length()),
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "yy.protocol.app.S2CLogin.username");
-    target = stream->WriteStringMaybeAliased(
-        4, this->_internal_username(), target);
-  }
-
-  // optional string ip = 5;
-  if (_internal_has_ip()) {
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-      this->_internal_ip().data(), static_cast<int>(this->_internal_ip().length()),
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "yy.protocol.app.S2CLogin.ip");
-    target = stream->WriteStringMaybeAliased(
-        5, this->_internal_ip(), target);
-  }
-
-  // optional uint32 port = 6;
-  if (_internal_has_port()) {
-    target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteUInt32ToArray(6, this->_internal_port(), target);
-  }
-
-  // optional string token = 7;
-  if (_internal_has_token()) {
+  // string token = 3;
+  if (!this->_internal_token().empty()) {
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_token().data(), static_cast<int>(this->_internal_token().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "yy.protocol.app.S2CLogin.token");
+      "yy.protocol.app.LoginRsp.token");
     target = stream->WriteStringMaybeAliased(
-        7, this->_internal_token(), target);
+        3, this->_internal_token(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
-  // @@protoc_insertion_point(serialize_to_array_end:yy.protocol.app.S2CLogin)
+  // @@protoc_insertion_point(serialize_to_array_end:yy.protocol.app.LoginRsp)
   return target;
 }
 
-size_t S2CLogin::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:yy.protocol.app.S2CLogin)
+size_t LoginRsp::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:yy.protocol.app.LoginRsp)
   size_t total_size = 0;
 
   uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  cached_has_bits = _impl_._has_bits_[0];
-  if (cached_has_bits & 0x00000007u) {
-    // optional string username = 4;
-    if (cached_has_bits & 0x00000001u) {
-      total_size += 1 +
-        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-          this->_internal_username());
-    }
-
-    // optional string ip = 5;
-    if (cached_has_bits & 0x00000002u) {
-      total_size += 1 +
-        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-          this->_internal_ip());
-    }
-
-    // optional string token = 7;
-    if (cached_has_bits & 0x00000004u) {
-      total_size += 1 +
-        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-          this->_internal_token());
-    }
-
-  }
-  // uint64 session_id = 1;
-  if (this->_internal_session_id() != 0) {
-    total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_session_id());
+  // string token = 3;
+  if (!this->_internal_token().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_token());
   }
 
-  // optional uint64 uid = 3;
-  if (cached_has_bits & 0x00000008u) {
-    total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_uid());
+  // .yy.protocol.app.AccountBaseData account_data = 2;
+  if (this->_internal_has_account_data()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+        *_impl_.account_data_);
   }
 
-  // .yy.protocol.app.S2CLogin.Status result_code = 2;
+  // .yy.protocol.app.LoginRsp.Status result_code = 1;
   if (this->_internal_result_code() != 0) {
     total_size += 1 +
       ::_pbi::WireFormatLite::EnumSize(this->_internal_result_code());
   }
 
-  // optional uint32 port = 6;
-  if (cached_has_bits & 0x00000010u) {
-    total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_port());
-  }
-
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData S2CLogin::_class_data_ = {
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData LoginRsp::_class_data_ = {
     ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
-    S2CLogin::MergeImpl
+    LoginRsp::MergeImpl
 };
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*S2CLogin::GetClassData() const { return &_class_data_; }
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*LoginRsp::GetClassData() const { return &_class_data_; }
 
 
-void S2CLogin::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
-  auto* const _this = static_cast<S2CLogin*>(&to_msg);
-  auto& from = static_cast<const S2CLogin&>(from_msg);
-  // @@protoc_insertion_point(class_specific_merge_from_start:yy.protocol.app.S2CLogin)
+void LoginRsp::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<LoginRsp*>(&to_msg);
+  auto& from = static_cast<const LoginRsp&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:yy.protocol.app.LoginRsp)
   GOOGLE_DCHECK_NE(&from, _this);
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  cached_has_bits = from._impl_._has_bits_[0];
-  if (cached_has_bits & 0x00000007u) {
-    if (cached_has_bits & 0x00000001u) {
-      _this->_internal_set_username(from._internal_username());
-    }
-    if (cached_has_bits & 0x00000002u) {
-      _this->_internal_set_ip(from._internal_ip());
-    }
-    if (cached_has_bits & 0x00000004u) {
-      _this->_internal_set_token(from._internal_token());
-    }
+  if (!from._internal_token().empty()) {
+    _this->_internal_set_token(from._internal_token());
   }
-  if (from._internal_session_id() != 0) {
-    _this->_internal_set_session_id(from._internal_session_id());
-  }
-  if (cached_has_bits & 0x00000008u) {
-    _this->_internal_set_uid(from._internal_uid());
+  if (from._internal_has_account_data()) {
+    _this->_internal_mutable_account_data()->::yy::protocol::app::AccountBaseData::MergeFrom(
+        from._internal_account_data());
   }
   if (from._internal_result_code() != 0) {
     _this->_internal_set_result_code(from._internal_result_code());
   }
-  if (cached_has_bits & 0x00000010u) {
-    _this->_internal_set_port(from._internal_port());
-  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
-void S2CLogin::CopyFrom(const S2CLogin& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:yy.protocol.app.S2CLogin)
+void LoginRsp::CopyFrom(const LoginRsp& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:yy.protocol.app.LoginRsp)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool S2CLogin::IsInitialized() const {
+bool LoginRsp::IsInitialized() const {
   return true;
 }
 
-void S2CLogin::InternalSwap(S2CLogin* other) {
+void LoginRsp::InternalSwap(LoginRsp* other) {
   using std::swap;
   auto* lhs_arena = GetArenaForAllocation();
   auto* rhs_arena = other->GetArenaForAllocation();
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
-      &_impl_.username_, lhs_arena,
-      &other->_impl_.username_, rhs_arena
-  );
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
-      &_impl_.ip_, lhs_arena,
-      &other->_impl_.ip_, rhs_arena
-  );
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
       &_impl_.token_, lhs_arena,
       &other->_impl_.token_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(S2CLogin, _impl_.port_)
-      + sizeof(S2CLogin::_impl_.port_)
-      - PROTOBUF_FIELD_OFFSET(S2CLogin, _impl_.session_id_)>(
-          reinterpret_cast<char*>(&_impl_.session_id_),
-          reinterpret_cast<char*>(&other->_impl_.session_id_));
+      PROTOBUF_FIELD_OFFSET(LoginRsp, _impl_.result_code_)
+      + sizeof(LoginRsp::_impl_.result_code_)
+      - PROTOBUF_FIELD_OFFSET(LoginRsp, _impl_.account_data_)>(
+          reinterpret_cast<char*>(&_impl_.account_data_),
+          reinterpret_cast<char*>(&other->_impl_.account_data_));
 }
 
-::PROTOBUF_NAMESPACE_ID::Metadata S2CLogin::GetMetadata() const {
+::PROTOBUF_NAMESPACE_ID::Metadata LoginRsp::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_account_2eproto_getter, &descriptor_table_account_2eproto_once,
       file_level_metadata_account_2eproto[1]);
@@ -989,23 +766,22 @@ void S2CLogin::InternalSwap(S2CLogin* other) {
 
 // ===================================================================
 
-class C2SRegister::_Internal {
+class RegisterReq::_Internal {
  public:
 };
 
-C2SRegister::C2SRegister(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+RegisterReq::RegisterReq(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
   SharedCtor(arena, is_message_owned);
-  // @@protoc_insertion_point(arena_constructor:yy.protocol.app.C2SRegister)
+  // @@protoc_insertion_point(arena_constructor:yy.protocol.app.RegisterReq)
 }
-C2SRegister::C2SRegister(const C2SRegister& from)
+RegisterReq::RegisterReq(const RegisterReq& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
-  C2SRegister* const _this = this; (void)_this;
+  RegisterReq* const _this = this; (void)_this;
   new (&_impl_) Impl_{
       decltype(_impl_.username_){}
     , decltype(_impl_.password_){}
-    , decltype(_impl_.session_id_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -1025,18 +801,16 @@ C2SRegister::C2SRegister(const C2SRegister& from)
     _this->_impl_.password_.Set(from._internal_password(), 
       _this->GetArenaForAllocation());
   }
-  _this->_impl_.session_id_ = from._impl_.session_id_;
-  // @@protoc_insertion_point(copy_constructor:yy.protocol.app.C2SRegister)
+  // @@protoc_insertion_point(copy_constructor:yy.protocol.app.RegisterReq)
 }
 
-inline void C2SRegister::SharedCtor(
+inline void RegisterReq::SharedCtor(
     ::_pb::Arena* arena, bool is_message_owned) {
   (void)arena;
   (void)is_message_owned;
   new (&_impl_) Impl_{
       decltype(_impl_.username_){}
     , decltype(_impl_.password_){}
-    , decltype(_impl_.session_id_){uint64_t{0u}}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.username_.InitDefault();
@@ -1049,8 +823,8 @@ inline void C2SRegister::SharedCtor(
   #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
 }
 
-C2SRegister::~C2SRegister() {
-  // @@protoc_insertion_point(destructor:yy.protocol.app.C2SRegister)
+RegisterReq::~RegisterReq() {
+  // @@protoc_insertion_point(destructor:yy.protocol.app.RegisterReq)
   if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
   (void)arena;
     return;
@@ -1058,49 +832,40 @@ C2SRegister::~C2SRegister() {
   SharedDtor();
 }
 
-inline void C2SRegister::SharedDtor() {
+inline void RegisterReq::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
   _impl_.username_.Destroy();
   _impl_.password_.Destroy();
 }
 
-void C2SRegister::SetCachedSize(int size) const {
+void RegisterReq::SetCachedSize(int size) const {
   _impl_._cached_size_.Set(size);
 }
 
-void C2SRegister::Clear() {
-// @@protoc_insertion_point(message_clear_start:yy.protocol.app.C2SRegister)
+void RegisterReq::Clear() {
+// @@protoc_insertion_point(message_clear_start:yy.protocol.app.RegisterReq)
   uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
   _impl_.username_.ClearToEmpty();
   _impl_.password_.ClearToEmpty();
-  _impl_.session_id_ = uint64_t{0u};
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* C2SRegister::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+const char* RegisterReq::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   while (!ctx->Done(&ptr)) {
     uint32_t tag;
     ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // uint64 session_id = 1;
-      case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
-          _impl_.session_id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
-          CHK_(ptr);
-        } else
-          goto handle_unusual;
-        continue;
       // string username = 3;
       case 3:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
           auto str = _internal_mutable_username();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
-          CHK_(::_pbi::VerifyUTF8(str, "yy.protocol.app.C2SRegister.username"));
+          CHK_(::_pbi::VerifyUTF8(str, "yy.protocol.app.RegisterReq.username"));
         } else
           goto handle_unusual;
         continue;
@@ -1110,7 +875,7 @@ const char* C2SRegister::_InternalParse(const char* ptr, ::_pbi::ParseContext* c
           auto str = _internal_mutable_password();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
-          CHK_(::_pbi::VerifyUTF8(str, "yy.protocol.app.C2SRegister.password"));
+          CHK_(::_pbi::VerifyUTF8(str, "yy.protocol.app.RegisterReq.password"));
         } else
           goto handle_unusual;
         continue;
@@ -1137,24 +902,18 @@ failure:
 #undef CHK_
 }
 
-uint8_t* C2SRegister::_InternalSerialize(
+uint8_t* RegisterReq::_InternalSerialize(
     uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:yy.protocol.app.C2SRegister)
+  // @@protoc_insertion_point(serialize_to_array_start:yy.protocol.app.RegisterReq)
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
-
-  // uint64 session_id = 1;
-  if (this->_internal_session_id() != 0) {
-    target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(1, this->_internal_session_id(), target);
-  }
 
   // string username = 3;
   if (!this->_internal_username().empty()) {
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_username().data(), static_cast<int>(this->_internal_username().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "yy.protocol.app.C2SRegister.username");
+      "yy.protocol.app.RegisterReq.username");
     target = stream->WriteStringMaybeAliased(
         3, this->_internal_username(), target);
   }
@@ -1164,7 +923,7 @@ uint8_t* C2SRegister::_InternalSerialize(
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_password().data(), static_cast<int>(this->_internal_password().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "yy.protocol.app.C2SRegister.password");
+      "yy.protocol.app.RegisterReq.password");
     target = stream->WriteStringMaybeAliased(
         4, this->_internal_password(), target);
   }
@@ -1173,12 +932,12 @@ uint8_t* C2SRegister::_InternalSerialize(
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
-  // @@protoc_insertion_point(serialize_to_array_end:yy.protocol.app.C2SRegister)
+  // @@protoc_insertion_point(serialize_to_array_end:yy.protocol.app.RegisterReq)
   return target;
 }
 
-size_t C2SRegister::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:yy.protocol.app.C2SRegister)
+size_t RegisterReq::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:yy.protocol.app.RegisterReq)
   size_t total_size = 0;
 
   uint32_t cached_has_bits = 0;
@@ -1199,25 +958,20 @@ size_t C2SRegister::ByteSizeLong() const {
         this->_internal_password());
   }
 
-  // uint64 session_id = 1;
-  if (this->_internal_session_id() != 0) {
-    total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_session_id());
-  }
-
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData C2SRegister::_class_data_ = {
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData RegisterReq::_class_data_ = {
     ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
-    C2SRegister::MergeImpl
+    RegisterReq::MergeImpl
 };
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*C2SRegister::GetClassData() const { return &_class_data_; }
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*RegisterReq::GetClassData() const { return &_class_data_; }
 
 
-void C2SRegister::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
-  auto* const _this = static_cast<C2SRegister*>(&to_msg);
-  auto& from = static_cast<const C2SRegister&>(from_msg);
-  // @@protoc_insertion_point(class_specific_merge_from_start:yy.protocol.app.C2SRegister)
+void RegisterReq::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<RegisterReq*>(&to_msg);
+  auto& from = static_cast<const RegisterReq&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:yy.protocol.app.RegisterReq)
   GOOGLE_DCHECK_NE(&from, _this);
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
@@ -1228,24 +982,21 @@ void C2SRegister::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PR
   if (!from._internal_password().empty()) {
     _this->_internal_set_password(from._internal_password());
   }
-  if (from._internal_session_id() != 0) {
-    _this->_internal_set_session_id(from._internal_session_id());
-  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
-void C2SRegister::CopyFrom(const C2SRegister& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:yy.protocol.app.C2SRegister)
+void RegisterReq::CopyFrom(const RegisterReq& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:yy.protocol.app.RegisterReq)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool C2SRegister::IsInitialized() const {
+bool RegisterReq::IsInitialized() const {
   return true;
 }
 
-void C2SRegister::InternalSwap(C2SRegister* other) {
+void RegisterReq::InternalSwap(RegisterReq* other) {
   using std::swap;
   auto* lhs_arena = GetArenaForAllocation();
   auto* rhs_arena = other->GetArenaForAllocation();
@@ -1258,10 +1009,9 @@ void C2SRegister::InternalSwap(C2SRegister* other) {
       &_impl_.password_, lhs_arena,
       &other->_impl_.password_, rhs_arena
   );
-  swap(_impl_.session_id_, other->_impl_.session_id_);
 }
 
-::PROTOBUF_NAMESPACE_ID::Metadata C2SRegister::GetMetadata() const {
+::PROTOBUF_NAMESPACE_ID::Metadata RegisterReq::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_account_2eproto_getter, &descriptor_table_account_2eproto_once,
       file_level_metadata_account_2eproto[2]);
@@ -1269,52 +1019,44 @@ void C2SRegister::InternalSwap(C2SRegister* other) {
 
 // ===================================================================
 
-class S2CRegister::_Internal {
+class RegisterRsp::_Internal {
  public:
-  using HasBits = decltype(std::declval<S2CRegister>()._impl_._has_bits_);
-  static void set_has_uid(HasBits* has_bits) {
-    (*has_bits)[0] |= 1u;
-  }
 };
 
-S2CRegister::S2CRegister(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+RegisterRsp::RegisterRsp(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
   SharedCtor(arena, is_message_owned);
-  // @@protoc_insertion_point(arena_constructor:yy.protocol.app.S2CRegister)
+  // @@protoc_insertion_point(arena_constructor:yy.protocol.app.RegisterRsp)
 }
-S2CRegister::S2CRegister(const S2CRegister& from)
+RegisterRsp::RegisterRsp(const RegisterRsp& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
-  S2CRegister* const _this = this; (void)_this;
+  RegisterRsp* const _this = this; (void)_this;
   new (&_impl_) Impl_{
-      decltype(_impl_._has_bits_){from._impl_._has_bits_}
-    , /*decltype(_impl_._cached_size_)*/{}
-    , decltype(_impl_.session_id_){}
-    , decltype(_impl_.uid_){}
-    , decltype(_impl_.result_code_){}};
+      decltype(_impl_.uid_){}
+    , decltype(_impl_.result_code_){}
+    , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  ::memcpy(&_impl_.session_id_, &from._impl_.session_id_,
+  ::memcpy(&_impl_.uid_, &from._impl_.uid_,
     static_cast<size_t>(reinterpret_cast<char*>(&_impl_.result_code_) -
-    reinterpret_cast<char*>(&_impl_.session_id_)) + sizeof(_impl_.result_code_));
-  // @@protoc_insertion_point(copy_constructor:yy.protocol.app.S2CRegister)
+    reinterpret_cast<char*>(&_impl_.uid_)) + sizeof(_impl_.result_code_));
+  // @@protoc_insertion_point(copy_constructor:yy.protocol.app.RegisterRsp)
 }
 
-inline void S2CRegister::SharedCtor(
+inline void RegisterRsp::SharedCtor(
     ::_pb::Arena* arena, bool is_message_owned) {
   (void)arena;
   (void)is_message_owned;
   new (&_impl_) Impl_{
-      decltype(_impl_._has_bits_){}
-    , /*decltype(_impl_._cached_size_)*/{}
-    , decltype(_impl_.session_id_){uint64_t{0u}}
-    , decltype(_impl_.uid_){uint64_t{0u}}
+      decltype(_impl_.uid_){uint64_t{0u}}
     , decltype(_impl_.result_code_){0}
+    , /*decltype(_impl_._cached_size_)*/{}
   };
 }
 
-S2CRegister::~S2CRegister() {
-  // @@protoc_insertion_point(destructor:yy.protocol.app.S2CRegister)
+RegisterRsp::~RegisterRsp() {
+  // @@protoc_insertion_point(destructor:yy.protocol.app.RegisterRsp)
   if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
   (void)arena;
     return;
@@ -1322,55 +1064,44 @@ S2CRegister::~S2CRegister() {
   SharedDtor();
 }
 
-inline void S2CRegister::SharedDtor() {
+inline void RegisterRsp::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
 }
 
-void S2CRegister::SetCachedSize(int size) const {
+void RegisterRsp::SetCachedSize(int size) const {
   _impl_._cached_size_.Set(size);
 }
 
-void S2CRegister::Clear() {
-// @@protoc_insertion_point(message_clear_start:yy.protocol.app.S2CRegister)
+void RegisterRsp::Clear() {
+// @@protoc_insertion_point(message_clear_start:yy.protocol.app.RegisterRsp)
   uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  _impl_.session_id_ = uint64_t{0u};
-  _impl_.uid_ = uint64_t{0u};
-  _impl_.result_code_ = 0;
-  _impl_._has_bits_.Clear();
+  ::memset(&_impl_.uid_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&_impl_.result_code_) -
+      reinterpret_cast<char*>(&_impl_.uid_)) + sizeof(_impl_.result_code_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* S2CRegister::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+const char* RegisterRsp::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
-  _Internal::HasBits has_bits{};
   while (!ctx->Done(&ptr)) {
     uint32_t tag;
     ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // uint64 session_id = 1;
-      case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
-          _impl_.session_id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
-          CHK_(ptr);
-        } else
-          goto handle_unusual;
-        continue;
-      // .yy.protocol.app.S2CRegister.Status result_code = 2;
+      // .yy.protocol.app.RegisterRsp.Status result_code = 2;
       case 2:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
           uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
-          _internal_set_result_code(static_cast<::yy::protocol::app::S2CRegister_Status>(val));
+          _internal_set_result_code(static_cast<::yy::protocol::app::RegisterRsp_Status>(val));
         } else
           goto handle_unusual;
         continue;
-      // optional uint64 uid = 4;
+      // uint64 uid = 4;
       case 4:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 32)) {
-          _Internal::set_has_uid(&has_bits);
           _impl_.uid_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
         } else
@@ -1392,7 +1123,6 @@ const char* S2CRegister::_InternalParse(const char* ptr, ::_pbi::ParseContext* c
     CHK_(ptr != nullptr);
   }  // while
 message_done:
-  _impl_._has_bits_.Or(has_bits);
   return ptr;
 failure:
   ptr = nullptr;
@@ -1400,27 +1130,21 @@ failure:
 #undef CHK_
 }
 
-uint8_t* S2CRegister::_InternalSerialize(
+uint8_t* RegisterRsp::_InternalSerialize(
     uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:yy.protocol.app.S2CRegister)
+  // @@protoc_insertion_point(serialize_to_array_start:yy.protocol.app.RegisterRsp)
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // uint64 session_id = 1;
-  if (this->_internal_session_id() != 0) {
-    target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(1, this->_internal_session_id(), target);
-  }
-
-  // .yy.protocol.app.S2CRegister.Status result_code = 2;
+  // .yy.protocol.app.RegisterRsp.Status result_code = 2;
   if (this->_internal_result_code() != 0) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteEnumToArray(
       2, this->_internal_result_code(), target);
   }
 
-  // optional uint64 uid = 4;
-  if (_internal_has_uid()) {
+  // uint64 uid = 4;
+  if (this->_internal_uid() != 0) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteUInt64ToArray(4, this->_internal_uid(), target);
   }
@@ -1429,30 +1153,24 @@ uint8_t* S2CRegister::_InternalSerialize(
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
-  // @@protoc_insertion_point(serialize_to_array_end:yy.protocol.app.S2CRegister)
+  // @@protoc_insertion_point(serialize_to_array_end:yy.protocol.app.RegisterRsp)
   return target;
 }
 
-size_t S2CRegister::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:yy.protocol.app.S2CRegister)
+size_t RegisterRsp::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:yy.protocol.app.RegisterRsp)
   size_t total_size = 0;
 
   uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // uint64 session_id = 1;
-  if (this->_internal_session_id() != 0) {
-    total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_session_id());
-  }
-
-  // optional uint64 uid = 4;
-  cached_has_bits = _impl_._has_bits_[0];
-  if (cached_has_bits & 0x00000001u) {
+  // uint64 uid = 4;
+  if (this->_internal_uid() != 0) {
     total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_uid());
   }
 
-  // .yy.protocol.app.S2CRegister.Status result_code = 2;
+  // .yy.protocol.app.RegisterRsp.Status result_code = 2;
   if (this->_internal_result_code() != 0) {
     total_size += 1 +
       ::_pbi::WireFormatLite::EnumSize(this->_internal_result_code());
@@ -1461,25 +1179,22 @@ size_t S2CRegister::ByteSizeLong() const {
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData S2CRegister::_class_data_ = {
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData RegisterRsp::_class_data_ = {
     ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
-    S2CRegister::MergeImpl
+    RegisterRsp::MergeImpl
 };
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*S2CRegister::GetClassData() const { return &_class_data_; }
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*RegisterRsp::GetClassData() const { return &_class_data_; }
 
 
-void S2CRegister::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
-  auto* const _this = static_cast<S2CRegister*>(&to_msg);
-  auto& from = static_cast<const S2CRegister&>(from_msg);
-  // @@protoc_insertion_point(class_specific_merge_from_start:yy.protocol.app.S2CRegister)
+void RegisterRsp::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<RegisterRsp*>(&to_msg);
+  auto& from = static_cast<const RegisterRsp&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:yy.protocol.app.RegisterRsp)
   GOOGLE_DCHECK_NE(&from, _this);
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (from._internal_session_id() != 0) {
-    _this->_internal_set_session_id(from._internal_session_id());
-  }
-  if (from._internal_has_uid()) {
+  if (from._internal_uid() != 0) {
     _this->_internal_set_uid(from._internal_uid());
   }
   if (from._internal_result_code() != 0) {
@@ -1488,30 +1203,29 @@ void S2CRegister::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PR
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
-void S2CRegister::CopyFrom(const S2CRegister& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:yy.protocol.app.S2CRegister)
+void RegisterRsp::CopyFrom(const RegisterRsp& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:yy.protocol.app.RegisterRsp)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool S2CRegister::IsInitialized() const {
+bool RegisterRsp::IsInitialized() const {
   return true;
 }
 
-void S2CRegister::InternalSwap(S2CRegister* other) {
+void RegisterRsp::InternalSwap(RegisterRsp* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(S2CRegister, _impl_.result_code_)
-      + sizeof(S2CRegister::_impl_.result_code_)
-      - PROTOBUF_FIELD_OFFSET(S2CRegister, _impl_.session_id_)>(
-          reinterpret_cast<char*>(&_impl_.session_id_),
-          reinterpret_cast<char*>(&other->_impl_.session_id_));
+      PROTOBUF_FIELD_OFFSET(RegisterRsp, _impl_.result_code_)
+      + sizeof(RegisterRsp::_impl_.result_code_)
+      - PROTOBUF_FIELD_OFFSET(RegisterRsp, _impl_.uid_)>(
+          reinterpret_cast<char*>(&_impl_.uid_),
+          reinterpret_cast<char*>(&other->_impl_.uid_));
 }
 
-::PROTOBUF_NAMESPACE_ID::Metadata S2CRegister::GetMetadata() const {
+::PROTOBUF_NAMESPACE_ID::Metadata RegisterRsp::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_account_2eproto_getter, &descriptor_table_account_2eproto_once,
       file_level_metadata_account_2eproto[3]);
@@ -1531,16 +1245,16 @@ const ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor* AccountServiceRpc::GetDescript
 }
 
 void AccountServiceRpc::Login(::PROTOBUF_NAMESPACE_ID::RpcController* controller,
-                         const ::yy::protocol::app::C2SLogin*,
-                         ::yy::protocol::app::S2CLogin*,
+                         const ::yy::protocol::app::LoginReq*,
+                         ::yy::protocol::app::LoginRsp*,
                          ::google::protobuf::Closure* done) {
   controller->SetFailed("Method Login() not implemented.");
   done->Run();
 }
 
 void AccountServiceRpc::Register(::PROTOBUF_NAMESPACE_ID::RpcController* controller,
-                         const ::yy::protocol::app::C2SRegister*,
-                         ::yy::protocol::app::S2CRegister*,
+                         const ::yy::protocol::app::RegisterReq*,
+                         ::yy::protocol::app::RegisterRsp*,
                          ::google::protobuf::Closure* done) {
   controller->SetFailed("Method Register() not implemented.");
   done->Run();
@@ -1555,17 +1269,17 @@ void AccountServiceRpc::CallMethod(const ::PROTOBUF_NAMESPACE_ID::MethodDescript
   switch(method->index()) {
     case 0:
       Login(controller,
-             ::PROTOBUF_NAMESPACE_ID::internal::DownCast<const ::yy::protocol::app::C2SLogin*>(
+             ::PROTOBUF_NAMESPACE_ID::internal::DownCast<const ::yy::protocol::app::LoginReq*>(
                  request),
-             ::PROTOBUF_NAMESPACE_ID::internal::DownCast<::yy::protocol::app::S2CLogin*>(
+             ::PROTOBUF_NAMESPACE_ID::internal::DownCast<::yy::protocol::app::LoginRsp*>(
                  response),
              done);
       break;
     case 1:
       Register(controller,
-             ::PROTOBUF_NAMESPACE_ID::internal::DownCast<const ::yy::protocol::app::C2SRegister*>(
+             ::PROTOBUF_NAMESPACE_ID::internal::DownCast<const ::yy::protocol::app::RegisterReq*>(
                  request),
-             ::PROTOBUF_NAMESPACE_ID::internal::DownCast<::yy::protocol::app::S2CRegister*>(
+             ::PROTOBUF_NAMESPACE_ID::internal::DownCast<::yy::protocol::app::RegisterRsp*>(
                  response),
              done);
       break;
@@ -1580,9 +1294,9 @@ const ::PROTOBUF_NAMESPACE_ID::Message& AccountServiceRpc::GetRequestPrototype(
   GOOGLE_DCHECK_EQ(method->service(), descriptor());
   switch(method->index()) {
     case 0:
-      return ::yy::protocol::app::C2SLogin::default_instance();
+      return ::yy::protocol::app::LoginReq::default_instance();
     case 1:
-      return ::yy::protocol::app::C2SRegister::default_instance();
+      return ::yy::protocol::app::RegisterReq::default_instance();
     default:
       GOOGLE_LOG(FATAL) << "Bad method index; this should never happen.";
       return *::PROTOBUF_NAMESPACE_ID::MessageFactory::generated_factory()
@@ -1595,9 +1309,9 @@ const ::PROTOBUF_NAMESPACE_ID::Message& AccountServiceRpc::GetResponsePrototype(
   GOOGLE_DCHECK_EQ(method->service(), descriptor());
   switch(method->index()) {
     case 0:
-      return ::yy::protocol::app::S2CLogin::default_instance();
+      return ::yy::protocol::app::LoginRsp::default_instance();
     case 1:
-      return ::yy::protocol::app::S2CRegister::default_instance();
+      return ::yy::protocol::app::RegisterRsp::default_instance();
     default:
       GOOGLE_LOG(FATAL) << "Bad method index; this should never happen.";
       return *::PROTOBUF_NAMESPACE_ID::MessageFactory::generated_factory()
@@ -1617,15 +1331,15 @@ AccountServiceRpc_Stub::~AccountServiceRpc_Stub() {
 }
 
 void AccountServiceRpc_Stub::Login(::PROTOBUF_NAMESPACE_ID::RpcController* controller,
-                              const ::yy::protocol::app::C2SLogin* request,
-                              ::yy::protocol::app::S2CLogin* response,
+                              const ::yy::protocol::app::LoginReq* request,
+                              ::yy::protocol::app::LoginRsp* response,
                               ::google::protobuf::Closure* done) {
   channel_->CallMethod(descriptor()->method(0),
                        controller, request, response, done);
 }
 void AccountServiceRpc_Stub::Register(::PROTOBUF_NAMESPACE_ID::RpcController* controller,
-                              const ::yy::protocol::app::C2SRegister* request,
-                              ::yy::protocol::app::S2CRegister* response,
+                              const ::yy::protocol::app::RegisterReq* request,
+                              ::yy::protocol::app::RegisterRsp* response,
                               ::google::protobuf::Closure* done) {
   channel_->CallMethod(descriptor()->method(1),
                        controller, request, response, done);
@@ -1636,21 +1350,21 @@ void AccountServiceRpc_Stub::Register(::PROTOBUF_NAMESPACE_ID::RpcController* co
 }  // namespace protocol
 }  // namespace yy
 PROTOBUF_NAMESPACE_OPEN
-template<> PROTOBUF_NOINLINE ::yy::protocol::app::C2SLogin*
-Arena::CreateMaybeMessage< ::yy::protocol::app::C2SLogin >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::yy::protocol::app::C2SLogin >(arena);
+template<> PROTOBUF_NOINLINE ::yy::protocol::app::LoginReq*
+Arena::CreateMaybeMessage< ::yy::protocol::app::LoginReq >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::yy::protocol::app::LoginReq >(arena);
 }
-template<> PROTOBUF_NOINLINE ::yy::protocol::app::S2CLogin*
-Arena::CreateMaybeMessage< ::yy::protocol::app::S2CLogin >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::yy::protocol::app::S2CLogin >(arena);
+template<> PROTOBUF_NOINLINE ::yy::protocol::app::LoginRsp*
+Arena::CreateMaybeMessage< ::yy::protocol::app::LoginRsp >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::yy::protocol::app::LoginRsp >(arena);
 }
-template<> PROTOBUF_NOINLINE ::yy::protocol::app::C2SRegister*
-Arena::CreateMaybeMessage< ::yy::protocol::app::C2SRegister >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::yy::protocol::app::C2SRegister >(arena);
+template<> PROTOBUF_NOINLINE ::yy::protocol::app::RegisterReq*
+Arena::CreateMaybeMessage< ::yy::protocol::app::RegisterReq >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::yy::protocol::app::RegisterReq >(arena);
 }
-template<> PROTOBUF_NOINLINE ::yy::protocol::app::S2CRegister*
-Arena::CreateMaybeMessage< ::yy::protocol::app::S2CRegister >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::yy::protocol::app::S2CRegister >(arena);
+template<> PROTOBUF_NOINLINE ::yy::protocol::app::RegisterRsp*
+Arena::CreateMaybeMessage< ::yy::protocol::app::RegisterRsp >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::yy::protocol::app::RegisterRsp >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
 

@@ -49,111 +49,111 @@ extern const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table
 namespace yy {
 namespace protocol {
 namespace core {
-class C2SSecurityBody;
-struct C2SSecurityBodyDefaultTypeInternal;
-extern C2SSecurityBodyDefaultTypeInternal _C2SSecurityBody_default_instance_;
-class C2SUdpPortRegister;
-struct C2SUdpPortRegisterDefaultTypeInternal;
-extern C2SUdpPortRegisterDefaultTypeInternal _C2SUdpPortRegister_default_instance_;
 class HeartBody;
 struct HeartBodyDefaultTypeInternal;
 extern HeartBodyDefaultTypeInternal _HeartBody_default_instance_;
-class S2CSecurityBody;
-struct S2CSecurityBodyDefaultTypeInternal;
-extern S2CSecurityBodyDefaultTypeInternal _S2CSecurityBody_default_instance_;
-class S2CUdpPortRegister;
-struct S2CUdpPortRegisterDefaultTypeInternal;
-extern S2CUdpPortRegisterDefaultTypeInternal _S2CUdpPortRegister_default_instance_;
-class S2CXorBody;
-struct S2CXorBodyDefaultTypeInternal;
-extern S2CXorBodyDefaultTypeInternal _S2CXorBody_default_instance_;
+class SecurityCheckReq;
+struct SecurityCheckReqDefaultTypeInternal;
+extern SecurityCheckReqDefaultTypeInternal _SecurityCheckReq_default_instance_;
+class SecurityCheckRsp;
+struct SecurityCheckRspDefaultTypeInternal;
+extern SecurityCheckRspDefaultTypeInternal _SecurityCheckRsp_default_instance_;
+class UdpPortRegisterReq;
+struct UdpPortRegisterReqDefaultTypeInternal;
+extern UdpPortRegisterReqDefaultTypeInternal _UdpPortRegisterReq_default_instance_;
+class UdpPortRegisterRsp;
+struct UdpPortRegisterRspDefaultTypeInternal;
+extern UdpPortRegisterRspDefaultTypeInternal _UdpPortRegisterRsp_default_instance_;
+class XorBodyRsp;
+struct XorBodyRspDefaultTypeInternal;
+extern XorBodyRspDefaultTypeInternal _XorBodyRsp_default_instance_;
 }  // namespace core
 }  // namespace protocol
 }  // namespace yy
 PROTOBUF_NAMESPACE_OPEN
-template<> ::yy::protocol::core::C2SSecurityBody* Arena::CreateMaybeMessage<::yy::protocol::core::C2SSecurityBody>(Arena*);
-template<> ::yy::protocol::core::C2SUdpPortRegister* Arena::CreateMaybeMessage<::yy::protocol::core::C2SUdpPortRegister>(Arena*);
 template<> ::yy::protocol::core::HeartBody* Arena::CreateMaybeMessage<::yy::protocol::core::HeartBody>(Arena*);
-template<> ::yy::protocol::core::S2CSecurityBody* Arena::CreateMaybeMessage<::yy::protocol::core::S2CSecurityBody>(Arena*);
-template<> ::yy::protocol::core::S2CUdpPortRegister* Arena::CreateMaybeMessage<::yy::protocol::core::S2CUdpPortRegister>(Arena*);
-template<> ::yy::protocol::core::S2CXorBody* Arena::CreateMaybeMessage<::yy::protocol::core::S2CXorBody>(Arena*);
+template<> ::yy::protocol::core::SecurityCheckReq* Arena::CreateMaybeMessage<::yy::protocol::core::SecurityCheckReq>(Arena*);
+template<> ::yy::protocol::core::SecurityCheckRsp* Arena::CreateMaybeMessage<::yy::protocol::core::SecurityCheckRsp>(Arena*);
+template<> ::yy::protocol::core::UdpPortRegisterReq* Arena::CreateMaybeMessage<::yy::protocol::core::UdpPortRegisterReq>(Arena*);
+template<> ::yy::protocol::core::UdpPortRegisterRsp* Arena::CreateMaybeMessage<::yy::protocol::core::UdpPortRegisterRsp>(Arena*);
+template<> ::yy::protocol::core::XorBodyRsp* Arena::CreateMaybeMessage<::yy::protocol::core::XorBodyRsp>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
 namespace yy {
 namespace protocol {
 namespace core {
 
-enum S2CSecurityBody_ResultCode : int {
-  S2CSecurityBody_ResultCode_eSuccess = 0,
-  S2CSecurityBody_ResultCode_eAppVersionFailed = 1,
-  S2CSecurityBody_ResultCode_eMd5Failed = 2,
-  S2CSecurityBody_ResultCode_S2CSecurityBody_ResultCode_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
-  S2CSecurityBody_ResultCode_S2CSecurityBody_ResultCode_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
+enum SecurityCheckRsp_ResultCode : int {
+  SecurityCheckRsp_ResultCode_eSuccess = 0,
+  SecurityCheckRsp_ResultCode_eAppVersionFailed = 1,
+  SecurityCheckRsp_ResultCode_eMd5Failed = 2,
+  SecurityCheckRsp_ResultCode_SecurityCheckRsp_ResultCode_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
+  SecurityCheckRsp_ResultCode_SecurityCheckRsp_ResultCode_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
 };
-bool S2CSecurityBody_ResultCode_IsValid(int value);
-constexpr S2CSecurityBody_ResultCode S2CSecurityBody_ResultCode_ResultCode_MIN = S2CSecurityBody_ResultCode_eSuccess;
-constexpr S2CSecurityBody_ResultCode S2CSecurityBody_ResultCode_ResultCode_MAX = S2CSecurityBody_ResultCode_eMd5Failed;
-constexpr int S2CSecurityBody_ResultCode_ResultCode_ARRAYSIZE = S2CSecurityBody_ResultCode_ResultCode_MAX + 1;
+bool SecurityCheckRsp_ResultCode_IsValid(int value);
+constexpr SecurityCheckRsp_ResultCode SecurityCheckRsp_ResultCode_ResultCode_MIN = SecurityCheckRsp_ResultCode_eSuccess;
+constexpr SecurityCheckRsp_ResultCode SecurityCheckRsp_ResultCode_ResultCode_MAX = SecurityCheckRsp_ResultCode_eMd5Failed;
+constexpr int SecurityCheckRsp_ResultCode_ResultCode_ARRAYSIZE = SecurityCheckRsp_ResultCode_ResultCode_MAX + 1;
 
-const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* S2CSecurityBody_ResultCode_descriptor();
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* SecurityCheckRsp_ResultCode_descriptor();
 template<typename T>
-inline const std::string& S2CSecurityBody_ResultCode_Name(T enum_t_value) {
-  static_assert(::std::is_same<T, S2CSecurityBody_ResultCode>::value ||
+inline const std::string& SecurityCheckRsp_ResultCode_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, SecurityCheckRsp_ResultCode>::value ||
     ::std::is_integral<T>::value,
-    "Incorrect type passed to function S2CSecurityBody_ResultCode_Name.");
+    "Incorrect type passed to function SecurityCheckRsp_ResultCode_Name.");
   return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
-    S2CSecurityBody_ResultCode_descriptor(), enum_t_value);
+    SecurityCheckRsp_ResultCode_descriptor(), enum_t_value);
 }
-inline bool S2CSecurityBody_ResultCode_Parse(
-    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, S2CSecurityBody_ResultCode* value) {
-  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<S2CSecurityBody_ResultCode>(
-    S2CSecurityBody_ResultCode_descriptor(), name, value);
+inline bool SecurityCheckRsp_ResultCode_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, SecurityCheckRsp_ResultCode* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<SecurityCheckRsp_ResultCode>(
+    SecurityCheckRsp_ResultCode_descriptor(), name, value);
 }
-enum S2CUdpPortRegister_Status : int {
-  S2CUdpPortRegister_Status_eSuccess = 0,
-  S2CUdpPortRegister_Status_eInvalidPort = 1,
-  S2CUdpPortRegister_Status_eDuplicatePort = 2,
-  S2CUdpPortRegister_Status_S2CUdpPortRegister_Status_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
-  S2CUdpPortRegister_Status_S2CUdpPortRegister_Status_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
+enum UdpPortRegisterRsp_Status : int {
+  UdpPortRegisterRsp_Status_eSuccess = 0,
+  UdpPortRegisterRsp_Status_eInvalidPort = 1,
+  UdpPortRegisterRsp_Status_eDuplicatePort = 2,
+  UdpPortRegisterRsp_Status_UdpPortRegisterRsp_Status_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
+  UdpPortRegisterRsp_Status_UdpPortRegisterRsp_Status_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
 };
-bool S2CUdpPortRegister_Status_IsValid(int value);
-constexpr S2CUdpPortRegister_Status S2CUdpPortRegister_Status_Status_MIN = S2CUdpPortRegister_Status_eSuccess;
-constexpr S2CUdpPortRegister_Status S2CUdpPortRegister_Status_Status_MAX = S2CUdpPortRegister_Status_eDuplicatePort;
-constexpr int S2CUdpPortRegister_Status_Status_ARRAYSIZE = S2CUdpPortRegister_Status_Status_MAX + 1;
+bool UdpPortRegisterRsp_Status_IsValid(int value);
+constexpr UdpPortRegisterRsp_Status UdpPortRegisterRsp_Status_Status_MIN = UdpPortRegisterRsp_Status_eSuccess;
+constexpr UdpPortRegisterRsp_Status UdpPortRegisterRsp_Status_Status_MAX = UdpPortRegisterRsp_Status_eDuplicatePort;
+constexpr int UdpPortRegisterRsp_Status_Status_ARRAYSIZE = UdpPortRegisterRsp_Status_Status_MAX + 1;
 
-const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* S2CUdpPortRegister_Status_descriptor();
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* UdpPortRegisterRsp_Status_descriptor();
 template<typename T>
-inline const std::string& S2CUdpPortRegister_Status_Name(T enum_t_value) {
-  static_assert(::std::is_same<T, S2CUdpPortRegister_Status>::value ||
+inline const std::string& UdpPortRegisterRsp_Status_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, UdpPortRegisterRsp_Status>::value ||
     ::std::is_integral<T>::value,
-    "Incorrect type passed to function S2CUdpPortRegister_Status_Name.");
+    "Incorrect type passed to function UdpPortRegisterRsp_Status_Name.");
   return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
-    S2CUdpPortRegister_Status_descriptor(), enum_t_value);
+    UdpPortRegisterRsp_Status_descriptor(), enum_t_value);
 }
-inline bool S2CUdpPortRegister_Status_Parse(
-    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, S2CUdpPortRegister_Status* value) {
-  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<S2CUdpPortRegister_Status>(
-    S2CUdpPortRegister_Status_descriptor(), name, value);
+inline bool UdpPortRegisterRsp_Status_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, UdpPortRegisterRsp_Status* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<UdpPortRegisterRsp_Status>(
+    UdpPortRegisterRsp_Status_descriptor(), name, value);
 }
 // ===================================================================
 
-class S2CXorBody final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:yy.protocol.core.S2CXorBody) */ {
+class XorBodyRsp final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:yy.protocol.core.XorBodyRsp) */ {
  public:
-  inline S2CXorBody() : S2CXorBody(nullptr) {}
-  ~S2CXorBody() override;
-  explicit PROTOBUF_CONSTEXPR S2CXorBody(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+  inline XorBodyRsp() : XorBodyRsp(nullptr) {}
+  ~XorBodyRsp() override;
+  explicit PROTOBUF_CONSTEXPR XorBodyRsp(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
 
-  S2CXorBody(const S2CXorBody& from);
-  S2CXorBody(S2CXorBody&& from) noexcept
-    : S2CXorBody() {
+  XorBodyRsp(const XorBodyRsp& from);
+  XorBodyRsp(XorBodyRsp&& from) noexcept
+    : XorBodyRsp() {
     *this = ::std::move(from);
   }
 
-  inline S2CXorBody& operator=(const S2CXorBody& from) {
+  inline XorBodyRsp& operator=(const XorBodyRsp& from) {
     CopyFrom(from);
     return *this;
   }
-  inline S2CXorBody& operator=(S2CXorBody&& from) noexcept {
+  inline XorBodyRsp& operator=(XorBodyRsp&& from) noexcept {
     if (this == &from) return *this;
     if (GetOwningArena() == from.GetOwningArena()
   #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
@@ -176,20 +176,20 @@ class S2CXorBody final :
   static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
     return default_instance().GetMetadata().reflection;
   }
-  static const S2CXorBody& default_instance() {
+  static const XorBodyRsp& default_instance() {
     return *internal_default_instance();
   }
-  static inline const S2CXorBody* internal_default_instance() {
-    return reinterpret_cast<const S2CXorBody*>(
-               &_S2CXorBody_default_instance_);
+  static inline const XorBodyRsp* internal_default_instance() {
+    return reinterpret_cast<const XorBodyRsp*>(
+               &_XorBodyRsp_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
     0;
 
-  friend void swap(S2CXorBody& a, S2CXorBody& b) {
+  friend void swap(XorBodyRsp& a, XorBodyRsp& b) {
     a.Swap(&b);
   }
-  inline void Swap(S2CXorBody* other) {
+  inline void Swap(XorBodyRsp* other) {
     if (other == this) return;
   #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
     if (GetOwningArena() != nullptr &&
@@ -202,7 +202,7 @@ class S2CXorBody final :
       ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
     }
   }
-  void UnsafeArenaSwap(S2CXorBody* other) {
+  void UnsafeArenaSwap(XorBodyRsp* other) {
     if (other == this) return;
     GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
     InternalSwap(other);
@@ -210,14 +210,14 @@ class S2CXorBody final :
 
   // implements Message ----------------------------------------------
 
-  S2CXorBody* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
-    return CreateMaybeMessage<S2CXorBody>(arena);
+  XorBodyRsp* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<XorBodyRsp>(arena);
   }
   using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
-  void CopyFrom(const S2CXorBody& from);
+  void CopyFrom(const XorBodyRsp& from);
   using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
-  void MergeFrom( const S2CXorBody& from) {
-    S2CXorBody::MergeImpl(*this, from);
+  void MergeFrom( const XorBodyRsp& from) {
+    XorBodyRsp::MergeImpl(*this, from);
   }
   private:
   static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
@@ -235,15 +235,15 @@ class S2CXorBody final :
   void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
   void SharedDtor();
   void SetCachedSize(int size) const final;
-  void InternalSwap(S2CXorBody* other);
+  void InternalSwap(XorBodyRsp* other);
 
   private:
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "yy.protocol.core.S2CXorBody";
+    return "yy.protocol.core.XorBodyRsp";
   }
   protected:
-  explicit S2CXorBody(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+  explicit XorBodyRsp(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                        bool is_message_owned = false);
   public:
 
@@ -268,7 +268,7 @@ class S2CXorBody final :
   void _internal_set_xor_code(uint32_t value);
   public:
 
-  // @@protoc_insertion_point(class_scope:yy.protocol.core.S2CXorBody)
+  // @@protoc_insertion_point(class_scope:yy.protocol.core.XorBodyRsp)
  private:
   class _Internal;
 
@@ -402,24 +402,24 @@ class HeartBody final :
 };
 // -------------------------------------------------------------------
 
-class C2SSecurityBody final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:yy.protocol.core.C2SSecurityBody) */ {
+class SecurityCheckReq final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:yy.protocol.core.SecurityCheckReq) */ {
  public:
-  inline C2SSecurityBody() : C2SSecurityBody(nullptr) {}
-  ~C2SSecurityBody() override;
-  explicit PROTOBUF_CONSTEXPR C2SSecurityBody(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+  inline SecurityCheckReq() : SecurityCheckReq(nullptr) {}
+  ~SecurityCheckReq() override;
+  explicit PROTOBUF_CONSTEXPR SecurityCheckReq(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
 
-  C2SSecurityBody(const C2SSecurityBody& from);
-  C2SSecurityBody(C2SSecurityBody&& from) noexcept
-    : C2SSecurityBody() {
+  SecurityCheckReq(const SecurityCheckReq& from);
+  SecurityCheckReq(SecurityCheckReq&& from) noexcept
+    : SecurityCheckReq() {
     *this = ::std::move(from);
   }
 
-  inline C2SSecurityBody& operator=(const C2SSecurityBody& from) {
+  inline SecurityCheckReq& operator=(const SecurityCheckReq& from) {
     CopyFrom(from);
     return *this;
   }
-  inline C2SSecurityBody& operator=(C2SSecurityBody&& from) noexcept {
+  inline SecurityCheckReq& operator=(SecurityCheckReq&& from) noexcept {
     if (this == &from) return *this;
     if (GetOwningArena() == from.GetOwningArena()
   #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
@@ -442,20 +442,20 @@ class C2SSecurityBody final :
   static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
     return default_instance().GetMetadata().reflection;
   }
-  static const C2SSecurityBody& default_instance() {
+  static const SecurityCheckReq& default_instance() {
     return *internal_default_instance();
   }
-  static inline const C2SSecurityBody* internal_default_instance() {
-    return reinterpret_cast<const C2SSecurityBody*>(
-               &_C2SSecurityBody_default_instance_);
+  static inline const SecurityCheckReq* internal_default_instance() {
+    return reinterpret_cast<const SecurityCheckReq*>(
+               &_SecurityCheckReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
     2;
 
-  friend void swap(C2SSecurityBody& a, C2SSecurityBody& b) {
+  friend void swap(SecurityCheckReq& a, SecurityCheckReq& b) {
     a.Swap(&b);
   }
-  inline void Swap(C2SSecurityBody* other) {
+  inline void Swap(SecurityCheckReq* other) {
     if (other == this) return;
   #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
     if (GetOwningArena() != nullptr &&
@@ -468,7 +468,7 @@ class C2SSecurityBody final :
       ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
     }
   }
-  void UnsafeArenaSwap(C2SSecurityBody* other) {
+  void UnsafeArenaSwap(SecurityCheckReq* other) {
     if (other == this) return;
     GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
     InternalSwap(other);
@@ -476,14 +476,14 @@ class C2SSecurityBody final :
 
   // implements Message ----------------------------------------------
 
-  C2SSecurityBody* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
-    return CreateMaybeMessage<C2SSecurityBody>(arena);
+  SecurityCheckReq* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<SecurityCheckReq>(arena);
   }
   using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
-  void CopyFrom(const C2SSecurityBody& from);
+  void CopyFrom(const SecurityCheckReq& from);
   using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
-  void MergeFrom( const C2SSecurityBody& from) {
-    C2SSecurityBody::MergeImpl(*this, from);
+  void MergeFrom( const SecurityCheckReq& from) {
+    SecurityCheckReq::MergeImpl(*this, from);
   }
   private:
   static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
@@ -501,15 +501,15 @@ class C2SSecurityBody final :
   void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
   void SharedDtor();
   void SetCachedSize(int size) const final;
-  void InternalSwap(C2SSecurityBody* other);
+  void InternalSwap(SecurityCheckReq* other);
 
   private:
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "yy.protocol.core.C2SSecurityBody";
+    return "yy.protocol.core.SecurityCheckReq";
   }
   protected:
-  explicit C2SSecurityBody(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+  explicit SecurityCheckReq(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                        bool is_message_owned = false);
   public:
 
@@ -559,7 +559,7 @@ class C2SSecurityBody final :
   void _internal_set_app_version(uint32_t value);
   public:
 
-  // @@protoc_insertion_point(class_scope:yy.protocol.core.C2SSecurityBody)
+  // @@protoc_insertion_point(class_scope:yy.protocol.core.SecurityCheckReq)
  private:
   class _Internal;
 
@@ -577,24 +577,24 @@ class C2SSecurityBody final :
 };
 // -------------------------------------------------------------------
 
-class S2CSecurityBody final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:yy.protocol.core.S2CSecurityBody) */ {
+class SecurityCheckRsp final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:yy.protocol.core.SecurityCheckRsp) */ {
  public:
-  inline S2CSecurityBody() : S2CSecurityBody(nullptr) {}
-  ~S2CSecurityBody() override;
-  explicit PROTOBUF_CONSTEXPR S2CSecurityBody(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+  inline SecurityCheckRsp() : SecurityCheckRsp(nullptr) {}
+  ~SecurityCheckRsp() override;
+  explicit PROTOBUF_CONSTEXPR SecurityCheckRsp(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
 
-  S2CSecurityBody(const S2CSecurityBody& from);
-  S2CSecurityBody(S2CSecurityBody&& from) noexcept
-    : S2CSecurityBody() {
+  SecurityCheckRsp(const SecurityCheckRsp& from);
+  SecurityCheckRsp(SecurityCheckRsp&& from) noexcept
+    : SecurityCheckRsp() {
     *this = ::std::move(from);
   }
 
-  inline S2CSecurityBody& operator=(const S2CSecurityBody& from) {
+  inline SecurityCheckRsp& operator=(const SecurityCheckRsp& from) {
     CopyFrom(from);
     return *this;
   }
-  inline S2CSecurityBody& operator=(S2CSecurityBody&& from) noexcept {
+  inline SecurityCheckRsp& operator=(SecurityCheckRsp&& from) noexcept {
     if (this == &from) return *this;
     if (GetOwningArena() == from.GetOwningArena()
   #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
@@ -617,20 +617,20 @@ class S2CSecurityBody final :
   static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
     return default_instance().GetMetadata().reflection;
   }
-  static const S2CSecurityBody& default_instance() {
+  static const SecurityCheckRsp& default_instance() {
     return *internal_default_instance();
   }
-  static inline const S2CSecurityBody* internal_default_instance() {
-    return reinterpret_cast<const S2CSecurityBody*>(
-               &_S2CSecurityBody_default_instance_);
+  static inline const SecurityCheckRsp* internal_default_instance() {
+    return reinterpret_cast<const SecurityCheckRsp*>(
+               &_SecurityCheckRsp_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
     3;
 
-  friend void swap(S2CSecurityBody& a, S2CSecurityBody& b) {
+  friend void swap(SecurityCheckRsp& a, SecurityCheckRsp& b) {
     a.Swap(&b);
   }
-  inline void Swap(S2CSecurityBody* other) {
+  inline void Swap(SecurityCheckRsp* other) {
     if (other == this) return;
   #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
     if (GetOwningArena() != nullptr &&
@@ -643,7 +643,7 @@ class S2CSecurityBody final :
       ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
     }
   }
-  void UnsafeArenaSwap(S2CSecurityBody* other) {
+  void UnsafeArenaSwap(SecurityCheckRsp* other) {
     if (other == this) return;
     GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
     InternalSwap(other);
@@ -651,14 +651,14 @@ class S2CSecurityBody final :
 
   // implements Message ----------------------------------------------
 
-  S2CSecurityBody* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
-    return CreateMaybeMessage<S2CSecurityBody>(arena);
+  SecurityCheckRsp* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<SecurityCheckRsp>(arena);
   }
   using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
-  void CopyFrom(const S2CSecurityBody& from);
+  void CopyFrom(const SecurityCheckRsp& from);
   using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
-  void MergeFrom( const S2CSecurityBody& from) {
-    S2CSecurityBody::MergeImpl(*this, from);
+  void MergeFrom( const SecurityCheckRsp& from) {
+    SecurityCheckRsp::MergeImpl(*this, from);
   }
   private:
   static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
@@ -676,15 +676,15 @@ class S2CSecurityBody final :
   void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
   void SharedDtor();
   void SetCachedSize(int size) const final;
-  void InternalSwap(S2CSecurityBody* other);
+  void InternalSwap(SecurityCheckRsp* other);
 
   private:
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "yy.protocol.core.S2CSecurityBody";
+    return "yy.protocol.core.SecurityCheckRsp";
   }
   protected:
-  explicit S2CSecurityBody(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+  explicit SecurityCheckRsp(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                        bool is_message_owned = false);
   public:
 
@@ -695,36 +695,36 @@ class S2CSecurityBody final :
 
   // nested types ----------------------------------------------------
 
-  typedef S2CSecurityBody_ResultCode ResultCode;
+  typedef SecurityCheckRsp_ResultCode ResultCode;
   static constexpr ResultCode eSuccess =
-    S2CSecurityBody_ResultCode_eSuccess;
+    SecurityCheckRsp_ResultCode_eSuccess;
   static constexpr ResultCode eAppVersionFailed =
-    S2CSecurityBody_ResultCode_eAppVersionFailed;
+    SecurityCheckRsp_ResultCode_eAppVersionFailed;
   static constexpr ResultCode eMd5Failed =
-    S2CSecurityBody_ResultCode_eMd5Failed;
+    SecurityCheckRsp_ResultCode_eMd5Failed;
   static inline bool ResultCode_IsValid(int value) {
-    return S2CSecurityBody_ResultCode_IsValid(value);
+    return SecurityCheckRsp_ResultCode_IsValid(value);
   }
   static constexpr ResultCode ResultCode_MIN =
-    S2CSecurityBody_ResultCode_ResultCode_MIN;
+    SecurityCheckRsp_ResultCode_ResultCode_MIN;
   static constexpr ResultCode ResultCode_MAX =
-    S2CSecurityBody_ResultCode_ResultCode_MAX;
+    SecurityCheckRsp_ResultCode_ResultCode_MAX;
   static constexpr int ResultCode_ARRAYSIZE =
-    S2CSecurityBody_ResultCode_ResultCode_ARRAYSIZE;
+    SecurityCheckRsp_ResultCode_ResultCode_ARRAYSIZE;
   static inline const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
   ResultCode_descriptor() {
-    return S2CSecurityBody_ResultCode_descriptor();
+    return SecurityCheckRsp_ResultCode_descriptor();
   }
   template<typename T>
   static inline const std::string& ResultCode_Name(T enum_t_value) {
     static_assert(::std::is_same<T, ResultCode>::value ||
       ::std::is_integral<T>::value,
       "Incorrect type passed to function ResultCode_Name.");
-    return S2CSecurityBody_ResultCode_Name(enum_t_value);
+    return SecurityCheckRsp_ResultCode_Name(enum_t_value);
   }
   static inline bool ResultCode_Parse(::PROTOBUF_NAMESPACE_ID::ConstStringParam name,
       ResultCode* value) {
-    return S2CSecurityBody_ResultCode_Parse(name, value);
+    return SecurityCheckRsp_ResultCode_Parse(name, value);
   }
 
   // accessors -------------------------------------------------------
@@ -734,13 +734,13 @@ class S2CSecurityBody final :
     kServerUdpPortFieldNumber = 2,
     kSessionIdFieldNumber = 3,
   };
-  // .yy.protocol.core.S2CSecurityBody.ResultCode result_code = 1;
+  // .yy.protocol.core.SecurityCheckRsp.ResultCode result_code = 1;
   void clear_result_code();
-  ::yy::protocol::core::S2CSecurityBody_ResultCode result_code() const;
-  void set_result_code(::yy::protocol::core::S2CSecurityBody_ResultCode value);
+  ::yy::protocol::core::SecurityCheckRsp_ResultCode result_code() const;
+  void set_result_code(::yy::protocol::core::SecurityCheckRsp_ResultCode value);
   private:
-  ::yy::protocol::core::S2CSecurityBody_ResultCode _internal_result_code() const;
-  void _internal_set_result_code(::yy::protocol::core::S2CSecurityBody_ResultCode value);
+  ::yy::protocol::core::SecurityCheckRsp_ResultCode _internal_result_code() const;
+  void _internal_set_result_code(::yy::protocol::core::SecurityCheckRsp_ResultCode value);
   public:
 
   // optional uint32 server_udp_port = 2;
@@ -769,7 +769,7 @@ class S2CSecurityBody final :
   void _internal_set_session_id(uint64_t value);
   public:
 
-  // @@protoc_insertion_point(class_scope:yy.protocol.core.S2CSecurityBody)
+  // @@protoc_insertion_point(class_scope:yy.protocol.core.SecurityCheckRsp)
  private:
   class _Internal;
 
@@ -788,24 +788,24 @@ class S2CSecurityBody final :
 };
 // -------------------------------------------------------------------
 
-class C2SUdpPortRegister final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:yy.protocol.core.C2SUdpPortRegister) */ {
+class UdpPortRegisterReq final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:yy.protocol.core.UdpPortRegisterReq) */ {
  public:
-  inline C2SUdpPortRegister() : C2SUdpPortRegister(nullptr) {}
-  ~C2SUdpPortRegister() override;
-  explicit PROTOBUF_CONSTEXPR C2SUdpPortRegister(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+  inline UdpPortRegisterReq() : UdpPortRegisterReq(nullptr) {}
+  ~UdpPortRegisterReq() override;
+  explicit PROTOBUF_CONSTEXPR UdpPortRegisterReq(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
 
-  C2SUdpPortRegister(const C2SUdpPortRegister& from);
-  C2SUdpPortRegister(C2SUdpPortRegister&& from) noexcept
-    : C2SUdpPortRegister() {
+  UdpPortRegisterReq(const UdpPortRegisterReq& from);
+  UdpPortRegisterReq(UdpPortRegisterReq&& from) noexcept
+    : UdpPortRegisterReq() {
     *this = ::std::move(from);
   }
 
-  inline C2SUdpPortRegister& operator=(const C2SUdpPortRegister& from) {
+  inline UdpPortRegisterReq& operator=(const UdpPortRegisterReq& from) {
     CopyFrom(from);
     return *this;
   }
-  inline C2SUdpPortRegister& operator=(C2SUdpPortRegister&& from) noexcept {
+  inline UdpPortRegisterReq& operator=(UdpPortRegisterReq&& from) noexcept {
     if (this == &from) return *this;
     if (GetOwningArena() == from.GetOwningArena()
   #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
@@ -828,20 +828,20 @@ class C2SUdpPortRegister final :
   static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
     return default_instance().GetMetadata().reflection;
   }
-  static const C2SUdpPortRegister& default_instance() {
+  static const UdpPortRegisterReq& default_instance() {
     return *internal_default_instance();
   }
-  static inline const C2SUdpPortRegister* internal_default_instance() {
-    return reinterpret_cast<const C2SUdpPortRegister*>(
-               &_C2SUdpPortRegister_default_instance_);
+  static inline const UdpPortRegisterReq* internal_default_instance() {
+    return reinterpret_cast<const UdpPortRegisterReq*>(
+               &_UdpPortRegisterReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
     4;
 
-  friend void swap(C2SUdpPortRegister& a, C2SUdpPortRegister& b) {
+  friend void swap(UdpPortRegisterReq& a, UdpPortRegisterReq& b) {
     a.Swap(&b);
   }
-  inline void Swap(C2SUdpPortRegister* other) {
+  inline void Swap(UdpPortRegisterReq* other) {
     if (other == this) return;
   #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
     if (GetOwningArena() != nullptr &&
@@ -854,7 +854,7 @@ class C2SUdpPortRegister final :
       ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
     }
   }
-  void UnsafeArenaSwap(C2SUdpPortRegister* other) {
+  void UnsafeArenaSwap(UdpPortRegisterReq* other) {
     if (other == this) return;
     GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
     InternalSwap(other);
@@ -862,14 +862,14 @@ class C2SUdpPortRegister final :
 
   // implements Message ----------------------------------------------
 
-  C2SUdpPortRegister* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
-    return CreateMaybeMessage<C2SUdpPortRegister>(arena);
+  UdpPortRegisterReq* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<UdpPortRegisterReq>(arena);
   }
   using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
-  void CopyFrom(const C2SUdpPortRegister& from);
+  void CopyFrom(const UdpPortRegisterReq& from);
   using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
-  void MergeFrom( const C2SUdpPortRegister& from) {
-    C2SUdpPortRegister::MergeImpl(*this, from);
+  void MergeFrom( const UdpPortRegisterReq& from) {
+    UdpPortRegisterReq::MergeImpl(*this, from);
   }
   private:
   static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
@@ -887,15 +887,15 @@ class C2SUdpPortRegister final :
   void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
   void SharedDtor();
   void SetCachedSize(int size) const final;
-  void InternalSwap(C2SUdpPortRegister* other);
+  void InternalSwap(UdpPortRegisterReq* other);
 
   private:
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "yy.protocol.core.C2SUdpPortRegister";
+    return "yy.protocol.core.UdpPortRegisterReq";
   }
   protected:
-  explicit C2SUdpPortRegister(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+  explicit UdpPortRegisterReq(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                        bool is_message_owned = false);
   public:
 
@@ -945,7 +945,7 @@ class C2SUdpPortRegister final :
   void _internal_set_client_udp_port(uint32_t value);
   public:
 
-  // @@protoc_insertion_point(class_scope:yy.protocol.core.C2SUdpPortRegister)
+  // @@protoc_insertion_point(class_scope:yy.protocol.core.UdpPortRegisterReq)
  private:
   class _Internal;
 
@@ -963,24 +963,24 @@ class C2SUdpPortRegister final :
 };
 // -------------------------------------------------------------------
 
-class S2CUdpPortRegister final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:yy.protocol.core.S2CUdpPortRegister) */ {
+class UdpPortRegisterRsp final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:yy.protocol.core.UdpPortRegisterRsp) */ {
  public:
-  inline S2CUdpPortRegister() : S2CUdpPortRegister(nullptr) {}
-  ~S2CUdpPortRegister() override;
-  explicit PROTOBUF_CONSTEXPR S2CUdpPortRegister(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+  inline UdpPortRegisterRsp() : UdpPortRegisterRsp(nullptr) {}
+  ~UdpPortRegisterRsp() override;
+  explicit PROTOBUF_CONSTEXPR UdpPortRegisterRsp(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
 
-  S2CUdpPortRegister(const S2CUdpPortRegister& from);
-  S2CUdpPortRegister(S2CUdpPortRegister&& from) noexcept
-    : S2CUdpPortRegister() {
+  UdpPortRegisterRsp(const UdpPortRegisterRsp& from);
+  UdpPortRegisterRsp(UdpPortRegisterRsp&& from) noexcept
+    : UdpPortRegisterRsp() {
     *this = ::std::move(from);
   }
 
-  inline S2CUdpPortRegister& operator=(const S2CUdpPortRegister& from) {
+  inline UdpPortRegisterRsp& operator=(const UdpPortRegisterRsp& from) {
     CopyFrom(from);
     return *this;
   }
-  inline S2CUdpPortRegister& operator=(S2CUdpPortRegister&& from) noexcept {
+  inline UdpPortRegisterRsp& operator=(UdpPortRegisterRsp&& from) noexcept {
     if (this == &from) return *this;
     if (GetOwningArena() == from.GetOwningArena()
   #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
@@ -1003,20 +1003,20 @@ class S2CUdpPortRegister final :
   static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
     return default_instance().GetMetadata().reflection;
   }
-  static const S2CUdpPortRegister& default_instance() {
+  static const UdpPortRegisterRsp& default_instance() {
     return *internal_default_instance();
   }
-  static inline const S2CUdpPortRegister* internal_default_instance() {
-    return reinterpret_cast<const S2CUdpPortRegister*>(
-               &_S2CUdpPortRegister_default_instance_);
+  static inline const UdpPortRegisterRsp* internal_default_instance() {
+    return reinterpret_cast<const UdpPortRegisterRsp*>(
+               &_UdpPortRegisterRsp_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
     5;
 
-  friend void swap(S2CUdpPortRegister& a, S2CUdpPortRegister& b) {
+  friend void swap(UdpPortRegisterRsp& a, UdpPortRegisterRsp& b) {
     a.Swap(&b);
   }
-  inline void Swap(S2CUdpPortRegister* other) {
+  inline void Swap(UdpPortRegisterRsp* other) {
     if (other == this) return;
   #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
     if (GetOwningArena() != nullptr &&
@@ -1029,7 +1029,7 @@ class S2CUdpPortRegister final :
       ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
     }
   }
-  void UnsafeArenaSwap(S2CUdpPortRegister* other) {
+  void UnsafeArenaSwap(UdpPortRegisterRsp* other) {
     if (other == this) return;
     GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
     InternalSwap(other);
@@ -1037,14 +1037,14 @@ class S2CUdpPortRegister final :
 
   // implements Message ----------------------------------------------
 
-  S2CUdpPortRegister* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
-    return CreateMaybeMessage<S2CUdpPortRegister>(arena);
+  UdpPortRegisterRsp* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<UdpPortRegisterRsp>(arena);
   }
   using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
-  void CopyFrom(const S2CUdpPortRegister& from);
+  void CopyFrom(const UdpPortRegisterRsp& from);
   using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
-  void MergeFrom( const S2CUdpPortRegister& from) {
-    S2CUdpPortRegister::MergeImpl(*this, from);
+  void MergeFrom( const UdpPortRegisterRsp& from) {
+    UdpPortRegisterRsp::MergeImpl(*this, from);
   }
   private:
   static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
@@ -1062,15 +1062,15 @@ class S2CUdpPortRegister final :
   void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
   void SharedDtor();
   void SetCachedSize(int size) const final;
-  void InternalSwap(S2CUdpPortRegister* other);
+  void InternalSwap(UdpPortRegisterRsp* other);
 
   private:
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "yy.protocol.core.S2CUdpPortRegister";
+    return "yy.protocol.core.UdpPortRegisterRsp";
   }
   protected:
-  explicit S2CUdpPortRegister(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+  explicit UdpPortRegisterRsp(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                        bool is_message_owned = false);
   public:
 
@@ -1081,36 +1081,36 @@ class S2CUdpPortRegister final :
 
   // nested types ----------------------------------------------------
 
-  typedef S2CUdpPortRegister_Status Status;
+  typedef UdpPortRegisterRsp_Status Status;
   static constexpr Status eSuccess =
-    S2CUdpPortRegister_Status_eSuccess;
+    UdpPortRegisterRsp_Status_eSuccess;
   static constexpr Status eInvalidPort =
-    S2CUdpPortRegister_Status_eInvalidPort;
+    UdpPortRegisterRsp_Status_eInvalidPort;
   static constexpr Status eDuplicatePort =
-    S2CUdpPortRegister_Status_eDuplicatePort;
+    UdpPortRegisterRsp_Status_eDuplicatePort;
   static inline bool Status_IsValid(int value) {
-    return S2CUdpPortRegister_Status_IsValid(value);
+    return UdpPortRegisterRsp_Status_IsValid(value);
   }
   static constexpr Status Status_MIN =
-    S2CUdpPortRegister_Status_Status_MIN;
+    UdpPortRegisterRsp_Status_Status_MIN;
   static constexpr Status Status_MAX =
-    S2CUdpPortRegister_Status_Status_MAX;
+    UdpPortRegisterRsp_Status_Status_MAX;
   static constexpr int Status_ARRAYSIZE =
-    S2CUdpPortRegister_Status_Status_ARRAYSIZE;
+    UdpPortRegisterRsp_Status_Status_ARRAYSIZE;
   static inline const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
   Status_descriptor() {
-    return S2CUdpPortRegister_Status_descriptor();
+    return UdpPortRegisterRsp_Status_descriptor();
   }
   template<typename T>
   static inline const std::string& Status_Name(T enum_t_value) {
     static_assert(::std::is_same<T, Status>::value ||
       ::std::is_integral<T>::value,
       "Incorrect type passed to function Status_Name.");
-    return S2CUdpPortRegister_Status_Name(enum_t_value);
+    return UdpPortRegisterRsp_Status_Name(enum_t_value);
   }
   static inline bool Status_Parse(::PROTOBUF_NAMESPACE_ID::ConstStringParam name,
       Status* value) {
-    return S2CUdpPortRegister_Status_Parse(name, value);
+    return UdpPortRegisterRsp_Status_Parse(name, value);
   }
 
   // accessors -------------------------------------------------------
@@ -1128,16 +1128,16 @@ class S2CUdpPortRegister final :
   void _internal_set_session_id(uint64_t value);
   public:
 
-  // .yy.protocol.core.S2CUdpPortRegister.Status status = 2;
+  // .yy.protocol.core.UdpPortRegisterRsp.Status status = 2;
   void clear_status();
-  ::yy::protocol::core::S2CUdpPortRegister_Status status() const;
-  void set_status(::yy::protocol::core::S2CUdpPortRegister_Status value);
+  ::yy::protocol::core::UdpPortRegisterRsp_Status status() const;
+  void set_status(::yy::protocol::core::UdpPortRegisterRsp_Status value);
   private:
-  ::yy::protocol::core::S2CUdpPortRegister_Status _internal_status() const;
-  void _internal_set_status(::yy::protocol::core::S2CUdpPortRegister_Status value);
+  ::yy::protocol::core::UdpPortRegisterRsp_Status _internal_status() const;
+  void _internal_set_status(::yy::protocol::core::UdpPortRegisterRsp_Status value);
   public:
 
-  // @@protoc_insertion_point(class_scope:yy.protocol.core.S2CUdpPortRegister)
+  // @@protoc_insertion_point(class_scope:yy.protocol.core.UdpPortRegisterRsp)
  private:
   class _Internal;
 
@@ -1161,26 +1161,26 @@ class S2CUdpPortRegister final :
   #pragma GCC diagnostic push
   #pragma GCC diagnostic ignored "-Wstrict-aliasing"
 #endif  // __GNUC__
-// S2CXorBody
+// XorBodyRsp
 
 // uint32 xor_code = 1;
-inline void S2CXorBody::clear_xor_code() {
+inline void XorBodyRsp::clear_xor_code() {
   _impl_.xor_code_ = 0u;
 }
-inline uint32_t S2CXorBody::_internal_xor_code() const {
+inline uint32_t XorBodyRsp::_internal_xor_code() const {
   return _impl_.xor_code_;
 }
-inline uint32_t S2CXorBody::xor_code() const {
-  // @@protoc_insertion_point(field_get:yy.protocol.core.S2CXorBody.xor_code)
+inline uint32_t XorBodyRsp::xor_code() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.core.XorBodyRsp.xor_code)
   return _internal_xor_code();
 }
-inline void S2CXorBody::_internal_set_xor_code(uint32_t value) {
+inline void XorBodyRsp::_internal_set_xor_code(uint32_t value) {
   
   _impl_.xor_code_ = value;
 }
-inline void S2CXorBody::set_xor_code(uint32_t value) {
+inline void XorBodyRsp::set_xor_code(uint32_t value) {
   _internal_set_xor_code(value);
-  // @@protoc_insertion_point(field_set:yy.protocol.core.S2CXorBody.xor_code)
+  // @@protoc_insertion_point(field_set:yy.protocol.core.XorBodyRsp.xor_code)
 }
 
 // -------------------------------------------------------------------
@@ -1189,84 +1189,84 @@ inline void S2CXorBody::set_xor_code(uint32_t value) {
 
 // -------------------------------------------------------------------
 
-// C2SSecurityBody
+// SecurityCheckReq
 
 // uint32 app_id = 1;
-inline void C2SSecurityBody::clear_app_id() {
+inline void SecurityCheckReq::clear_app_id() {
   _impl_.app_id_ = 0u;
 }
-inline uint32_t C2SSecurityBody::_internal_app_id() const {
+inline uint32_t SecurityCheckReq::_internal_app_id() const {
   return _impl_.app_id_;
 }
-inline uint32_t C2SSecurityBody::app_id() const {
-  // @@protoc_insertion_point(field_get:yy.protocol.core.C2SSecurityBody.app_id)
+inline uint32_t SecurityCheckReq::app_id() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.core.SecurityCheckReq.app_id)
   return _internal_app_id();
 }
-inline void C2SSecurityBody::_internal_set_app_id(uint32_t value) {
+inline void SecurityCheckReq::_internal_set_app_id(uint32_t value) {
   
   _impl_.app_id_ = value;
 }
-inline void C2SSecurityBody::set_app_id(uint32_t value) {
+inline void SecurityCheckReq::set_app_id(uint32_t value) {
   _internal_set_app_id(value);
-  // @@protoc_insertion_point(field_set:yy.protocol.core.C2SSecurityBody.app_id)
+  // @@protoc_insertion_point(field_set:yy.protocol.core.SecurityCheckReq.app_id)
 }
 
 // uint32 app_version = 2;
-inline void C2SSecurityBody::clear_app_version() {
+inline void SecurityCheckReq::clear_app_version() {
   _impl_.app_version_ = 0u;
 }
-inline uint32_t C2SSecurityBody::_internal_app_version() const {
+inline uint32_t SecurityCheckReq::_internal_app_version() const {
   return _impl_.app_version_;
 }
-inline uint32_t C2SSecurityBody::app_version() const {
-  // @@protoc_insertion_point(field_get:yy.protocol.core.C2SSecurityBody.app_version)
+inline uint32_t SecurityCheckReq::app_version() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.core.SecurityCheckReq.app_version)
   return _internal_app_version();
 }
-inline void C2SSecurityBody::_internal_set_app_version(uint32_t value) {
+inline void SecurityCheckReq::_internal_set_app_version(uint32_t value) {
   
   _impl_.app_version_ = value;
 }
-inline void C2SSecurityBody::set_app_version(uint32_t value) {
+inline void SecurityCheckReq::set_app_version(uint32_t value) {
   _internal_set_app_version(value);
-  // @@protoc_insertion_point(field_set:yy.protocol.core.C2SSecurityBody.app_version)
+  // @@protoc_insertion_point(field_set:yy.protocol.core.SecurityCheckReq.app_version)
 }
 
 // string app_md5 = 3;
-inline void C2SSecurityBody::clear_app_md5() {
+inline void SecurityCheckReq::clear_app_md5() {
   _impl_.app_md5_.ClearToEmpty();
 }
-inline const std::string& C2SSecurityBody::app_md5() const {
-  // @@protoc_insertion_point(field_get:yy.protocol.core.C2SSecurityBody.app_md5)
+inline const std::string& SecurityCheckReq::app_md5() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.core.SecurityCheckReq.app_md5)
   return _internal_app_md5();
 }
 template <typename ArgT0, typename... ArgT>
 inline PROTOBUF_ALWAYS_INLINE
-void C2SSecurityBody::set_app_md5(ArgT0&& arg0, ArgT... args) {
+void SecurityCheckReq::set_app_md5(ArgT0&& arg0, ArgT... args) {
  
  _impl_.app_md5_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:yy.protocol.core.C2SSecurityBody.app_md5)
+  // @@protoc_insertion_point(field_set:yy.protocol.core.SecurityCheckReq.app_md5)
 }
-inline std::string* C2SSecurityBody::mutable_app_md5() {
+inline std::string* SecurityCheckReq::mutable_app_md5() {
   std::string* _s = _internal_mutable_app_md5();
-  // @@protoc_insertion_point(field_mutable:yy.protocol.core.C2SSecurityBody.app_md5)
+  // @@protoc_insertion_point(field_mutable:yy.protocol.core.SecurityCheckReq.app_md5)
   return _s;
 }
-inline const std::string& C2SSecurityBody::_internal_app_md5() const {
+inline const std::string& SecurityCheckReq::_internal_app_md5() const {
   return _impl_.app_md5_.Get();
 }
-inline void C2SSecurityBody::_internal_set_app_md5(const std::string& value) {
+inline void SecurityCheckReq::_internal_set_app_md5(const std::string& value) {
   
   _impl_.app_md5_.Set(value, GetArenaForAllocation());
 }
-inline std::string* C2SSecurityBody::_internal_mutable_app_md5() {
+inline std::string* SecurityCheckReq::_internal_mutable_app_md5() {
   
   return _impl_.app_md5_.Mutable(GetArenaForAllocation());
 }
-inline std::string* C2SSecurityBody::release_app_md5() {
-  // @@protoc_insertion_point(field_release:yy.protocol.core.C2SSecurityBody.app_md5)
+inline std::string* SecurityCheckReq::release_app_md5() {
+  // @@protoc_insertion_point(field_release:yy.protocol.core.SecurityCheckReq.app_md5)
   return _impl_.app_md5_.Release();
 }
-inline void C2SSecurityBody::set_allocated_app_md5(std::string* app_md5) {
+inline void SecurityCheckReq::set_allocated_app_md5(std::string* app_md5) {
   if (app_md5 != nullptr) {
     
   } else {
@@ -1278,149 +1278,149 @@ inline void C2SSecurityBody::set_allocated_app_md5(std::string* app_md5) {
     _impl_.app_md5_.Set("", GetArenaForAllocation());
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:yy.protocol.core.C2SSecurityBody.app_md5)
+  // @@protoc_insertion_point(field_set_allocated:yy.protocol.core.SecurityCheckReq.app_md5)
 }
 
 // -------------------------------------------------------------------
 
-// S2CSecurityBody
+// SecurityCheckRsp
 
-// .yy.protocol.core.S2CSecurityBody.ResultCode result_code = 1;
-inline void S2CSecurityBody::clear_result_code() {
+// .yy.protocol.core.SecurityCheckRsp.ResultCode result_code = 1;
+inline void SecurityCheckRsp::clear_result_code() {
   _impl_.result_code_ = 0;
 }
-inline ::yy::protocol::core::S2CSecurityBody_ResultCode S2CSecurityBody::_internal_result_code() const {
-  return static_cast< ::yy::protocol::core::S2CSecurityBody_ResultCode >(_impl_.result_code_);
+inline ::yy::protocol::core::SecurityCheckRsp_ResultCode SecurityCheckRsp::_internal_result_code() const {
+  return static_cast< ::yy::protocol::core::SecurityCheckRsp_ResultCode >(_impl_.result_code_);
 }
-inline ::yy::protocol::core::S2CSecurityBody_ResultCode S2CSecurityBody::result_code() const {
-  // @@protoc_insertion_point(field_get:yy.protocol.core.S2CSecurityBody.result_code)
+inline ::yy::protocol::core::SecurityCheckRsp_ResultCode SecurityCheckRsp::result_code() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.core.SecurityCheckRsp.result_code)
   return _internal_result_code();
 }
-inline void S2CSecurityBody::_internal_set_result_code(::yy::protocol::core::S2CSecurityBody_ResultCode value) {
+inline void SecurityCheckRsp::_internal_set_result_code(::yy::protocol::core::SecurityCheckRsp_ResultCode value) {
   
   _impl_.result_code_ = value;
 }
-inline void S2CSecurityBody::set_result_code(::yy::protocol::core::S2CSecurityBody_ResultCode value) {
+inline void SecurityCheckRsp::set_result_code(::yy::protocol::core::SecurityCheckRsp_ResultCode value) {
   _internal_set_result_code(value);
-  // @@protoc_insertion_point(field_set:yy.protocol.core.S2CSecurityBody.result_code)
+  // @@protoc_insertion_point(field_set:yy.protocol.core.SecurityCheckRsp.result_code)
 }
 
 // optional uint32 server_udp_port = 2;
-inline bool S2CSecurityBody::_internal_has_server_udp_port() const {
+inline bool SecurityCheckRsp::_internal_has_server_udp_port() const {
   bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
   return value;
 }
-inline bool S2CSecurityBody::has_server_udp_port() const {
+inline bool SecurityCheckRsp::has_server_udp_port() const {
   return _internal_has_server_udp_port();
 }
-inline void S2CSecurityBody::clear_server_udp_port() {
+inline void SecurityCheckRsp::clear_server_udp_port() {
   _impl_.server_udp_port_ = 0u;
   _impl_._has_bits_[0] &= ~0x00000001u;
 }
-inline uint32_t S2CSecurityBody::_internal_server_udp_port() const {
+inline uint32_t SecurityCheckRsp::_internal_server_udp_port() const {
   return _impl_.server_udp_port_;
 }
-inline uint32_t S2CSecurityBody::server_udp_port() const {
-  // @@protoc_insertion_point(field_get:yy.protocol.core.S2CSecurityBody.server_udp_port)
+inline uint32_t SecurityCheckRsp::server_udp_port() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.core.SecurityCheckRsp.server_udp_port)
   return _internal_server_udp_port();
 }
-inline void S2CSecurityBody::_internal_set_server_udp_port(uint32_t value) {
+inline void SecurityCheckRsp::_internal_set_server_udp_port(uint32_t value) {
   _impl_._has_bits_[0] |= 0x00000001u;
   _impl_.server_udp_port_ = value;
 }
-inline void S2CSecurityBody::set_server_udp_port(uint32_t value) {
+inline void SecurityCheckRsp::set_server_udp_port(uint32_t value) {
   _internal_set_server_udp_port(value);
-  // @@protoc_insertion_point(field_set:yy.protocol.core.S2CSecurityBody.server_udp_port)
+  // @@protoc_insertion_point(field_set:yy.protocol.core.SecurityCheckRsp.server_udp_port)
 }
 
 // optional uint64 session_id = 3;
-inline bool S2CSecurityBody::_internal_has_session_id() const {
+inline bool SecurityCheckRsp::_internal_has_session_id() const {
   bool value = (_impl_._has_bits_[0] & 0x00000002u) != 0;
   return value;
 }
-inline bool S2CSecurityBody::has_session_id() const {
+inline bool SecurityCheckRsp::has_session_id() const {
   return _internal_has_session_id();
 }
-inline void S2CSecurityBody::clear_session_id() {
+inline void SecurityCheckRsp::clear_session_id() {
   _impl_.session_id_ = uint64_t{0u};
   _impl_._has_bits_[0] &= ~0x00000002u;
 }
-inline uint64_t S2CSecurityBody::_internal_session_id() const {
+inline uint64_t SecurityCheckRsp::_internal_session_id() const {
   return _impl_.session_id_;
 }
-inline uint64_t S2CSecurityBody::session_id() const {
-  // @@protoc_insertion_point(field_get:yy.protocol.core.S2CSecurityBody.session_id)
+inline uint64_t SecurityCheckRsp::session_id() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.core.SecurityCheckRsp.session_id)
   return _internal_session_id();
 }
-inline void S2CSecurityBody::_internal_set_session_id(uint64_t value) {
+inline void SecurityCheckRsp::_internal_set_session_id(uint64_t value) {
   _impl_._has_bits_[0] |= 0x00000002u;
   _impl_.session_id_ = value;
 }
-inline void S2CSecurityBody::set_session_id(uint64_t value) {
+inline void SecurityCheckRsp::set_session_id(uint64_t value) {
   _internal_set_session_id(value);
-  // @@protoc_insertion_point(field_set:yy.protocol.core.S2CSecurityBody.session_id)
+  // @@protoc_insertion_point(field_set:yy.protocol.core.SecurityCheckRsp.session_id)
 }
 
 // -------------------------------------------------------------------
 
-// C2SUdpPortRegister
+// UdpPortRegisterReq
 
 // uint64 session_id = 1;
-inline void C2SUdpPortRegister::clear_session_id() {
+inline void UdpPortRegisterReq::clear_session_id() {
   _impl_.session_id_ = uint64_t{0u};
 }
-inline uint64_t C2SUdpPortRegister::_internal_session_id() const {
+inline uint64_t UdpPortRegisterReq::_internal_session_id() const {
   return _impl_.session_id_;
 }
-inline uint64_t C2SUdpPortRegister::session_id() const {
-  // @@protoc_insertion_point(field_get:yy.protocol.core.C2SUdpPortRegister.session_id)
+inline uint64_t UdpPortRegisterReq::session_id() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.core.UdpPortRegisterReq.session_id)
   return _internal_session_id();
 }
-inline void C2SUdpPortRegister::_internal_set_session_id(uint64_t value) {
+inline void UdpPortRegisterReq::_internal_set_session_id(uint64_t value) {
   
   _impl_.session_id_ = value;
 }
-inline void C2SUdpPortRegister::set_session_id(uint64_t value) {
+inline void UdpPortRegisterReq::set_session_id(uint64_t value) {
   _internal_set_session_id(value);
-  // @@protoc_insertion_point(field_set:yy.protocol.core.C2SUdpPortRegister.session_id)
+  // @@protoc_insertion_point(field_set:yy.protocol.core.UdpPortRegisterReq.session_id)
 }
 
 // string client_udp_ip = 2;
-inline void C2SUdpPortRegister::clear_client_udp_ip() {
+inline void UdpPortRegisterReq::clear_client_udp_ip() {
   _impl_.client_udp_ip_.ClearToEmpty();
 }
-inline const std::string& C2SUdpPortRegister::client_udp_ip() const {
-  // @@protoc_insertion_point(field_get:yy.protocol.core.C2SUdpPortRegister.client_udp_ip)
+inline const std::string& UdpPortRegisterReq::client_udp_ip() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.core.UdpPortRegisterReq.client_udp_ip)
   return _internal_client_udp_ip();
 }
 template <typename ArgT0, typename... ArgT>
 inline PROTOBUF_ALWAYS_INLINE
-void C2SUdpPortRegister::set_client_udp_ip(ArgT0&& arg0, ArgT... args) {
+void UdpPortRegisterReq::set_client_udp_ip(ArgT0&& arg0, ArgT... args) {
  
  _impl_.client_udp_ip_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:yy.protocol.core.C2SUdpPortRegister.client_udp_ip)
+  // @@protoc_insertion_point(field_set:yy.protocol.core.UdpPortRegisterReq.client_udp_ip)
 }
-inline std::string* C2SUdpPortRegister::mutable_client_udp_ip() {
+inline std::string* UdpPortRegisterReq::mutable_client_udp_ip() {
   std::string* _s = _internal_mutable_client_udp_ip();
-  // @@protoc_insertion_point(field_mutable:yy.protocol.core.C2SUdpPortRegister.client_udp_ip)
+  // @@protoc_insertion_point(field_mutable:yy.protocol.core.UdpPortRegisterReq.client_udp_ip)
   return _s;
 }
-inline const std::string& C2SUdpPortRegister::_internal_client_udp_ip() const {
+inline const std::string& UdpPortRegisterReq::_internal_client_udp_ip() const {
   return _impl_.client_udp_ip_.Get();
 }
-inline void C2SUdpPortRegister::_internal_set_client_udp_ip(const std::string& value) {
+inline void UdpPortRegisterReq::_internal_set_client_udp_ip(const std::string& value) {
   
   _impl_.client_udp_ip_.Set(value, GetArenaForAllocation());
 }
-inline std::string* C2SUdpPortRegister::_internal_mutable_client_udp_ip() {
+inline std::string* UdpPortRegisterReq::_internal_mutable_client_udp_ip() {
   
   return _impl_.client_udp_ip_.Mutable(GetArenaForAllocation());
 }
-inline std::string* C2SUdpPortRegister::release_client_udp_ip() {
-  // @@protoc_insertion_point(field_release:yy.protocol.core.C2SUdpPortRegister.client_udp_ip)
+inline std::string* UdpPortRegisterReq::release_client_udp_ip() {
+  // @@protoc_insertion_point(field_release:yy.protocol.core.UdpPortRegisterReq.client_udp_ip)
   return _impl_.client_udp_ip_.Release();
 }
-inline void C2SUdpPortRegister::set_allocated_client_udp_ip(std::string* client_udp_ip) {
+inline void UdpPortRegisterReq::set_allocated_client_udp_ip(std::string* client_udp_ip) {
   if (client_udp_ip != nullptr) {
     
   } else {
@@ -1432,71 +1432,71 @@ inline void C2SUdpPortRegister::set_allocated_client_udp_ip(std::string* client_
     _impl_.client_udp_ip_.Set("", GetArenaForAllocation());
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:yy.protocol.core.C2SUdpPortRegister.client_udp_ip)
+  // @@protoc_insertion_point(field_set_allocated:yy.protocol.core.UdpPortRegisterReq.client_udp_ip)
 }
 
 // uint32 client_udp_port = 3;
-inline void C2SUdpPortRegister::clear_client_udp_port() {
+inline void UdpPortRegisterReq::clear_client_udp_port() {
   _impl_.client_udp_port_ = 0u;
 }
-inline uint32_t C2SUdpPortRegister::_internal_client_udp_port() const {
+inline uint32_t UdpPortRegisterReq::_internal_client_udp_port() const {
   return _impl_.client_udp_port_;
 }
-inline uint32_t C2SUdpPortRegister::client_udp_port() const {
-  // @@protoc_insertion_point(field_get:yy.protocol.core.C2SUdpPortRegister.client_udp_port)
+inline uint32_t UdpPortRegisterReq::client_udp_port() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.core.UdpPortRegisterReq.client_udp_port)
   return _internal_client_udp_port();
 }
-inline void C2SUdpPortRegister::_internal_set_client_udp_port(uint32_t value) {
+inline void UdpPortRegisterReq::_internal_set_client_udp_port(uint32_t value) {
   
   _impl_.client_udp_port_ = value;
 }
-inline void C2SUdpPortRegister::set_client_udp_port(uint32_t value) {
+inline void UdpPortRegisterReq::set_client_udp_port(uint32_t value) {
   _internal_set_client_udp_port(value);
-  // @@protoc_insertion_point(field_set:yy.protocol.core.C2SUdpPortRegister.client_udp_port)
+  // @@protoc_insertion_point(field_set:yy.protocol.core.UdpPortRegisterReq.client_udp_port)
 }
 
 // -------------------------------------------------------------------
 
-// S2CUdpPortRegister
+// UdpPortRegisterRsp
 
 // uint64 session_id = 1;
-inline void S2CUdpPortRegister::clear_session_id() {
+inline void UdpPortRegisterRsp::clear_session_id() {
   _impl_.session_id_ = uint64_t{0u};
 }
-inline uint64_t S2CUdpPortRegister::_internal_session_id() const {
+inline uint64_t UdpPortRegisterRsp::_internal_session_id() const {
   return _impl_.session_id_;
 }
-inline uint64_t S2CUdpPortRegister::session_id() const {
-  // @@protoc_insertion_point(field_get:yy.protocol.core.S2CUdpPortRegister.session_id)
+inline uint64_t UdpPortRegisterRsp::session_id() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.core.UdpPortRegisterRsp.session_id)
   return _internal_session_id();
 }
-inline void S2CUdpPortRegister::_internal_set_session_id(uint64_t value) {
+inline void UdpPortRegisterRsp::_internal_set_session_id(uint64_t value) {
   
   _impl_.session_id_ = value;
 }
-inline void S2CUdpPortRegister::set_session_id(uint64_t value) {
+inline void UdpPortRegisterRsp::set_session_id(uint64_t value) {
   _internal_set_session_id(value);
-  // @@protoc_insertion_point(field_set:yy.protocol.core.S2CUdpPortRegister.session_id)
+  // @@protoc_insertion_point(field_set:yy.protocol.core.UdpPortRegisterRsp.session_id)
 }
 
-// .yy.protocol.core.S2CUdpPortRegister.Status status = 2;
-inline void S2CUdpPortRegister::clear_status() {
+// .yy.protocol.core.UdpPortRegisterRsp.Status status = 2;
+inline void UdpPortRegisterRsp::clear_status() {
   _impl_.status_ = 0;
 }
-inline ::yy::protocol::core::S2CUdpPortRegister_Status S2CUdpPortRegister::_internal_status() const {
-  return static_cast< ::yy::protocol::core::S2CUdpPortRegister_Status >(_impl_.status_);
+inline ::yy::protocol::core::UdpPortRegisterRsp_Status UdpPortRegisterRsp::_internal_status() const {
+  return static_cast< ::yy::protocol::core::UdpPortRegisterRsp_Status >(_impl_.status_);
 }
-inline ::yy::protocol::core::S2CUdpPortRegister_Status S2CUdpPortRegister::status() const {
-  // @@protoc_insertion_point(field_get:yy.protocol.core.S2CUdpPortRegister.status)
+inline ::yy::protocol::core::UdpPortRegisterRsp_Status UdpPortRegisterRsp::status() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.core.UdpPortRegisterRsp.status)
   return _internal_status();
 }
-inline void S2CUdpPortRegister::_internal_set_status(::yy::protocol::core::S2CUdpPortRegister_Status value) {
+inline void UdpPortRegisterRsp::_internal_set_status(::yy::protocol::core::UdpPortRegisterRsp_Status value) {
   
   _impl_.status_ = value;
 }
-inline void S2CUdpPortRegister::set_status(::yy::protocol::core::S2CUdpPortRegister_Status value) {
+inline void UdpPortRegisterRsp::set_status(::yy::protocol::core::UdpPortRegisterRsp_Status value) {
   _internal_set_status(value);
-  // @@protoc_insertion_point(field_set:yy.protocol.core.S2CUdpPortRegister.status)
+  // @@protoc_insertion_point(field_set:yy.protocol.core.UdpPortRegisterRsp.status)
 }
 
 #ifdef __GNUC__
@@ -1521,15 +1521,15 @@ inline void S2CUdpPortRegister::set_status(::yy::protocol::core::S2CUdpPortRegis
 
 PROTOBUF_NAMESPACE_OPEN
 
-template <> struct is_proto_enum< ::yy::protocol::core::S2CSecurityBody_ResultCode> : ::std::true_type {};
+template <> struct is_proto_enum< ::yy::protocol::core::SecurityCheckRsp_ResultCode> : ::std::true_type {};
 template <>
-inline const EnumDescriptor* GetEnumDescriptor< ::yy::protocol::core::S2CSecurityBody_ResultCode>() {
-  return ::yy::protocol::core::S2CSecurityBody_ResultCode_descriptor();
+inline const EnumDescriptor* GetEnumDescriptor< ::yy::protocol::core::SecurityCheckRsp_ResultCode>() {
+  return ::yy::protocol::core::SecurityCheckRsp_ResultCode_descriptor();
 }
-template <> struct is_proto_enum< ::yy::protocol::core::S2CUdpPortRegister_Status> : ::std::true_type {};
+template <> struct is_proto_enum< ::yy::protocol::core::UdpPortRegisterRsp_Status> : ::std::true_type {};
 template <>
-inline const EnumDescriptor* GetEnumDescriptor< ::yy::protocol::core::S2CUdpPortRegister_Status>() {
-  return ::yy::protocol::core::S2CUdpPortRegister_Status_descriptor();
+inline const EnumDescriptor* GetEnumDescriptor< ::yy::protocol::core::UdpPortRegisterRsp_Status>() {
+  return ::yy::protocol::core::UdpPortRegisterRsp_Status_descriptor();
 }
 
 PROTOBUF_NAMESPACE_CLOSE

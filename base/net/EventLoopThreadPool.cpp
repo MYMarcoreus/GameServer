@@ -30,6 +30,22 @@ void EventLoopThreadPool::Start(const int threadNum, Milliseconds pollwaitTimeou
     }
 }
 
+void EventLoopThreadPool::StartTick(const int threadNum, Milliseconds pollwaitTimeout, const Milliseconds deltaTime, F_ThreadInitCallback cb) {
+    m_BaseLoop->AssertInLoopingThread();
+
+    for (int i = 0; i < threadNum; ++i) {
+        auto loop_thread = std::make_unique<EventLoopThread>(cb, pollwaitTimeout);
+        m_ioLoops.emplace_back(loop_thread->CreateLoopTick(deltaTime));
+        YLOG_INFO("启动io线程<{}>！", loop_thread->GetThreadID())
+        m_Threads.emplace_back(std::move(loop_thread));
+    }
+
+    // 没有额外的线程，只有主线程，仍要执行线程初始化回调
+    if(threadNum == 0 && cb) {
+        cb(m_BaseLoop);
+    }
+}
+
 EventLoop *EventLoopThreadPool::GetNextLoop() {
     m_BaseLoop->AssertInLoopingThread();
 

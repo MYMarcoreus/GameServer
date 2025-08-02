@@ -38,7 +38,7 @@ private:
 private:
     /* * Linux的特有的定时器，使用文件描述符的读写事件来通知定时器到期。
        * 当定时器到期时，用户可使用::read从定时器文件描述符读取定时器到期信息，read缓冲区类型是uint64_t */
-    int     m_LinuxTimerFD;
+    int       m_LinuxTimerFD;
     IOChannel m_LinuxTimerChannel;
 
     const Microseconds  kMinInterval = 100us;
@@ -92,7 +92,7 @@ void __TimerfdManager::ResetTimerfd(Timestamp expireTime)
     struct itimerspec oldValue{};
 
     //! 定时器间隔不小于100ns
-    Microseconds interval = expireTime - Timestamp::Now();
+    const Microseconds interval = expireTime - Timestamp::Now();
     newValue.it_value = DurationToTimespec(interval < kMinInterval ? kMinInterval : interval);
     // YLOG_TRACE("newValue：{%ld, %ld}", newValue.it_value.tv_sec, newValue.it_value.tv_nsec)
     /*
@@ -100,7 +100,7 @@ void __TimerfdManager::ResetTimerfd(Timestamp expireTime)
      *     0                   将newValue.it_value视为相对于调用::timerfd_settime时间点的相对时间
      *     TFD_TIMER_ABSTIME   将newValue.it_value视为绝对时间（从时钟的0点开始）
      * */
-    int ret = ::timerfd_settime(m_LinuxTimerFD, 0, &newValue, &oldValue);
+    const int ret = ::timerfd_settime(m_LinuxTimerFD, 0, &newValue, &oldValue);
     if(ret < 0) {
         if(errno == EINVAL) {
             YLOG_ERROR("::timerfd_settime() error, {}, {}, {}", yy::util::GetLastErrorInfo(),
@@ -199,7 +199,7 @@ void RBTreeTimerManager::AddTimerInLoop(const TimerPtr& timer) {
 }
 
 bool RBTreeTimerManager::InsertTimer(TimerPtr timer) {
-    auto earliestExpiredTimer = GetEarliestExpriredTimer();
+    const auto earliestExpiredTimer = GetEarliestExpriredTimer();
 
     bool isEarliestExpiredTimerChanged = false;
     if( earliestExpiredTimer and timer->GetExpireTime() < earliestExpiredTimer->GetExpireTime())
@@ -217,7 +217,7 @@ bool RBTreeTimerManager::InsertTimer(TimerPtr timer) {
 }
 
 TimerPtr RBTreeTimerManager::GetEarliestExpriredTimer() {
-    auto it = m_TimerList.begin();
+    const auto it = m_TimerList.begin();
     return  it!=m_TimerList.end() ? (*it) : nullptr;
 }
 
@@ -258,7 +258,7 @@ int RBTreeTimerManager::HandleExpiredTimersInLoop() {
 
     //! 获取到期的timer，将这些timer从定时器列表中删除
     auto expiredTimers = GetExpiredTimers();
-    int expiredCount = expiredTimers.size();
+    const int expiredCount = expiredTimers.size();
     if(expiredCount == 0 )
         return 0;
 
@@ -292,7 +292,7 @@ std::vector<TimerPtr> RBTreeTimerManager::GetExpiredTimers() {
     decltype(m_TimerList)::iterator bound_end;
     {
         //! 找到expired timer分界点
-        TimerPtr nowTimer = std::make_shared<Timer>(m_TimerCounter++, nullptr, Timestamp::Now());
+        const TimerPtr nowTimer = std::make_shared<Timer>(m_TimerCounter++, nullptr, Timestamp::Now());
         bound_end = m_TimerList.lower_bound(nowTimer);
     }
     std::vector<TimerPtr> expiredTimers;

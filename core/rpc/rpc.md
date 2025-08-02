@@ -5,14 +5,14 @@ package yy.protocol.app;
 // 重要，开启该选项才会生成service代码
 option cc_generic_services = true;
 
-message C2SLogin {
+message LoginReq {
     uint64 session_id = 1;
 
     string account_name = 3;
     string password = 4;
 }
 
-message S2CLogin {
+message LoginRsp {
     uint64 session_id = 1;
 
     enum Status {
@@ -30,7 +30,7 @@ message S2CLogin {
 
 service AccountServiceRpc
 {
-    rpc Login(C2SLogin) returns(S2CLogin);
+    rpc Login(LoginReq) returns(LoginRsp);
 }
 ```
 

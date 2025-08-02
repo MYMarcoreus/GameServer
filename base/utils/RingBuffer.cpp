@@ -4,7 +4,7 @@
 
 namespace yy::util
 {
-bool RingBuffer::PeekToCBuffer(int start_index, void* dest, size_t need_len) const
+bool RingBuffer::PeekToCBuffer(const int start_index, void* dest, const size_t need_len) const
 {
     if (start_index < 0)
         return false;
@@ -13,7 +13,7 @@ bool RingBuffer::PeekToCBuffer(int start_index, void* dest, size_t need_len) con
     if (GetDataSize() < (start_index + need_len) or dest == nullptr)
         return false;
 
-    size_t peek_head = Mask(m_Head + start_index);
+    const size_t peek_head = Mask(m_Head + start_index);
 
     // 如果缓冲区末尾剩余空间不够一次性读取，则只复制到缓冲区末尾（巧妙避开环的判定）。
     const size_t firstCopyLen = std::min(m_Capacity - peek_head, need_len);
@@ -25,7 +25,7 @@ bool RingBuffer::PeekToCBuffer(int start_index, void* dest, size_t need_len) con
     return true;
 }
 
-bool RingBuffer::PeekToString(int start_index, std::string& dest, size_t need_len) const
+bool RingBuffer::PeekToString(const int start_index, std::string& dest, const size_t need_len) const
 {
     if (start_index < 0)
         return false;
@@ -36,7 +36,7 @@ bool RingBuffer::PeekToString(int start_index, std::string& dest, size_t need_le
 
     dest.resize(need_len);
 
-    size_t peek_head = Mask(m_Head + start_index);
+    const size_t peek_head = Mask(m_Head + start_index);
 
     // 如果缓冲区末尾剩余空间不够一次性读取，则只复制到缓冲区末尾（巧妙避开环的判定）。
     const size_t firstCopyLen = std::min(m_Capacity - peek_head, need_len);
@@ -48,7 +48,7 @@ bool RingBuffer::PeekToString(int start_index, std::string& dest, size_t need_le
     return true;
 }
 
-bool RingBuffer::AppendDataFromCBuffer(const void* src_buf, size_t data_len)
+bool RingBuffer::AppendDataFromCBuffer(const void* src_buf, const size_t data_len)
 {
     if (data_len <= 0)
         return false;
@@ -71,7 +71,7 @@ bool RingBuffer::AppendDataFromCBuffer(const void* src_buf, size_t data_len)
 
 bool RingBuffer::AppendDataFromProtobuf(const google::protobuf::Message& message)
 {
-    size_t message_size = message.ByteSizeLong();
+    const size_t message_size = message.ByteSizeLong();
 
     if (not HaveEnoughFreeSpace(message_size))
         TryMakeEnoughFreeSpace(message_size);
@@ -98,7 +98,7 @@ bool RingBuffer::AppendDataFromProtobuf(const google::protobuf::Message& message
     }
 }
 
-bool RingBuffer::PopDataToCBuffer(void* dest, size_t need_len)
+bool RingBuffer::PopDataToCBuffer(void* dest, const size_t need_len)
 {
     if (need_len <= 0)
         return false;
@@ -117,7 +117,7 @@ bool RingBuffer::PopDataToCBuffer(void* dest, size_t need_len)
     return true;
 }
 
-bool RingBuffer::PopDataToProtobuf(const std::shared_ptr<google::protobuf::Message> & outMsg, size_t message_size)
+bool RingBuffer::PopDataToProtobuf(const std::shared_ptr<google::protobuf::Message> & outMsg, const size_t message_size)
 {
     if (!outMsg)
         return false;
@@ -127,7 +127,7 @@ bool RingBuffer::PopDataToProtobuf(const std::shared_ptr<google::protobuf::Messa
     if (not HaveEnoughDataSpace(message_size))
         return false;
 
-    size_t contiguous_space = m_Capacity - m_Head; //!
+    const size_t contiguous_space = m_Capacity - m_Head; //!
     if (contiguous_space >= message_size)
     {
         // 缓冲区数据连续，直接反序列化
@@ -171,14 +171,14 @@ std::string RingBuffer::PopAllDataAsString()
     return PopDataAsString(GetDataSize());
 }
 
-bool RingBuffer::TryMakeEnoughFreeSpace(size_t needLen)
+bool RingBuffer::TryMakeEnoughFreeSpace(const size_t needLen)
 {
     if (GetFreeSize() < needLen) {
-        auto old_datasize = GetDataSize();
+        const auto old_datasize = GetDataSize();
 
         // 把数据放入新数组中
-        auto new_datasize = old_datasize + needLen;
-        auto new_capacity = NextPowerOfTwo(new_datasize);
+        const auto new_datasize = old_datasize + needLen;
+        const auto new_capacity = NextPowerOfTwo(new_datasize);
         std::vector<char> new_buffer(new_capacity);
 
         // 旧数据复制到新数组
@@ -193,7 +193,7 @@ bool RingBuffer::TryMakeEnoughFreeSpace(size_t needLen)
     return true; //! 无上限扩容
 }
 
-void RingBuffer::MoveHeadAndTryReset(size_t offset)
+void RingBuffer::MoveHeadAndTryReset(const size_t offset)
 {
     m_Head = Mask(m_Head + offset);
     // 下面的不是必须的

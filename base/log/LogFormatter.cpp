@@ -51,7 +51,7 @@ public:
         : m_time_fmt_pattern(std::move(timeFmtPattern)), m_need_us(need_us) {}
 
     void format(std::ostream& out, const LogMessage::ptr & msg) override
-    { out << util::get_current_fmt_time(m_time_fmt_pattern, m_need_us); }
+    { out << util::make_format_time(msg->getTime(), m_time_fmt_pattern, m_need_us); }
 
     std::string getTimeFormat(){ return m_time_fmt_pattern; }
 private:

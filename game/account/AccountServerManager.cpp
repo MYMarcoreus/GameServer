@@ -17,8 +17,8 @@ using namespace yy::net;
 using namespace yy::core;
 using namespace yy::util;
 
-using yy::protocol::app::C2SLogin;
-using yy::protocol::app::C2SRegister;
+using yy::protocol::app::LoginReq;
+using yy::protocol::app::RegisterReq;
 
 
 template<class T>
@@ -49,9 +49,9 @@ void AccountServerManager::AppNotifier_Disconnect(const UserConnectionPtr& userd
     YLOG_INFO("↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ 用户<{}>断开连接", userdata->GetUID())
 }
 
-void AccountServerManager::AppNotifier_Command(const UserConnectionPtr & userdata, const MessagePtr & message, const MessageType type)
+void AccountServerManager::AppNotifier_Command(const UserConnectionPtr & userdata, const MessagePtr & message, const MessageNetType type)
 {
-    m_wordThreads->PushTask([this, userdata, message](){
+    m_wordThreads->PushTask([this, userdata, message]{
         m_dispatcher.OnProtobufMessage(userdata, message);
     });
 }
@@ -108,7 +108,7 @@ void AccountServerManager::Init()
         });
 
     m_server->SetNotifier_Command(
-        [this](const UserConnectionPtr & userdata, const MessagePtr & message, const MessageType type) {
+        [this](const UserConnectionPtr & userdata, const MessagePtr & message, const MessageNetType type) {
             this->AppNotifier_Command(userdata, message, type);
         });
 
@@ -116,7 +116,7 @@ void AccountServerManager::Init()
     m_server->Start();
 
     const IPAddressPtr rpcAddr = std::make_shared<IPv4Address>(config::g_app_config->GetValue().rpc_port());
-    m_rpcServer = std::make_unique<rpc::RpcServer>(m_accpetorLoop.get(), rpcAddr);
+    m_rpcServer = std::make_unique<core::rpc::RpcServer>(m_accpetorLoop.get(), rpcAddr);
     m_rpcServer->RegisterService<AccountRpcServiceImpl>(m_accpetorLoop.get());
     m_rpcServer->Start(2, 500ms);
 }

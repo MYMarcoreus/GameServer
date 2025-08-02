@@ -1,56 +1,43 @@
 syntax = "proto3";
 package yy.protocol.app;
-
-// 重要，开启该选项才会生成service代码
 option cc_generic_services = true;
+import "account_data.proto";
 
-message C2SLogin {
-    uint64 session_id = 1;
-
+message LoginReq {
     string username = 3;
     string password = 4;
 }
-
-message S2CLogin {
-    uint64 session_id = 1;
-
+message LoginRsp {
     enum Status {
         eSuccess = 0;
         eAccountNotExist = 1;
         ePasswordError = 2;
         eUnknownError = 3;
     }
-    Status result_code = 2;
+    Status result_code = 1;
 
-    optional uint64 uid = 3;
-    optional string username = 4;
-    optional string ip = 5;
-    optional uint32 port = 6;
-    optional string token = 7;
+    AccountBaseData account_data = 2;
+    string token = 3;
 }
 
-message C2SRegister {
-    uint64 session_id = 1;
-
+message RegisterReq {
     string username = 3;
     string password = 4;
 }
-
-message S2CRegister {
-    uint64 session_id = 1;
-
+message RegisterRsp {
     enum Status {
         eSuccess = 0;
         eAccountAlreadyExist = 2;
         eUnknownError = 3;
     }
     Status result_code = 2;
-    optional uint64 uid = 4;
+
+    uint64 uid = 4;
 }
 
 
 service AccountServiceRpc
 {
-    rpc Login(C2SLogin) returns(S2CLogin);
-    rpc Register(C2SRegister) returns(S2CRegister);
+    rpc Login(LoginReq) returns(LoginRsp);
+    rpc Register(RegisterReq) returns(RegisterRsp);
 }

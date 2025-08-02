@@ -10,11 +10,12 @@ find_package(GTest CONFIG REQUIRED)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+add_definitions(-DUUID_ENABLE_STL_HASH)
+find_package(stduuid CONFIG REQUIRED)
 
 find_package(redis++ REQUIRED)
 find_package(unofficial-mysql-connector-cpp CONFIG REQUIRED)
-find_package(unofficial-zookeeper CONFIG REQUIRED)
-
+#find_package(unofficial-zookeeper CONFIG REQUIRED)
 
 add_definitions(-DTHREADED)
 include_directories(${Zookeeper_INCLUDE_DIRS})
@@ -130,11 +131,26 @@ include_directories(
         game/logic
         game/gate
         game/account
+        game/rpc_clients
         ${Protobuf_INCLUDE_DIRS}
 )
 
 
 set(COMMON_SOURCES
+        game/account/AccountRedisDAO.cpp
+        game/account/AccountRedisDAO.h
+        game/account/AccountData.cpp
+        game/account/AccountData.h
+        game/account/AccountMysqlDAO.cpp
+        game/account/AccountMysqlDAO.h
+        game/gate/GateRedisDAO.cpp
+        game/gate/GateRedisDAO.h
+        game/center/CenterRedisDAO.cpp
+        game/center/CenterRedisDAO.h
+        game/logic/LogicRedisDAO.cpp
+        game/logic/LogicRedisDAO.h
+        core/codec/CodecUtils.hpp
+
 )
 # 调用子目录下的cmake
 add_subdirectory(base)
@@ -152,21 +168,15 @@ add_library(CommonLibrary STATIC ${COMMON_SOURCES}) # STATIC替换为SHARED就�
 if(CMAKE_HOST_SYSTEM_NAME MATCHES Windows)
     message("Linking Librarys in Windows!!")
     #! 有target前缀的就是链接动态库
-    target_link_libraries( CommonLibrary
-            PRIVATE protobuf::libprotoc
-            protobuf::libprotobuf
-            protobuf::libprotobuf-lite
-            ws2_32.lib
-            zookeeper_mt
-#            unofficial::zookeeper::zookeeper
-            redis++::redis++_static
-            PRIVATE unofficial::mysql-connector-cpp::connector
-            resolv
-    )
+    target_link_libraries( CommonLibrary ws2_32.lib )
 else()
     target_link_libraries( CommonLibrary
-            PUBLIC ${PROTOBUF_LIBRARIES}
             PUBLIC pthread
+    )
+endif()
+
+target_link_libraries(CommonLibrary
+            PUBLIC ${PROTOBUF_LIBRARIES}
             protobuf::libprotoc
             protobuf::libprotobuf
             protobuf::libprotobuf-lite
@@ -175,18 +185,15 @@ else()
             redis++::redis++_static
             PRIVATE unofficial::mysql-connector-cpp::connector
             resolv
-    )
-endif()
-
-
+            stduuid
+)
 
 
 
 
 
 #! 添加多个可执行文件，可在clion选择一个来构建/执行
-add_executable(LogicServer game/logic/main_logic.cpp
-)
+add_executable(LogicServer game/logic/main_logic.cpp)
 #! 在cmake中指定要链接的动态库的时候，应该将命令写到生成了可执行文件之后，因为是在可执行文件生成后，再将protobuf库链接的
 target_link_libraries(LogicServer CommonLibrary)
 

@@ -17,11 +17,13 @@ public:
     ~EventLoopThread();
 
     EventLoop * CreateLoop();
+    EventLoop * CreateLoopTick(Milliseconds deltaTime);
 
     std::string GetThreadID() const;
 
 private:
     void ThreadLoopFunction(std::promise<EventLoop *> & loopPromise);
+    void ThreadLoopTickFunction(std::promise<EventLoop *> & loopPromise, Milliseconds deltaTime);
 
     EventLoop *            m_Loop;
     F_ThreadInitCallback   m_ThreadInitCallback;

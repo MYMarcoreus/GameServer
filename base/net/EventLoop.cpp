@@ -74,18 +74,18 @@ public:
 
     ~WakeupManager();
 
+    void Notify();
 
     void NotifyIfNeed() {
-        if(isNeedWakeup) {
+        if(isNeedWakeup.load(std::memory_order_acquire)) {
             Notify();
         }
     }
 
-    void SetNeedWake(const bool val) { isNeedWakeup = val; }
+    void SetNeedWake(const bool val) { isNeedWakeup.store(val, std::memory_order_release); }
 
 private:
     void OnNotify();
-    void Notify();
 
     WakeupFD wakeupEventFD_;
     std::unique_ptr<IOChannel> wakeupChannel_;
@@ -195,7 +195,7 @@ bool EventLoop::HasChannel(IOChannel *channel) const {
 void EventLoop::AssertInLoopingThread() {
     if(!IsInLoopingThread())
     {
-        1+1;
+        (void)0;
         YLOG_FATAL("EventLoop Created In thread<{}>, but now in {}",
             ::yy::util::CastThreadIDToStr(m_ThreadID), ::yy::util::GetStrThreadID())
     }
@@ -205,6 +205,7 @@ void EventLoop::Loop() {
     AssertInLoopingThread();
 
     m_IsLooping = true;
+    m_EnableWakeup = true;
 
     Milliseconds timeout{};
     while(!m_IsQuit)
@@ -224,8 +225,6 @@ void EventLoop::Loop() {
             continue;
         }
 #endif
-
-        m_WakeupManager->NotifyIfNeed();
 
         //! 等待timeout ms，由Poller填充ActiveChannels
         m_Poller->PollWait(m_ActiveChannels, timeout);
@@ -251,16 +250,67 @@ void EventLoop::Loop() {
     }
 
     m_IsLooping = false;
+}
 
+void EventLoop::LoopTick(const Milliseconds deltaTime)
+{
+    AssertInLoopingThread();
+
+    m_IsLooping = true;
+    m_EnableWakeup = false;
+
+    RunEvery(deltaTime, [this] {
+        //! 运行代办函数
+        CallPenddingCallbacks();
+    });
+
+    Milliseconds timeout{};
+    while(!m_IsQuit)
+    {
+        m_ActiveChannels.clear();
+
+        YLOG_TRACE("Before PollWait();")
+
+        //! 距离下一个定时器超时的时长（没有定时器就是距离默认超时时间的时长）
+        timeout = GetPollwaitTimeout();
+
+        //! Windows没有类似Linux的定时器，直接在这里处理已超时的定时器
+        //! Linux则有内置定时器，RBTreeTimerManager内已将其作为Channel加入m_Poller的监听范围中，在PollWait内处理超时的定时器
+#ifdef ____WINDOWS
+        if(timeout <= 0ms) {
+            m_TimerManager->HandleExpiredTimersInLoop();
+            continue;
+        }
+#endif
+
+        //! 等待timeout ms，由Poller填充ActiveChannels
+        m_Poller->PollWait(m_ActiveChannels, timeout);
+
+        //todo 对发生的事件进行优先级排序
+        YLOG_TRACE("\nAfter PollWait(), 发生了{}个事件", m_ActiveChannels.size())
+
+        //! 处理发生了事件的channel
+        for(IOChannel * activeChannel: m_ActiveChannels) {
+            activeChannel->HandleHappenedEvent();
+        }
+
+        //! 检查被shutdown的套接字，看是否到达关闭的要求，若到达，关闭之。
+        if(m_CloseSocketsCallback) {
+            m_CloseSocketsCallback();
+        }
+    }
+
+    m_IsLooping = false;
 }
 
 void EventLoop::QuitLoop() {
     m_IsQuit = true;
+    m_EnableWakeup = true;
 
     /* 若在当前线程执行QuitLoop()，则不用Wakeup()，因为当前线程只有可能在`active_event->HandleHappenedEvent();`处执行各种函数，
     执行完后会到下一轮循环然后检查m_IsQuit然后退出循环 */
     if(!IsInLoopingThread()){
-        m_WakeupManager->SetNeedWake(true);
+        m_WakeupManager->Notify();
     }
 }
 
@@ -295,7 +345,9 @@ void EventLoop::EnqueueCallbackInLoop(F_PendingCallback cb) {
     YLOG_TRACE("已将函数<{}>加入代办函数列表", GetDemangleName(cb.target_type().name()).c_str())
 
     if(!IsInLoopingThread() or m_IsCallingPenddingFunctors) {
-        m_WakeupManager->SetNeedWake(true);
+        if (m_EnableWakeup) {
+            m_WakeupManager->Notify();
+        }
     }
 }
 

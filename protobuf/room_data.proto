@@ -1,0 +1,16 @@
+syntax = "proto3";
+package yy.protocol.app;
+import "account_data.proto";
+
+message RoomBriefData {
+    uint64          room_id = 1;
+    string          name = 2;
+    uint64          owner_uid = 3;
+    uint32          size = 4;
+    uint32          capacity = 5;
+}
+
+message RoomDetailData {
+    RoomBriefData            breif_data = 1;
+    repeated AccountBaseData exist_player_datas = 7;
+}

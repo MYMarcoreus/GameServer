@@ -4,6 +4,8 @@
 #include <csignal>
 #include <atomic>
 #include <thread>
+
+#include "net_definations.h"
 #include "socket_definations.h"
 
 #ifdef ____GNUC
@@ -29,8 +31,12 @@ extern std::string GetCWD();
 
 /// @brief 获取当前的格式化时间，默认格式为 2023-02-04 20:29:44.961172
 extern std::string get_current_fmt_time(
-        const std::string &fmt = "%Y-%m-%d %H:%M:%S", bool need_us = true);
+        const std::string &fmt = "%Y-%m-%d %H:%M:%S.", bool need_us = true);
 
+extern std::chrono::system_clock::time_point get_current_time();
+
+extern std::string make_format_time(std::chrono::system_clock::time_point now,
+        const std::string &fmt = "%Y-%m-%d %H:%M:%S.", bool need_us = true);
 
 /// @brief 用于打点计时，注意使用默认类型则需要补上空模板参数：Ticker<>
 /// @tparam Period 计时单位
@@ -97,8 +103,12 @@ extern std::chrono::nanoseconds TimespecToDuration(struct timespec spec);
 extern std::string GetLastErrorInfo();
 extern std::string GetErrorInfo(int64_t err);
 
-extern std::string GenerateToken(size_t length = 32);
+extern std::string GenerateTokenOld(size_t length = 32);
+extern std::string GenerateToken();
 
+extern std::string GenerateServerName(const net::IPAddressPtr& server_addr);
+
+extern uint8_t GenerateXorCode();
 }
 
 

@@ -47,7 +47,7 @@ RpcServer::~RpcServer()
     Stop();
 }
 
-void RpcServer::Start(int ioThreadNum, net::Milliseconds ioWaitTimeout, const net::F_ThreadInitCallback& cb)
+void RpcServer::Start(const int ioThreadNum, const net::Milliseconds ioWaitTimeout, const net::F_ThreadInitCallback& cb)
 {
     if (services_.empty()) {
         std::cerr << "RPC Server: No services were provided." << std::endl;
@@ -62,8 +62,7 @@ void RpcServer::Start(int ioThreadNum, net::Milliseconds ioWaitTimeout, const ne
         zkServiceManager_.Register(service_name, ip, port);
     }
 
-
-    server_.Start(2, 300ms);
+    server_.Start(ioThreadNum, ioWaitTimeout);
 }
 
 void RpcServer::Stop()
@@ -83,7 +82,13 @@ void RpcServer::OnRpcRequest(const net::TcpConnectionPtr& conn, const RpcMessage
     const auto & service_opt = this->GetService(service_name);
     if (not service_opt.has_value()) {
         errcode = RpcMessage::NO_SERVICE;
+        RpcMessage message;
+        message.set_type(RpcMessage::RESPONSE);
+        message.set_id(id);
+        message.set_error(errcode);
+        codec_.SendTCP(conn, message);
         YLOG_WARN("RPC Server：收到Rpc的服务请求，但是Server未注册该服务<{}>", service_name)
+        return;
     }
 
     auto & service = service_opt.value().get();
@@ -91,11 +96,17 @@ void RpcServer::OnRpcRequest(const net::TcpConnectionPtr& conn, const RpcMessage
     const google::protobuf::MethodDescriptor * method = desc->FindMethodByName(method_name);
     if (method == nullptr) {
         errcode = RpcMessage::NO_METHOD;
+        RpcMessage message;
+        message.set_type(RpcMessage::RESPONSE);
+        message.set_id(id);
+        message.set_error(errcode);
+        codec_.SendTCP(conn, message);
         YLOG_WARN("RPC Server：Server已注册服务<{}>，但是查找不到其下的方法<{}>", service_name, method_name)
+        return;
     }
 
     //! 读取请求消息
-    const std::unique_ptr<google::protobuf::Message> request{service.GetRequestPrototype(method).New()}; //! 函数结束后自动析构
+    const std::unique_ptr<google::protobuf::Message> request{service.GetRequestPrototype(method).New()}; //! 函数结束后自动析构（如果实现的Rpc方法是异步的且需要用到请求消息，则需要拷贝请求消息）
     if (msg->has_request()) {
         if (request->ParseFromString(msg->request()) == false) {
             errcode = RpcMessage::INVALID_REQUEST;
@@ -108,7 +119,7 @@ void RpcServer::OnRpcRequest(const net::TcpConnectionPtr& conn, const RpcMessage
     switch (errcode) {
         case protocol::core::RpcMessage_Status_NO_ERROR: {
             //! 生成响应消息
-            auto response = service.GetResponsePrototype(method).New(); //! 异步接收响应是，不负责生命周期，由下面的回调函数析构response
+            auto response = service.GetResponsePrototype(method).New(); //! 异步接收响应，不负责生命周期。response仅在done->Run() —— 即SendRpcResponse() —— 调用后自动析构
 
             // 给下面的method方法的调用，绑定一个Closure的回调函数
             google::protobuf::Closure* done = google::protobuf::NewCallback
@@ -128,8 +139,6 @@ void RpcServer::OnRpcRequest(const net::TcpConnectionPtr& conn, const RpcMessage
             break;
         }
     }
-
-
 }
 
 // done->Run()中会调用该函数，之后会将自身析构掉
@@ -157,10 +166,6 @@ void RpcServer::SendRpcResponse(net::TcpConnectionPtr conn /*必须使用值传�
             std::cerr << "serialize response_str error!" << std::endl;
         }
     }
-
-    // 模拟http的短链接服务，由RpcServer主动断开连接
-    // conn->Shutdown();
-    // YLOG_TRACE("RPC Server: 断开与<{}:{}>的连接", conn->GetPeerAddr()->GetIPStr(), conn->GetPeerAddr()->GetPortStr())
 }
 // ReSharper restore CppPassValueParameterByConstReference
 

@@ -44,6 +44,17 @@ class UserConnection;
 using UserConnectionPtr = std::shared_ptr<UserConnection>;
 using MessagePtr = std::shared_ptr<google::protobuf::Message>;
 
+// 首部用Protobuf消息的类型名字符串标识消息
+class ProtobufTcpCodec_Name;
+class ProtobufUdpCodec_Name;
+// 首部用数字表示消息类型
+class ProtobufTcpCodec_Cmd;
+class ProtobufUdpCodec_Cmd;
+
+using ProtobufTcpCodec = ProtobufTcpCodec_Cmd;
+using ProtobufUdpCodec = ProtobufUdpCodec_Cmd;
+
+
 enum class MessageParseErrorCode {
     eNoError = 0,
     eInvalidCheckCode = 1,
@@ -78,7 +89,7 @@ inline std::string ToString(const MessageParseErrorCode code)
 
 
 
-enum class MessageType
+enum class MessageNetType
 {
     TCP = 0,
     UDP = 1
@@ -97,6 +108,18 @@ concept MessageHandlerInvocable = requires(
     (self->*handler)(user, msg);
 };
 
+template <typename T>
+concept HasToken = requires(T t) {
+    { t.token() } -> std::convertible_to<std::string>;
+};
+
+template <typename T>
+concept HasUserToken = requires(T t) {
+    { t.user_token() } -> std::convertible_to<std::string>;
+};
+
+template <typename T>
+concept HasTokenMethod = HasToken<T> or HasUserToken<T>;
 
 }
 

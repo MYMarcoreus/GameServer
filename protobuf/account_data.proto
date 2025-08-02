@@ -1,0 +1,7 @@
+syntax = "proto3";
+package yy.protocol.app;
+
+message AccountBaseData {
+    uint64 uid = 1;
+    string username = 3;
+}

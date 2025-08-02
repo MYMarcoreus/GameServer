@@ -31,6 +31,7 @@ public:
 
     /*! 核心函数 */
     void Loop();
+    void LoopTick(Milliseconds deltaTime);
 
     /*! 向m_quitManager所管理的Channel发送数据，m_quitManager收到数据后 !*/
     void QuitLoop();
@@ -101,6 +102,7 @@ private:
     std::thread::id                m_ThreadID;
     bool                           m_IsLooping;
     bool                           m_IsQuit;
+    bool                           m_EnableWakeup;
     std::unique_ptr<Poller>        m_Poller;          //! 其实EventLoop有一些函数都是直接调用Poller的函数，所以Poller需要先初始化
     std::unique_ptr<TimerManager>  m_TimerManager;
     std::unique_ptr<WakeupManager> m_WakeupManager;   // 用于QuitLoop，唤醒正在Loop()阻塞的PollWait()函数

@@ -188,12 +188,7 @@ int Connector::RemoveAndResetChannel() {
     return sockfd;
 }
 
-Connector::~Connector() {
-    if(m_Channel) {
-        m_Channel->ResetAndRemoveFromPoller();
-    }
-
-}
+Connector::~Connector() { }
 
 
 }

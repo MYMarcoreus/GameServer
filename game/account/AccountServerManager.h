@@ -30,7 +30,7 @@ private:
 
     void AppNotifier_Secutiry(const UserConnectionPtr& userdata) ;
     void AppNotifier_Disconnect(const UserConnectionPtr& userdata) ;
-    void AppNotifier_Command(const UserConnectionPtr &, const MessagePtr &, const MessageType);
+    void AppNotifier_Command(const UserConnectionPtr &, const MessagePtr &, const MessageNetType);
 
     void UnkonwnCommand(const UserConnectionPtr &, const MessagePtr &);
 

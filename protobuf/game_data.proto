@@ -1,0 +1,46 @@
+syntax = "proto3";
+package yy.protocol.app;
+import "account_data.proto";
+
+// 三维向量
+message Vector3_net {
+  float x = 1;
+  float y = 2;
+  float z = 3;
+}
+
+// 四元数（表示旋转）
+message Quaternion_net {
+  float x = 1;
+  float y = 2;
+  float z = 3;
+  float w = 4;
+}
+
+// 向服务端或客户端同步的位置和旋转信息
+message Transform_net {
+  Vector3_net   position = 2;
+  Quaternion_net rotation = 3;
+}
+
+message PlayerMove
+{
+    Transform_net   transform = 1;
+    float           ani_speed = 5;
+    float           ani_motion_speed = 6;
+}
+message PlayerJumpAndGravity
+{
+    bool     ani_is_jump = 2;
+    bool     ani_is_ground = 3;
+    bool     ani_is_freefall = 4;
+}
+message PlayerBaseData
+{
+    AccountBaseData         account_data        = 1;
+    int32                   state               = 3;
+    int32                   hp_current          = 4;
+    int32                   hp_max              = 5;
+    PlayerMove              movement            = 6;
+    PlayerJumpAndGravity    jump_and_gravity    = 7;
+}

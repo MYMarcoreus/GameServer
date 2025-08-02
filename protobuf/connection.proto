@@ -1,37 +1,9 @@
 syntax = "proto3";
 package yy.protocol.core;
 
-//option optimize_for = CODE_SIZE;      // 减少代码大小，但降低了性能
 //option optimize_for = LITE_RUNTIME;   // 链接libprotobuf-lite.so，减少资源消耗
 
-/*********** 消息头 ***********/
-//message PackageHead {
-//    bytes            check_code = 1;
-//    uint32           length     = 2;
-//    E_PackageCommand cmd        = 3;
-//}
-
-//enum E_PackageCommand
-//{
-//    /* 业务层的命令 */
-//    eTest            = 0;
-//    eLogin           = 1000;
-//    eMove            = 2000;
-//    eGetPlayerData   = 3000;
-//    eLeave           = 4000;
-//    eJumpAndGravity  = 5000;
-//
-//    /* 服务器的命令 */
-//    eHeart    = 65000;  // 验证对端的连接是否存在
-//    eXor      = 65531;  // 发送给客户端的异或码
-//    eSecurity = 65532;  // 安全验证
-//}
-
-
-/*********** 消息体 ***********/
-
-
-message S2CXorBody {
+message XorBodyRsp {
     uint32 xor_code = 1;
 }
 
@@ -40,12 +12,12 @@ message HeartBody
 
 }
 
-message C2SSecurityBody {
+message SecurityCheckReq {
     uint32 app_id      = 1;
     uint32 app_version = 2;
     string app_md5     = 3;
 }
-message S2CSecurityBody {
+message SecurityCheckRsp {
     enum ResultCode {
         eSuccess          = 0;
         eAppVersionFailed = 1;
@@ -56,12 +28,12 @@ message S2CSecurityBody {
     optional uint64 session_id = 3; // 连接标识，仅在 eSuccess 时使用
 }
 
-message C2SUdpPortRegister  {
+message UdpPortRegisterReq  {
     uint64 session_id = 1;
     string client_udp_ip  = 2;
     uint32 client_udp_port  = 3;
 }
-message S2CUdpPortRegister {
+message UdpPortRegisterRsp {
     uint64 session_id = 1;
 
     enum Status {

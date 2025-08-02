@@ -4,7 +4,6 @@
 #include<cstring>
 #include<memory>
 #include<UserConnection.h>
-#include"room.pb.h"
 
 namespace yy::app {
 

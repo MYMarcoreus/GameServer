@@ -44,6 +44,28 @@ EventLoop *EventLoopThread::CreateLoop() {
     return m_Loop;
 }
 
+EventLoop *EventLoopThread::CreateLoopTick(Milliseconds deltaTime) {
+    //! 防止多次启动
+    std::call_once(m_OnceFlag,
+        [this, deltaTime]()
+        {
+            std::promise<EventLoop *> loopPromise;
+
+            //! 启动线程
+            m_LoopThread = std::thread(
+                [this, &loopPromise, deltaTime]() {
+                    ThreadLoopTickFunction(loopPromise, deltaTime);
+                    std::cout << std::format("io线程<{}>结束", this->GetThreadID()) << std::endl;
+                }
+            );
+            //! 等待Loop线程初始化m_Loop
+            loopPromise.get_future().wait(); //* wait
+        }
+    );
+
+    return m_Loop;
+}
+
 void EventLoopThread::ThreadLoopFunction(std::promise<EventLoop *> & loopPromise) {
     //! 使用栈上的EventLoop线程对象
     EventLoop eventLoop(m_PollWaitTimeout);
@@ -58,6 +80,25 @@ void EventLoopThread::ThreadLoopFunction(std::promise<EventLoop *> & loopPromise
 
     //! 执行Loop
     m_Loop->Loop();
+
+    //! Loop退出，指针置空，函数退出时栈上的对象自动释放
+    m_Loop = nullptr;
+}
+
+void EventLoopThread::ThreadLoopTickFunction(std::promise<EventLoop *> & loopPromise, const Milliseconds deltaTime) {
+    //! 使用栈上的EventLoop线程对象
+    EventLoop eventLoop(m_PollWaitTimeout);
+
+    //! 执行线程初始化回调函数
+    if(m_ThreadInitCallback) {
+        m_ThreadInitCallback(&eventLoop);
+    }
+    //! 初始化m_Loop并通知其它线程
+    m_Loop = &eventLoop;
+    loopPromise.set_value(&eventLoop); //* notify
+
+    //! 执行Loop
+    m_Loop->LoopTick(deltaTime);
 
     //! Loop退出，指针置空，函数退出时栈上的对象自动释放
     m_Loop = nullptr;

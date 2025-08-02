@@ -18,7 +18,7 @@
 #include <atomic>
 #include <ranges>
 
-#define MAKE_LOG_MESSAGE(level, content) std::make_shared<yy::Ylog::LogMessage>(level, /*yy::util::get_current_fmt_time(),*/ __FILE__, __LINE__, std::this_thread::get_id(), content)
+#define MAKE_LOG_MESSAGE(level, content) std::make_shared<yy::Ylog::LogMessage>(level, yy::util::get_current_time(), __FILE__, __LINE__, std::this_thread::get_id(), content)
 
 #define GET_LOGGER(loggername) yy::Ylog::LoggerManager::Instance().getLogger(loggername)
 
@@ -111,35 +111,28 @@ public:
     using ptr = std::shared_ptr<LogMessage>;
 
 public:
-    LogMessage(
-        LogLevel        level   , /*std::string time,*/
-        std::string     filepath, uint32_t    line,
-        std::thread::id theradID, std::string content
-    ) : m_level(level), /*m_time(std::move(time)),*/
+    LogMessage(const LogLevel level, std::chrono::system_clock::time_point time,std::string filepath,
+               const uint32_t line, const std::thread::id theradID, std::string content):
+        m_level(level), m_time(std::move(time)),
         m_filepath(std::move(filepath)), m_fileline(line),
         m_threadID(theradID), m_content(std::move(content)) {}
 
     ~LogMessage() = default;
 
-    [[nodiscard]] LogLevel getLevel() const { return m_level; }
-
-    // [[nodiscard]] const std::string& getTime() const { return m_time; }
-
-    [[nodiscard]] const std::string& getFilepath() const { return m_filepath; }
-
-    [[nodiscard]] uint32_t getFileline() const { return m_fileline; }
-
-    [[nodiscard]] std::thread::id getTheradID() const { return m_threadID; }
-
-    [[nodiscard]] const std::string& getContent() const { return m_content; }
+    [[nodiscard]] auto getLevel() const -> LogLevel { return m_level; }
+    [[nodiscard]] auto getTime() const -> const std::chrono::time_point<std::chrono::system_clock>& { return m_time; }
+    [[nodiscard]] auto getFilepath() const -> const std::string& { return m_filepath; }
+    [[nodiscard]] auto getFileline() const -> uint32_t { return m_fileline; }
+    [[nodiscard]] auto getTheradID() const -> std::thread::id { return m_threadID; }
+    [[nodiscard]] auto getContent() const -> const std::string& { return m_content; }
 
 private:
-    LogLevel        m_level;    // 日志级别
-    // std::string     m_time;     // 产生日志信息的时间
-    std::string     m_filepath; // 产生日志信息的文件名
-    uint32_t        m_fileline; // 产生日志信息的代码所在行号
-    std::thread::id m_threadID; // 线程号
-    std::string     m_content;  // 具体内容
+    LogLevel                                m_level;    // 日志级别
+    std::chrono::system_clock::time_point   m_time;     // 产生日志信息的时间
+    std::string                             m_filepath; // 产生日志信息的文件名
+    uint32_t                                m_fileline; // 产生日志信息的代码所在行号
+    std::thread::id                         m_threadID; // 线程号
+    std::string                             m_content;  // 具体内容
 };
 
 

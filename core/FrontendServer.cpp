@@ -12,11 +12,12 @@
 
 using namespace yy::net;
 using yy::core::UserConnection;
-using yy::core::MessageHeader;
+using yy::core::MessageHeader_Cmd;
 
 namespace yy::core {
 
 FrontendServer::FrontendServer(EventLoop *accpetorLoop, const IPAddressPtr& listenAddr) :
+    m_listenAddr{listenAddr},
     m_appConfigvar(config::g_app_config),
     m_accpetorLoop{accpetorLoop},
     m_tcpServer(accpetorLoop, listenAddr, true,
@@ -45,8 +46,8 @@ FrontendServer::FrontendServer(EventLoop *accpetorLoop, const IPAddressPtr& list
 {
     //! 消息回调注册
     m_tcpDispatcher.RegisterMessageCallback<protocol::core::HeartBody>( [this](const TcpConnectionPtr& conn, const HeartPtr& msg) { this->OnTcpHeart(conn, msg); });
-    m_tcpDispatcher.RegisterMessageCallback<protocol::core::C2SSecurityBody>( [this](const TcpConnectionPtr& conn, const C2SSecurityPtr& msg) { this->OnSecurity(conn, msg); });
-    m_tcpDispatcher.RegisterMessageCallback<protocol::core::C2SUdpPortRegister>( [this](const TcpConnectionPtr& conn, const C2SUdpPortRegisterPtr& msg) { this->OnUdpPortRegisterRequest(conn, msg); });
+    m_tcpDispatcher.RegisterMessageCallback<protocol::core::SecurityCheckReq>( [this](const TcpConnectionPtr& conn, const C2SSecurityPtr& msg) { this->OnSecurity(conn, msg); });
+    m_tcpDispatcher.RegisterMessageCallback<protocol::core::UdpPortRegisterReq>( [this](const TcpConnectionPtr& conn, const UdpPortRegisterReqPtr& msg) { this->OnUdpPortRegisterRequest(conn, msg); });
     m_udpDispatcher.RegisterMessageCallback<protocol::core::HeartBody>( [this](const UdpSessionPtr& conn, const HeartPtr& msg) { this->OnUdpHeart(conn, msg); });
 
     m_tcpServer.SetMessageCallback(
@@ -90,14 +91,14 @@ void FrontendServer::OnUnknownTcpMessage(const TcpConnectionPtr & conn, const Me
     YLOG_TRACE("Tcp消息：{}，交由业务层", message->GetDescriptor()->full_name());
 
     // 执行业务层回调，分发消息
-    m_NotifierCommand(FindUser(conn->GetConnID()), message, MessageType::TCP);
+    m_NotifierCommand(FindUser(conn->GetConnID()), message, MessageNetType::TCP);
 }
 
 void FrontendServer::OnUnknownUdpMessage(const UdpSessionPtr & sess, const MessagePtr &message) {
     YLOG_TRACE("Udp消息：{}，交由业务层", message->GetDescriptor()->full_name());
 
     // 执行业务层回调，分发消息
-    m_NotifierCommand(FindUser(sess->GetConnID()), message, MessageType::UDP);
+    m_NotifierCommand(FindUser(sess->GetConnID()), message, MessageNetType::UDP);
 }
 
 void FrontendServer::OnConnectionEstablished(const TcpConnectionPtr  & conn) {
@@ -152,8 +153,8 @@ void FrontendServer::CheckHeart(const UserConnectionPtr & userdata) {
 
 void FrontendServer::SendXorCode(const TcpConnectionPtr &conn) {
     // 发送随机生成的异或码给用户，之后的通信都用该异或码进行加密
-    auto gen_val = MessageHeader::GenerateXorCode();
-    protocol::core::S2CXorBody xorBody;
+    uint8_t gen_val = util::GenerateXorCode();
+    protocol::core::XorBodyRsp xorBody;
     xorBody.set_xor_code(gen_val ^ GetAppConfig().app_xor_code()); //! 记得与初始异或码异或
 
     m_tcpCodec.SendTCP(conn, xorBody);
@@ -197,28 +198,28 @@ void FrontendServer::OnSecurity(const TcpConnectionPtr & conn, const C2SSecurity
     YLOG_DEBUG("客户端: {}, {}, {}", message->app_id(),message->app_version(), message->app_md5().c_str())
 
     //! 进行安全验证
-    protocol::core::S2CSecurityBody::ResultCode resultCode;
+    protocol::core::SecurityCheckRsp::ResultCode resultCode;
     if(message->app_version() != GetAppConfig().app_version()) {
         YLOG_DEBUG("<{}>解包执行：版本不同，安全验证失败！", conn->GetConnID())
-        resultCode = protocol::core::S2CSecurityBody_ResultCode_eAppVersionFailed;
+        resultCode = protocol::core::SecurityCheckRsp_ResultCode_eAppVersionFailed;
     }
     else if(util::StrCmp_IgnoreCase(message->app_md5().c_str(), md5Arr)) {
         YLOG_DEBUG("<{}>解包执行：md5码不同，安全验证失败！", conn->GetConnID())
-        resultCode = protocol::core::S2CSecurityBody_ResultCode_eMd5Failed;
+        resultCode = protocol::core::SecurityCheckRsp_ResultCode_eMd5Failed;
     }
     else {
-        resultCode = protocol::core::S2CSecurityBody_ResultCode_eSuccess;
+        resultCode = protocol::core::SecurityCheckRsp_ResultCode_eSuccess;
     }
 
     //! 发送安全验证结果
-    protocol::core::S2CSecurityBody resultBody;
+    protocol::core::SecurityCheckRsp resultBody;
     resultBody.set_result_code(resultCode);
     resultBody.set_server_udp_port(m_udpServer.GetPort());
     resultBody.set_session_id(conn->GetConnID());
     m_tcpCodec.SendTCP(conn, resultBody);
 
     //! 安全验证通过：交由业务层
-    if(resultBody.result_code() == protocol::core::S2CSecurityBody_ResultCode_eSuccess) {
+    if(resultBody.result_code() == protocol::core::SecurityCheckRsp_ResultCode_eSuccess) {
         ++m_numSecurity;
         if(m_NotifierSecurity)
             m_NotifierSecurity(FindUser(conn->GetConnID()));
@@ -231,7 +232,7 @@ void FrontendServer::OnSecurity(const TcpConnectionPtr & conn, const C2SSecurity
     }
 }
 
-void FrontendServer::OnUdpPortRegisterRequest(const TcpConnectionPtr & conn, const C2SUdpPortRegisterPtr & message)
+void FrontendServer::OnUdpPortRegisterRequest(const TcpConnectionPtr & conn, const UdpPortRegisterReqPtr & message)
 {
     if(message->session_id() != conn->GetConnID()) {
         YLOG_INFO("<{}>客户端会话ID验证错误", conn->GetConnID())
@@ -246,9 +247,9 @@ void FrontendServer::OnUdpPortRegisterRequest(const TcpConnectionPtr & conn, con
     const UdpSessionPtr udpSession = std::make_unique<UdpSession>(conn->GetConnID(), m_udpServer.GetUdpTran(), udpAddr, m_appConfigvar->GetValue().app_xor_code());
     FindUser(conn->GetConnID())->BindUdp(udpSession);
 
-    protocol::core::S2CUdpPortRegister response;
+    protocol::core::UdpPortRegisterRsp response;
     response.set_session_id(conn->GetConnID());
-    response.set_status(protocol::core::S2CUdpPortRegister_Status_eSuccess);
+    response.set_status(protocol::core::UdpPortRegisterRsp_Status_eSuccess);
     m_tcpCodec.SendTCP(conn, response);
 }
 

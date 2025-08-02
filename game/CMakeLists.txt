@@ -1,17 +1,21 @@
 set(LocalSrc
+        rpc_clients/CenterRpcClient.cpp
+        rpc_clients/LogicRpcClient.cpp
+        rpc_clients/AccountRpcClient.cpp
         logic/LogicServerManager.cpp
-        logic/RoomService.cpp
+        logic/GameService.cpp
         logic/TestService.cpp
         logic/Room.cpp
         logic/Player.cpp
-        logic/Player.h
+        logic/RoomManager.cpp
         account/AccountServerManager.cpp
         account/AccountRpcServiceImpl.cpp
-        account/CenterRpcClient.cpp
         gate/GateServerManager.cpp
-        gate/AccountRpcClient.cpp
         center/CenterRpcServiceImpl.cpp
         center/CenterServerManager.cpp
+        center/RoomInfoController.cpp
+        center/LogicServerController.cpp
+        center/LogicInfoController.cpp
 )
 
 #! 给本地相对路径添加前缀，变为绝对路径

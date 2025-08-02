@@ -104,7 +104,7 @@ public:
 
     std::shared_ptr<T> wait_pop()
     {
-        std::unique_lock<std::mutex> head_lock(head_mutex);
+        std::unique_lock head_lock(head_mutex);
         data_cv.wait(head_lock, [&]{ return head.get() != get_tail(); } );
         auto old_head = pop_head();
         return old_head->data; //! 返回被pop的结点的数据
@@ -112,7 +112,7 @@ public:
 
     void wait_pop(T & value)
     {
-        std::unique_lock<std::mutex> head_lock(head_mutex);
+        std::unique_lock head_lock(head_mutex);
         data_cv.wait(head_lock, [&]{ return head.get() != get_tail(); } );
 
         value = std::move(*head->data); //! 将要pop结点的数据移入value中返回
@@ -121,7 +121,7 @@ public:
 
     bool wait_pop_for(T & value, std::chrono::milliseconds interval)
     {
-        std::unique_lock<std::mutex> head_lock(head_mutex);
+        std::unique_lock head_lock(head_mutex);
 
         // 使用 wait_for + 谓词版本，返回 true 表示条件满足（有数据）
         const bool has_data = data_cv.wait_for(head_lock, interval, [&]{

@@ -29,9 +29,15 @@ public:
         assert(stub_ != nullptr);
     }
 
+    net::IPAddressPtr GetServerAddr() const { return server_addr_; }
+    std::string GetServerName() const { return util::GenerateServerName(server_addr_); }
+
     bool Connect(const net::IPAddressPtr& server_addr)
     {
-        return rpc_conn_->Connect(server_addr);
+        const bool isconn = rpc_conn_->Connect(server_addr);
+        server_addr_ = server_addr;
+
+        return isconn;
     }
 
     void Disconnect()
@@ -55,8 +61,9 @@ public:
     }
 
 private:
-    RpcConnection *           rpc_conn_;
+    RpcConnection *                     rpc_conn_;
     std::unique_ptr<ServiceType_Stub>   stub_;
+    net::IPAddressPtr server_addr_;
 };
 
 }

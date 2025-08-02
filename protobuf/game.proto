@@ -1,0 +1,103 @@
+syntax = "proto3";
+package yy.protocol.app;
+option cc_generic_services = true;
+import "game_data.proto";
+
+
+/************************************** Client <-> Logic Server ***************************************/
+message SceneLoginReq {
+    uint64  uid         = 1;
+    uint64  room_id     = 2;
+    string  user_token  = 3;
+    string  scene_token = 4;
+}
+message SceneLoginRsp
+{
+    bool is_ok = 1;
+}
+
+//! 客户端从房间进入场景
+//todo 客户端关闭后如何返回场景？
+// Client <-> LogicServer
+message C2SEnterScene
+{
+    uint64  uid         = 1;
+    uint64  room_id     = 2;
+}
+//! 服务器端返回给客户端的登录结果
+message S2CEnterScene
+{
+    uint64                      uid = 1;
+    uint64                      room_id = 2;
+    bool                        result = 3;
+    PlayerBaseData              self_data = 4;
+    repeated PlayerBaseData     other_datas = 5;
+}
+
+//! 客户端发送和接收
+//Client <-> LogicServer
+message C2SLeaveScene
+{
+    uint64   uid = 1;
+    uint64   room_id = 2;
+};
+message S2CLeaveScene
+{
+    uint64   uid = 1;
+    uint64   room_id = 2;
+}
+
+//! 客户端发送自己的移动数据，服务端验证，然后返回让客户端接收
+// Client <-> LogicServer
+message C2SMove
+{
+    uint64      uid = 1;
+    uint64      room_id = 3;
+    PlayerMove  movement = 2;
+}
+//! 客户端接收其它玩家的移动
+message S2CMove
+{
+    uint64      uid = 1;
+    uint64      room_id = 3;
+    PlayerMove  movement = 2;
+}
+
+//! 客户端发送自己的跳跃数据，服务端验证，然后返回让客户端接收
+// Client <-> LogicServer
+message C2SJumpAndGravity
+{
+    uint64      uid = 1;
+    uint64      room_id = 3;
+    PlayerJumpAndGravity jump_and_gravity = 2;
+}
+//! 客户端接收其它玩家的跳跃
+message S2CJumpAndGravity
+{
+    uint64      uid = 1;
+    uint64      room_id = 3;
+    PlayerJumpAndGravity jump_and_gravity = 2;
+}
+
+//! 如果收到其它玩家的移动或跳跃数据，但是没有该玩家的基础数据，则先请求之
+// Client <-> LogicServer
+message C2SOtherPlayerData
+{
+    uint64     requester_uid        = 1;
+    uint64     requested_uid        = 2;
+    uint64     room_id = 3;
+}
+//! 如果收到其它玩家的移动或跳跃数据，但是没有该玩家的基础数据，则先请求之
+message S2COtherPlayerData
+{
+    uint64          uid = 1;
+    uint64          room_id = 2;
+    PlayerBaseData  other_data = 3;
+}
+
+
+
+
+
+
+

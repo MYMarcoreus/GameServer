@@ -12,8 +12,8 @@ namespace yy::core {
 
 
 
-class ProtobufTcpCodec;
-class ProtobufUdpCodec;
+class ProtobufTcpCodec_Name;
+class ProtobufUdpCodec_Name;
 
 /// @brief 用户连接数据
 class UserConnection: util::noncopyable
@@ -32,21 +32,23 @@ public:
 
     UserConnection(const TcpConnectionPtr& conn, ProtobufTcpCodec & tcpCodec, ProtobufUdpCodec & udpCodec);
 
-    void Shutdown();
-
-    void SendTCP(const MessagePtr & message) ;
-    void SendTCP(const google::protobuf::Message & message);
-
-    void SendUDP(const MessagePtr & message) ;
-    void SendUDP(const google::protobuf::Message & message);
-
-    void SetState(const E_UserBaseState state) { m_state = state; }
-
-    void SetUID(const uint32_t uid) { m_uid = uid; }
-
     void BindUdp(const UdpSessionPtr&);
 
-    ///Region GETTER
+    void Shutdown() const;
+
+    void SendTCP(const MessagePtr & message) const;
+    void SendTCP(const google::protobuf::Message & message) const;
+    void SendUDP(const MessagePtr & message) ;
+    void SendUDP(const google::protobuf::Message & message) const;
+
+    //Region SETTER
+    void SetState(const E_UserBaseState state) { m_state = state; }
+    void SetUID(const uint32_t uid) { m_uid = uid; }
+    void SetToken(const std::string & token) { m_token = token; }
+    //End
+
+
+    //Region GETTER
     TcpConnectionPtr GetConnection() { return m_tcpChannel; }
 
     /// @brief 是否已连接
@@ -61,19 +63,26 @@ public:
     /// @brief 是否需要保存
     bool IsNeedSave() const { return m_state == E_UserBaseState::eSavingData; }
 
-    uint32_t GetUID() const { return m_uid; }
-    uint64_t GetConnID() const;
-    SocketApiWrapper::socket_t GetSocketFD() const;
-    ///End GETTER
+    uint32_t    GetUID() const { return m_uid; }
 
-    TimerID RunAt(Timestamp time, F_TaskCallback cb);
-    TimerID RunAfter(Microseconds delay, F_TaskCallback cb);
-    TimerID RunEvery(Microseconds interval, F_TaskCallback cb);
-    void CancelTimer(TimerID timerid);
+    uint64_t    GetConnID() const;
+
+    std::string GetToken() const { return m_token; }
+
+    SocketApiWrapper::socket_t GetSocketFD() const;
+    //End GETTER
+
+    //Region 定时器相关
+    TimerID RunAt(Timestamp time, F_TaskCallback cb) const;
+    TimerID RunAfter(Microseconds delay, F_TaskCallback cb) const;
+    TimerID RunEvery(Microseconds interval, F_TaskCallback cb) const;
+    void CancelTimer(TimerID timerid) const;
+    //End
 
 private:
     E_UserBaseState                             m_state;
     uint64_t                                    m_uid;
+    std::string                                 m_token;
     TcpConnectionPtr                            m_tcpChannel;
     UdpSessionPtr                               m_udpChannel;
     ProtobufTcpCodec &                          m_tcpCodec;

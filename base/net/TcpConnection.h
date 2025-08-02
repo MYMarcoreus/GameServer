@@ -2,12 +2,12 @@
 #include "net_definations.h"
 #include "IPAddress.h"
 #include "Timestamp.h"
+#include "SequentialBuffer.h"
 
 #include <memory>
 #include <atomic>
 #include <any>
 
-#include "ProtobufTcpCodec.h"
 
 namespace yy::net {
 

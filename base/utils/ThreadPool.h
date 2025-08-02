@@ -40,9 +40,9 @@ public:
     int TaskQueueSize() const { return m_Queue.size(); }
 
 
-    TimerID RunTaskAt(Timestamp time, Task cb);
-    TimerID RunTaskAfter(Microseconds delay, Task cb);
-    TimerID RunTaskEvery(Microseconds interval, Task cb);
+    std::optional<TimerID> RunTaskAt(Timestamp time, Task cb);
+    std::optional<TimerID> RunTaskAfter(Microseconds delay, Task cb);
+    std::optional<TimerID> RunTaskEvery(Microseconds interval, Task cb);
     void CancelTimer(TimerID timerid);
 
 

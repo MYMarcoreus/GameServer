@@ -1,0 +1,32 @@
+syntax = "proto3";
+package yy.protocol.app;
+option cc_generic_services = true;
+import "room_data.proto";
+
+/* **************** 内部RPC消息 **************** */
+message NewRoomReq {
+    RoomDetailData room_data = 1;
+    string user_token = 3;
+}
+
+message NewRoomRsp{
+     bool success = 1;
+     uint64 room_id = 2;
+     string ip = 3;
+     uint32 port = 4;
+}
+
+message DeleteRoomReq {
+     uint64 room_id = 1;
+}
+
+message DeleteRoomRsp {
+     bool success = 1;
+     uint64 room_id = 2;
+}
+
+service LogicRoomServiceRpc
+{
+    rpc NewRoom(NewRoomReq) returns(NewRoomRsp);
+    rpc DeleteRoom(DeleteRoomReq) returns(DeleteRoomRsp);
+}

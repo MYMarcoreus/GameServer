@@ -26,12 +26,12 @@ int main()
         client->Start(10, [&client_raw = *client](const yy::net::TcpConnectionPtr & conn) {
             YLOG_INFO("连接至<{}:{}>，我方地址为<{}:{}>", conn->GetPeerAddr()->GetIPStr().c_str(), conn->GetPeerAddr()->GetPort()
                                                     , conn->GetLocalAddr()->GetIPStr().c_str(), conn->GetLocalAddr()->GetPort());
-            const auto req = std::make_shared<yy::protocol::app::C2SLogin>();
+            const auto req = std::make_shared<yy::protocol::app::LoginReq>();
             req->set_username("sadamofn");
             req->set_password("114514");
             req->set_session_id(101010);
-            client_raw.CallRemoteAsync<yy::protocol::app::C2SLogin, yy::protocol::app::S2CLogin>(req,
-                [](std::unique_ptr<yy::protocol::app::S2CLogin> && response, std::unique_ptr<yy::core::RpcControllerImpl> && controller) {
+            client_raw.CallRemoteAsync<yy::protocol::app::LoginReq, yy::protocol::app::LoginRsp>(req,
+                [](std::unique_ptr<yy::protocol::app::LoginRsp> && response, std::unique_ptr<yy::core::RpcControllerImpl> && controller) {
                     YLOG_INFO("回复：{}", response->token())
                 });
         });

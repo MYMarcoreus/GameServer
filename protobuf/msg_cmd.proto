@@ -1,0 +1,55 @@
+syntax = "proto3";
+package yy.protocol;
+
+enum MessageCommand {
+    MSG_Unknown = 0;
+
+    // 连接协议相关
+    MSG_HeartBody = 500;
+    MSG_XorBodyRsp = 501;
+    MSG_SecurityCheckReq = 502;
+    MSG_SecurityCheckRsp = 503;
+    MSG_UdpPortRegisterReq = 504;
+    MSG_UdpPortRegisterRsp = 505;
+
+    // 登录模块：网关服->账号服
+    MSG_LoginReq = 1000;
+    MSG_LoginRsp = 1001;
+    MSG_RegisterReq = 1002;
+    MSG_RegisterRsp = 1003;
+
+    // 房间模块：网关服->中心服
+    MSG_CreateRoomReq = 2000;
+    MSG_CreateRoomRsp = 2001;
+    MSG_SearchRoomReq = 2002;
+    MSG_SearchRoomRsp = 2003;
+    MSG_JoinRoomReq = 2004;
+    MSG_JoinRoomRsp = 2005;
+    MSG_QuitRoomReq = 2006;
+    MSG_QuitRoomRsp = 2007;
+    MSG_GetEnterSceneTokenReq = 2008;
+    MSG_GetEnterSceneTokenRsp = 2009;
+    // 房间广播：中心服->网关服
+    MSG_BroadcastRoomReq = 2300;
+    MSG_BroadcastRoomRsp = 2301;
+
+    // 房间增删：中心服->逻辑服
+    MSG_NewRoomReq = 2500;
+    MSG_NewRoomRsp = 2501;
+    MSG_DeleteRoomReq = 2503;
+    MSG_DeleteRoomRsp = 2504;
+
+    // 场景模块：逻辑服->客户端
+    MSG_SceneLoginReq = 3000;
+    MSG_SceneLoginRsp = 3001;
+    MSG_C2SEnterScene = 3002;
+    MSG_S2CEnterScene = 3003;
+    MSG_C2SLeaveScene = 3004;
+    MSG_S2CLeaveScene = 3005;
+    MSG_C2SMove = 3006;
+    MSG_S2CMove = 3007;
+    MSG_C2SJumpAndGravity = 3008;
+    MSG_S2CJumpAndGravity = 3009;
+    MSG_C2SOtherPlayerData = 3010;
+    MSG_S2COtherPlayerData = 3011;
+}

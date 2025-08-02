@@ -3,8 +3,8 @@
 #include "IServer.h"
 #include "TcpServer.h"
 #include "UdpServer.h"
-#include "ProtobufTcpCodec.h"
-#include "ProtobufUdpCodec.h"
+#include "ProtobufTcpCodec_Cmd.h"
+#include "ProtobufUdpCodec_Cmd.h"
 #include "ProtobufDispatcher.h"
 #include "net_definations.h"
 #include "core_definations.h"
@@ -13,8 +13,8 @@
 
 namespace yy::protocol::core {
 class HeartBody;
-class C2SSecurityBody;
-class C2SUdpPortRegister;
+class SecurityCheckReq;
+class UdpPortRegisterReq;
 }
 
 using namespace yy::net;
@@ -24,8 +24,8 @@ namespace yy::core {
 
 class FrontendServer final: public IServer{
     using HeartPtr    = std::shared_ptr<protocol::core::HeartBody> ;
-    using C2SSecurityPtr = std::shared_ptr<protocol::core::C2SSecurityBody> ;
-    using C2SUdpPortRegisterPtr = std::shared_ptr<protocol::core::C2SUdpPortRegister> ;
+    using C2SSecurityPtr = std::shared_ptr<protocol::core::SecurityCheckReq> ;
+    using UdpPortRegisterReqPtr = std::shared_ptr<protocol::core::UdpPortRegisterReq> ;
 
 public:
     FrontendServer(EventLoop* accpetorLoop, const IPAddressPtr& listenAddr);
@@ -44,6 +44,7 @@ public:
 
     bool IsRunning() const override { return m_tcpServer.IsRunning(); }
     const config::AppXmlConfig & GetAppConfig() override { return m_appConfigvar->GetValue(); }
+    IPAddressPtr GetListenAddr() const override { return m_listenAddr; }
 
     /* * 由业务层定义并传入 * */
     void SetNotifier_Security  (const F_Notifier cb) override { m_NotifierSecurity   = cb; }
@@ -68,12 +69,13 @@ private:
     void OnTcpHeart(const TcpConnectionPtr &conn, const HeartPtr & message);
     void OnUdpHeart(const UdpSessionPtr &conn, const HeartPtr & message);
     void OnSecurity(const TcpConnectionPtr & conn, const C2SSecurityPtr & message);
-    void OnUdpPortRegisterRequest(const TcpConnectionPtr & conn, const C2SUdpPortRegisterPtr & message);
+    void OnUdpPortRegisterRequest(const TcpConnectionPtr & conn, const UdpPortRegisterReqPtr & message);
 
     void AfterShutdownConnection(const TcpConnectionPtr &conn);
 
 private:
-    config::ConfigVar<config::AppXmlConfig>::ptr    m_appConfigvar; // 用于获取配置项
+    IPAddressPtr                                   m_listenAddr;
+    config::ConfigVar<config::AppXmlConfig>::ptr   m_appConfigvar; // 用于获取配置项
     EventLoop *                                    m_accpetorLoop;
 
     TcpServer                                      m_tcpServer;

@@ -6,6 +6,7 @@ using namespace std::chrono_literals;
 
 namespace yy::net {
 
+using Nanoseconds = std::chrono::nanoseconds ;
 using Microseconds = std::chrono::microseconds ;
 using Milliseconds = std::chrono::milliseconds ;
 using Seconds = std::chrono::seconds;

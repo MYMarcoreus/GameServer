@@ -1,99 +1,124 @@
 syntax = "proto3";
 package yy.protocol.app;
+option cc_generic_services = true;
+import "room_data.proto";
+import "account_data.proto";
+import "msg_cmd.proto";
 
 
-
-message PlayerBaseData
-{
-    uint64     uid         = 1;
-    int32      state       = 3;
-    int32      hp_current  = 4;
-    int32      hp_max      = 5;
-    PlayerMove movement    = 6;
-    PlayerJumpAndGravity jump_and_gravity = 7;
+/************************************** Client <-> Gate Server <-> Center Server ***************************************/
+// Client <-> CenterServer <-> LogicServer
+message CreateRoomReq {
+    AccountBaseData owner_data = 1;
+    string          user_token = 2;
+    string          name = 3;
+    uint32          capacity = 6;
 }
-message PlayerMove
-{
-    bytes       position = 2;
-    bytes       rotation = 3;
-    float       ani_speed = 5;
-    float       ani_motion_speed = 6;
+message CreateRoomRsp {
+    enum Status {
+        eSuccess = 0;
+        eNoServer = 1;
+        eUnknownError = 2;
+    }
+    uint64          uid = 1;
+    Status          result_code = 2;
+    RoomDetailData  room_data = 3;
+    string          room_ip = 4;
+    uint32          room_port = 5;
 }
-message PlayerJumpAndGravity
-{
-    bool     ani_is_jump = 2;
-    bool     ani_is_ground = 3;
-    bool     ani_is_freefall = 4;
+
+//! 客户端请求所有房间的信息（不包含房间地址信息）
+// Client <-> CenterServer
+message SearchRoomReq {
+    uint64 uid = 1;
+    string user_token = 3;
+    //todo 过滤条件
+}
+message SearchRoomRsp {
+    uint64                 uid = 1;
+    repeated RoomBriefData room_datas = 2;
 }
 
-//! 客户端发送和接收
-message C2SLeaveRoom
-{
-    uint64   leaver_uid = 1;
-};
+//! 客户端加入房间
+// Client <-> CenterServer
+message JoinRoomReq {
+    uint64 uid = 1;
+    string user_token = 3;
+    uint64 room_id = 2;
+}
+message JoinRoomRsp {
+    enum Status {
+        eSuccess = 0;
+        eRoomNotExist = 1;
+        eUnknownError = 2;
+    }
 
+    uint64          uid = 1;
+    Status          result_code = 2;
+    RoomDetailData  room_data = 3;
+}
 
-//! 客户端发送自己的移动数据，服务端验证，然后返回让客户端接收
-message C2SMove
-{
+message QuitRoomReq {
+    uint64 uid = 1;
+    string user_token = 3;
+    uint64 room_id = 2;
+}
+message QuitRoomRsp {
+    enum Status {
+        eSuccess = 0;
+        eRoomNotExist = 1;
+        eUnknownError = 2;
+    }
+
+    uint64 uid = 1;
+    uint64 room_id = 2;
+    Status result_code = 3;
+}
+
+//! 客户端点击“进入”后，首先向CenterServer获取房间场景token，之后带着这个场景token连接LogicServer
+message GetEnterSceneTokenReq {
+    uint64 uid = 1;
+    string user_token = 3;
+    uint64 room_id = 2;
+}
+message GetEnterSceneTokenRsp {
+    enum Status {
+        eSuccess = 0;
+        eRoomNotExist = 1;
+        eUnknownError = 2;
+    }
+
     uint64      uid = 1;
-    PlayerMove movement = 2;
+    Status      result_code = 2;
+    uint64      room_id = 3;
+    string      scene_token = 4;
 }
-//! 客户端接收其它玩家的移动
-message S2CMove
+
+message BroadcastRoomReq {
+    uint64 room_id = 1;
+    repeated uint64 target_uids = 2;
+    MessageCommand msg_cmd = 3; // payload的消息类型
+    bytes payload = 4;
+}
+
+message BroadcastRoomRsp {
+    uint64 room_id = 1;
+    repeated uint64 failed_uids = 2;
+    MessageCommand msg_cmd = 3;
+    bool success = 4;
+}
+
+//! CenterServer
+service CenterRoomServiceRpc
 {
-    uint64      uid = 1;
-    PlayerMove  movement = 2;
+    rpc CreateRoom(CreateRoomReq) returns(CreateRoomRsp);
+    rpc SearchRoom(SearchRoomReq) returns(SearchRoomRsp);
+    rpc JoinRoom(JoinRoomReq) returns(JoinRoomRsp);
+    rpc GetEnterSceneToken(GetEnterSceneTokenReq) returns(GetEnterSceneTokenRsp);
+    rpc QuitRoom(QuitRoomReq) returns(QuitRoomRsp);
 }
 
-
-//! 客户端发送自己的跳跃数据，服务端验证，然后返回让客户端接收
-message C2SJumpAndGravity
+service GateRoomServiceRpc
 {
-    uint64      uid = 1;
-    PlayerJumpAndGravity jump_and_gravity = 2;
-}
-//! 客户端接收其它玩家的跳跃
-message S2CJumpAndGravity
-{
-    uint64      uid = 1;
-    PlayerJumpAndGravity jump_and_gravity = 2;
-}
-
-
-//! 客户端登录成功申请进入场景
-message C2SEnterRoom
-{
-    uint64  uid   = 1;
-}
-//! 服务器端返回给客户端的登录结果
-message S2CEnterRoom
-{
-    uint64  uid = 1;
-    bool   result = 2;
-    PlayerBaseData self_data = 3;
-    repeated PlayerBaseData other_datas = 4;
-}
-
-
-//! 如果收到其它玩家的移动或跳跃数据，但是没有该玩家的基础数据，则先请求之
-message C2SOtherPlayerData
-{
-    uint64     requester_uid        = 1;
-    uint64     requested_uid        = 2;
-}
-
-//! 如果收到其它玩家的移动或跳跃数据，但是没有该玩家的基础数据，则先请求之
-message S2COtherPlayerData
-{
-    PlayerBaseData other_data = 1;
-}
-
-
-message RoomBaseData {
-    uint64 id = 1;
-    string name = 2;
-    uint64 owner_uid = 3;
-    uint32 capacity = 4;
-    repeated uint64 exist_players_uid = 5;
+    rpc BroadcastRoom(BroadcastRoomReq) returns(BroadcastRoomRsp);
 }

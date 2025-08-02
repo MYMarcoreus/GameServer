@@ -86,25 +86,31 @@ void ThreadPool::PopAndExecuteTask() {
     YLOG_INFO("结束线程池[{}]线程<{}>", m_name, CastThreadIDToStr(std::this_thread::get_id()))
 }
 
-TimerID ThreadPool::RunTaskAt(const Timestamp time, Task cb) {
+std::optional<TimerID> ThreadPool::RunTaskAt(const Timestamp time, Task cb) {
     assert(m_IsRunning);
-    assert(m_TimerLoop);
+    if (m_TimerLoop == nullptr) {
+        return std::nullopt;
+    }
     auto timerid = m_TimerLoop->RunAt(time, [this, taskcb = std::move(cb)]{this->PushTask(taskcb);});
     m_runningTimerIDs.emplace_back(timerid);
     return timerid;
 }
 
-TimerID ThreadPool::RunTaskAfter(const Microseconds delay, Task cb) {
+std::optional<TimerID> ThreadPool::RunTaskAfter(const Microseconds delay, Task cb) {
     assert(m_IsRunning);
-    assert(m_TimerLoop);
+    if (m_TimerLoop == nullptr) {
+        return std::nullopt;
+    }
     auto timerid = m_TimerLoop->RunAfter(delay, [this, taskcb = std::move(cb)](){this->PushTask(taskcb);});
     m_runningTimerIDs.emplace_back(timerid);
     return timerid;
 }
 
-TimerID ThreadPool::RunTaskEvery(const Microseconds interval, Task cb) {
+std::optional<TimerID> ThreadPool::RunTaskEvery(const Microseconds interval, Task cb) {
     assert(m_IsRunning);
-    assert(m_TimerLoop);
+    if (m_TimerLoop == nullptr) {
+        return std::nullopt;
+    }
     auto timerid = m_TimerLoop->RunEvery(interval, [this, taskcb = std::move(cb)](){ this->PushTask(taskcb); });
     m_runningTimerIDs.emplace_back(timerid);
     return timerid;

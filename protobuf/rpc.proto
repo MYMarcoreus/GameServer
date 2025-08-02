@@ -4,29 +4,25 @@ package yy.protocol.core;
 
 message RpcMessage
 {
-  enum Type {
-      REQUEST = 0;
-      RESPONSE = 1;
-      ERROR = 2; // not used
-  }
-  enum Status {
-      NO_ERROR = 0;
-      WRONG_PROTO = 1;
-      NO_SERVICE = 2;
-      NO_METHOD = 3;
-      INVALID_REQUEST = 4;
-      INVALID_RESPONSE = 5;
-      TIMEOUT = 6;
-  }
-
+    enum Type {
+        REQUEST = 0;
+        RESPONSE = 1;
+        ERROR = 2; // not used
+    }
+    enum Status {
+        NO_ERROR = 0;
+        WRONG_PROTO = 1;
+        NO_SERVICE = 2;
+        NO_METHOD = 3;
+        INVALID_REQUEST = 4;
+        INVALID_RESPONSE = 5;
+        TIMEOUT = 6;
+    }
     Type type = 1;
     fixed64 id = 2;
-
     optional string service = 3;
     optional string method = 4;
-
     optional bytes request = 5;
     optional bytes response = 6;
-
     optional Status error = 7;
 }

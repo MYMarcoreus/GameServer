@@ -1,8 +1,10 @@
 #pragma once
 
 #include "account.pb.h"
-#include "CenterRpcClient.h"
+#include "rpc_clients/CenterRpcClient.h"
 #include <google/protobuf/service.h>
+
+
 
 
 namespace yy::net
@@ -14,7 +16,7 @@ namespace yy::core
 {
 namespace zk
 {
-    class ZkServiceManager;
+    class ZkServiceClient;
 }
 namespace rpc { class RpcServer; }
 namespace redis { class RedisClient; }
@@ -24,6 +26,8 @@ class IServer;
 
 namespace yy::app::account
 {
+class AccountMysqlDAO;
+class AccountRedisDAO;
 
 class AccountRpcServiceImpl final : public protocol::app::AccountServiceRpc {
     constexpr static std::string PWD_field = "password";
@@ -33,21 +37,23 @@ public:
     explicit AccountRpcServiceImpl(net::EventLoop * loop);
 
     void Login(google::protobuf::RpcController* controller,
-               const protocol::app::C2SLogin* request,
-               protocol::app::S2CLogin* response,
+               const protocol::app::LoginReq* request,
+               protocol::app::LoginRsp* response,
                google::protobuf::Closure* done) override;
 
     void Register(google::protobuf::RpcController* controller,
-                  const protocol::app::C2SRegister* request,
-                  protocol::app::S2CRegister* response,
+                  const protocol::app::RegisterReq* request,
+                  protocol::app::RegisterRsp* response,
                   google::protobuf::Closure* done) override;
 
 private:
+    auto GenerateToken() -> std::string;
+
     core::IServer & server_;
     core::rpc::RpcServer & rpc_server_;
-    core::redis::RedisClient& redis_client_;
-    core::mysql::MySqlClient& mysql_client_;
-    CenterRpcClient& center_client_;
+    AccountRedisDAO& redis_dao_;
+    AccountMysqlDAO& mysql_dao_;
+    rpc_client::CenterRpcClient& center_client_;
 };
 
 }

@@ -60,9 +60,12 @@ public:
     ///@brief 析构时关闭套接字
     ~Socket();
 
-    Type              GetType()   const { return m_type; }
-    Family            GetFamily() const { return m_family; }
-    SocketApiWrapper::socket_t GetFD()     const { return m_socketfd; }
+    auto GetType() const -> Type { return m_type; }
+    auto GetFamily() const -> Family { return m_family; }
+    auto GetFD() const -> SocketApiWrapper::socket_t { return m_socketfd; }
+    IPAddress::ptr GetLocalAddr();
+    IPAddress::ptr GetPeerAddr();
+
     bool IsNonblocking() const { return m_IsNonblocking; }
     void SetNonblocking();
     void SetOpt_ReuseAddr(bool onoff);
@@ -71,7 +74,6 @@ public:
     void SetOpt_Linger   (bool onoff, int timeout = 0);
     void SetOpt_RecvBuf(int bufSize);
     void SetOpt_SendBuf(int bufSize);
-
 
     ///@brief 设置为监听套接字，出错则终止程序
     void Listen(int backlog = SOMAXCONN);

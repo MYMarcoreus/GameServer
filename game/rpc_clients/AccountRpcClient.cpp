@@ -9,7 +9,7 @@ template<>                                                                 \
 void AccountRpcClient::DoCall<ReqType, RspType>(                           \
 AccountServiceRpc_Stub& stub,                                              \
 RpcControllerImpl* controller,                                             \
-ReqType* request,                                                          \
+const ReqType* request,                                                    \
 RspType* response,                                                         \
 google::protobuf::Closure* done)                                           \
 {                                                                          \

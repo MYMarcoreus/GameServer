@@ -26,11 +26,10 @@ public:
     void Start(int ioThreadNum, net::Milliseconds ioWaitTimeout, const net::F_ThreadInitCallback& cb = nullptr) ;
 
     /// @brief 结束服务器
-    void Stop() ;
+    void Stop();
 
     template <typename ServiceType, typename... Args>
     requires requires(ServiceType t) {
-        // 必须继承自 protobuf::Service
         requires std::derived_from<ServiceType, google::protobuf::Service>;
         requires (!requires {
             { t.channel() } -> std::convertible_to<google::protobuf::RpcChannel*>;
@@ -38,19 +37,18 @@ public:
     }
     void RegisterService(Args&&... args);
 
-    template <typename ServiceType, typename... Args>
+    template <typename ServiceType>
     requires requires(ServiceType t) {
-        // 必须继承自 protobuf::Service
         requires std::derived_from<ServiceType, google::protobuf::Service>;
         requires (!requires {
             { t.channel() } -> std::convertible_to<google::protobuf::RpcChannel*>;
         });
-}
+    }
     void RegisterService(std::unique_ptr<ServiceType> && service);
 
-    const std::string & GetServiceRoot() const { return service_root_; }
+    auto GetServiceRoot() const -> const std::string& { return service_root_; }
 
-    zk::ZkServiceClient & GetZkServiceManager() { return zkServiceManager_; };
+    auto GetZkServiceManager() -> zk::ZkServiceClient& { return zkServiceManager_; }
 
 private:
     void OnRpcRequest(const net::TcpConnectionPtr& conn, const RpcMessagePtr& msg);
@@ -84,33 +82,32 @@ void RpcServer::RegisterService(Args&&... args)
     const std::string service_name = service_desc->name();
 
     if (services_.contains(service_name)) {
-        YLOG_WARN("RPC Server: Service {} is already exist", service_name);
+        YLOG_WARN("[RPC Server] Service {} is already exist", service_name);
         return;
     }
 
     services_[service_name] = std::move(service);
     // 注册zookeeper服务
-    zkServiceManager_.Register(service_name, listenAddr_->GetIPStr(), listenAddr_->GetPortStr());
-    YLOG_INFO("RPC Server: Registered service {}", service_name);
+    // zkServiceManager_.Register(service_name, listenAddr_->GetIPStr(), listenAddr_->GetPortStr());
+    YLOG_INFO("[RPC Server] Registered service {} in Local", service_name);
 }
 
-template <typename ServiceType, typename ... Args> requires requires (ServiceType t) { requires std::derived_from<
-    ServiceType, google::protobuf::Service>; requires (!requires { { t.channel() } -> std::convertible_to<google::
-    protobuf::RpcChannel*>; }); }
-void RpcServer::RegisterService(unique_ptr<ServiceType> && service)
+template <typename ServiceType> requires requires (ServiceType t) {
+    requires std::derived_from<ServiceType, google::protobuf::Service>;
+    requires (!requires { { t.channel() } -> std::convertible_to<google::protobuf::RpcChannel*>; });
+}
+void RpcServer::RegisterService(std::unique_ptr<ServiceType> && service)
 {
     const auto* service_desc = service->GetDescriptor();
     const std::string service_name = service_desc->name();
 
     if (services_.contains(service_name)) {
-        YLOG_WARN("RPC Server: Service {} is already exist", service_name);
+        YLOG_WARN("[RPC Server] Service {} is already exist", service_name);
         return;
     }
 
     services_[service_name] = std::move(service);
-    // 注册zookeeper服务
-    zkServiceManager_.Register(service_name, listenAddr_->GetIPStr(), listenAddr_->GetPortStr());
-    YLOG_INFO("RPC Server: Registered service {}", service_name);
+    YLOG_INFO("[RPC Server] Registered service {} in Local", service_name);
 }
 
 inline auto RpcServer::GetService(const std::string& name) const -> std::optional<std::reference_wrapper<google::protobuf::Service>>

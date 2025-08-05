@@ -29,14 +29,14 @@ RpcServer::RpcServer(net::EventLoop* accpetorLoop, const net::IPAddressPtr& list
     });
 
     server_.SetConnectionEstablishedCallback([this](const net::TcpConnectionPtr& conn) {
-        YLOG_INFO("RPC Server: Connection established with {}:{}", conn->GetPeerAddr()->GetIPStr(), conn->GetPeerAddr()->GetPort());
+        YLOG_INFO("[RPC Server] Connection established with {}:{}", conn->GetPeerAddr()->GetIPStr(), conn->GetPeerAddr()->GetPort());
         if (not conn->IsConnected()) {
             conn->Shutdown();
         }
     });
 
     server_.SetConnectionDestroyedCallback([this](const net::TcpConnectionPtr& conn) {
-        YLOG_INFO("RPC Server Connection destroyed with {}:{}", conn->GetPeerAddr()->GetIPStr(), conn->GetPeerAddr()->GetPort());
+        YLOG_INFO("[RPC Server] Connection destroyed with {}:{}", conn->GetPeerAddr()->GetIPStr(), conn->GetPeerAddr()->GetPort());
     });
 
     zkServiceManager_.Start(service_root_);
@@ -50,19 +50,18 @@ RpcServer::~RpcServer()
 void RpcServer::Start(const int ioThreadNum, const net::Milliseconds ioWaitTimeout, const net::F_ThreadInitCallback& cb)
 {
     if (services_.empty()) {
-        std::cerr << "RPC Server: No services were provided." << std::endl;
+        std::cerr << "[RPC Server] No services were provided." << std::endl;
         std::terminate();
     }
     const auto & ip = listenAddr_->GetIPStr();
     const auto & port = listenAddr_->GetPortStr();
-
     //! 启动时注册zookeeper服务
     for (auto & [service_name, service] : services_)
     {
         zkServiceManager_.Register(service_name, ip, port);
     }
 
-    server_.Start(ioThreadNum, ioWaitTimeout);
+    server_.Start(ioThreadNum, ioWaitTimeout, cb);
 }
 
 void RpcServer::Stop()

@@ -8,20 +8,20 @@
 
 namespace yy::net {
 
-IPv4Address::IPv4Address() : IPv4Address(0, 0) {}
+IPv4Address::IPv4Address() : IPv4Address(INADDR_ANY, 0) {}
 
-IPv4Address::IPv4Address(uint16_t port) : IPv4Address(INADDR_ANY, port) {}
+IPv4Address::IPv4Address(const uint16_t port) : IPv4Address(INADDR_ANY, port) {}
 
 IPv4Address::IPv4Address(const std::string &ipv4_str): IPv4Address(ipv4_str, 0) { }
 
-
-IPv4Address::IPv4Address(const std::string & ipv4_str, uint16_t port): m_address{}
+IPv4Address::IPv4Address(const std::string & ipv4_str, const uint16_t port): m_address{}
 {
-    int ret = ::inet_pton(AF_INET, ipv4_str.c_str(), &m_address.sin_addr);
+    const int ret = ::inet_pton(AF_INET, ipv4_str.c_str(), &m_address.sin_addr);
     if (ret == 0) {
         YLOG_FATAL("inet_pton() error: invalid format of ipv4 address.")
         throw std::invalid_argument("invalid format of ipv4 address.");
-    } else if (ret == -1 and errno == EAFNOSUPPORT) {
+    }
+    if (ret == -1 and errno == EAFNOSUPPORT) {
         YLOG_FATAL("inet_pton() error, invalid address family")
         throw std::invalid_argument("invalid address family");
     }

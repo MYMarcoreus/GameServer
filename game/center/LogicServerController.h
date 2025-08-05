@@ -27,12 +27,11 @@ public:
     ///@brief 根据房间ID获取房间所在的服务器
     auto FindServerNameByRoomID(ROOM_ID_t room_id) -> std::optional<std::string>;
 
-
-
 private:
-    LogicInfoController                         logic_info_controller_;
-    RoomInfoController                          room_info_controller_;
-    rpc_client::LogicRpcClient&                         logic_client_;
+    LogicInfoController                             logic_info_controller_;
+    RoomInfoController                              room_info_controller_;
+    rpc_client::LogicRpcClient&                     logic_client_;
+    std::unique_ptr<core::zk::ZkServiceClient>      zk_client_{};
 };
 
 }

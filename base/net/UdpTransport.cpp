@@ -14,9 +14,9 @@ namespace yy::net {
 
 using namespace yy::util;
 using namespace yy::config;
-using yy::SocketApiWrapper::SocketError;
+using SocketApiWrapper::SocketError;
 
-UdpTransport::UdpTransport(EventLoop * recvLoop, std::optional<uint16_t> app_udp_port, const int32_t recv_bytes_one, const int32_t m_send_thread_num):
+UdpTransport::UdpTransport(EventLoop * recvLoop, const IPAddressPtr & recv_addr, const int32_t recv_bytes_one, const int32_t m_send_thread_num):
     m_recv_bytes_one(recv_bytes_one),
     m_send_thread_num(m_send_thread_num),
     m_recvLoop(recvLoop),
@@ -29,26 +29,14 @@ UdpTransport::UdpTransport(EventLoop * recvLoop, std::optional<uint16_t> app_udp
     assert(m_recvBuf);
     assert(m_sendWorkThreadPool);
 
-    m_sendWorkThreadPool->Start(recvLoop, m_send_thread_num);
+    m_sendWorkThreadPool->Start(m_recvLoop, m_send_thread_num);
 
-    if (app_udp_port.has_value()) {
-        m_udp_port = app_udp_port.value();
-    }
-
-    const yy::net::IPAddressPtr recvAddr = std::make_shared<net::IPv4Address>(m_udp_port);
     m_socket->SetOpt_ReuseAddr(true);
-    m_socket->Bind(recvAddr);
+    m_socket->Bind(recv_addr);
     m_socket->SetOpt_KeepAlive(true);
 
-    YLOG_INFO("线程<{}>开始接收Udp，接收地址为：<{}:{}>，接收套接字为{}", util::CastThreadIDToStr(recvLoop->GetThreadID()),
-              recvAddr->GetIPStr().c_str(), recvAddr->GetPort(), m_socket->GetFD())
-
     m_channel = std::make_unique<IOChannel>(recvLoop, m_socket->GetFD(), "udp-server-sock");
-    m_channel->SetErrorCallback([this](){this->HandleError();});
-    m_channel->SetReadCallback ([this](){this->HandleRead() ;});
-    m_channel->GetOwnerLoop()->RunCallbackInLoop([this](){
-        this->m_channel->EnableReading();
-    });
+
 }
 
 
@@ -59,21 +47,32 @@ UdpTransport::~UdpTransport() {
     YLOG_DEBUG("UdpTransport<{}>已被析构！", this->GetSocketFD())
 }
 
+void UdpTransport::StartRecv()
+{
+    m_recvLoop->RunCallbackInLoop([this] { this->StartRecvInLoop(); });
+}
+
+
+void UdpTransport::StartRecvInLoop()
+{
+    m_recvLoop->AssertInLoopingThread();
+
+    m_channel->SetErrorCallback([this](){this->HandleError();});
+    m_channel->SetReadCallback ([this](){this->HandleRead() ;});
+    m_channel->EnableReading();
+    const auto recv_addr = m_socket->GetLocalAddr();
+    YLOG_INFO("线程<{}>开始接收Udp，接收地址为：<{}:{}>，接收套接字为{}", util::CastThreadIDToStr(m_recvLoop->GetThreadID()),
+          recv_addr->GetIPStr().c_str(), recv_addr->GetPort(), m_socket->GetFD())
+}
 
 SocketApiWrapper::socket_t UdpTransport::GetSocketFD() const {
     return m_socket->GetFD();
 }
 
-
-// void UdpTransport::SendUDP(const google::protobuf::Message & message, IPAddressPtr peerAddr) {
-//     //! FIXED_BUG：string_view对象并不会延长临时string的生命周期
-//     //! 下面两种方式生成的临时string均会在message.SerializeAsString()返回后被销毁，string_view 持有的指针变成悬垂指针
-//     //! SendUDP(std::string_view(message.SerializeAsString()));
-//     //! SendUDP(message.SerializeAsString());
-//     std::string tmp = message.SerializeAsString(); // tmp 是一个局部变量，生命周期在本函数结束前有效（如果跨线程，则不安全需要拷贝该字符串）
-//     SendUDP(std::string_view{tmp}, peerAddr); // string 会自动转换构造为 string_view临时对象，被调用的Send不论有没有const&都是生命周期安全的。
-// }
-
+auto UdpTransport::GetRecvAddr() const -> IPAddressPtr
+{
+    return m_socket->GetLocalAddr();
+}
 
 void UdpTransport::SendUDP(const std::string_view & message, const IPAddressPtr & peerAddr) {
     //! 需要将数据从业务线程拷贝到IO线程中（否则线程不安全），这里SendInLoop使用const &延长临时对象生命周期
@@ -82,7 +81,7 @@ void UdpTransport::SendUDP(const std::string_view & message, const IPAddressPtr 
     });
 }
 
-void UdpTransport::SendUDP(const std::shared_ptr<util::SequentialBuffer>& buf, const IPAddressPtr & peerAddr)
+void UdpTransport::SendUDP(const std::shared_ptr<SequentialBuffer>& buf, const IPAddressPtr & peerAddr)
 {
     m_sendWorkThreadPool->PushTask([this, buf /* 引用计数+1 */, peerAddr]() {
         this->SendUDPWorker(buf, peerAddr);
@@ -122,7 +121,7 @@ void UdpTransport::SendUDPWorker(const std::string_view & buf, const IPAddressPt
     }
 }
 
-void UdpTransport::SendUDPWorker(const std::shared_ptr<util::SequentialBuffer> & buf, const IPAddressPtr & peerAddr) { //! const &延长临时对象生命周期
+void UdpTransport::SendUDPWorker(const std::shared_ptr<SequentialBuffer> & buf, const IPAddressPtr & peerAddr) { //! const &延长临时对象生命周期
     //! 输出缓冲中目前没有任何的未发送数据，便直接向套接字发送数据（不借助输出缓冲）
     SocketApiWrapper::SocketResult rst = m_socket->Sendto(buf->Peek(), buf->GetDataSize(), 0, peerAddr);
 

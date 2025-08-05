@@ -1,82 +1,114 @@
 #include "RoomManager.h"
-
+#include "AppXmlConfig.h"
+#include "EventLoop.h"
+#include "EventLoopThread.h"
+#include "EventLoopThreadPool.h"
 #include <ranges>
 
-#include "EventLoop.h"
-#include "util_functions.h"
-
-#include "EventLoopThread.h"
-
+using namespace yy::net;
+using namespace yy::core;
+using namespace yy::app;
+using namespace yy::protocol::app;
 
 namespace yy::app::logic
 {
-RoomManager::RoomManager()
+RoomManager::RoomManager(EventLoop * base_loop): base_loop_(base_loop)
 {
-    (void)0;
+    work_threads = std::make_unique<EventLoopThreadPool>(base_loop);
+    work_threads->Start(config::g_app_config->GetValue().work_thread_num(), 500ms); //! 启动服务器的工作线程：即时处理
 }
 
-RoomPtr RoomManager::AddRoom(EventLoop* loop, RoomDetailData room_data)
+void RoomManager::AddRoom(RoomDetailData room_data, std::function<void(RoomPtr)> done)
 {
-    // 初始化房间对象，开启Update
-    auto room = std::make_shared<Room>(loop, room_data);
-    room->Init(ROOM_TICK);
+    assert(done);
+    if (!done) return;
 
-    // 加入房间列表
-    {
-        util::WriteLockGuard lg(mutex_);
+    base_loop_->RunCallbackInLoop([this, room_data = std::move(room_data), done = std::move(done)] {
+        // 初始化房间对象，分配房间对应的线程，开启Update
+         auto room = std::make_shared<Room>(work_threads->GetNextLoop(), room_data);
+         room->Init(ROOM_TICK);
+
+         // 加入房间列表
         rooms_.emplace(room->get_id(), room);
         uid_to_roomid_.emplace(room->get_owner_uid(), room->get_id());
-    }
-    return room;
+        return done(room);
+    });
 }
 
-bool RoomManager::RemoveRoom(const ROOM_ID_t room_id)
+void RoomManager::RemoveRoom(const ROOM_ID_t room_id, std::function<void(bool)> done)
 {
-    const auto room = FindRoomByRoomID(room_id);
-    if (room == nullptr) {
-        return false;
-    }
+    assert(done);
+    if (!done) return;
 
-    util::WriteLockGuard lg(mutex_);
-    for (const auto& player_uid : room->GetAllPlayers() | std::views::keys) {
-        uid_to_roomid_.erase(player_uid);
-    }
-    return rooms_.erase(room_id) > 0;
+    base_loop_->RunCallbackInLoop([this, room_id, done = std::move(done)] {
+        const auto it = rooms_.find(room_id);
+        const auto room = (it != rooms_.end() ? it->second : nullptr);
+        if (room == nullptr) {
+            return done(false);
+        }
+        for (const auto& player_uid : room->GetAllPlayers() | std::views::keys) {
+            uid_to_roomid_.erase(player_uid);
+        }
+        return done(rooms_.erase(room_id) > 0);
+    });
 }
 
-std::optional<ROOM_ID_t> RoomManager::FindRoomIDByUID(const UID_t uid)
+void RoomManager::FindRoomByRoomID(const ROOM_ID_t room_id, std::function<void(RoomPtr)> done)
 {
-    util::ReadLockGuard lg(mutex_);
-    const auto it_room_id = uid_to_roomid_.find(uid);
-    if (it_room_id == uid_to_roomid_.end()) {
-        return std::nullopt;
-    }
-    return it_room_id->second;
+    assert(done);
+    if (!done) return;
+
+    base_loop_->RunCallbackInLoop([this, room_id, done = std::move(done)] {
+        const auto it = rooms_.find(room_id);
+        done(it != rooms_.end() ? it->second : nullptr);
+    });
 }
 
-RoomPtr RoomManager::FindRoomByRoomID(const ROOM_ID_t room_id)
+void RoomManager::FindRoomByUID(const UID_t uid, std::function<void(RoomPtr)> done)
 {
-    util::ReadLockGuard lg(mutex_);
-    const auto it = rooms_.find(room_id);
-    return it != rooms_.end() ? it->second : nullptr;
+    assert(done);
+    if (!done) return;
+
+    base_loop_->RunCallbackInLoop([this, uid, done = std::move(done)] {
+        const auto it_room_id = uid_to_roomid_.find(uid);
+        if (it_room_id == uid_to_roomid_.end()) {
+            return done(nullptr);
+        }
+        const auto it = rooms_.find(it_room_id->second);
+        done(it != rooms_.end() ? it->second : nullptr);
+    });
 }
 
-RoomPtr RoomManager::FindRoomByUID(const UID_t uid)
+void RoomManager::FindRoomIDByUID(const UID_t uid, std::function<void(std::optional<ROOM_ID_t>)> done)
 {
-    const auto room_id = FindRoomIDByUID(uid);
-    return room_id ? FindRoomByRoomID(room_id.value()) : nullptr;
+    assert(done);
+    if (!done) return;
+
+    base_loop_->RunCallbackInLoop([this, uid, done = std::move(done)] {
+        const auto it_room_id = uid_to_roomid_.find(uid);
+        if (it_room_id == uid_to_roomid_.end()) {
+            return done(std::nullopt);
+        }
+        return done(it_room_id->second);
+    });
 }
 
-PlayerPtr RoomManager::FindPlayer(const UID_t uid)
+void RoomManager::AddPlayerToRoom(ROOM_ID_t room_id, UID_t uid, const UserConnectionPtr & userconn, std::function<void(RoomPtr)> done)
 {
-    const auto room = FindRoomByUID(uid);
-    return room ? room->FindPlayer(uid) : nullptr;
-}
+    assert(done);
+    if (!done) return;
 
-PlayerPtr RoomManager::FindPlayer(const ROOM_ID_t room_id, const UID_t uid)
-{
-    const auto room = FindRoomByRoomID(room_id);
-    return room ? room->FindPlayer(uid) : nullptr;
+    base_loop_->RunCallbackInLoop([this, room_id, uid, done = std::move(done), userconn] {
+        // 查找要加入的房间
+        const auto it_room = rooms_.find(room_id);
+        const auto room = (it_room != rooms_.end() ? it_room->second : nullptr);
+        if (room == nullptr) {
+            return done(nullptr);
+        }
+        room->AddPlayer(userconn, uid);
+        uid_to_roomid_.emplace(uid, room->get_id());
+        return done(room);
+    });
 }
 
 }

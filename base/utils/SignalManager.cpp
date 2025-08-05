@@ -2,7 +2,7 @@
 #include "IOChannel.h"
 #include "util_functions.h"
 
-namespace yy::util
+namespace yy::net
 {
 
 SignalManager::SignalManager(EventLoop* loop, const std::function<void()>& handler):
@@ -52,6 +52,6 @@ void SignalManager::set_signal_handler_default(const int SIGXXXX)
     set_signal_handler(SIGXXXX, SIG_DFL);
 }
 
-FullDuplexPipe SignalManager::pipe_{};
+util::FullDuplexPipe SignalManager::pipe_{};
 
 }

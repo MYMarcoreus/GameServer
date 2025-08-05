@@ -137,19 +137,13 @@ include_directories(
 
 
 set(COMMON_SOURCES
-        game/account/AccountRedisDAO.cpp
-        game/account/AccountRedisDAO.h
-        game/account/AccountData.cpp
-        game/account/AccountData.h
-        game/account/AccountMysqlDAO.cpp
-        game/account/AccountMysqlDAO.h
-        game/gate/GateRedisDAO.cpp
-        game/gate/GateRedisDAO.h
-        game/center/CenterRedisDAO.cpp
-        game/center/CenterRedisDAO.h
-        game/logic/LogicRedisDAO.cpp
-        game/logic/LogicRedisDAO.h
-        core/codec/CodecUtils.hpp
+        game/rpc_clients/GateRpcClient.cpp
+        game/rpc_clients/GateRpcClient.h
+        game/gate/GateRpcServiceImpl.cpp
+        game/gate/GateRpcServiceImpl.h
+        game/gate/ForwardManager.cpp
+        game/gate/ForwardManager.h
+        base/net/UnorderedMapInLoop.hpp
 
 )
 # 调用子目录下的cmake

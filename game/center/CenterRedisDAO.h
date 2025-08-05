@@ -7,7 +7,6 @@
 
 namespace yy::net { class EventLoop; }
 namespace yy::core::redis { class RedisClient; }
-using namespace yy::protocol::app;
 
 namespace yy::app::center
 {

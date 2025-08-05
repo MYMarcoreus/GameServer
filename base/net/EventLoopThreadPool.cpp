@@ -20,7 +20,7 @@ void EventLoopThreadPool::Start(const int threadNum, Milliseconds pollwaitTimeou
     for (int i = 0; i < threadNum; ++i) {
         auto loop_thread = std::make_unique<EventLoopThread>(cb, pollwaitTimeout);
         m_ioLoops.emplace_back(loop_thread->CreateLoop());
-        YLOG_INFO("启动io线程<{}>！", loop_thread->GetThreadID())
+        YLOG_INFO("[EventLoopThreadPool] 启动io线程<{}>！", loop_thread->GetThreadID())
         m_Threads.emplace_back(std::move(loop_thread));
     }
 

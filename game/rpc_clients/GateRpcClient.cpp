@@ -1,13 +1,13 @@
-#include "LogicRpcClient.h"
+#include "GateRpcClient.h"
 
 using namespace yy::protocol::app;
-using yy::app::rpc_client::LogicRpcClient;
+using yy::app::rpc_client::GateRpcClient;
 
 #define DEFINE_CENTER_RPC_CALL(ReqType, RspType, MethodName)           \
 template<>                                                             \
 template<>                                                             \
-void LogicRpcClient::DoCall<ReqType, RspType>(                         \
-LogicRoomServiceRpc_Stub& stub,                                        \
+void GateRpcClient::DoCall<ReqType, RspType>(                          \
+GateRoomServiceRpc_Stub& stub,                                         \
 RpcControllerImpl* controller,                                         \
 const ReqType* request,                                                \
 RspType* response,                                                     \
@@ -16,6 +16,4 @@ google::protobuf::Closure* done)                                       \
 stub.MethodName(controller, request, response, done);                  \
 }
 
-DEFINE_CENTER_RPC_CALL(NewRoomReq, NewRoomRsp, NewRoom)
-DEFINE_CENTER_RPC_CALL(DeleteRoomReq, DeleteRoomRsp, DeleteRoom)
-DEFINE_CENTER_RPC_CALL(GetLogicAddrReq, GetLogicAddrRsp, GetLogicAddr)
+DEFINE_CENTER_RPC_CALL(BroadcastRoomReq, BroadcastRoomRsp, BroadcastRoom)

@@ -137,6 +137,16 @@ SocketApiWrapper::SocketResult Socket::Recvfrom(void *ptr, const size_t nbytes, 
     return SocketApiWrapper::recvfrom(m_socketfd, ptr, nbytes, flags, peerAddr);
 }
 
+IPAddress::ptr Socket::GetLocalAddr()
+{
+    return SocketApiWrapper::GetLocalAddr(m_socketfd);
+}
+
+IPAddress::ptr Socket::GetPeerAddr()
+{
+    return SocketApiWrapper::GetPeerAddr(m_socketfd);
+}
+
 void Socket::SetNonblocking() {
     SocketApiWrapper::set_nonblocking(m_socketfd);
 }

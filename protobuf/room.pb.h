@@ -70,24 +70,36 @@ extern GetEnterSceneTokenReqDefaultTypeInternal _GetEnterSceneTokenReq_default_i
 class GetEnterSceneTokenRsp;
 struct GetEnterSceneTokenRspDefaultTypeInternal;
 extern GetEnterSceneTokenRspDefaultTypeInternal _GetEnterSceneTokenRsp_default_instance_;
-class JoinRoomReq;
-struct JoinRoomReqDefaultTypeInternal;
-extern JoinRoomReqDefaultTypeInternal _JoinRoomReq_default_instance_;
-class JoinRoomRsp;
-struct JoinRoomRspDefaultTypeInternal;
-extern JoinRoomRspDefaultTypeInternal _JoinRoomRsp_default_instance_;
-class QuitRoomReq;
-struct QuitRoomReqDefaultTypeInternal;
-extern QuitRoomReqDefaultTypeInternal _QuitRoomReq_default_instance_;
-class QuitRoomRsp;
-struct QuitRoomRspDefaultTypeInternal;
-extern QuitRoomRspDefaultTypeInternal _QuitRoomRsp_default_instance_;
+class OtherJoinRoomRsp;
+struct OtherJoinRoomRspDefaultTypeInternal;
+extern OtherJoinRoomRspDefaultTypeInternal _OtherJoinRoomRsp_default_instance_;
+class OtherQuitRoomRsp;
+struct OtherQuitRoomRspDefaultTypeInternal;
+extern OtherQuitRoomRspDefaultTypeInternal _OtherQuitRoomRsp_default_instance_;
 class SearchRoomReq;
 struct SearchRoomReqDefaultTypeInternal;
 extern SearchRoomReqDefaultTypeInternal _SearchRoomReq_default_instance_;
 class SearchRoomRsp;
 struct SearchRoomRspDefaultTypeInternal;
 extern SearchRoomRspDefaultTypeInternal _SearchRoomRsp_default_instance_;
+class SelfJoinRoomReq;
+struct SelfJoinRoomReqDefaultTypeInternal;
+extern SelfJoinRoomReqDefaultTypeInternal _SelfJoinRoomReq_default_instance_;
+class SelfJoinRoomRsp;
+struct SelfJoinRoomRspDefaultTypeInternal;
+extern SelfJoinRoomRspDefaultTypeInternal _SelfJoinRoomRsp_default_instance_;
+class SelfQuitRoomReq;
+struct SelfQuitRoomReqDefaultTypeInternal;
+extern SelfQuitRoomReqDefaultTypeInternal _SelfQuitRoomReq_default_instance_;
+class SelfQuitRoomRsp;
+struct SelfQuitRoomRspDefaultTypeInternal;
+extern SelfQuitRoomRspDefaultTypeInternal _SelfQuitRoomRsp_default_instance_;
+class UserDisconnectReq;
+struct UserDisconnectReqDefaultTypeInternal;
+extern UserDisconnectReqDefaultTypeInternal _UserDisconnectReq_default_instance_;
+class UserDisconnectRsp;
+struct UserDisconnectRspDefaultTypeInternal;
+extern UserDisconnectRspDefaultTypeInternal _UserDisconnectRsp_default_instance_;
 }  // namespace app
 }  // namespace protocol
 }  // namespace yy
@@ -98,12 +110,16 @@ template<> ::yy::protocol::app::CreateRoomReq* Arena::CreateMaybeMessage<::yy::p
 template<> ::yy::protocol::app::CreateRoomRsp* Arena::CreateMaybeMessage<::yy::protocol::app::CreateRoomRsp>(Arena*);
 template<> ::yy::protocol::app::GetEnterSceneTokenReq* Arena::CreateMaybeMessage<::yy::protocol::app::GetEnterSceneTokenReq>(Arena*);
 template<> ::yy::protocol::app::GetEnterSceneTokenRsp* Arena::CreateMaybeMessage<::yy::protocol::app::GetEnterSceneTokenRsp>(Arena*);
-template<> ::yy::protocol::app::JoinRoomReq* Arena::CreateMaybeMessage<::yy::protocol::app::JoinRoomReq>(Arena*);
-template<> ::yy::protocol::app::JoinRoomRsp* Arena::CreateMaybeMessage<::yy::protocol::app::JoinRoomRsp>(Arena*);
-template<> ::yy::protocol::app::QuitRoomReq* Arena::CreateMaybeMessage<::yy::protocol::app::QuitRoomReq>(Arena*);
-template<> ::yy::protocol::app::QuitRoomRsp* Arena::CreateMaybeMessage<::yy::protocol::app::QuitRoomRsp>(Arena*);
+template<> ::yy::protocol::app::OtherJoinRoomRsp* Arena::CreateMaybeMessage<::yy::protocol::app::OtherJoinRoomRsp>(Arena*);
+template<> ::yy::protocol::app::OtherQuitRoomRsp* Arena::CreateMaybeMessage<::yy::protocol::app::OtherQuitRoomRsp>(Arena*);
 template<> ::yy::protocol::app::SearchRoomReq* Arena::CreateMaybeMessage<::yy::protocol::app::SearchRoomReq>(Arena*);
 template<> ::yy::protocol::app::SearchRoomRsp* Arena::CreateMaybeMessage<::yy::protocol::app::SearchRoomRsp>(Arena*);
+template<> ::yy::protocol::app::SelfJoinRoomReq* Arena::CreateMaybeMessage<::yy::protocol::app::SelfJoinRoomReq>(Arena*);
+template<> ::yy::protocol::app::SelfJoinRoomRsp* Arena::CreateMaybeMessage<::yy::protocol::app::SelfJoinRoomRsp>(Arena*);
+template<> ::yy::protocol::app::SelfQuitRoomReq* Arena::CreateMaybeMessage<::yy::protocol::app::SelfQuitRoomReq>(Arena*);
+template<> ::yy::protocol::app::SelfQuitRoomRsp* Arena::CreateMaybeMessage<::yy::protocol::app::SelfQuitRoomRsp>(Arena*);
+template<> ::yy::protocol::app::UserDisconnectReq* Arena::CreateMaybeMessage<::yy::protocol::app::UserDisconnectReq>(Arena*);
+template<> ::yy::protocol::app::UserDisconnectRsp* Arena::CreateMaybeMessage<::yy::protocol::app::UserDisconnectRsp>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
 namespace yy {
 namespace protocol {
@@ -135,57 +151,109 @@ inline bool CreateRoomRsp_Status_Parse(
   return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<CreateRoomRsp_Status>(
     CreateRoomRsp_Status_descriptor(), name, value);
 }
-enum JoinRoomRsp_Status : int {
-  JoinRoomRsp_Status_eSuccess = 0,
-  JoinRoomRsp_Status_eRoomNotExist = 1,
-  JoinRoomRsp_Status_eUnknownError = 2,
-  JoinRoomRsp_Status_JoinRoomRsp_Status_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
-  JoinRoomRsp_Status_JoinRoomRsp_Status_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
+enum SelfJoinRoomRsp_Status : int {
+  SelfJoinRoomRsp_Status_eSuccess = 0,
+  SelfJoinRoomRsp_Status_eRoomNotExist = 1,
+  SelfJoinRoomRsp_Status_eUnknownError = 2,
+  SelfJoinRoomRsp_Status_SelfJoinRoomRsp_Status_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
+  SelfJoinRoomRsp_Status_SelfJoinRoomRsp_Status_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
 };
-bool JoinRoomRsp_Status_IsValid(int value);
-constexpr JoinRoomRsp_Status JoinRoomRsp_Status_Status_MIN = JoinRoomRsp_Status_eSuccess;
-constexpr JoinRoomRsp_Status JoinRoomRsp_Status_Status_MAX = JoinRoomRsp_Status_eUnknownError;
-constexpr int JoinRoomRsp_Status_Status_ARRAYSIZE = JoinRoomRsp_Status_Status_MAX + 1;
+bool SelfJoinRoomRsp_Status_IsValid(int value);
+constexpr SelfJoinRoomRsp_Status SelfJoinRoomRsp_Status_Status_MIN = SelfJoinRoomRsp_Status_eSuccess;
+constexpr SelfJoinRoomRsp_Status SelfJoinRoomRsp_Status_Status_MAX = SelfJoinRoomRsp_Status_eUnknownError;
+constexpr int SelfJoinRoomRsp_Status_Status_ARRAYSIZE = SelfJoinRoomRsp_Status_Status_MAX + 1;
 
-const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* JoinRoomRsp_Status_descriptor();
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* SelfJoinRoomRsp_Status_descriptor();
 template<typename T>
-inline const std::string& JoinRoomRsp_Status_Name(T enum_t_value) {
-  static_assert(::std::is_same<T, JoinRoomRsp_Status>::value ||
+inline const std::string& SelfJoinRoomRsp_Status_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, SelfJoinRoomRsp_Status>::value ||
     ::std::is_integral<T>::value,
-    "Incorrect type passed to function JoinRoomRsp_Status_Name.");
+    "Incorrect type passed to function SelfJoinRoomRsp_Status_Name.");
   return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
-    JoinRoomRsp_Status_descriptor(), enum_t_value);
+    SelfJoinRoomRsp_Status_descriptor(), enum_t_value);
 }
-inline bool JoinRoomRsp_Status_Parse(
-    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, JoinRoomRsp_Status* value) {
-  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<JoinRoomRsp_Status>(
-    JoinRoomRsp_Status_descriptor(), name, value);
+inline bool SelfJoinRoomRsp_Status_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, SelfJoinRoomRsp_Status* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<SelfJoinRoomRsp_Status>(
+    SelfJoinRoomRsp_Status_descriptor(), name, value);
 }
-enum QuitRoomRsp_Status : int {
-  QuitRoomRsp_Status_eSuccess = 0,
-  QuitRoomRsp_Status_eRoomNotExist = 1,
-  QuitRoomRsp_Status_eUnknownError = 2,
-  QuitRoomRsp_Status_QuitRoomRsp_Status_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
-  QuitRoomRsp_Status_QuitRoomRsp_Status_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
+enum OtherJoinRoomRsp_Status : int {
+  OtherJoinRoomRsp_Status_eSuccess = 0,
+  OtherJoinRoomRsp_Status_eRoomNotExist = 1,
+  OtherJoinRoomRsp_Status_eUnknownError = 2,
+  OtherJoinRoomRsp_Status_OtherJoinRoomRsp_Status_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
+  OtherJoinRoomRsp_Status_OtherJoinRoomRsp_Status_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
 };
-bool QuitRoomRsp_Status_IsValid(int value);
-constexpr QuitRoomRsp_Status QuitRoomRsp_Status_Status_MIN = QuitRoomRsp_Status_eSuccess;
-constexpr QuitRoomRsp_Status QuitRoomRsp_Status_Status_MAX = QuitRoomRsp_Status_eUnknownError;
-constexpr int QuitRoomRsp_Status_Status_ARRAYSIZE = QuitRoomRsp_Status_Status_MAX + 1;
+bool OtherJoinRoomRsp_Status_IsValid(int value);
+constexpr OtherJoinRoomRsp_Status OtherJoinRoomRsp_Status_Status_MIN = OtherJoinRoomRsp_Status_eSuccess;
+constexpr OtherJoinRoomRsp_Status OtherJoinRoomRsp_Status_Status_MAX = OtherJoinRoomRsp_Status_eUnknownError;
+constexpr int OtherJoinRoomRsp_Status_Status_ARRAYSIZE = OtherJoinRoomRsp_Status_Status_MAX + 1;
 
-const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* QuitRoomRsp_Status_descriptor();
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* OtherJoinRoomRsp_Status_descriptor();
 template<typename T>
-inline const std::string& QuitRoomRsp_Status_Name(T enum_t_value) {
-  static_assert(::std::is_same<T, QuitRoomRsp_Status>::value ||
+inline const std::string& OtherJoinRoomRsp_Status_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, OtherJoinRoomRsp_Status>::value ||
     ::std::is_integral<T>::value,
-    "Incorrect type passed to function QuitRoomRsp_Status_Name.");
+    "Incorrect type passed to function OtherJoinRoomRsp_Status_Name.");
   return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
-    QuitRoomRsp_Status_descriptor(), enum_t_value);
+    OtherJoinRoomRsp_Status_descriptor(), enum_t_value);
 }
-inline bool QuitRoomRsp_Status_Parse(
-    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, QuitRoomRsp_Status* value) {
-  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<QuitRoomRsp_Status>(
-    QuitRoomRsp_Status_descriptor(), name, value);
+inline bool OtherJoinRoomRsp_Status_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, OtherJoinRoomRsp_Status* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<OtherJoinRoomRsp_Status>(
+    OtherJoinRoomRsp_Status_descriptor(), name, value);
+}
+enum SelfQuitRoomRsp_Status : int {
+  SelfQuitRoomRsp_Status_eSuccess = 0,
+  SelfQuitRoomRsp_Status_eRoomNotExist = 1,
+  SelfQuitRoomRsp_Status_eUnknownError = 2,
+  SelfQuitRoomRsp_Status_SelfQuitRoomRsp_Status_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
+  SelfQuitRoomRsp_Status_SelfQuitRoomRsp_Status_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
+};
+bool SelfQuitRoomRsp_Status_IsValid(int value);
+constexpr SelfQuitRoomRsp_Status SelfQuitRoomRsp_Status_Status_MIN = SelfQuitRoomRsp_Status_eSuccess;
+constexpr SelfQuitRoomRsp_Status SelfQuitRoomRsp_Status_Status_MAX = SelfQuitRoomRsp_Status_eUnknownError;
+constexpr int SelfQuitRoomRsp_Status_Status_ARRAYSIZE = SelfQuitRoomRsp_Status_Status_MAX + 1;
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* SelfQuitRoomRsp_Status_descriptor();
+template<typename T>
+inline const std::string& SelfQuitRoomRsp_Status_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, SelfQuitRoomRsp_Status>::value ||
+    ::std::is_integral<T>::value,
+    "Incorrect type passed to function SelfQuitRoomRsp_Status_Name.");
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
+    SelfQuitRoomRsp_Status_descriptor(), enum_t_value);
+}
+inline bool SelfQuitRoomRsp_Status_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, SelfQuitRoomRsp_Status* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<SelfQuitRoomRsp_Status>(
+    SelfQuitRoomRsp_Status_descriptor(), name, value);
+}
+enum OtherQuitRoomRsp_Status : int {
+  OtherQuitRoomRsp_Status_eSuccess = 0,
+  OtherQuitRoomRsp_Status_eRoomNotExist = 1,
+  OtherQuitRoomRsp_Status_eUnknownError = 2,
+  OtherQuitRoomRsp_Status_OtherQuitRoomRsp_Status_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
+  OtherQuitRoomRsp_Status_OtherQuitRoomRsp_Status_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
+};
+bool OtherQuitRoomRsp_Status_IsValid(int value);
+constexpr OtherQuitRoomRsp_Status OtherQuitRoomRsp_Status_Status_MIN = OtherQuitRoomRsp_Status_eSuccess;
+constexpr OtherQuitRoomRsp_Status OtherQuitRoomRsp_Status_Status_MAX = OtherQuitRoomRsp_Status_eUnknownError;
+constexpr int OtherQuitRoomRsp_Status_Status_ARRAYSIZE = OtherQuitRoomRsp_Status_Status_MAX + 1;
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* OtherQuitRoomRsp_Status_descriptor();
+template<typename T>
+inline const std::string& OtherQuitRoomRsp_Status_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, OtherQuitRoomRsp_Status>::value ||
+    ::std::is_integral<T>::value,
+    "Incorrect type passed to function OtherQuitRoomRsp_Status_Name.");
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
+    OtherQuitRoomRsp_Status_descriptor(), enum_t_value);
+}
+inline bool OtherQuitRoomRsp_Status_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, OtherQuitRoomRsp_Status* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<OtherQuitRoomRsp_Status>(
+    OtherQuitRoomRsp_Status_descriptor(), name, value);
 }
 enum GetEnterSceneTokenRsp_Status : int {
   GetEnterSceneTokenRsp_Status_eSuccess = 0,
@@ -941,22 +1009,22 @@ class SearchRoomRsp final :
     kRoomDatasFieldNumber = 2,
     kUidFieldNumber = 1,
   };
-  // repeated .yy.protocol.app.RoomBriefData room_datas = 2;
+  // repeated .yy.protocol.app.RoomDetailData room_datas = 2;
   int room_datas_size() const;
   private:
   int _internal_room_datas_size() const;
   public:
   void clear_room_datas();
-  ::yy::protocol::app::RoomBriefData* mutable_room_datas(int index);
-  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::yy::protocol::app::RoomBriefData >*
+  ::yy::protocol::app::RoomDetailData* mutable_room_datas(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::yy::protocol::app::RoomDetailData >*
       mutable_room_datas();
   private:
-  const ::yy::protocol::app::RoomBriefData& _internal_room_datas(int index) const;
-  ::yy::protocol::app::RoomBriefData* _internal_add_room_datas();
+  const ::yy::protocol::app::RoomDetailData& _internal_room_datas(int index) const;
+  ::yy::protocol::app::RoomDetailData* _internal_add_room_datas();
   public:
-  const ::yy::protocol::app::RoomBriefData& room_datas(int index) const;
-  ::yy::protocol::app::RoomBriefData* add_room_datas();
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::yy::protocol::app::RoomBriefData >&
+  const ::yy::protocol::app::RoomDetailData& room_datas(int index) const;
+  ::yy::protocol::app::RoomDetailData* add_room_datas();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::yy::protocol::app::RoomDetailData >&
       room_datas() const;
 
   // uint64 uid = 1;
@@ -976,7 +1044,7 @@ class SearchRoomRsp final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
-    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::yy::protocol::app::RoomBriefData > room_datas_;
+    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::yy::protocol::app::RoomDetailData > room_datas_;
     uint64_t uid_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
@@ -985,24 +1053,24 @@ class SearchRoomRsp final :
 };
 // -------------------------------------------------------------------
 
-class JoinRoomReq final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:yy.protocol.app.JoinRoomReq) */ {
+class SelfJoinRoomReq final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:yy.protocol.app.SelfJoinRoomReq) */ {
  public:
-  inline JoinRoomReq() : JoinRoomReq(nullptr) {}
-  ~JoinRoomReq() override;
-  explicit PROTOBUF_CONSTEXPR JoinRoomReq(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+  inline SelfJoinRoomReq() : SelfJoinRoomReq(nullptr) {}
+  ~SelfJoinRoomReq() override;
+  explicit PROTOBUF_CONSTEXPR SelfJoinRoomReq(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
 
-  JoinRoomReq(const JoinRoomReq& from);
-  JoinRoomReq(JoinRoomReq&& from) noexcept
-    : JoinRoomReq() {
+  SelfJoinRoomReq(const SelfJoinRoomReq& from);
+  SelfJoinRoomReq(SelfJoinRoomReq&& from) noexcept
+    : SelfJoinRoomReq() {
     *this = ::std::move(from);
   }
 
-  inline JoinRoomReq& operator=(const JoinRoomReq& from) {
+  inline SelfJoinRoomReq& operator=(const SelfJoinRoomReq& from) {
     CopyFrom(from);
     return *this;
   }
-  inline JoinRoomReq& operator=(JoinRoomReq&& from) noexcept {
+  inline SelfJoinRoomReq& operator=(SelfJoinRoomReq&& from) noexcept {
     if (this == &from) return *this;
     if (GetOwningArena() == from.GetOwningArena()
   #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
@@ -1025,20 +1093,20 @@ class JoinRoomReq final :
   static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
     return default_instance().GetMetadata().reflection;
   }
-  static const JoinRoomReq& default_instance() {
+  static const SelfJoinRoomReq& default_instance() {
     return *internal_default_instance();
   }
-  static inline const JoinRoomReq* internal_default_instance() {
-    return reinterpret_cast<const JoinRoomReq*>(
-               &_JoinRoomReq_default_instance_);
+  static inline const SelfJoinRoomReq* internal_default_instance() {
+    return reinterpret_cast<const SelfJoinRoomReq*>(
+               &_SelfJoinRoomReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
     4;
 
-  friend void swap(JoinRoomReq& a, JoinRoomReq& b) {
+  friend void swap(SelfJoinRoomReq& a, SelfJoinRoomReq& b) {
     a.Swap(&b);
   }
-  inline void Swap(JoinRoomReq* other) {
+  inline void Swap(SelfJoinRoomReq* other) {
     if (other == this) return;
   #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
     if (GetOwningArena() != nullptr &&
@@ -1051,7 +1119,7 @@ class JoinRoomReq final :
       ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
     }
   }
-  void UnsafeArenaSwap(JoinRoomReq* other) {
+  void UnsafeArenaSwap(SelfJoinRoomReq* other) {
     if (other == this) return;
     GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
     InternalSwap(other);
@@ -1059,14 +1127,14 @@ class JoinRoomReq final :
 
   // implements Message ----------------------------------------------
 
-  JoinRoomReq* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
-    return CreateMaybeMessage<JoinRoomReq>(arena);
+  SelfJoinRoomReq* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<SelfJoinRoomReq>(arena);
   }
   using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
-  void CopyFrom(const JoinRoomReq& from);
+  void CopyFrom(const SelfJoinRoomReq& from);
   using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
-  void MergeFrom( const JoinRoomReq& from) {
-    JoinRoomReq::MergeImpl(*this, from);
+  void MergeFrom( const SelfJoinRoomReq& from) {
+    SelfJoinRoomReq::MergeImpl(*this, from);
   }
   private:
   static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
@@ -1084,15 +1152,15 @@ class JoinRoomReq final :
   void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
   void SharedDtor();
   void SetCachedSize(int size) const final;
-  void InternalSwap(JoinRoomReq* other);
+  void InternalSwap(SelfJoinRoomReq* other);
 
   private:
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "yy.protocol.app.JoinRoomReq";
+    return "yy.protocol.app.SelfJoinRoomReq";
   }
   protected:
-  explicit JoinRoomReq(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+  explicit SelfJoinRoomReq(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                        bool is_message_owned = false);
   public:
 
@@ -1106,11 +1174,11 @@ class JoinRoomReq final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kUserTokenFieldNumber = 3,
-    kUidFieldNumber = 1,
-    kRoomIdFieldNumber = 2,
+    kUserTokenFieldNumber = 2,
+    kJoinnerDataFieldNumber = 1,
+    kRoomIdFieldNumber = 3,
   };
-  // string user_token = 3;
+  // string user_token = 2;
   void clear_user_token();
   const std::string& user_token() const;
   template <typename ArgT0 = const std::string&, typename... ArgT>
@@ -1124,16 +1192,25 @@ class JoinRoomReq final :
   std::string* _internal_mutable_user_token();
   public:
 
-  // uint64 uid = 1;
-  void clear_uid();
-  uint64_t uid() const;
-  void set_uid(uint64_t value);
+  // .yy.protocol.app.AccountBaseData joinner_data = 1;
+  bool has_joinner_data() const;
   private:
-  uint64_t _internal_uid() const;
-  void _internal_set_uid(uint64_t value);
+  bool _internal_has_joinner_data() const;
   public:
+  void clear_joinner_data();
+  const ::yy::protocol::app::AccountBaseData& joinner_data() const;
+  PROTOBUF_NODISCARD ::yy::protocol::app::AccountBaseData* release_joinner_data();
+  ::yy::protocol::app::AccountBaseData* mutable_joinner_data();
+  void set_allocated_joinner_data(::yy::protocol::app::AccountBaseData* joinner_data);
+  private:
+  const ::yy::protocol::app::AccountBaseData& _internal_joinner_data() const;
+  ::yy::protocol::app::AccountBaseData* _internal_mutable_joinner_data();
+  public:
+  void unsafe_arena_set_allocated_joinner_data(
+      ::yy::protocol::app::AccountBaseData* joinner_data);
+  ::yy::protocol::app::AccountBaseData* unsafe_arena_release_joinner_data();
 
-  // uint64 room_id = 2;
+  // uint64 room_id = 3;
   void clear_room_id();
   uint64_t room_id() const;
   void set_room_id(uint64_t value);
@@ -1142,7 +1219,7 @@ class JoinRoomReq final :
   void _internal_set_room_id(uint64_t value);
   public:
 
-  // @@protoc_insertion_point(class_scope:yy.protocol.app.JoinRoomReq)
+  // @@protoc_insertion_point(class_scope:yy.protocol.app.SelfJoinRoomReq)
  private:
   class _Internal;
 
@@ -1151,7 +1228,7 @@ class JoinRoomReq final :
   typedef void DestructorSkippable_;
   struct Impl_ {
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr user_token_;
-    uint64_t uid_;
+    ::yy::protocol::app::AccountBaseData* joinner_data_;
     uint64_t room_id_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
@@ -1160,24 +1237,24 @@ class JoinRoomReq final :
 };
 // -------------------------------------------------------------------
 
-class JoinRoomRsp final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:yy.protocol.app.JoinRoomRsp) */ {
+class SelfJoinRoomRsp final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:yy.protocol.app.SelfJoinRoomRsp) */ {
  public:
-  inline JoinRoomRsp() : JoinRoomRsp(nullptr) {}
-  ~JoinRoomRsp() override;
-  explicit PROTOBUF_CONSTEXPR JoinRoomRsp(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+  inline SelfJoinRoomRsp() : SelfJoinRoomRsp(nullptr) {}
+  ~SelfJoinRoomRsp() override;
+  explicit PROTOBUF_CONSTEXPR SelfJoinRoomRsp(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
 
-  JoinRoomRsp(const JoinRoomRsp& from);
-  JoinRoomRsp(JoinRoomRsp&& from) noexcept
-    : JoinRoomRsp() {
+  SelfJoinRoomRsp(const SelfJoinRoomRsp& from);
+  SelfJoinRoomRsp(SelfJoinRoomRsp&& from) noexcept
+    : SelfJoinRoomRsp() {
     *this = ::std::move(from);
   }
 
-  inline JoinRoomRsp& operator=(const JoinRoomRsp& from) {
+  inline SelfJoinRoomRsp& operator=(const SelfJoinRoomRsp& from) {
     CopyFrom(from);
     return *this;
   }
-  inline JoinRoomRsp& operator=(JoinRoomRsp&& from) noexcept {
+  inline SelfJoinRoomRsp& operator=(SelfJoinRoomRsp&& from) noexcept {
     if (this == &from) return *this;
     if (GetOwningArena() == from.GetOwningArena()
   #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
@@ -1200,20 +1277,20 @@ class JoinRoomRsp final :
   static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
     return default_instance().GetMetadata().reflection;
   }
-  static const JoinRoomRsp& default_instance() {
+  static const SelfJoinRoomRsp& default_instance() {
     return *internal_default_instance();
   }
-  static inline const JoinRoomRsp* internal_default_instance() {
-    return reinterpret_cast<const JoinRoomRsp*>(
-               &_JoinRoomRsp_default_instance_);
+  static inline const SelfJoinRoomRsp* internal_default_instance() {
+    return reinterpret_cast<const SelfJoinRoomRsp*>(
+               &_SelfJoinRoomRsp_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
     5;
 
-  friend void swap(JoinRoomRsp& a, JoinRoomRsp& b) {
+  friend void swap(SelfJoinRoomRsp& a, SelfJoinRoomRsp& b) {
     a.Swap(&b);
   }
-  inline void Swap(JoinRoomRsp* other) {
+  inline void Swap(SelfJoinRoomRsp* other) {
     if (other == this) return;
   #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
     if (GetOwningArena() != nullptr &&
@@ -1226,7 +1303,7 @@ class JoinRoomRsp final :
       ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
     }
   }
-  void UnsafeArenaSwap(JoinRoomRsp* other) {
+  void UnsafeArenaSwap(SelfJoinRoomRsp* other) {
     if (other == this) return;
     GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
     InternalSwap(other);
@@ -1234,14 +1311,14 @@ class JoinRoomRsp final :
 
   // implements Message ----------------------------------------------
 
-  JoinRoomRsp* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
-    return CreateMaybeMessage<JoinRoomRsp>(arena);
+  SelfJoinRoomRsp* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<SelfJoinRoomRsp>(arena);
   }
   using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
-  void CopyFrom(const JoinRoomRsp& from);
+  void CopyFrom(const SelfJoinRoomRsp& from);
   using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
-  void MergeFrom( const JoinRoomRsp& from) {
-    JoinRoomRsp::MergeImpl(*this, from);
+  void MergeFrom( const SelfJoinRoomRsp& from) {
+    SelfJoinRoomRsp::MergeImpl(*this, from);
   }
   private:
   static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
@@ -1259,15 +1336,15 @@ class JoinRoomRsp final :
   void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
   void SharedDtor();
   void SetCachedSize(int size) const final;
-  void InternalSwap(JoinRoomRsp* other);
+  void InternalSwap(SelfJoinRoomRsp* other);
 
   private:
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "yy.protocol.app.JoinRoomRsp";
+    return "yy.protocol.app.SelfJoinRoomRsp";
   }
   protected:
-  explicit JoinRoomRsp(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+  explicit SelfJoinRoomRsp(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                        bool is_message_owned = false);
   public:
 
@@ -1278,45 +1355,61 @@ class JoinRoomRsp final :
 
   // nested types ----------------------------------------------------
 
-  typedef JoinRoomRsp_Status Status;
+  typedef SelfJoinRoomRsp_Status Status;
   static constexpr Status eSuccess =
-    JoinRoomRsp_Status_eSuccess;
+    SelfJoinRoomRsp_Status_eSuccess;
   static constexpr Status eRoomNotExist =
-    JoinRoomRsp_Status_eRoomNotExist;
+    SelfJoinRoomRsp_Status_eRoomNotExist;
   static constexpr Status eUnknownError =
-    JoinRoomRsp_Status_eUnknownError;
+    SelfJoinRoomRsp_Status_eUnknownError;
   static inline bool Status_IsValid(int value) {
-    return JoinRoomRsp_Status_IsValid(value);
+    return SelfJoinRoomRsp_Status_IsValid(value);
   }
   static constexpr Status Status_MIN =
-    JoinRoomRsp_Status_Status_MIN;
+    SelfJoinRoomRsp_Status_Status_MIN;
   static constexpr Status Status_MAX =
-    JoinRoomRsp_Status_Status_MAX;
+    SelfJoinRoomRsp_Status_Status_MAX;
   static constexpr int Status_ARRAYSIZE =
-    JoinRoomRsp_Status_Status_ARRAYSIZE;
+    SelfJoinRoomRsp_Status_Status_ARRAYSIZE;
   static inline const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
   Status_descriptor() {
-    return JoinRoomRsp_Status_descriptor();
+    return SelfJoinRoomRsp_Status_descriptor();
   }
   template<typename T>
   static inline const std::string& Status_Name(T enum_t_value) {
     static_assert(::std::is_same<T, Status>::value ||
       ::std::is_integral<T>::value,
       "Incorrect type passed to function Status_Name.");
-    return JoinRoomRsp_Status_Name(enum_t_value);
+    return SelfJoinRoomRsp_Status_Name(enum_t_value);
   }
   static inline bool Status_Parse(::PROTOBUF_NAMESPACE_ID::ConstStringParam name,
       Status* value) {
-    return JoinRoomRsp_Status_Parse(name, value);
+    return SelfJoinRoomRsp_Status_Parse(name, value);
   }
 
   // accessors -------------------------------------------------------
 
   enum : int {
+    kRoomIpFieldNumber = 4,
     kRoomDataFieldNumber = 3,
     kUidFieldNumber = 1,
     kResultCodeFieldNumber = 2,
+    kRoomPortFieldNumber = 5,
   };
+  // string room_ip = 4;
+  void clear_room_ip();
+  const std::string& room_ip() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_room_ip(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_room_ip();
+  PROTOBUF_NODISCARD std::string* release_room_ip();
+  void set_allocated_room_ip(std::string* room_ip);
+  private:
+  const std::string& _internal_room_ip() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_room_ip(const std::string& value);
+  std::string* _internal_mutable_room_ip();
+  public:
+
   // .yy.protocol.app.RoomDetailData room_data = 3;
   bool has_room_data() const;
   private:
@@ -1344,16 +1437,25 @@ class JoinRoomRsp final :
   void _internal_set_uid(uint64_t value);
   public:
 
-  // .yy.protocol.app.JoinRoomRsp.Status result_code = 2;
+  // .yy.protocol.app.SelfJoinRoomRsp.Status result_code = 2;
   void clear_result_code();
-  ::yy::protocol::app::JoinRoomRsp_Status result_code() const;
-  void set_result_code(::yy::protocol::app::JoinRoomRsp_Status value);
+  ::yy::protocol::app::SelfJoinRoomRsp_Status result_code() const;
+  void set_result_code(::yy::protocol::app::SelfJoinRoomRsp_Status value);
   private:
-  ::yy::protocol::app::JoinRoomRsp_Status _internal_result_code() const;
-  void _internal_set_result_code(::yy::protocol::app::JoinRoomRsp_Status value);
+  ::yy::protocol::app::SelfJoinRoomRsp_Status _internal_result_code() const;
+  void _internal_set_result_code(::yy::protocol::app::SelfJoinRoomRsp_Status value);
   public:
 
-  // @@protoc_insertion_point(class_scope:yy.protocol.app.JoinRoomRsp)
+  // uint32 room_port = 5;
+  void clear_room_port();
+  uint32_t room_port() const;
+  void set_room_port(uint32_t value);
+  private:
+  uint32_t _internal_room_port() const;
+  void _internal_set_room_port(uint32_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:yy.protocol.app.SelfJoinRoomRsp)
  private:
   class _Internal;
 
@@ -1361,9 +1463,11 @@ class JoinRoomRsp final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr room_ip_;
     ::yy::protocol::app::RoomDetailData* room_data_;
     uint64_t uid_;
     int result_code_;
+    uint32_t room_port_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -1371,24 +1475,24 @@ class JoinRoomRsp final :
 };
 // -------------------------------------------------------------------
 
-class QuitRoomReq final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:yy.protocol.app.QuitRoomReq) */ {
+class OtherJoinRoomRsp final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:yy.protocol.app.OtherJoinRoomRsp) */ {
  public:
-  inline QuitRoomReq() : QuitRoomReq(nullptr) {}
-  ~QuitRoomReq() override;
-  explicit PROTOBUF_CONSTEXPR QuitRoomReq(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+  inline OtherJoinRoomRsp() : OtherJoinRoomRsp(nullptr) {}
+  ~OtherJoinRoomRsp() override;
+  explicit PROTOBUF_CONSTEXPR OtherJoinRoomRsp(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
 
-  QuitRoomReq(const QuitRoomReq& from);
-  QuitRoomReq(QuitRoomReq&& from) noexcept
-    : QuitRoomReq() {
+  OtherJoinRoomRsp(const OtherJoinRoomRsp& from);
+  OtherJoinRoomRsp(OtherJoinRoomRsp&& from) noexcept
+    : OtherJoinRoomRsp() {
     *this = ::std::move(from);
   }
 
-  inline QuitRoomReq& operator=(const QuitRoomReq& from) {
+  inline OtherJoinRoomRsp& operator=(const OtherJoinRoomRsp& from) {
     CopyFrom(from);
     return *this;
   }
-  inline QuitRoomReq& operator=(QuitRoomReq&& from) noexcept {
+  inline OtherJoinRoomRsp& operator=(OtherJoinRoomRsp&& from) noexcept {
     if (this == &from) return *this;
     if (GetOwningArena() == from.GetOwningArena()
   #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
@@ -1411,20 +1515,20 @@ class QuitRoomReq final :
   static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
     return default_instance().GetMetadata().reflection;
   }
-  static const QuitRoomReq& default_instance() {
+  static const OtherJoinRoomRsp& default_instance() {
     return *internal_default_instance();
   }
-  static inline const QuitRoomReq* internal_default_instance() {
-    return reinterpret_cast<const QuitRoomReq*>(
-               &_QuitRoomReq_default_instance_);
+  static inline const OtherJoinRoomRsp* internal_default_instance() {
+    return reinterpret_cast<const OtherJoinRoomRsp*>(
+               &_OtherJoinRoomRsp_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
     6;
 
-  friend void swap(QuitRoomReq& a, QuitRoomReq& b) {
+  friend void swap(OtherJoinRoomRsp& a, OtherJoinRoomRsp& b) {
     a.Swap(&b);
   }
-  inline void Swap(QuitRoomReq* other) {
+  inline void Swap(OtherJoinRoomRsp* other) {
     if (other == this) return;
   #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
     if (GetOwningArena() != nullptr &&
@@ -1437,7 +1541,7 @@ class QuitRoomReq final :
       ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
     }
   }
-  void UnsafeArenaSwap(QuitRoomReq* other) {
+  void UnsafeArenaSwap(OtherJoinRoomRsp* other) {
     if (other == this) return;
     GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
     InternalSwap(other);
@@ -1445,14 +1549,14 @@ class QuitRoomReq final :
 
   // implements Message ----------------------------------------------
 
-  QuitRoomReq* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
-    return CreateMaybeMessage<QuitRoomReq>(arena);
+  OtherJoinRoomRsp* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<OtherJoinRoomRsp>(arena);
   }
   using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
-  void CopyFrom(const QuitRoomReq& from);
+  void CopyFrom(const OtherJoinRoomRsp& from);
   using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
-  void MergeFrom( const QuitRoomReq& from) {
-    QuitRoomReq::MergeImpl(*this, from);
+  void MergeFrom( const OtherJoinRoomRsp& from) {
+    OtherJoinRoomRsp::MergeImpl(*this, from);
   }
   private:
   static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
@@ -1470,15 +1574,215 @@ class QuitRoomReq final :
   void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
   void SharedDtor();
   void SetCachedSize(int size) const final;
-  void InternalSwap(QuitRoomReq* other);
+  void InternalSwap(OtherJoinRoomRsp* other);
 
   private:
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "yy.protocol.app.QuitRoomReq";
+    return "yy.protocol.app.OtherJoinRoomRsp";
   }
   protected:
-  explicit QuitRoomReq(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+  explicit OtherJoinRoomRsp(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  typedef OtherJoinRoomRsp_Status Status;
+  static constexpr Status eSuccess =
+    OtherJoinRoomRsp_Status_eSuccess;
+  static constexpr Status eRoomNotExist =
+    OtherJoinRoomRsp_Status_eRoomNotExist;
+  static constexpr Status eUnknownError =
+    OtherJoinRoomRsp_Status_eUnknownError;
+  static inline bool Status_IsValid(int value) {
+    return OtherJoinRoomRsp_Status_IsValid(value);
+  }
+  static constexpr Status Status_MIN =
+    OtherJoinRoomRsp_Status_Status_MIN;
+  static constexpr Status Status_MAX =
+    OtherJoinRoomRsp_Status_Status_MAX;
+  static constexpr int Status_ARRAYSIZE =
+    OtherJoinRoomRsp_Status_Status_ARRAYSIZE;
+  static inline const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
+  Status_descriptor() {
+    return OtherJoinRoomRsp_Status_descriptor();
+  }
+  template<typename T>
+  static inline const std::string& Status_Name(T enum_t_value) {
+    static_assert(::std::is_same<T, Status>::value ||
+      ::std::is_integral<T>::value,
+      "Incorrect type passed to function Status_Name.");
+    return OtherJoinRoomRsp_Status_Name(enum_t_value);
+  }
+  static inline bool Status_Parse(::PROTOBUF_NAMESPACE_ID::ConstStringParam name,
+      Status* value) {
+    return OtherJoinRoomRsp_Status_Parse(name, value);
+  }
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kJoinnerDataFieldNumber = 3,
+    kResultCodeFieldNumber = 2,
+  };
+  // .yy.protocol.app.AccountBaseData joinner_data = 3;
+  bool has_joinner_data() const;
+  private:
+  bool _internal_has_joinner_data() const;
+  public:
+  void clear_joinner_data();
+  const ::yy::protocol::app::AccountBaseData& joinner_data() const;
+  PROTOBUF_NODISCARD ::yy::protocol::app::AccountBaseData* release_joinner_data();
+  ::yy::protocol::app::AccountBaseData* mutable_joinner_data();
+  void set_allocated_joinner_data(::yy::protocol::app::AccountBaseData* joinner_data);
+  private:
+  const ::yy::protocol::app::AccountBaseData& _internal_joinner_data() const;
+  ::yy::protocol::app::AccountBaseData* _internal_mutable_joinner_data();
+  public:
+  void unsafe_arena_set_allocated_joinner_data(
+      ::yy::protocol::app::AccountBaseData* joinner_data);
+  ::yy::protocol::app::AccountBaseData* unsafe_arena_release_joinner_data();
+
+  // .yy.protocol.app.OtherJoinRoomRsp.Status result_code = 2;
+  void clear_result_code();
+  ::yy::protocol::app::OtherJoinRoomRsp_Status result_code() const;
+  void set_result_code(::yy::protocol::app::OtherJoinRoomRsp_Status value);
+  private:
+  ::yy::protocol::app::OtherJoinRoomRsp_Status _internal_result_code() const;
+  void _internal_set_result_code(::yy::protocol::app::OtherJoinRoomRsp_Status value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:yy.protocol.app.OtherJoinRoomRsp)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::yy::protocol::app::AccountBaseData* joinner_data_;
+    int result_code_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_room_2eproto;
+};
+// -------------------------------------------------------------------
+
+class SelfQuitRoomReq final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:yy.protocol.app.SelfQuitRoomReq) */ {
+ public:
+  inline SelfQuitRoomReq() : SelfQuitRoomReq(nullptr) {}
+  ~SelfQuitRoomReq() override;
+  explicit PROTOBUF_CONSTEXPR SelfQuitRoomReq(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  SelfQuitRoomReq(const SelfQuitRoomReq& from);
+  SelfQuitRoomReq(SelfQuitRoomReq&& from) noexcept
+    : SelfQuitRoomReq() {
+    *this = ::std::move(from);
+  }
+
+  inline SelfQuitRoomReq& operator=(const SelfQuitRoomReq& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline SelfQuitRoomReq& operator=(SelfQuitRoomReq&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const SelfQuitRoomReq& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const SelfQuitRoomReq* internal_default_instance() {
+    return reinterpret_cast<const SelfQuitRoomReq*>(
+               &_SelfQuitRoomReq_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    7;
+
+  friend void swap(SelfQuitRoomReq& a, SelfQuitRoomReq& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(SelfQuitRoomReq* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(SelfQuitRoomReq* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  SelfQuitRoomReq* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<SelfQuitRoomReq>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const SelfQuitRoomReq& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const SelfQuitRoomReq& from) {
+    SelfQuitRoomReq::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(SelfQuitRoomReq* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "yy.protocol.app.SelfQuitRoomReq";
+  }
+  protected:
+  explicit SelfQuitRoomReq(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                        bool is_message_owned = false);
   public:
 
@@ -1528,7 +1832,7 @@ class QuitRoomReq final :
   void _internal_set_room_id(uint64_t value);
   public:
 
-  // @@protoc_insertion_point(class_scope:yy.protocol.app.QuitRoomReq)
+  // @@protoc_insertion_point(class_scope:yy.protocol.app.SelfQuitRoomReq)
  private:
   class _Internal;
 
@@ -1546,24 +1850,24 @@ class QuitRoomReq final :
 };
 // -------------------------------------------------------------------
 
-class QuitRoomRsp final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:yy.protocol.app.QuitRoomRsp) */ {
+class SelfQuitRoomRsp final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:yy.protocol.app.SelfQuitRoomRsp) */ {
  public:
-  inline QuitRoomRsp() : QuitRoomRsp(nullptr) {}
-  ~QuitRoomRsp() override;
-  explicit PROTOBUF_CONSTEXPR QuitRoomRsp(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+  inline SelfQuitRoomRsp() : SelfQuitRoomRsp(nullptr) {}
+  ~SelfQuitRoomRsp() override;
+  explicit PROTOBUF_CONSTEXPR SelfQuitRoomRsp(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
 
-  QuitRoomRsp(const QuitRoomRsp& from);
-  QuitRoomRsp(QuitRoomRsp&& from) noexcept
-    : QuitRoomRsp() {
+  SelfQuitRoomRsp(const SelfQuitRoomRsp& from);
+  SelfQuitRoomRsp(SelfQuitRoomRsp&& from) noexcept
+    : SelfQuitRoomRsp() {
     *this = ::std::move(from);
   }
 
-  inline QuitRoomRsp& operator=(const QuitRoomRsp& from) {
+  inline SelfQuitRoomRsp& operator=(const SelfQuitRoomRsp& from) {
     CopyFrom(from);
     return *this;
   }
-  inline QuitRoomRsp& operator=(QuitRoomRsp&& from) noexcept {
+  inline SelfQuitRoomRsp& operator=(SelfQuitRoomRsp&& from) noexcept {
     if (this == &from) return *this;
     if (GetOwningArena() == from.GetOwningArena()
   #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
@@ -1586,20 +1890,20 @@ class QuitRoomRsp final :
   static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
     return default_instance().GetMetadata().reflection;
   }
-  static const QuitRoomRsp& default_instance() {
+  static const SelfQuitRoomRsp& default_instance() {
     return *internal_default_instance();
   }
-  static inline const QuitRoomRsp* internal_default_instance() {
-    return reinterpret_cast<const QuitRoomRsp*>(
-               &_QuitRoomRsp_default_instance_);
+  static inline const SelfQuitRoomRsp* internal_default_instance() {
+    return reinterpret_cast<const SelfQuitRoomRsp*>(
+               &_SelfQuitRoomRsp_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    7;
+    8;
 
-  friend void swap(QuitRoomRsp& a, QuitRoomRsp& b) {
+  friend void swap(SelfQuitRoomRsp& a, SelfQuitRoomRsp& b) {
     a.Swap(&b);
   }
-  inline void Swap(QuitRoomRsp* other) {
+  inline void Swap(SelfQuitRoomRsp* other) {
     if (other == this) return;
   #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
     if (GetOwningArena() != nullptr &&
@@ -1612,7 +1916,7 @@ class QuitRoomRsp final :
       ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
     }
   }
-  void UnsafeArenaSwap(QuitRoomRsp* other) {
+  void UnsafeArenaSwap(SelfQuitRoomRsp* other) {
     if (other == this) return;
     GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
     InternalSwap(other);
@@ -1620,14 +1924,14 @@ class QuitRoomRsp final :
 
   // implements Message ----------------------------------------------
 
-  QuitRoomRsp* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
-    return CreateMaybeMessage<QuitRoomRsp>(arena);
+  SelfQuitRoomRsp* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<SelfQuitRoomRsp>(arena);
   }
   using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
-  void CopyFrom(const QuitRoomRsp& from);
+  void CopyFrom(const SelfQuitRoomRsp& from);
   using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
-  void MergeFrom( const QuitRoomRsp& from) {
-    QuitRoomRsp::MergeImpl(*this, from);
+  void MergeFrom( const SelfQuitRoomRsp& from) {
+    SelfQuitRoomRsp::MergeImpl(*this, from);
   }
   private:
   static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
@@ -1645,15 +1949,15 @@ class QuitRoomRsp final :
   void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
   void SharedDtor();
   void SetCachedSize(int size) const final;
-  void InternalSwap(QuitRoomRsp* other);
+  void InternalSwap(SelfQuitRoomRsp* other);
 
   private:
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "yy.protocol.app.QuitRoomRsp";
+    return "yy.protocol.app.SelfQuitRoomRsp";
   }
   protected:
-  explicit QuitRoomRsp(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+  explicit SelfQuitRoomRsp(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                        bool is_message_owned = false);
   public:
 
@@ -1664,36 +1968,36 @@ class QuitRoomRsp final :
 
   // nested types ----------------------------------------------------
 
-  typedef QuitRoomRsp_Status Status;
+  typedef SelfQuitRoomRsp_Status Status;
   static constexpr Status eSuccess =
-    QuitRoomRsp_Status_eSuccess;
+    SelfQuitRoomRsp_Status_eSuccess;
   static constexpr Status eRoomNotExist =
-    QuitRoomRsp_Status_eRoomNotExist;
+    SelfQuitRoomRsp_Status_eRoomNotExist;
   static constexpr Status eUnknownError =
-    QuitRoomRsp_Status_eUnknownError;
+    SelfQuitRoomRsp_Status_eUnknownError;
   static inline bool Status_IsValid(int value) {
-    return QuitRoomRsp_Status_IsValid(value);
+    return SelfQuitRoomRsp_Status_IsValid(value);
   }
   static constexpr Status Status_MIN =
-    QuitRoomRsp_Status_Status_MIN;
+    SelfQuitRoomRsp_Status_Status_MIN;
   static constexpr Status Status_MAX =
-    QuitRoomRsp_Status_Status_MAX;
+    SelfQuitRoomRsp_Status_Status_MAX;
   static constexpr int Status_ARRAYSIZE =
-    QuitRoomRsp_Status_Status_ARRAYSIZE;
+    SelfQuitRoomRsp_Status_Status_ARRAYSIZE;
   static inline const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
   Status_descriptor() {
-    return QuitRoomRsp_Status_descriptor();
+    return SelfQuitRoomRsp_Status_descriptor();
   }
   template<typename T>
   static inline const std::string& Status_Name(T enum_t_value) {
     static_assert(::std::is_same<T, Status>::value ||
       ::std::is_integral<T>::value,
       "Incorrect type passed to function Status_Name.");
-    return QuitRoomRsp_Status_Name(enum_t_value);
+    return SelfQuitRoomRsp_Status_Name(enum_t_value);
   }
   static inline bool Status_Parse(::PROTOBUF_NAMESPACE_ID::ConstStringParam name,
       Status* value) {
-    return QuitRoomRsp_Status_Parse(name, value);
+    return SelfQuitRoomRsp_Status_Parse(name, value);
   }
 
   // accessors -------------------------------------------------------
@@ -1721,16 +2025,218 @@ class QuitRoomRsp final :
   void _internal_set_room_id(uint64_t value);
   public:
 
-  // .yy.protocol.app.QuitRoomRsp.Status result_code = 3;
+  // .yy.protocol.app.SelfQuitRoomRsp.Status result_code = 3;
   void clear_result_code();
-  ::yy::protocol::app::QuitRoomRsp_Status result_code() const;
-  void set_result_code(::yy::protocol::app::QuitRoomRsp_Status value);
+  ::yy::protocol::app::SelfQuitRoomRsp_Status result_code() const;
+  void set_result_code(::yy::protocol::app::SelfQuitRoomRsp_Status value);
   private:
-  ::yy::protocol::app::QuitRoomRsp_Status _internal_result_code() const;
-  void _internal_set_result_code(::yy::protocol::app::QuitRoomRsp_Status value);
+  ::yy::protocol::app::SelfQuitRoomRsp_Status _internal_result_code() const;
+  void _internal_set_result_code(::yy::protocol::app::SelfQuitRoomRsp_Status value);
   public:
 
-  // @@protoc_insertion_point(class_scope:yy.protocol.app.QuitRoomRsp)
+  // @@protoc_insertion_point(class_scope:yy.protocol.app.SelfQuitRoomRsp)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    uint64_t uid_;
+    uint64_t room_id_;
+    int result_code_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_room_2eproto;
+};
+// -------------------------------------------------------------------
+
+class OtherQuitRoomRsp final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:yy.protocol.app.OtherQuitRoomRsp) */ {
+ public:
+  inline OtherQuitRoomRsp() : OtherQuitRoomRsp(nullptr) {}
+  ~OtherQuitRoomRsp() override;
+  explicit PROTOBUF_CONSTEXPR OtherQuitRoomRsp(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  OtherQuitRoomRsp(const OtherQuitRoomRsp& from);
+  OtherQuitRoomRsp(OtherQuitRoomRsp&& from) noexcept
+    : OtherQuitRoomRsp() {
+    *this = ::std::move(from);
+  }
+
+  inline OtherQuitRoomRsp& operator=(const OtherQuitRoomRsp& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline OtherQuitRoomRsp& operator=(OtherQuitRoomRsp&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const OtherQuitRoomRsp& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const OtherQuitRoomRsp* internal_default_instance() {
+    return reinterpret_cast<const OtherQuitRoomRsp*>(
+               &_OtherQuitRoomRsp_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    9;
+
+  friend void swap(OtherQuitRoomRsp& a, OtherQuitRoomRsp& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(OtherQuitRoomRsp* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(OtherQuitRoomRsp* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  OtherQuitRoomRsp* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<OtherQuitRoomRsp>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const OtherQuitRoomRsp& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const OtherQuitRoomRsp& from) {
+    OtherQuitRoomRsp::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(OtherQuitRoomRsp* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "yy.protocol.app.OtherQuitRoomRsp";
+  }
+  protected:
+  explicit OtherQuitRoomRsp(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  typedef OtherQuitRoomRsp_Status Status;
+  static constexpr Status eSuccess =
+    OtherQuitRoomRsp_Status_eSuccess;
+  static constexpr Status eRoomNotExist =
+    OtherQuitRoomRsp_Status_eRoomNotExist;
+  static constexpr Status eUnknownError =
+    OtherQuitRoomRsp_Status_eUnknownError;
+  static inline bool Status_IsValid(int value) {
+    return OtherQuitRoomRsp_Status_IsValid(value);
+  }
+  static constexpr Status Status_MIN =
+    OtherQuitRoomRsp_Status_Status_MIN;
+  static constexpr Status Status_MAX =
+    OtherQuitRoomRsp_Status_Status_MAX;
+  static constexpr int Status_ARRAYSIZE =
+    OtherQuitRoomRsp_Status_Status_ARRAYSIZE;
+  static inline const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
+  Status_descriptor() {
+    return OtherQuitRoomRsp_Status_descriptor();
+  }
+  template<typename T>
+  static inline const std::string& Status_Name(T enum_t_value) {
+    static_assert(::std::is_same<T, Status>::value ||
+      ::std::is_integral<T>::value,
+      "Incorrect type passed to function Status_Name.");
+    return OtherQuitRoomRsp_Status_Name(enum_t_value);
+  }
+  static inline bool Status_Parse(::PROTOBUF_NAMESPACE_ID::ConstStringParam name,
+      Status* value) {
+    return OtherQuitRoomRsp_Status_Parse(name, value);
+  }
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kUidFieldNumber = 1,
+    kRoomIdFieldNumber = 2,
+    kResultCodeFieldNumber = 3,
+  };
+  // uint64 uid = 1;
+  void clear_uid();
+  uint64_t uid() const;
+  void set_uid(uint64_t value);
+  private:
+  uint64_t _internal_uid() const;
+  void _internal_set_uid(uint64_t value);
+  public:
+
+  // uint64 room_id = 2;
+  void clear_room_id();
+  uint64_t room_id() const;
+  void set_room_id(uint64_t value);
+  private:
+  uint64_t _internal_room_id() const;
+  void _internal_set_room_id(uint64_t value);
+  public:
+
+  // .yy.protocol.app.OtherQuitRoomRsp.Status result_code = 3;
+  void clear_result_code();
+  ::yy::protocol::app::OtherQuitRoomRsp_Status result_code() const;
+  void set_result_code(::yy::protocol::app::OtherQuitRoomRsp_Status value);
+  private:
+  ::yy::protocol::app::OtherQuitRoomRsp_Status _internal_result_code() const;
+  void _internal_set_result_code(::yy::protocol::app::OtherQuitRoomRsp_Status value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:yy.protocol.app.OtherQuitRoomRsp)
  private:
   class _Internal;
 
@@ -1796,7 +2302,7 @@ class GetEnterSceneTokenReq final :
                &_GetEnterSceneTokenReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    8;
+    10;
 
   friend void swap(GetEnterSceneTokenReq& a, GetEnterSceneTokenReq& b) {
     a.Swap(&b);
@@ -1971,7 +2477,7 @@ class GetEnterSceneTokenRsp final :
                &_GetEnterSceneTokenRsp_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    9;
+    11;
 
   friend void swap(GetEnterSceneTokenRsp& a, GetEnterSceneTokenRsp& b) {
     a.Swap(&b);
@@ -2189,7 +2695,7 @@ class BroadcastRoomReq final :
                &_BroadcastRoomReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    10;
+    12;
 
   friend void swap(BroadcastRoomReq& a, BroadcastRoomReq& b) {
     a.Swap(&b);
@@ -2389,7 +2895,7 @@ class BroadcastRoomRsp final :
                &_BroadcastRoomRsp_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    11;
+    13;
 
   friend void swap(BroadcastRoomRsp& a, BroadcastRoomRsp& b) {
     a.Swap(&b);
@@ -2534,6 +3040,302 @@ class BroadcastRoomRsp final :
   union { Impl_ _impl_; };
   friend struct ::TableStruct_room_2eproto;
 };
+// -------------------------------------------------------------------
+
+class UserDisconnectReq final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:yy.protocol.app.UserDisconnectReq) */ {
+ public:
+  inline UserDisconnectReq() : UserDisconnectReq(nullptr) {}
+  ~UserDisconnectReq() override;
+  explicit PROTOBUF_CONSTEXPR UserDisconnectReq(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  UserDisconnectReq(const UserDisconnectReq& from);
+  UserDisconnectReq(UserDisconnectReq&& from) noexcept
+    : UserDisconnectReq() {
+    *this = ::std::move(from);
+  }
+
+  inline UserDisconnectReq& operator=(const UserDisconnectReq& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline UserDisconnectReq& operator=(UserDisconnectReq&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const UserDisconnectReq& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const UserDisconnectReq* internal_default_instance() {
+    return reinterpret_cast<const UserDisconnectReq*>(
+               &_UserDisconnectReq_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    14;
+
+  friend void swap(UserDisconnectReq& a, UserDisconnectReq& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(UserDisconnectReq* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(UserDisconnectReq* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  UserDisconnectReq* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<UserDisconnectReq>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const UserDisconnectReq& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const UserDisconnectReq& from) {
+    UserDisconnectReq::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(UserDisconnectReq* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "yy.protocol.app.UserDisconnectReq";
+  }
+  protected:
+  explicit UserDisconnectReq(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kUidFieldNumber = 1,
+  };
+  // uint64 uid = 1;
+  void clear_uid();
+  uint64_t uid() const;
+  void set_uid(uint64_t value);
+  private:
+  uint64_t _internal_uid() const;
+  void _internal_set_uid(uint64_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:yy.protocol.app.UserDisconnectReq)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    uint64_t uid_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_room_2eproto;
+};
+// -------------------------------------------------------------------
+
+class UserDisconnectRsp final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:yy.protocol.app.UserDisconnectRsp) */ {
+ public:
+  inline UserDisconnectRsp() : UserDisconnectRsp(nullptr) {}
+  ~UserDisconnectRsp() override;
+  explicit PROTOBUF_CONSTEXPR UserDisconnectRsp(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  UserDisconnectRsp(const UserDisconnectRsp& from);
+  UserDisconnectRsp(UserDisconnectRsp&& from) noexcept
+    : UserDisconnectRsp() {
+    *this = ::std::move(from);
+  }
+
+  inline UserDisconnectRsp& operator=(const UserDisconnectRsp& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline UserDisconnectRsp& operator=(UserDisconnectRsp&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const UserDisconnectRsp& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const UserDisconnectRsp* internal_default_instance() {
+    return reinterpret_cast<const UserDisconnectRsp*>(
+               &_UserDisconnectRsp_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    15;
+
+  friend void swap(UserDisconnectRsp& a, UserDisconnectRsp& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(UserDisconnectRsp* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(UserDisconnectRsp* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  UserDisconnectRsp* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<UserDisconnectRsp>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const UserDisconnectRsp& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const UserDisconnectRsp& from) {
+    UserDisconnectRsp::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(UserDisconnectRsp* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "yy.protocol.app.UserDisconnectRsp";
+  }
+  protected:
+  explicit UserDisconnectRsp(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kUidFieldNumber = 1,
+  };
+  // uint64 uid = 1;
+  void clear_uid();
+  uint64_t uid() const;
+  void set_uid(uint64_t value);
+  private:
+  uint64_t _internal_uid() const;
+  void _internal_set_uid(uint64_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:yy.protocol.app.UserDisconnectRsp)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    uint64_t uid_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_room_2eproto;
+};
 // ===================================================================
 
 class CenterRoomServiceRpc_Stub;
@@ -2557,17 +3359,21 @@ class CenterRoomServiceRpc : public ::PROTOBUF_NAMESPACE_ID::Service {
                        const ::yy::protocol::app::SearchRoomReq* request,
                        ::yy::protocol::app::SearchRoomRsp* response,
                        ::google::protobuf::Closure* done);
-  virtual void JoinRoom(::PROTOBUF_NAMESPACE_ID::RpcController* controller,
-                       const ::yy::protocol::app::JoinRoomReq* request,
-                       ::yy::protocol::app::JoinRoomRsp* response,
+  virtual void SelfJoinRoom(::PROTOBUF_NAMESPACE_ID::RpcController* controller,
+                       const ::yy::protocol::app::SelfJoinRoomReq* request,
+                       ::yy::protocol::app::SelfJoinRoomRsp* response,
                        ::google::protobuf::Closure* done);
   virtual void GetEnterSceneToken(::PROTOBUF_NAMESPACE_ID::RpcController* controller,
                        const ::yy::protocol::app::GetEnterSceneTokenReq* request,
                        ::yy::protocol::app::GetEnterSceneTokenRsp* response,
                        ::google::protobuf::Closure* done);
-  virtual void QuitRoom(::PROTOBUF_NAMESPACE_ID::RpcController* controller,
-                       const ::yy::protocol::app::QuitRoomReq* request,
-                       ::yy::protocol::app::QuitRoomRsp* response,
+  virtual void SelfQuitRoom(::PROTOBUF_NAMESPACE_ID::RpcController* controller,
+                       const ::yy::protocol::app::SelfQuitRoomReq* request,
+                       ::yy::protocol::app::SelfQuitRoomRsp* response,
+                       ::google::protobuf::Closure* done);
+  virtual void UserDisconnect(::PROTOBUF_NAMESPACE_ID::RpcController* controller,
+                       const ::yy::protocol::app::UserDisconnectReq* request,
+                       ::yy::protocol::app::UserDisconnectRsp* response,
                        ::google::protobuf::Closure* done);
 
   // implements Service ----------------------------------------------
@@ -2606,17 +3412,21 @@ class CenterRoomServiceRpc_Stub : public CenterRoomServiceRpc {
                        const ::yy::protocol::app::SearchRoomReq* request,
                        ::yy::protocol::app::SearchRoomRsp* response,
                        ::google::protobuf::Closure* done);
-  void JoinRoom(::PROTOBUF_NAMESPACE_ID::RpcController* controller,
-                       const ::yy::protocol::app::JoinRoomReq* request,
-                       ::yy::protocol::app::JoinRoomRsp* response,
+  void SelfJoinRoom(::PROTOBUF_NAMESPACE_ID::RpcController* controller,
+                       const ::yy::protocol::app::SelfJoinRoomReq* request,
+                       ::yy::protocol::app::SelfJoinRoomRsp* response,
                        ::google::protobuf::Closure* done);
   void GetEnterSceneToken(::PROTOBUF_NAMESPACE_ID::RpcController* controller,
                        const ::yy::protocol::app::GetEnterSceneTokenReq* request,
                        ::yy::protocol::app::GetEnterSceneTokenRsp* response,
                        ::google::protobuf::Closure* done);
-  void QuitRoom(::PROTOBUF_NAMESPACE_ID::RpcController* controller,
-                       const ::yy::protocol::app::QuitRoomReq* request,
-                       ::yy::protocol::app::QuitRoomRsp* response,
+  void SelfQuitRoom(::PROTOBUF_NAMESPACE_ID::RpcController* controller,
+                       const ::yy::protocol::app::SelfQuitRoomReq* request,
+                       ::yy::protocol::app::SelfQuitRoomRsp* response,
+                       ::google::protobuf::Closure* done);
+  void UserDisconnect(::PROTOBUF_NAMESPACE_ID::RpcController* controller,
+                       const ::yy::protocol::app::UserDisconnectReq* request,
+                       ::yy::protocol::app::UserDisconnectRsp* response,
                        ::google::protobuf::Closure* done);
  private:
   ::PROTOBUF_NAMESPACE_ID::RpcChannel* channel_;
@@ -3197,38 +4007,38 @@ inline void SearchRoomRsp::set_uid(uint64_t value) {
   // @@protoc_insertion_point(field_set:yy.protocol.app.SearchRoomRsp.uid)
 }
 
-// repeated .yy.protocol.app.RoomBriefData room_datas = 2;
+// repeated .yy.protocol.app.RoomDetailData room_datas = 2;
 inline int SearchRoomRsp::_internal_room_datas_size() const {
   return _impl_.room_datas_.size();
 }
 inline int SearchRoomRsp::room_datas_size() const {
   return _internal_room_datas_size();
 }
-inline ::yy::protocol::app::RoomBriefData* SearchRoomRsp::mutable_room_datas(int index) {
+inline ::yy::protocol::app::RoomDetailData* SearchRoomRsp::mutable_room_datas(int index) {
   // @@protoc_insertion_point(field_mutable:yy.protocol.app.SearchRoomRsp.room_datas)
   return _impl_.room_datas_.Mutable(index);
 }
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::yy::protocol::app::RoomBriefData >*
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::yy::protocol::app::RoomDetailData >*
 SearchRoomRsp::mutable_room_datas() {
   // @@protoc_insertion_point(field_mutable_list:yy.protocol.app.SearchRoomRsp.room_datas)
   return &_impl_.room_datas_;
 }
-inline const ::yy::protocol::app::RoomBriefData& SearchRoomRsp::_internal_room_datas(int index) const {
+inline const ::yy::protocol::app::RoomDetailData& SearchRoomRsp::_internal_room_datas(int index) const {
   return _impl_.room_datas_.Get(index);
 }
-inline const ::yy::protocol::app::RoomBriefData& SearchRoomRsp::room_datas(int index) const {
+inline const ::yy::protocol::app::RoomDetailData& SearchRoomRsp::room_datas(int index) const {
   // @@protoc_insertion_point(field_get:yy.protocol.app.SearchRoomRsp.room_datas)
   return _internal_room_datas(index);
 }
-inline ::yy::protocol::app::RoomBriefData* SearchRoomRsp::_internal_add_room_datas() {
+inline ::yy::protocol::app::RoomDetailData* SearchRoomRsp::_internal_add_room_datas() {
   return _impl_.room_datas_.Add();
 }
-inline ::yy::protocol::app::RoomBriefData* SearchRoomRsp::add_room_datas() {
-  ::yy::protocol::app::RoomBriefData* _add = _internal_add_room_datas();
+inline ::yy::protocol::app::RoomDetailData* SearchRoomRsp::add_room_datas() {
+  ::yy::protocol::app::RoomDetailData* _add = _internal_add_room_datas();
   // @@protoc_insertion_point(field_add:yy.protocol.app.SearchRoomRsp.room_datas)
   return _add;
 }
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::yy::protocol::app::RoomBriefData >&
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::yy::protocol::app::RoomDetailData >&
 SearchRoomRsp::room_datas() const {
   // @@protoc_insertion_point(field_list:yy.protocol.app.SearchRoomRsp.room_datas)
   return _impl_.room_datas_;
@@ -3236,64 +4046,129 @@ SearchRoomRsp::room_datas() const {
 
 // -------------------------------------------------------------------
 
-// JoinRoomReq
+// SelfJoinRoomReq
 
-// uint64 uid = 1;
-inline void JoinRoomReq::clear_uid() {
-  _impl_.uid_ = uint64_t{0u};
+// .yy.protocol.app.AccountBaseData joinner_data = 1;
+inline bool SelfJoinRoomReq::_internal_has_joinner_data() const {
+  return this != internal_default_instance() && _impl_.joinner_data_ != nullptr;
 }
-inline uint64_t JoinRoomReq::_internal_uid() const {
-  return _impl_.uid_;
+inline bool SelfJoinRoomReq::has_joinner_data() const {
+  return _internal_has_joinner_data();
 }
-inline uint64_t JoinRoomReq::uid() const {
-  // @@protoc_insertion_point(field_get:yy.protocol.app.JoinRoomReq.uid)
-  return _internal_uid();
+inline const ::yy::protocol::app::AccountBaseData& SelfJoinRoomReq::_internal_joinner_data() const {
+  const ::yy::protocol::app::AccountBaseData* p = _impl_.joinner_data_;
+  return p != nullptr ? *p : reinterpret_cast<const ::yy::protocol::app::AccountBaseData&>(
+      ::yy::protocol::app::_AccountBaseData_default_instance_);
 }
-inline void JoinRoomReq::_internal_set_uid(uint64_t value) {
+inline const ::yy::protocol::app::AccountBaseData& SelfJoinRoomReq::joinner_data() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.SelfJoinRoomReq.joinner_data)
+  return _internal_joinner_data();
+}
+inline void SelfJoinRoomReq::unsafe_arena_set_allocated_joinner_data(
+    ::yy::protocol::app::AccountBaseData* joinner_data) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.joinner_data_);
+  }
+  _impl_.joinner_data_ = joinner_data;
+  if (joinner_data) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:yy.protocol.app.SelfJoinRoomReq.joinner_data)
+}
+inline ::yy::protocol::app::AccountBaseData* SelfJoinRoomReq::release_joinner_data() {
   
-  _impl_.uid_ = value;
+  ::yy::protocol::app::AccountBaseData* temp = _impl_.joinner_data_;
+  _impl_.joinner_data_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
 }
-inline void JoinRoomReq::set_uid(uint64_t value) {
-  _internal_set_uid(value);
-  // @@protoc_insertion_point(field_set:yy.protocol.app.JoinRoomReq.uid)
+inline ::yy::protocol::app::AccountBaseData* SelfJoinRoomReq::unsafe_arena_release_joinner_data() {
+  // @@protoc_insertion_point(field_release:yy.protocol.app.SelfJoinRoomReq.joinner_data)
+  
+  ::yy::protocol::app::AccountBaseData* temp = _impl_.joinner_data_;
+  _impl_.joinner_data_ = nullptr;
+  return temp;
+}
+inline ::yy::protocol::app::AccountBaseData* SelfJoinRoomReq::_internal_mutable_joinner_data() {
+  
+  if (_impl_.joinner_data_ == nullptr) {
+    auto* p = CreateMaybeMessage<::yy::protocol::app::AccountBaseData>(GetArenaForAllocation());
+    _impl_.joinner_data_ = p;
+  }
+  return _impl_.joinner_data_;
+}
+inline ::yy::protocol::app::AccountBaseData* SelfJoinRoomReq::mutable_joinner_data() {
+  ::yy::protocol::app::AccountBaseData* _msg = _internal_mutable_joinner_data();
+  // @@protoc_insertion_point(field_mutable:yy.protocol.app.SelfJoinRoomReq.joinner_data)
+  return _msg;
+}
+inline void SelfJoinRoomReq::set_allocated_joinner_data(::yy::protocol::app::AccountBaseData* joinner_data) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete reinterpret_cast< ::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.joinner_data_);
+  }
+  if (joinner_data) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(
+                reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(joinner_data));
+    if (message_arena != submessage_arena) {
+      joinner_data = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, joinner_data, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  _impl_.joinner_data_ = joinner_data;
+  // @@protoc_insertion_point(field_set_allocated:yy.protocol.app.SelfJoinRoomReq.joinner_data)
 }
 
-// string user_token = 3;
-inline void JoinRoomReq::clear_user_token() {
+// string user_token = 2;
+inline void SelfJoinRoomReq::clear_user_token() {
   _impl_.user_token_.ClearToEmpty();
 }
-inline const std::string& JoinRoomReq::user_token() const {
-  // @@protoc_insertion_point(field_get:yy.protocol.app.JoinRoomReq.user_token)
+inline const std::string& SelfJoinRoomReq::user_token() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.SelfJoinRoomReq.user_token)
   return _internal_user_token();
 }
 template <typename ArgT0, typename... ArgT>
 inline PROTOBUF_ALWAYS_INLINE
-void JoinRoomReq::set_user_token(ArgT0&& arg0, ArgT... args) {
+void SelfJoinRoomReq::set_user_token(ArgT0&& arg0, ArgT... args) {
  
  _impl_.user_token_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:yy.protocol.app.JoinRoomReq.user_token)
+  // @@protoc_insertion_point(field_set:yy.protocol.app.SelfJoinRoomReq.user_token)
 }
-inline std::string* JoinRoomReq::mutable_user_token() {
+inline std::string* SelfJoinRoomReq::mutable_user_token() {
   std::string* _s = _internal_mutable_user_token();
-  // @@protoc_insertion_point(field_mutable:yy.protocol.app.JoinRoomReq.user_token)
+  // @@protoc_insertion_point(field_mutable:yy.protocol.app.SelfJoinRoomReq.user_token)
   return _s;
 }
-inline const std::string& JoinRoomReq::_internal_user_token() const {
+inline const std::string& SelfJoinRoomReq::_internal_user_token() const {
   return _impl_.user_token_.Get();
 }
-inline void JoinRoomReq::_internal_set_user_token(const std::string& value) {
+inline void SelfJoinRoomReq::_internal_set_user_token(const std::string& value) {
   
   _impl_.user_token_.Set(value, GetArenaForAllocation());
 }
-inline std::string* JoinRoomReq::_internal_mutable_user_token() {
+inline std::string* SelfJoinRoomReq::_internal_mutable_user_token() {
   
   return _impl_.user_token_.Mutable(GetArenaForAllocation());
 }
-inline std::string* JoinRoomReq::release_user_token() {
-  // @@protoc_insertion_point(field_release:yy.protocol.app.JoinRoomReq.user_token)
+inline std::string* SelfJoinRoomReq::release_user_token() {
+  // @@protoc_insertion_point(field_release:yy.protocol.app.SelfJoinRoomReq.user_token)
   return _impl_.user_token_.Release();
 }
-inline void JoinRoomReq::set_allocated_user_token(std::string* user_token) {
+inline void SelfJoinRoomReq::set_allocated_user_token(std::string* user_token) {
   if (user_token != nullptr) {
     
   } else {
@@ -3305,90 +4180,90 @@ inline void JoinRoomReq::set_allocated_user_token(std::string* user_token) {
     _impl_.user_token_.Set("", GetArenaForAllocation());
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:yy.protocol.app.JoinRoomReq.user_token)
+  // @@protoc_insertion_point(field_set_allocated:yy.protocol.app.SelfJoinRoomReq.user_token)
 }
 
-// uint64 room_id = 2;
-inline void JoinRoomReq::clear_room_id() {
+// uint64 room_id = 3;
+inline void SelfJoinRoomReq::clear_room_id() {
   _impl_.room_id_ = uint64_t{0u};
 }
-inline uint64_t JoinRoomReq::_internal_room_id() const {
+inline uint64_t SelfJoinRoomReq::_internal_room_id() const {
   return _impl_.room_id_;
 }
-inline uint64_t JoinRoomReq::room_id() const {
-  // @@protoc_insertion_point(field_get:yy.protocol.app.JoinRoomReq.room_id)
+inline uint64_t SelfJoinRoomReq::room_id() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.SelfJoinRoomReq.room_id)
   return _internal_room_id();
 }
-inline void JoinRoomReq::_internal_set_room_id(uint64_t value) {
+inline void SelfJoinRoomReq::_internal_set_room_id(uint64_t value) {
   
   _impl_.room_id_ = value;
 }
-inline void JoinRoomReq::set_room_id(uint64_t value) {
+inline void SelfJoinRoomReq::set_room_id(uint64_t value) {
   _internal_set_room_id(value);
-  // @@protoc_insertion_point(field_set:yy.protocol.app.JoinRoomReq.room_id)
+  // @@protoc_insertion_point(field_set:yy.protocol.app.SelfJoinRoomReq.room_id)
 }
 
 // -------------------------------------------------------------------
 
-// JoinRoomRsp
+// SelfJoinRoomRsp
 
 // uint64 uid = 1;
-inline void JoinRoomRsp::clear_uid() {
+inline void SelfJoinRoomRsp::clear_uid() {
   _impl_.uid_ = uint64_t{0u};
 }
-inline uint64_t JoinRoomRsp::_internal_uid() const {
+inline uint64_t SelfJoinRoomRsp::_internal_uid() const {
   return _impl_.uid_;
 }
-inline uint64_t JoinRoomRsp::uid() const {
-  // @@protoc_insertion_point(field_get:yy.protocol.app.JoinRoomRsp.uid)
+inline uint64_t SelfJoinRoomRsp::uid() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.SelfJoinRoomRsp.uid)
   return _internal_uid();
 }
-inline void JoinRoomRsp::_internal_set_uid(uint64_t value) {
+inline void SelfJoinRoomRsp::_internal_set_uid(uint64_t value) {
   
   _impl_.uid_ = value;
 }
-inline void JoinRoomRsp::set_uid(uint64_t value) {
+inline void SelfJoinRoomRsp::set_uid(uint64_t value) {
   _internal_set_uid(value);
-  // @@protoc_insertion_point(field_set:yy.protocol.app.JoinRoomRsp.uid)
+  // @@protoc_insertion_point(field_set:yy.protocol.app.SelfJoinRoomRsp.uid)
 }
 
-// .yy.protocol.app.JoinRoomRsp.Status result_code = 2;
-inline void JoinRoomRsp::clear_result_code() {
+// .yy.protocol.app.SelfJoinRoomRsp.Status result_code = 2;
+inline void SelfJoinRoomRsp::clear_result_code() {
   _impl_.result_code_ = 0;
 }
-inline ::yy::protocol::app::JoinRoomRsp_Status JoinRoomRsp::_internal_result_code() const {
-  return static_cast< ::yy::protocol::app::JoinRoomRsp_Status >(_impl_.result_code_);
+inline ::yy::protocol::app::SelfJoinRoomRsp_Status SelfJoinRoomRsp::_internal_result_code() const {
+  return static_cast< ::yy::protocol::app::SelfJoinRoomRsp_Status >(_impl_.result_code_);
 }
-inline ::yy::protocol::app::JoinRoomRsp_Status JoinRoomRsp::result_code() const {
-  // @@protoc_insertion_point(field_get:yy.protocol.app.JoinRoomRsp.result_code)
+inline ::yy::protocol::app::SelfJoinRoomRsp_Status SelfJoinRoomRsp::result_code() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.SelfJoinRoomRsp.result_code)
   return _internal_result_code();
 }
-inline void JoinRoomRsp::_internal_set_result_code(::yy::protocol::app::JoinRoomRsp_Status value) {
+inline void SelfJoinRoomRsp::_internal_set_result_code(::yy::protocol::app::SelfJoinRoomRsp_Status value) {
   
   _impl_.result_code_ = value;
 }
-inline void JoinRoomRsp::set_result_code(::yy::protocol::app::JoinRoomRsp_Status value) {
+inline void SelfJoinRoomRsp::set_result_code(::yy::protocol::app::SelfJoinRoomRsp_Status value) {
   _internal_set_result_code(value);
-  // @@protoc_insertion_point(field_set:yy.protocol.app.JoinRoomRsp.result_code)
+  // @@protoc_insertion_point(field_set:yy.protocol.app.SelfJoinRoomRsp.result_code)
 }
 
 // .yy.protocol.app.RoomDetailData room_data = 3;
-inline bool JoinRoomRsp::_internal_has_room_data() const {
+inline bool SelfJoinRoomRsp::_internal_has_room_data() const {
   return this != internal_default_instance() && _impl_.room_data_ != nullptr;
 }
-inline bool JoinRoomRsp::has_room_data() const {
+inline bool SelfJoinRoomRsp::has_room_data() const {
   return _internal_has_room_data();
 }
-inline const ::yy::protocol::app::RoomDetailData& JoinRoomRsp::_internal_room_data() const {
+inline const ::yy::protocol::app::RoomDetailData& SelfJoinRoomRsp::_internal_room_data() const {
   const ::yy::protocol::app::RoomDetailData* p = _impl_.room_data_;
   return p != nullptr ? *p : reinterpret_cast<const ::yy::protocol::app::RoomDetailData&>(
       ::yy::protocol::app::_RoomDetailData_default_instance_);
 }
-inline const ::yy::protocol::app::RoomDetailData& JoinRoomRsp::room_data() const {
-  // @@protoc_insertion_point(field_get:yy.protocol.app.JoinRoomRsp.room_data)
+inline const ::yy::protocol::app::RoomDetailData& SelfJoinRoomRsp::room_data() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.SelfJoinRoomRsp.room_data)
   return _internal_room_data();
 }
-inline void JoinRoomRsp::unsafe_arena_set_allocated_room_data(
+inline void SelfJoinRoomRsp::unsafe_arena_set_allocated_room_data(
     ::yy::protocol::app::RoomDetailData* room_data) {
   if (GetArenaForAllocation() == nullptr) {
     delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.room_data_);
@@ -3399,9 +4274,9 @@ inline void JoinRoomRsp::unsafe_arena_set_allocated_room_data(
   } else {
     
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:yy.protocol.app.JoinRoomRsp.room_data)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:yy.protocol.app.SelfJoinRoomRsp.room_data)
 }
-inline ::yy::protocol::app::RoomDetailData* JoinRoomRsp::release_room_data() {
+inline ::yy::protocol::app::RoomDetailData* SelfJoinRoomRsp::release_room_data() {
   
   ::yy::protocol::app::RoomDetailData* temp = _impl_.room_data_;
   _impl_.room_data_ = nullptr;
@@ -3416,14 +4291,14 @@ inline ::yy::protocol::app::RoomDetailData* JoinRoomRsp::release_room_data() {
 #endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
   return temp;
 }
-inline ::yy::protocol::app::RoomDetailData* JoinRoomRsp::unsafe_arena_release_room_data() {
-  // @@protoc_insertion_point(field_release:yy.protocol.app.JoinRoomRsp.room_data)
+inline ::yy::protocol::app::RoomDetailData* SelfJoinRoomRsp::unsafe_arena_release_room_data() {
+  // @@protoc_insertion_point(field_release:yy.protocol.app.SelfJoinRoomRsp.room_data)
   
   ::yy::protocol::app::RoomDetailData* temp = _impl_.room_data_;
   _impl_.room_data_ = nullptr;
   return temp;
 }
-inline ::yy::protocol::app::RoomDetailData* JoinRoomRsp::_internal_mutable_room_data() {
+inline ::yy::protocol::app::RoomDetailData* SelfJoinRoomRsp::_internal_mutable_room_data() {
   
   if (_impl_.room_data_ == nullptr) {
     auto* p = CreateMaybeMessage<::yy::protocol::app::RoomDetailData>(GetArenaForAllocation());
@@ -3431,12 +4306,12 @@ inline ::yy::protocol::app::RoomDetailData* JoinRoomRsp::_internal_mutable_room_
   }
   return _impl_.room_data_;
 }
-inline ::yy::protocol::app::RoomDetailData* JoinRoomRsp::mutable_room_data() {
+inline ::yy::protocol::app::RoomDetailData* SelfJoinRoomRsp::mutable_room_data() {
   ::yy::protocol::app::RoomDetailData* _msg = _internal_mutable_room_data();
-  // @@protoc_insertion_point(field_mutable:yy.protocol.app.JoinRoomRsp.room_data)
+  // @@protoc_insertion_point(field_mutable:yy.protocol.app.SelfJoinRoomRsp.room_data)
   return _msg;
 }
-inline void JoinRoomRsp::set_allocated_room_data(::yy::protocol::app::RoomDetailData* room_data) {
+inline void SelfJoinRoomRsp::set_allocated_room_data(::yy::protocol::app::RoomDetailData* room_data) {
   ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
   if (message_arena == nullptr) {
     delete reinterpret_cast< ::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.room_data_);
@@ -3454,69 +4329,248 @@ inline void JoinRoomRsp::set_allocated_room_data(::yy::protocol::app::RoomDetail
     
   }
   _impl_.room_data_ = room_data;
-  // @@protoc_insertion_point(field_set_allocated:yy.protocol.app.JoinRoomRsp.room_data)
+  // @@protoc_insertion_point(field_set_allocated:yy.protocol.app.SelfJoinRoomRsp.room_data)
+}
+
+// string room_ip = 4;
+inline void SelfJoinRoomRsp::clear_room_ip() {
+  _impl_.room_ip_.ClearToEmpty();
+}
+inline const std::string& SelfJoinRoomRsp::room_ip() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.SelfJoinRoomRsp.room_ip)
+  return _internal_room_ip();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void SelfJoinRoomRsp::set_room_ip(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.room_ip_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:yy.protocol.app.SelfJoinRoomRsp.room_ip)
+}
+inline std::string* SelfJoinRoomRsp::mutable_room_ip() {
+  std::string* _s = _internal_mutable_room_ip();
+  // @@protoc_insertion_point(field_mutable:yy.protocol.app.SelfJoinRoomRsp.room_ip)
+  return _s;
+}
+inline const std::string& SelfJoinRoomRsp::_internal_room_ip() const {
+  return _impl_.room_ip_.Get();
+}
+inline void SelfJoinRoomRsp::_internal_set_room_ip(const std::string& value) {
+  
+  _impl_.room_ip_.Set(value, GetArenaForAllocation());
+}
+inline std::string* SelfJoinRoomRsp::_internal_mutable_room_ip() {
+  
+  return _impl_.room_ip_.Mutable(GetArenaForAllocation());
+}
+inline std::string* SelfJoinRoomRsp::release_room_ip() {
+  // @@protoc_insertion_point(field_release:yy.protocol.app.SelfJoinRoomRsp.room_ip)
+  return _impl_.room_ip_.Release();
+}
+inline void SelfJoinRoomRsp::set_allocated_room_ip(std::string* room_ip) {
+  if (room_ip != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.room_ip_.SetAllocated(room_ip, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.room_ip_.IsDefault()) {
+    _impl_.room_ip_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:yy.protocol.app.SelfJoinRoomRsp.room_ip)
+}
+
+// uint32 room_port = 5;
+inline void SelfJoinRoomRsp::clear_room_port() {
+  _impl_.room_port_ = 0u;
+}
+inline uint32_t SelfJoinRoomRsp::_internal_room_port() const {
+  return _impl_.room_port_;
+}
+inline uint32_t SelfJoinRoomRsp::room_port() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.SelfJoinRoomRsp.room_port)
+  return _internal_room_port();
+}
+inline void SelfJoinRoomRsp::_internal_set_room_port(uint32_t value) {
+  
+  _impl_.room_port_ = value;
+}
+inline void SelfJoinRoomRsp::set_room_port(uint32_t value) {
+  _internal_set_room_port(value);
+  // @@protoc_insertion_point(field_set:yy.protocol.app.SelfJoinRoomRsp.room_port)
 }
 
 // -------------------------------------------------------------------
 
-// QuitRoomReq
+// OtherJoinRoomRsp
+
+// .yy.protocol.app.AccountBaseData joinner_data = 3;
+inline bool OtherJoinRoomRsp::_internal_has_joinner_data() const {
+  return this != internal_default_instance() && _impl_.joinner_data_ != nullptr;
+}
+inline bool OtherJoinRoomRsp::has_joinner_data() const {
+  return _internal_has_joinner_data();
+}
+inline const ::yy::protocol::app::AccountBaseData& OtherJoinRoomRsp::_internal_joinner_data() const {
+  const ::yy::protocol::app::AccountBaseData* p = _impl_.joinner_data_;
+  return p != nullptr ? *p : reinterpret_cast<const ::yy::protocol::app::AccountBaseData&>(
+      ::yy::protocol::app::_AccountBaseData_default_instance_);
+}
+inline const ::yy::protocol::app::AccountBaseData& OtherJoinRoomRsp::joinner_data() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.OtherJoinRoomRsp.joinner_data)
+  return _internal_joinner_data();
+}
+inline void OtherJoinRoomRsp::unsafe_arena_set_allocated_joinner_data(
+    ::yy::protocol::app::AccountBaseData* joinner_data) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.joinner_data_);
+  }
+  _impl_.joinner_data_ = joinner_data;
+  if (joinner_data) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:yy.protocol.app.OtherJoinRoomRsp.joinner_data)
+}
+inline ::yy::protocol::app::AccountBaseData* OtherJoinRoomRsp::release_joinner_data() {
+  
+  ::yy::protocol::app::AccountBaseData* temp = _impl_.joinner_data_;
+  _impl_.joinner_data_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::yy::protocol::app::AccountBaseData* OtherJoinRoomRsp::unsafe_arena_release_joinner_data() {
+  // @@protoc_insertion_point(field_release:yy.protocol.app.OtherJoinRoomRsp.joinner_data)
+  
+  ::yy::protocol::app::AccountBaseData* temp = _impl_.joinner_data_;
+  _impl_.joinner_data_ = nullptr;
+  return temp;
+}
+inline ::yy::protocol::app::AccountBaseData* OtherJoinRoomRsp::_internal_mutable_joinner_data() {
+  
+  if (_impl_.joinner_data_ == nullptr) {
+    auto* p = CreateMaybeMessage<::yy::protocol::app::AccountBaseData>(GetArenaForAllocation());
+    _impl_.joinner_data_ = p;
+  }
+  return _impl_.joinner_data_;
+}
+inline ::yy::protocol::app::AccountBaseData* OtherJoinRoomRsp::mutable_joinner_data() {
+  ::yy::protocol::app::AccountBaseData* _msg = _internal_mutable_joinner_data();
+  // @@protoc_insertion_point(field_mutable:yy.protocol.app.OtherJoinRoomRsp.joinner_data)
+  return _msg;
+}
+inline void OtherJoinRoomRsp::set_allocated_joinner_data(::yy::protocol::app::AccountBaseData* joinner_data) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete reinterpret_cast< ::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.joinner_data_);
+  }
+  if (joinner_data) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(
+                reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(joinner_data));
+    if (message_arena != submessage_arena) {
+      joinner_data = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, joinner_data, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  _impl_.joinner_data_ = joinner_data;
+  // @@protoc_insertion_point(field_set_allocated:yy.protocol.app.OtherJoinRoomRsp.joinner_data)
+}
+
+// .yy.protocol.app.OtherJoinRoomRsp.Status result_code = 2;
+inline void OtherJoinRoomRsp::clear_result_code() {
+  _impl_.result_code_ = 0;
+}
+inline ::yy::protocol::app::OtherJoinRoomRsp_Status OtherJoinRoomRsp::_internal_result_code() const {
+  return static_cast< ::yy::protocol::app::OtherJoinRoomRsp_Status >(_impl_.result_code_);
+}
+inline ::yy::protocol::app::OtherJoinRoomRsp_Status OtherJoinRoomRsp::result_code() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.OtherJoinRoomRsp.result_code)
+  return _internal_result_code();
+}
+inline void OtherJoinRoomRsp::_internal_set_result_code(::yy::protocol::app::OtherJoinRoomRsp_Status value) {
+  
+  _impl_.result_code_ = value;
+}
+inline void OtherJoinRoomRsp::set_result_code(::yy::protocol::app::OtherJoinRoomRsp_Status value) {
+  _internal_set_result_code(value);
+  // @@protoc_insertion_point(field_set:yy.protocol.app.OtherJoinRoomRsp.result_code)
+}
+
+// -------------------------------------------------------------------
+
+// SelfQuitRoomReq
 
 // uint64 uid = 1;
-inline void QuitRoomReq::clear_uid() {
+inline void SelfQuitRoomReq::clear_uid() {
   _impl_.uid_ = uint64_t{0u};
 }
-inline uint64_t QuitRoomReq::_internal_uid() const {
+inline uint64_t SelfQuitRoomReq::_internal_uid() const {
   return _impl_.uid_;
 }
-inline uint64_t QuitRoomReq::uid() const {
-  // @@protoc_insertion_point(field_get:yy.protocol.app.QuitRoomReq.uid)
+inline uint64_t SelfQuitRoomReq::uid() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.SelfQuitRoomReq.uid)
   return _internal_uid();
 }
-inline void QuitRoomReq::_internal_set_uid(uint64_t value) {
+inline void SelfQuitRoomReq::_internal_set_uid(uint64_t value) {
   
   _impl_.uid_ = value;
 }
-inline void QuitRoomReq::set_uid(uint64_t value) {
+inline void SelfQuitRoomReq::set_uid(uint64_t value) {
   _internal_set_uid(value);
-  // @@protoc_insertion_point(field_set:yy.protocol.app.QuitRoomReq.uid)
+  // @@protoc_insertion_point(field_set:yy.protocol.app.SelfQuitRoomReq.uid)
 }
 
 // string user_token = 3;
-inline void QuitRoomReq::clear_user_token() {
+inline void SelfQuitRoomReq::clear_user_token() {
   _impl_.user_token_.ClearToEmpty();
 }
-inline const std::string& QuitRoomReq::user_token() const {
-  // @@protoc_insertion_point(field_get:yy.protocol.app.QuitRoomReq.user_token)
+inline const std::string& SelfQuitRoomReq::user_token() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.SelfQuitRoomReq.user_token)
   return _internal_user_token();
 }
 template <typename ArgT0, typename... ArgT>
 inline PROTOBUF_ALWAYS_INLINE
-void QuitRoomReq::set_user_token(ArgT0&& arg0, ArgT... args) {
+void SelfQuitRoomReq::set_user_token(ArgT0&& arg0, ArgT... args) {
  
  _impl_.user_token_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:yy.protocol.app.QuitRoomReq.user_token)
+  // @@protoc_insertion_point(field_set:yy.protocol.app.SelfQuitRoomReq.user_token)
 }
-inline std::string* QuitRoomReq::mutable_user_token() {
+inline std::string* SelfQuitRoomReq::mutable_user_token() {
   std::string* _s = _internal_mutable_user_token();
-  // @@protoc_insertion_point(field_mutable:yy.protocol.app.QuitRoomReq.user_token)
+  // @@protoc_insertion_point(field_mutable:yy.protocol.app.SelfQuitRoomReq.user_token)
   return _s;
 }
-inline const std::string& QuitRoomReq::_internal_user_token() const {
+inline const std::string& SelfQuitRoomReq::_internal_user_token() const {
   return _impl_.user_token_.Get();
 }
-inline void QuitRoomReq::_internal_set_user_token(const std::string& value) {
+inline void SelfQuitRoomReq::_internal_set_user_token(const std::string& value) {
   
   _impl_.user_token_.Set(value, GetArenaForAllocation());
 }
-inline std::string* QuitRoomReq::_internal_mutable_user_token() {
+inline std::string* SelfQuitRoomReq::_internal_mutable_user_token() {
   
   return _impl_.user_token_.Mutable(GetArenaForAllocation());
 }
-inline std::string* QuitRoomReq::release_user_token() {
-  // @@protoc_insertion_point(field_release:yy.protocol.app.QuitRoomReq.user_token)
+inline std::string* SelfQuitRoomReq::release_user_token() {
+  // @@protoc_insertion_point(field_release:yy.protocol.app.SelfQuitRoomReq.user_token)
   return _impl_.user_token_.Release();
 }
-inline void QuitRoomReq::set_allocated_user_token(std::string* user_token) {
+inline void SelfQuitRoomReq::set_allocated_user_token(std::string* user_token) {
   if (user_token != nullptr) {
     
   } else {
@@ -3528,91 +4582,155 @@ inline void QuitRoomReq::set_allocated_user_token(std::string* user_token) {
     _impl_.user_token_.Set("", GetArenaForAllocation());
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:yy.protocol.app.QuitRoomReq.user_token)
+  // @@protoc_insertion_point(field_set_allocated:yy.protocol.app.SelfQuitRoomReq.user_token)
 }
 
 // uint64 room_id = 2;
-inline void QuitRoomReq::clear_room_id() {
+inline void SelfQuitRoomReq::clear_room_id() {
   _impl_.room_id_ = uint64_t{0u};
 }
-inline uint64_t QuitRoomReq::_internal_room_id() const {
+inline uint64_t SelfQuitRoomReq::_internal_room_id() const {
   return _impl_.room_id_;
 }
-inline uint64_t QuitRoomReq::room_id() const {
-  // @@protoc_insertion_point(field_get:yy.protocol.app.QuitRoomReq.room_id)
+inline uint64_t SelfQuitRoomReq::room_id() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.SelfQuitRoomReq.room_id)
   return _internal_room_id();
 }
-inline void QuitRoomReq::_internal_set_room_id(uint64_t value) {
+inline void SelfQuitRoomReq::_internal_set_room_id(uint64_t value) {
   
   _impl_.room_id_ = value;
 }
-inline void QuitRoomReq::set_room_id(uint64_t value) {
+inline void SelfQuitRoomReq::set_room_id(uint64_t value) {
   _internal_set_room_id(value);
-  // @@protoc_insertion_point(field_set:yy.protocol.app.QuitRoomReq.room_id)
+  // @@protoc_insertion_point(field_set:yy.protocol.app.SelfQuitRoomReq.room_id)
 }
 
 // -------------------------------------------------------------------
 
-// QuitRoomRsp
+// SelfQuitRoomRsp
 
 // uint64 uid = 1;
-inline void QuitRoomRsp::clear_uid() {
+inline void SelfQuitRoomRsp::clear_uid() {
   _impl_.uid_ = uint64_t{0u};
 }
-inline uint64_t QuitRoomRsp::_internal_uid() const {
+inline uint64_t SelfQuitRoomRsp::_internal_uid() const {
   return _impl_.uid_;
 }
-inline uint64_t QuitRoomRsp::uid() const {
-  // @@protoc_insertion_point(field_get:yy.protocol.app.QuitRoomRsp.uid)
+inline uint64_t SelfQuitRoomRsp::uid() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.SelfQuitRoomRsp.uid)
   return _internal_uid();
 }
-inline void QuitRoomRsp::_internal_set_uid(uint64_t value) {
+inline void SelfQuitRoomRsp::_internal_set_uid(uint64_t value) {
   
   _impl_.uid_ = value;
 }
-inline void QuitRoomRsp::set_uid(uint64_t value) {
+inline void SelfQuitRoomRsp::set_uid(uint64_t value) {
   _internal_set_uid(value);
-  // @@protoc_insertion_point(field_set:yy.protocol.app.QuitRoomRsp.uid)
+  // @@protoc_insertion_point(field_set:yy.protocol.app.SelfQuitRoomRsp.uid)
 }
 
 // uint64 room_id = 2;
-inline void QuitRoomRsp::clear_room_id() {
+inline void SelfQuitRoomRsp::clear_room_id() {
   _impl_.room_id_ = uint64_t{0u};
 }
-inline uint64_t QuitRoomRsp::_internal_room_id() const {
+inline uint64_t SelfQuitRoomRsp::_internal_room_id() const {
   return _impl_.room_id_;
 }
-inline uint64_t QuitRoomRsp::room_id() const {
-  // @@protoc_insertion_point(field_get:yy.protocol.app.QuitRoomRsp.room_id)
+inline uint64_t SelfQuitRoomRsp::room_id() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.SelfQuitRoomRsp.room_id)
   return _internal_room_id();
 }
-inline void QuitRoomRsp::_internal_set_room_id(uint64_t value) {
+inline void SelfQuitRoomRsp::_internal_set_room_id(uint64_t value) {
   
   _impl_.room_id_ = value;
 }
-inline void QuitRoomRsp::set_room_id(uint64_t value) {
+inline void SelfQuitRoomRsp::set_room_id(uint64_t value) {
   _internal_set_room_id(value);
-  // @@protoc_insertion_point(field_set:yy.protocol.app.QuitRoomRsp.room_id)
+  // @@protoc_insertion_point(field_set:yy.protocol.app.SelfQuitRoomRsp.room_id)
 }
 
-// .yy.protocol.app.QuitRoomRsp.Status result_code = 3;
-inline void QuitRoomRsp::clear_result_code() {
+// .yy.protocol.app.SelfQuitRoomRsp.Status result_code = 3;
+inline void SelfQuitRoomRsp::clear_result_code() {
   _impl_.result_code_ = 0;
 }
-inline ::yy::protocol::app::QuitRoomRsp_Status QuitRoomRsp::_internal_result_code() const {
-  return static_cast< ::yy::protocol::app::QuitRoomRsp_Status >(_impl_.result_code_);
+inline ::yy::protocol::app::SelfQuitRoomRsp_Status SelfQuitRoomRsp::_internal_result_code() const {
+  return static_cast< ::yy::protocol::app::SelfQuitRoomRsp_Status >(_impl_.result_code_);
 }
-inline ::yy::protocol::app::QuitRoomRsp_Status QuitRoomRsp::result_code() const {
-  // @@protoc_insertion_point(field_get:yy.protocol.app.QuitRoomRsp.result_code)
+inline ::yy::protocol::app::SelfQuitRoomRsp_Status SelfQuitRoomRsp::result_code() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.SelfQuitRoomRsp.result_code)
   return _internal_result_code();
 }
-inline void QuitRoomRsp::_internal_set_result_code(::yy::protocol::app::QuitRoomRsp_Status value) {
+inline void SelfQuitRoomRsp::_internal_set_result_code(::yy::protocol::app::SelfQuitRoomRsp_Status value) {
   
   _impl_.result_code_ = value;
 }
-inline void QuitRoomRsp::set_result_code(::yy::protocol::app::QuitRoomRsp_Status value) {
+inline void SelfQuitRoomRsp::set_result_code(::yy::protocol::app::SelfQuitRoomRsp_Status value) {
   _internal_set_result_code(value);
-  // @@protoc_insertion_point(field_set:yy.protocol.app.QuitRoomRsp.result_code)
+  // @@protoc_insertion_point(field_set:yy.protocol.app.SelfQuitRoomRsp.result_code)
+}
+
+// -------------------------------------------------------------------
+
+// OtherQuitRoomRsp
+
+// uint64 uid = 1;
+inline void OtherQuitRoomRsp::clear_uid() {
+  _impl_.uid_ = uint64_t{0u};
+}
+inline uint64_t OtherQuitRoomRsp::_internal_uid() const {
+  return _impl_.uid_;
+}
+inline uint64_t OtherQuitRoomRsp::uid() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.OtherQuitRoomRsp.uid)
+  return _internal_uid();
+}
+inline void OtherQuitRoomRsp::_internal_set_uid(uint64_t value) {
+  
+  _impl_.uid_ = value;
+}
+inline void OtherQuitRoomRsp::set_uid(uint64_t value) {
+  _internal_set_uid(value);
+  // @@protoc_insertion_point(field_set:yy.protocol.app.OtherQuitRoomRsp.uid)
+}
+
+// uint64 room_id = 2;
+inline void OtherQuitRoomRsp::clear_room_id() {
+  _impl_.room_id_ = uint64_t{0u};
+}
+inline uint64_t OtherQuitRoomRsp::_internal_room_id() const {
+  return _impl_.room_id_;
+}
+inline uint64_t OtherQuitRoomRsp::room_id() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.OtherQuitRoomRsp.room_id)
+  return _internal_room_id();
+}
+inline void OtherQuitRoomRsp::_internal_set_room_id(uint64_t value) {
+  
+  _impl_.room_id_ = value;
+}
+inline void OtherQuitRoomRsp::set_room_id(uint64_t value) {
+  _internal_set_room_id(value);
+  // @@protoc_insertion_point(field_set:yy.protocol.app.OtherQuitRoomRsp.room_id)
+}
+
+// .yy.protocol.app.OtherQuitRoomRsp.Status result_code = 3;
+inline void OtherQuitRoomRsp::clear_result_code() {
+  _impl_.result_code_ = 0;
+}
+inline ::yy::protocol::app::OtherQuitRoomRsp_Status OtherQuitRoomRsp::_internal_result_code() const {
+  return static_cast< ::yy::protocol::app::OtherQuitRoomRsp_Status >(_impl_.result_code_);
+}
+inline ::yy::protocol::app::OtherQuitRoomRsp_Status OtherQuitRoomRsp::result_code() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.OtherQuitRoomRsp.result_code)
+  return _internal_result_code();
+}
+inline void OtherQuitRoomRsp::_internal_set_result_code(::yy::protocol::app::OtherQuitRoomRsp_Status value) {
+  
+  _impl_.result_code_ = value;
+}
+inline void OtherQuitRoomRsp::set_result_code(::yy::protocol::app::OtherQuitRoomRsp_Status value) {
+  _internal_set_result_code(value);
+  // @@protoc_insertion_point(field_set:yy.protocol.app.OtherQuitRoomRsp.result_code)
 }
 
 // -------------------------------------------------------------------
@@ -4075,9 +5193,65 @@ inline void BroadcastRoomRsp::set_success(bool value) {
   // @@protoc_insertion_point(field_set:yy.protocol.app.BroadcastRoomRsp.success)
 }
 
+// -------------------------------------------------------------------
+
+// UserDisconnectReq
+
+// uint64 uid = 1;
+inline void UserDisconnectReq::clear_uid() {
+  _impl_.uid_ = uint64_t{0u};
+}
+inline uint64_t UserDisconnectReq::_internal_uid() const {
+  return _impl_.uid_;
+}
+inline uint64_t UserDisconnectReq::uid() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.UserDisconnectReq.uid)
+  return _internal_uid();
+}
+inline void UserDisconnectReq::_internal_set_uid(uint64_t value) {
+  
+  _impl_.uid_ = value;
+}
+inline void UserDisconnectReq::set_uid(uint64_t value) {
+  _internal_set_uid(value);
+  // @@protoc_insertion_point(field_set:yy.protocol.app.UserDisconnectReq.uid)
+}
+
+// -------------------------------------------------------------------
+
+// UserDisconnectRsp
+
+// uint64 uid = 1;
+inline void UserDisconnectRsp::clear_uid() {
+  _impl_.uid_ = uint64_t{0u};
+}
+inline uint64_t UserDisconnectRsp::_internal_uid() const {
+  return _impl_.uid_;
+}
+inline uint64_t UserDisconnectRsp::uid() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.UserDisconnectRsp.uid)
+  return _internal_uid();
+}
+inline void UserDisconnectRsp::_internal_set_uid(uint64_t value) {
+  
+  _impl_.uid_ = value;
+}
+inline void UserDisconnectRsp::set_uid(uint64_t value) {
+  _internal_set_uid(value);
+  // @@protoc_insertion_point(field_set:yy.protocol.app.UserDisconnectRsp.uid)
+}
+
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------
@@ -4114,15 +5288,25 @@ template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::yy::protocol::app::CreateRoomRsp_Status>() {
   return ::yy::protocol::app::CreateRoomRsp_Status_descriptor();
 }
-template <> struct is_proto_enum< ::yy::protocol::app::JoinRoomRsp_Status> : ::std::true_type {};
+template <> struct is_proto_enum< ::yy::protocol::app::SelfJoinRoomRsp_Status> : ::std::true_type {};
 template <>
-inline const EnumDescriptor* GetEnumDescriptor< ::yy::protocol::app::JoinRoomRsp_Status>() {
-  return ::yy::protocol::app::JoinRoomRsp_Status_descriptor();
+inline const EnumDescriptor* GetEnumDescriptor< ::yy::protocol::app::SelfJoinRoomRsp_Status>() {
+  return ::yy::protocol::app::SelfJoinRoomRsp_Status_descriptor();
 }
-template <> struct is_proto_enum< ::yy::protocol::app::QuitRoomRsp_Status> : ::std::true_type {};
+template <> struct is_proto_enum< ::yy::protocol::app::OtherJoinRoomRsp_Status> : ::std::true_type {};
 template <>
-inline const EnumDescriptor* GetEnumDescriptor< ::yy::protocol::app::QuitRoomRsp_Status>() {
-  return ::yy::protocol::app::QuitRoomRsp_Status_descriptor();
+inline const EnumDescriptor* GetEnumDescriptor< ::yy::protocol::app::OtherJoinRoomRsp_Status>() {
+  return ::yy::protocol::app::OtherJoinRoomRsp_Status_descriptor();
+}
+template <> struct is_proto_enum< ::yy::protocol::app::SelfQuitRoomRsp_Status> : ::std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::yy::protocol::app::SelfQuitRoomRsp_Status>() {
+  return ::yy::protocol::app::SelfQuitRoomRsp_Status_descriptor();
+}
+template <> struct is_proto_enum< ::yy::protocol::app::OtherQuitRoomRsp_Status> : ::std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::yy::protocol::app::OtherQuitRoomRsp_Status>() {
+  return ::yy::protocol::app::OtherQuitRoomRsp_Status_descriptor();
 }
 template <> struct is_proto_enum< ::yy::protocol::app::GetEnterSceneTokenRsp_Status> : ::std::true_type {};
 template <>

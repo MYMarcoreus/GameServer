@@ -35,18 +35,18 @@ message SearchRoomReq {
     //todo 过滤条件
 }
 message SearchRoomRsp {
-    uint64                 uid = 1;
-    repeated RoomBriefData room_datas = 2;
+    uint64                  uid = 1;
+    repeated RoomDetailData room_datas = 2;
 }
 
 //! 客户端加入房间
 // Client <-> CenterServer
-message JoinRoomReq {
-    uint64 uid = 1;
-    string user_token = 3;
-    uint64 room_id = 2;
+message SelfJoinRoomReq {
+    AccountBaseData joinner_data = 1;
+    string          user_token = 2;
+    uint64          room_id = 3;
 }
-message JoinRoomRsp {
+message SelfJoinRoomRsp {
     enum Status {
         eSuccess = 0;
         eRoomNotExist = 1;
@@ -56,14 +56,27 @@ message JoinRoomRsp {
     uint64          uid = 1;
     Status          result_code = 2;
     RoomDetailData  room_data = 3;
+    string          room_ip = 4;
+    uint32          room_port = 5;
+}
+message OtherJoinRoomRsp {
+    enum Status {
+        eSuccess = 0;
+        eRoomNotExist = 1;
+        eUnknownError = 2;
+    }
+
+    AccountBaseData joinner_data = 3;
+    Status          result_code = 2;
 }
 
-message QuitRoomReq {
+
+message SelfQuitRoomReq {
     uint64 uid = 1;
     string user_token = 3;
     uint64 room_id = 2;
 }
-message QuitRoomRsp {
+message SelfQuitRoomRsp {
     enum Status {
         eSuccess = 0;
         eRoomNotExist = 1;
@@ -74,6 +87,18 @@ message QuitRoomRsp {
     uint64 room_id = 2;
     Status result_code = 3;
 }
+message OtherQuitRoomRsp {
+    enum Status {
+        eSuccess = 0;
+        eRoomNotExist = 1;
+        eUnknownError = 2;
+    }
+
+    uint64 uid = 1;
+    uint64 room_id = 2;
+    Status result_code = 3;
+}
+
 
 //! 客户端点击“进入”后，首先向CenterServer获取房间场景token，之后带着这个场景token连接LogicServer
 message GetEnterSceneTokenReq {
@@ -100,7 +125,6 @@ message BroadcastRoomReq {
     MessageCommand msg_cmd = 3; // payload的消息类型
     bytes payload = 4;
 }
-
 message BroadcastRoomRsp {
     uint64 room_id = 1;
     repeated uint64 failed_uids = 2;
@@ -108,14 +132,22 @@ message BroadcastRoomRsp {
     bool success = 4;
 }
 
+message UserDisconnectReq {
+    uint64 uid = 1;
+}
+message UserDisconnectRsp {
+    uint64 uid = 1;
+}
+
 //! CenterServer
 service CenterRoomServiceRpc
 {
     rpc CreateRoom(CreateRoomReq) returns(CreateRoomRsp);
     rpc SearchRoom(SearchRoomReq) returns(SearchRoomRsp);
-    rpc JoinRoom(JoinRoomReq) returns(JoinRoomRsp);
+    rpc SelfJoinRoom(SelfJoinRoomReq) returns(SelfJoinRoomRsp);
     rpc GetEnterSceneToken(GetEnterSceneTokenReq) returns(GetEnterSceneTokenRsp);
-    rpc QuitRoom(QuitRoomReq) returns(QuitRoomRsp);
+    rpc SelfQuitRoom(SelfQuitRoomReq) returns(SelfQuitRoomRsp);
+    rpc UserDisconnect(UserDisconnectReq) returns(UserDisconnectRsp);
 }
 
 service GateRoomServiceRpc

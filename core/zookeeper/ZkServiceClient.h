@@ -10,7 +10,7 @@ namespace yy::core::zk
 class ZkServiceClient  {
     mutable std::once_flag  zk_client_init_flag_;
 public:
-    using WatcherCallback = std::function<void(const std::string&, std::vector<net::IPAddressPtr> &&)>;
+    using WatcherCallback = std::function<void(const std::string&, std::unordered_map<std::string, net::IPAddressPtr>)>;
     void Start(const std::string & service_root);
 
     // 注册服务（服务名 + 实例地址）
@@ -26,10 +26,10 @@ public:
     auto FetchAllRemote() -> std::unordered_map<std::string, std::vector<net::IPAddressPtr>>;
     size_t EndpointSize(const std::string& service_name);
 
-    void Watch(const std::string& service_name, WatcherCallback && cb);
+    void Watch(const std::string& service_name, bool trigger_now, WatcherCallback watcher_cb);
 
 private:
-    auto StrEndpointsToIpAddr(const std::string& service_base, std::vector<std::string>&& providers) -> std::vector<net::IPAddressPtr>;
+    auto StrEndpointsToIpAddr(const std::string& service_base, const std::vector<std::string> & providers) -> std::vector<net::IPAddressPtr>;
 
 private:
     ZkClient zk_client_;

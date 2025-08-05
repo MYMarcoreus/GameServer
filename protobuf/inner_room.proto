@@ -4,6 +4,14 @@ option cc_generic_services = true;
 import "room_data.proto";
 
 /* **************** 内部RPC消息 **************** */
+message GetLogicAddrReq {
+}
+
+message GetLogicAddrRsp {
+    string ip = 3;
+    uint32 port = 4;
+}
+
 message NewRoomReq {
     RoomDetailData room_data = 1;
     string user_token = 3;
@@ -29,4 +37,5 @@ service LogicRoomServiceRpc
 {
     rpc NewRoom(NewRoomReq) returns(NewRoomRsp);
     rpc DeleteRoom(DeleteRoomReq) returns(DeleteRoomRsp);
+    rpc GetLogicAddr(GetLogicAddrReq) returns(GetLogicAddrRsp);
 }

@@ -36,7 +36,7 @@ const uint8_t xor_code, IPAddressPtr serverAddr) :
         m_Connector->SetConnectFailedCallback( [this]() { YLOG_WARN("coonect to <{}:{}>", this->m_ServerAddr->GetIPStr().c_str(), m_ServerAddr->GetPort()) } );
     }
 #ifdef ____LINUX
-    util::SignalManager::set_signal_ignore(SIGPIPE);
+    SignalManager::set_signal_ignore(SIGPIPE);
 #endif
 }
 

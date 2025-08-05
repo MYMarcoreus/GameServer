@@ -84,66 +84,97 @@ struct SearchRoomRspDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 SearchRoomRspDefaultTypeInternal _SearchRoomRsp_default_instance_;
-PROTOBUF_CONSTEXPR JoinRoomReq::JoinRoomReq(
+PROTOBUF_CONSTEXPR SelfJoinRoomReq::SelfJoinRoomReq(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_.user_token_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
-  , /*decltype(_impl_.uid_)*/uint64_t{0u}
+  , /*decltype(_impl_.joinner_data_)*/nullptr
   , /*decltype(_impl_.room_id_)*/uint64_t{0u}
   , /*decltype(_impl_._cached_size_)*/{}} {}
-struct JoinRoomReqDefaultTypeInternal {
-  PROTOBUF_CONSTEXPR JoinRoomReqDefaultTypeInternal()
+struct SelfJoinRoomReqDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR SelfJoinRoomReqDefaultTypeInternal()
       : _instance(::_pbi::ConstantInitialized{}) {}
-  ~JoinRoomReqDefaultTypeInternal() {}
+  ~SelfJoinRoomReqDefaultTypeInternal() {}
   union {
-    JoinRoomReq _instance;
+    SelfJoinRoomReq _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 JoinRoomReqDefaultTypeInternal _JoinRoomReq_default_instance_;
-PROTOBUF_CONSTEXPR JoinRoomRsp::JoinRoomRsp(
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 SelfJoinRoomReqDefaultTypeInternal _SelfJoinRoomReq_default_instance_;
+PROTOBUF_CONSTEXPR SelfJoinRoomRsp::SelfJoinRoomRsp(
     ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_.room_data_)*/nullptr
+    /*decltype(_impl_.room_ip_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_.room_data_)*/nullptr
   , /*decltype(_impl_.uid_)*/uint64_t{0u}
   , /*decltype(_impl_.result_code_)*/0
+  , /*decltype(_impl_.room_port_)*/0u
   , /*decltype(_impl_._cached_size_)*/{}} {}
-struct JoinRoomRspDefaultTypeInternal {
-  PROTOBUF_CONSTEXPR JoinRoomRspDefaultTypeInternal()
+struct SelfJoinRoomRspDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR SelfJoinRoomRspDefaultTypeInternal()
       : _instance(::_pbi::ConstantInitialized{}) {}
-  ~JoinRoomRspDefaultTypeInternal() {}
+  ~SelfJoinRoomRspDefaultTypeInternal() {}
   union {
-    JoinRoomRsp _instance;
+    SelfJoinRoomRsp _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 JoinRoomRspDefaultTypeInternal _JoinRoomRsp_default_instance_;
-PROTOBUF_CONSTEXPR QuitRoomReq::QuitRoomReq(
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 SelfJoinRoomRspDefaultTypeInternal _SelfJoinRoomRsp_default_instance_;
+PROTOBUF_CONSTEXPR OtherJoinRoomRsp::OtherJoinRoomRsp(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.joinner_data_)*/nullptr
+  , /*decltype(_impl_.result_code_)*/0
+  , /*decltype(_impl_._cached_size_)*/{}} {}
+struct OtherJoinRoomRspDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR OtherJoinRoomRspDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
+  ~OtherJoinRoomRspDefaultTypeInternal() {}
+  union {
+    OtherJoinRoomRsp _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 OtherJoinRoomRspDefaultTypeInternal _OtherJoinRoomRsp_default_instance_;
+PROTOBUF_CONSTEXPR SelfQuitRoomReq::SelfQuitRoomReq(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_.user_token_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.uid_)*/uint64_t{0u}
   , /*decltype(_impl_.room_id_)*/uint64_t{0u}
   , /*decltype(_impl_._cached_size_)*/{}} {}
-struct QuitRoomReqDefaultTypeInternal {
-  PROTOBUF_CONSTEXPR QuitRoomReqDefaultTypeInternal()
+struct SelfQuitRoomReqDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR SelfQuitRoomReqDefaultTypeInternal()
       : _instance(::_pbi::ConstantInitialized{}) {}
-  ~QuitRoomReqDefaultTypeInternal() {}
+  ~SelfQuitRoomReqDefaultTypeInternal() {}
   union {
-    QuitRoomReq _instance;
+    SelfQuitRoomReq _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 QuitRoomReqDefaultTypeInternal _QuitRoomReq_default_instance_;
-PROTOBUF_CONSTEXPR QuitRoomRsp::QuitRoomRsp(
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 SelfQuitRoomReqDefaultTypeInternal _SelfQuitRoomReq_default_instance_;
+PROTOBUF_CONSTEXPR SelfQuitRoomRsp::SelfQuitRoomRsp(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_.uid_)*/uint64_t{0u}
   , /*decltype(_impl_.room_id_)*/uint64_t{0u}
   , /*decltype(_impl_.result_code_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
-struct QuitRoomRspDefaultTypeInternal {
-  PROTOBUF_CONSTEXPR QuitRoomRspDefaultTypeInternal()
+struct SelfQuitRoomRspDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR SelfQuitRoomRspDefaultTypeInternal()
       : _instance(::_pbi::ConstantInitialized{}) {}
-  ~QuitRoomRspDefaultTypeInternal() {}
+  ~SelfQuitRoomRspDefaultTypeInternal() {}
   union {
-    QuitRoomRsp _instance;
+    SelfQuitRoomRsp _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 QuitRoomRspDefaultTypeInternal _QuitRoomRsp_default_instance_;
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 SelfQuitRoomRspDefaultTypeInternal _SelfQuitRoomRsp_default_instance_;
+PROTOBUF_CONSTEXPR OtherQuitRoomRsp::OtherQuitRoomRsp(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.uid_)*/uint64_t{0u}
+  , /*decltype(_impl_.room_id_)*/uint64_t{0u}
+  , /*decltype(_impl_.result_code_)*/0
+  , /*decltype(_impl_._cached_size_)*/{}} {}
+struct OtherQuitRoomRspDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR OtherQuitRoomRspDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
+  ~OtherQuitRoomRspDefaultTypeInternal() {}
+  union {
+    OtherQuitRoomRsp _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 OtherQuitRoomRspDefaultTypeInternal _OtherQuitRoomRsp_default_instance_;
 PROTOBUF_CONSTEXPR GetEnterSceneTokenReq::GetEnterSceneTokenReq(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_.user_token_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
@@ -209,11 +240,37 @@ struct BroadcastRoomRspDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 BroadcastRoomRspDefaultTypeInternal _BroadcastRoomRsp_default_instance_;
+PROTOBUF_CONSTEXPR UserDisconnectReq::UserDisconnectReq(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.uid_)*/uint64_t{0u}
+  , /*decltype(_impl_._cached_size_)*/{}} {}
+struct UserDisconnectReqDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR UserDisconnectReqDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
+  ~UserDisconnectReqDefaultTypeInternal() {}
+  union {
+    UserDisconnectReq _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 UserDisconnectReqDefaultTypeInternal _UserDisconnectReq_default_instance_;
+PROTOBUF_CONSTEXPR UserDisconnectRsp::UserDisconnectRsp(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.uid_)*/uint64_t{0u}
+  , /*decltype(_impl_._cached_size_)*/{}} {}
+struct UserDisconnectRspDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR UserDisconnectRspDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
+  ~UserDisconnectRspDefaultTypeInternal() {}
+  union {
+    UserDisconnectRsp _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 UserDisconnectRspDefaultTypeInternal _UserDisconnectRsp_default_instance_;
 }  // namespace app
 }  // namespace protocol
 }  // namespace yy
-static ::_pb::Metadata file_level_metadata_room_2eproto[12];
-static const ::_pb::EnumDescriptor* file_level_enum_descriptors_room_2eproto[4];
+static ::_pb::Metadata file_level_metadata_room_2eproto[16];
+static const ::_pb::EnumDescriptor* file_level_enum_descriptors_room_2eproto[6];
 static const ::_pb::ServiceDescriptor* file_level_service_descriptors_room_2eproto[2];
 
 const uint32_t TableStruct_room_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
@@ -255,41 +312,60 @@ const uint32_t TableStruct_room_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(pro
   PROTOBUF_FIELD_OFFSET(::yy::protocol::app::SearchRoomRsp, _impl_.uid_),
   PROTOBUF_FIELD_OFFSET(::yy::protocol::app::SearchRoomRsp, _impl_.room_datas_),
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::JoinRoomReq, _internal_metadata_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::SelfJoinRoomReq, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::JoinRoomReq, _impl_.uid_),
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::JoinRoomReq, _impl_.user_token_),
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::JoinRoomReq, _impl_.room_id_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::SelfJoinRoomReq, _impl_.joinner_data_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::SelfJoinRoomReq, _impl_.user_token_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::SelfJoinRoomReq, _impl_.room_id_),
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::JoinRoomRsp, _internal_metadata_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::SelfJoinRoomRsp, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::JoinRoomRsp, _impl_.uid_),
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::JoinRoomRsp, _impl_.result_code_),
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::JoinRoomRsp, _impl_.room_data_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::SelfJoinRoomRsp, _impl_.uid_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::SelfJoinRoomRsp, _impl_.result_code_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::SelfJoinRoomRsp, _impl_.room_data_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::SelfJoinRoomRsp, _impl_.room_ip_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::SelfJoinRoomRsp, _impl_.room_port_),
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::QuitRoomReq, _internal_metadata_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::OtherJoinRoomRsp, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::QuitRoomReq, _impl_.uid_),
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::QuitRoomReq, _impl_.user_token_),
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::QuitRoomReq, _impl_.room_id_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::OtherJoinRoomRsp, _impl_.joinner_data_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::OtherJoinRoomRsp, _impl_.result_code_),
   ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::QuitRoomRsp, _internal_metadata_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::SelfQuitRoomReq, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::QuitRoomRsp, _impl_.uid_),
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::QuitRoomRsp, _impl_.room_id_),
-  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::QuitRoomRsp, _impl_.result_code_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::SelfQuitRoomReq, _impl_.uid_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::SelfQuitRoomReq, _impl_.user_token_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::SelfQuitRoomReq, _impl_.room_id_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::SelfQuitRoomRsp, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::SelfQuitRoomRsp, _impl_.uid_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::SelfQuitRoomRsp, _impl_.room_id_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::SelfQuitRoomRsp, _impl_.result_code_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::OtherQuitRoomRsp, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::OtherQuitRoomRsp, _impl_.uid_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::OtherQuitRoomRsp, _impl_.room_id_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::OtherQuitRoomRsp, _impl_.result_code_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::yy::protocol::app::GetEnterSceneTokenReq, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -329,20 +405,38 @@ const uint32_t TableStruct_room_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(pro
   PROTOBUF_FIELD_OFFSET(::yy::protocol::app::BroadcastRoomRsp, _impl_.failed_uids_),
   PROTOBUF_FIELD_OFFSET(::yy::protocol::app::BroadcastRoomRsp, _impl_.msg_cmd_),
   PROTOBUF_FIELD_OFFSET(::yy::protocol::app::BroadcastRoomRsp, _impl_.success_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::UserDisconnectReq, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::UserDisconnectReq, _impl_.uid_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::UserDisconnectRsp, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::UserDisconnectRsp, _impl_.uid_),
 };
 static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::yy::protocol::app::CreateRoomReq)},
   { 10, -1, -1, sizeof(::yy::protocol::app::CreateRoomRsp)},
   { 21, -1, -1, sizeof(::yy::protocol::app::SearchRoomReq)},
   { 29, -1, -1, sizeof(::yy::protocol::app::SearchRoomRsp)},
-  { 37, -1, -1, sizeof(::yy::protocol::app::JoinRoomReq)},
-  { 46, -1, -1, sizeof(::yy::protocol::app::JoinRoomRsp)},
-  { 55, -1, -1, sizeof(::yy::protocol::app::QuitRoomReq)},
-  { 64, -1, -1, sizeof(::yy::protocol::app::QuitRoomRsp)},
-  { 73, -1, -1, sizeof(::yy::protocol::app::GetEnterSceneTokenReq)},
-  { 82, -1, -1, sizeof(::yy::protocol::app::GetEnterSceneTokenRsp)},
-  { 92, -1, -1, sizeof(::yy::protocol::app::BroadcastRoomReq)},
-  { 102, -1, -1, sizeof(::yy::protocol::app::BroadcastRoomRsp)},
+  { 37, -1, -1, sizeof(::yy::protocol::app::SelfJoinRoomReq)},
+  { 46, -1, -1, sizeof(::yy::protocol::app::SelfJoinRoomRsp)},
+  { 57, -1, -1, sizeof(::yy::protocol::app::OtherJoinRoomRsp)},
+  { 65, -1, -1, sizeof(::yy::protocol::app::SelfQuitRoomReq)},
+  { 74, -1, -1, sizeof(::yy::protocol::app::SelfQuitRoomRsp)},
+  { 83, -1, -1, sizeof(::yy::protocol::app::OtherQuitRoomRsp)},
+  { 92, -1, -1, sizeof(::yy::protocol::app::GetEnterSceneTokenReq)},
+  { 101, -1, -1, sizeof(::yy::protocol::app::GetEnterSceneTokenRsp)},
+  { 111, -1, -1, sizeof(::yy::protocol::app::BroadcastRoomReq)},
+  { 121, -1, -1, sizeof(::yy::protocol::app::BroadcastRoomRsp)},
+  { 131, -1, -1, sizeof(::yy::protocol::app::UserDisconnectReq)},
+  { 138, -1, -1, sizeof(::yy::protocol::app::UserDisconnectRsp)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -350,14 +444,18 @@ static const ::_pb::Message* const file_default_instances[] = {
   &::yy::protocol::app::_CreateRoomRsp_default_instance_._instance,
   &::yy::protocol::app::_SearchRoomReq_default_instance_._instance,
   &::yy::protocol::app::_SearchRoomRsp_default_instance_._instance,
-  &::yy::protocol::app::_JoinRoomReq_default_instance_._instance,
-  &::yy::protocol::app::_JoinRoomRsp_default_instance_._instance,
-  &::yy::protocol::app::_QuitRoomReq_default_instance_._instance,
-  &::yy::protocol::app::_QuitRoomRsp_default_instance_._instance,
+  &::yy::protocol::app::_SelfJoinRoomReq_default_instance_._instance,
+  &::yy::protocol::app::_SelfJoinRoomRsp_default_instance_._instance,
+  &::yy::protocol::app::_OtherJoinRoomRsp_default_instance_._instance,
+  &::yy::protocol::app::_SelfQuitRoomReq_default_instance_._instance,
+  &::yy::protocol::app::_SelfQuitRoomRsp_default_instance_._instance,
+  &::yy::protocol::app::_OtherQuitRoomRsp_default_instance_._instance,
   &::yy::protocol::app::_GetEnterSceneTokenReq_default_instance_._instance,
   &::yy::protocol::app::_GetEnterSceneTokenRsp_default_instance_._instance,
   &::yy::protocol::app::_BroadcastRoomReq_default_instance_._instance,
   &::yy::protocol::app::_BroadcastRoomRsp_default_instance_._instance,
+  &::yy::protocol::app::_UserDisconnectReq_default_instance_._instance,
+  &::yy::protocol::app::_UserDisconnectRsp_default_instance_._instance,
 };
 
 const char descriptor_table_protodef_room_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
@@ -373,48 +471,65 @@ const char descriptor_table_protodef_room_2eproto[] PROTOBUF_SECTION_VARIABLE(pr
   " \001(\t\022\021\n\troom_port\030\005 \001(\r\"8\n\006Status\022\014\n\010eSu"
   "ccess\020\000\022\r\n\teNoServer\020\001\022\021\n\reUnknownError\020"
   "\002\"0\n\rSearchRoomReq\022\013\n\003uid\030\001 \001(\004\022\022\n\nuser_"
-  "token\030\003 \001(\t\"P\n\rSearchRoomRsp\022\013\n\003uid\030\001 \001("
-  "\004\0222\n\nroom_datas\030\002 \003(\0132\036.yy.protocol.app."
-  "RoomBriefData\"\?\n\013JoinRoomReq\022\013\n\003uid\030\001 \001("
-  "\004\022\022\n\nuser_token\030\003 \001(\t\022\017\n\007room_id\030\002 \001(\004\"\306"
-  "\001\n\013JoinRoomRsp\022\013\n\003uid\030\001 \001(\004\0228\n\013result_co"
-  "de\030\002 \001(\0162#.yy.protocol.app.JoinRoomRsp.S"
-  "tatus\0222\n\troom_data\030\003 \001(\0132\037.yy.protocol.a"
-  "pp.RoomDetailData\"<\n\006Status\022\014\n\010eSuccess\020"
-  "\000\022\021\n\reRoomNotExist\020\001\022\021\n\reUnknownError\020\002\""
-  "\?\n\013QuitRoomReq\022\013\n\003uid\030\001 \001(\004\022\022\n\nuser_toke"
-  "n\030\003 \001(\t\022\017\n\007room_id\030\002 \001(\004\"\243\001\n\013QuitRoomRsp"
-  "\022\013\n\003uid\030\001 \001(\004\022\017\n\007room_id\030\002 \001(\004\0228\n\013result"
-  "_code\030\003 \001(\0162#.yy.protocol.app.QuitRoomRs"
-  "p.Status\"<\n\006Status\022\014\n\010eSuccess\020\000\022\021\n\reRoo"
-  "mNotExist\020\001\022\021\n\reUnknownError\020\002\"I\n\025GetEnt"
-  "erSceneTokenReq\022\013\n\003uid\030\001 \001(\004\022\022\n\nuser_tok"
-  "en\030\003 \001(\t\022\017\n\007room_id\030\002 \001(\004\"\314\001\n\025GetEnterSc"
-  "eneTokenRsp\022\013\n\003uid\030\001 \001(\004\022B\n\013result_code\030"
-  "\002 \001(\0162-.yy.protocol.app.GetEnterSceneTok"
-  "enRsp.Status\022\017\n\007room_id\030\003 \001(\004\022\023\n\013scene_t"
-  "oken\030\004 \001(\t\"<\n\006Status\022\014\n\010eSuccess\020\000\022\021\n\reR"
-  "oomNotExist\020\001\022\021\n\reUnknownError\020\002\"w\n\020Broa"
-  "dcastRoomReq\022\017\n\007room_id\030\001 \001(\004\022\023\n\013target_"
-  "uids\030\002 \003(\004\022,\n\007msg_cmd\030\003 \001(\0162\033.yy.protoco"
-  "l.MessageCommand\022\017\n\007payload\030\004 \001(\014\"w\n\020Bro"
-  "adcastRoomRsp\022\017\n\007room_id\030\001 \001(\004\022\023\n\013failed"
-  "_uids\030\002 \003(\004\022,\n\007msg_cmd\030\003 \001(\0162\033.yy.protoc"
-  "ol.MessageCommand\022\017\n\007success\030\004 \001(\0102\250\003\n\024C"
-  "enterRoomServiceRpc\022L\n\nCreateRoom\022\036.yy.p"
-  "rotocol.app.CreateRoomReq\032\036.yy.protocol."
-  "app.CreateRoomRsp\022L\n\nSearchRoom\022\036.yy.pro"
-  "tocol.app.SearchRoomReq\032\036.yy.protocol.ap"
-  "p.SearchRoomRsp\022F\n\010JoinRoom\022\034.yy.protoco"
-  "l.app.JoinRoomReq\032\034.yy.protocol.app.Join"
-  "RoomRsp\022d\n\022GetEnterSceneToken\022&.yy.proto"
-  "col.app.GetEnterSceneTokenReq\032&.yy.proto"
-  "col.app.GetEnterSceneTokenRsp\022F\n\010QuitRoo"
-  "m\022\034.yy.protocol.app.QuitRoomReq\032\034.yy.pro"
-  "tocol.app.QuitRoomRsp2k\n\022GateRoomService"
-  "Rpc\022U\n\rBroadcastRoom\022!.yy.protocol.app.B"
-  "roadcastRoomReq\032!.yy.protocol.app.Broadc"
-  "astRoomRspB\003\200\001\001b\006proto3"
+  "token\030\003 \001(\t\"Q\n\rSearchRoomRsp\022\013\n\003uid\030\001 \001("
+  "\004\0223\n\nroom_datas\030\002 \003(\0132\037.yy.protocol.app."
+  "RoomDetailData\"n\n\017SelfJoinRoomReq\0226\n\014joi"
+  "nner_data\030\001 \001(\0132 .yy.protocol.app.Accoun"
+  "tBaseData\022\022\n\nuser_token\030\002 \001(\t\022\017\n\007room_id"
+  "\030\003 \001(\004\"\362\001\n\017SelfJoinRoomRsp\022\013\n\003uid\030\001 \001(\004\022"
+  "<\n\013result_code\030\002 \001(\0162\'.yy.protocol.app.S"
+  "elfJoinRoomRsp.Status\0222\n\troom_data\030\003 \001(\013"
+  "2\037.yy.protocol.app.RoomDetailData\022\017\n\007roo"
+  "m_ip\030\004 \001(\t\022\021\n\troom_port\030\005 \001(\r\"<\n\006Status\022"
+  "\014\n\010eSuccess\020\000\022\021\n\reRoomNotExist\020\001\022\021\n\reUnk"
+  "nownError\020\002\"\307\001\n\020OtherJoinRoomRsp\0226\n\014join"
+  "ner_data\030\003 \001(\0132 .yy.protocol.app.Account"
+  "BaseData\022=\n\013result_code\030\002 \001(\0162(.yy.proto"
+  "col.app.OtherJoinRoomRsp.Status\"<\n\006Statu"
+  "s\022\014\n\010eSuccess\020\000\022\021\n\reRoomNotExist\020\001\022\021\n\reU"
+  "nknownError\020\002\"C\n\017SelfQuitRoomReq\022\013\n\003uid\030"
+  "\001 \001(\004\022\022\n\nuser_token\030\003 \001(\t\022\017\n\007room_id\030\002 \001"
+  "(\004\"\253\001\n\017SelfQuitRoomRsp\022\013\n\003uid\030\001 \001(\004\022\017\n\007r"
+  "oom_id\030\002 \001(\004\022<\n\013result_code\030\003 \001(\0162\'.yy.p"
+  "rotocol.app.SelfQuitRoomRsp.Status\"<\n\006St"
+  "atus\022\014\n\010eSuccess\020\000\022\021\n\reRoomNotExist\020\001\022\021\n"
+  "\reUnknownError\020\002\"\255\001\n\020OtherQuitRoomRsp\022\013\n"
+  "\003uid\030\001 \001(\004\022\017\n\007room_id\030\002 \001(\004\022=\n\013result_co"
+  "de\030\003 \001(\0162(.yy.protocol.app.OtherQuitRoom"
+  "Rsp.Status\"<\n\006Status\022\014\n\010eSuccess\020\000\022\021\n\reR"
+  "oomNotExist\020\001\022\021\n\reUnknownError\020\002\"I\n\025GetE"
+  "nterSceneTokenReq\022\013\n\003uid\030\001 \001(\004\022\022\n\nuser_t"
+  "oken\030\003 \001(\t\022\017\n\007room_id\030\002 \001(\004\"\314\001\n\025GetEnter"
+  "SceneTokenRsp\022\013\n\003uid\030\001 \001(\004\022B\n\013result_cod"
+  "e\030\002 \001(\0162-.yy.protocol.app.GetEnterSceneT"
+  "okenRsp.Status\022\017\n\007room_id\030\003 \001(\004\022\023\n\013scene"
+  "_token\030\004 \001(\t\"<\n\006Status\022\014\n\010eSuccess\020\000\022\021\n\r"
+  "eRoomNotExist\020\001\022\021\n\reUnknownError\020\002\"w\n\020Br"
+  "oadcastRoomReq\022\017\n\007room_id\030\001 \001(\004\022\023\n\013targe"
+  "t_uids\030\002 \003(\004\022,\n\007msg_cmd\030\003 \001(\0162\033.yy.proto"
+  "col.MessageCommand\022\017\n\007payload\030\004 \001(\014\"w\n\020B"
+  "roadcastRoomRsp\022\017\n\007room_id\030\001 \001(\004\022\023\n\013fail"
+  "ed_uids\030\002 \003(\004\022,\n\007msg_cmd\030\003 \001(\0162\033.yy.prot"
+  "ocol.MessageCommand\022\017\n\007success\030\004 \001(\010\" \n\021"
+  "UserDisconnectReq\022\013\n\003uid\030\001 \001(\004\" \n\021UserDi"
+  "sconnectRsp\022\013\n\003uid\030\001 \001(\0042\232\004\n\024CenterRoomS"
+  "erviceRpc\022L\n\nCreateRoom\022\036.yy.protocol.ap"
+  "p.CreateRoomReq\032\036.yy.protocol.app.Create"
+  "RoomRsp\022L\n\nSearchRoom\022\036.yy.protocol.app."
+  "SearchRoomReq\032\036.yy.protocol.app.SearchRo"
+  "omRsp\022R\n\014SelfJoinRoom\022 .yy.protocol.app."
+  "SelfJoinRoomReq\032 .yy.protocol.app.SelfJo"
+  "inRoomRsp\022d\n\022GetEnterSceneToken\022&.yy.pro"
+  "tocol.app.GetEnterSceneTokenReq\032&.yy.pro"
+  "tocol.app.GetEnterSceneTokenRsp\022R\n\014SelfQ"
+  "uitRoom\022 .yy.protocol.app.SelfQuitRoomRe"
+  "q\032 .yy.protocol.app.SelfQuitRoomRsp\022X\n\016U"
+  "serDisconnect\022\".yy.protocol.app.UserDisc"
+  "onnectReq\032\".yy.protocol.app.UserDisconne"
+  "ctRsp2k\n\022GateRoomServiceRpc\022U\n\rBroadcast"
+  "Room\022!.yy.protocol.app.BroadcastRoomReq\032"
+  "!.yy.protocol.app.BroadcastRoomRspB\003\200\001\001b"
+  "\006proto3"
   ;
 static const ::_pbi::DescriptorTable* const descriptor_table_room_2eproto_deps[3] = {
   &::descriptor_table_account_5fdata_2eproto,
@@ -423,9 +538,9 @@ static const ::_pbi::DescriptorTable* const descriptor_table_room_2eproto_deps[3
 };
 static ::_pbi::once_flag descriptor_table_room_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_room_2eproto = {
-    false, false, 2143, descriptor_table_protodef_room_2eproto,
+    false, false, 2807, descriptor_table_protodef_room_2eproto,
     "room.proto",
-    &descriptor_table_room_2eproto_once, descriptor_table_room_2eproto_deps, 3, 12,
+    &descriptor_table_room_2eproto_once, descriptor_table_room_2eproto_deps, 3, 16,
     schemas, file_default_instances, TableStruct_room_2eproto::offsets,
     file_level_metadata_room_2eproto, file_level_enum_descriptors_room_2eproto,
     file_level_service_descriptors_room_2eproto,
@@ -462,11 +577,11 @@ constexpr CreateRoomRsp_Status CreateRoomRsp::Status_MIN;
 constexpr CreateRoomRsp_Status CreateRoomRsp::Status_MAX;
 constexpr int CreateRoomRsp::Status_ARRAYSIZE;
 #endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
-const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* JoinRoomRsp_Status_descriptor() {
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* SelfJoinRoomRsp_Status_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_room_2eproto);
   return file_level_enum_descriptors_room_2eproto[1];
 }
-bool JoinRoomRsp_Status_IsValid(int value) {
+bool SelfJoinRoomRsp_Status_IsValid(int value) {
   switch (value) {
     case 0:
     case 1:
@@ -478,18 +593,18 @@ bool JoinRoomRsp_Status_IsValid(int value) {
 }
 
 #if (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
-constexpr JoinRoomRsp_Status JoinRoomRsp::eSuccess;
-constexpr JoinRoomRsp_Status JoinRoomRsp::eRoomNotExist;
-constexpr JoinRoomRsp_Status JoinRoomRsp::eUnknownError;
-constexpr JoinRoomRsp_Status JoinRoomRsp::Status_MIN;
-constexpr JoinRoomRsp_Status JoinRoomRsp::Status_MAX;
-constexpr int JoinRoomRsp::Status_ARRAYSIZE;
+constexpr SelfJoinRoomRsp_Status SelfJoinRoomRsp::eSuccess;
+constexpr SelfJoinRoomRsp_Status SelfJoinRoomRsp::eRoomNotExist;
+constexpr SelfJoinRoomRsp_Status SelfJoinRoomRsp::eUnknownError;
+constexpr SelfJoinRoomRsp_Status SelfJoinRoomRsp::Status_MIN;
+constexpr SelfJoinRoomRsp_Status SelfJoinRoomRsp::Status_MAX;
+constexpr int SelfJoinRoomRsp::Status_ARRAYSIZE;
 #endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
-const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* QuitRoomRsp_Status_descriptor() {
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* OtherJoinRoomRsp_Status_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_room_2eproto);
   return file_level_enum_descriptors_room_2eproto[2];
 }
-bool QuitRoomRsp_Status_IsValid(int value) {
+bool OtherJoinRoomRsp_Status_IsValid(int value) {
   switch (value) {
     case 0:
     case 1:
@@ -501,16 +616,62 @@ bool QuitRoomRsp_Status_IsValid(int value) {
 }
 
 #if (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
-constexpr QuitRoomRsp_Status QuitRoomRsp::eSuccess;
-constexpr QuitRoomRsp_Status QuitRoomRsp::eRoomNotExist;
-constexpr QuitRoomRsp_Status QuitRoomRsp::eUnknownError;
-constexpr QuitRoomRsp_Status QuitRoomRsp::Status_MIN;
-constexpr QuitRoomRsp_Status QuitRoomRsp::Status_MAX;
-constexpr int QuitRoomRsp::Status_ARRAYSIZE;
+constexpr OtherJoinRoomRsp_Status OtherJoinRoomRsp::eSuccess;
+constexpr OtherJoinRoomRsp_Status OtherJoinRoomRsp::eRoomNotExist;
+constexpr OtherJoinRoomRsp_Status OtherJoinRoomRsp::eUnknownError;
+constexpr OtherJoinRoomRsp_Status OtherJoinRoomRsp::Status_MIN;
+constexpr OtherJoinRoomRsp_Status OtherJoinRoomRsp::Status_MAX;
+constexpr int OtherJoinRoomRsp::Status_ARRAYSIZE;
+#endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* SelfQuitRoomRsp_Status_descriptor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_room_2eproto);
+  return file_level_enum_descriptors_room_2eproto[3];
+}
+bool SelfQuitRoomRsp_Status_IsValid(int value) {
+  switch (value) {
+    case 0:
+    case 1:
+    case 2:
+      return true;
+    default:
+      return false;
+  }
+}
+
+#if (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
+constexpr SelfQuitRoomRsp_Status SelfQuitRoomRsp::eSuccess;
+constexpr SelfQuitRoomRsp_Status SelfQuitRoomRsp::eRoomNotExist;
+constexpr SelfQuitRoomRsp_Status SelfQuitRoomRsp::eUnknownError;
+constexpr SelfQuitRoomRsp_Status SelfQuitRoomRsp::Status_MIN;
+constexpr SelfQuitRoomRsp_Status SelfQuitRoomRsp::Status_MAX;
+constexpr int SelfQuitRoomRsp::Status_ARRAYSIZE;
+#endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* OtherQuitRoomRsp_Status_descriptor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_room_2eproto);
+  return file_level_enum_descriptors_room_2eproto[4];
+}
+bool OtherQuitRoomRsp_Status_IsValid(int value) {
+  switch (value) {
+    case 0:
+    case 1:
+    case 2:
+      return true;
+    default:
+      return false;
+  }
+}
+
+#if (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
+constexpr OtherQuitRoomRsp_Status OtherQuitRoomRsp::eSuccess;
+constexpr OtherQuitRoomRsp_Status OtherQuitRoomRsp::eRoomNotExist;
+constexpr OtherQuitRoomRsp_Status OtherQuitRoomRsp::eUnknownError;
+constexpr OtherQuitRoomRsp_Status OtherQuitRoomRsp::Status_MIN;
+constexpr OtherQuitRoomRsp_Status OtherQuitRoomRsp::Status_MAX;
+constexpr int OtherQuitRoomRsp::Status_ARRAYSIZE;
 #endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* GetEnterSceneTokenRsp_Status_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_room_2eproto);
-  return file_level_enum_descriptors_room_2eproto[3];
+  return file_level_enum_descriptors_room_2eproto[5];
 }
 bool GetEnterSceneTokenRsp_Status_IsValid(int value) {
   switch (value) {
@@ -1513,7 +1674,7 @@ const char* SearchRoomRsp::_InternalParse(const char* ptr, ::_pbi::ParseContext*
         } else
           goto handle_unusual;
         continue;
-      // repeated .yy.protocol.app.RoomBriefData room_datas = 2;
+      // repeated .yy.protocol.app.RoomDetailData room_datas = 2;
       case 2:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
           ptr -= 1;
@@ -1561,7 +1722,7 @@ uint8_t* SearchRoomRsp::_InternalSerialize(
     target = ::_pbi::WireFormatLite::WriteUInt64ToArray(1, this->_internal_uid(), target);
   }
 
-  // repeated .yy.protocol.app.RoomBriefData room_datas = 2;
+  // repeated .yy.protocol.app.RoomDetailData room_datas = 2;
   for (unsigned i = 0,
       n = static_cast<unsigned>(this->_internal_room_datas_size()); i < n; i++) {
     const auto& repfield = this->_internal_room_datas(i);
@@ -1585,7 +1746,7 @@ size_t SearchRoomRsp::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // repeated .yy.protocol.app.RoomBriefData room_datas = 2;
+  // repeated .yy.protocol.app.RoomDetailData room_datas = 2;
   total_size += 1UL * this->_internal_room_datas_size();
   for (const auto& msg : this->_impl_.room_datas_) {
     total_size +=
@@ -1648,22 +1809,33 @@ void SearchRoomRsp::InternalSwap(SearchRoomRsp* other) {
 
 // ===================================================================
 
-class JoinRoomReq::_Internal {
+class SelfJoinRoomReq::_Internal {
  public:
+  static const ::yy::protocol::app::AccountBaseData& joinner_data(const SelfJoinRoomReq* msg);
 };
 
-JoinRoomReq::JoinRoomReq(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+const ::yy::protocol::app::AccountBaseData&
+SelfJoinRoomReq::_Internal::joinner_data(const SelfJoinRoomReq* msg) {
+  return *msg->_impl_.joinner_data_;
+}
+void SelfJoinRoomReq::clear_joinner_data() {
+  if (GetArenaForAllocation() == nullptr && _impl_.joinner_data_ != nullptr) {
+    delete _impl_.joinner_data_;
+  }
+  _impl_.joinner_data_ = nullptr;
+}
+SelfJoinRoomReq::SelfJoinRoomReq(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
   SharedCtor(arena, is_message_owned);
-  // @@protoc_insertion_point(arena_constructor:yy.protocol.app.JoinRoomReq)
+  // @@protoc_insertion_point(arena_constructor:yy.protocol.app.SelfJoinRoomReq)
 }
-JoinRoomReq::JoinRoomReq(const JoinRoomReq& from)
+SelfJoinRoomReq::SelfJoinRoomReq(const SelfJoinRoomReq& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
-  JoinRoomReq* const _this = this; (void)_this;
+  SelfJoinRoomReq* const _this = this; (void)_this;
   new (&_impl_) Impl_{
       decltype(_impl_.user_token_){}
-    , decltype(_impl_.uid_){}
+    , decltype(_impl_.joinner_data_){nullptr}
     , decltype(_impl_.room_id_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
@@ -1676,19 +1848,20 @@ JoinRoomReq::JoinRoomReq(const JoinRoomReq& from)
     _this->_impl_.user_token_.Set(from._internal_user_token(), 
       _this->GetArenaForAllocation());
   }
-  ::memcpy(&_impl_.uid_, &from._impl_.uid_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.room_id_) -
-    reinterpret_cast<char*>(&_impl_.uid_)) + sizeof(_impl_.room_id_));
-  // @@protoc_insertion_point(copy_constructor:yy.protocol.app.JoinRoomReq)
+  if (from._internal_has_joinner_data()) {
+    _this->_impl_.joinner_data_ = new ::yy::protocol::app::AccountBaseData(*from._impl_.joinner_data_);
+  }
+  _this->_impl_.room_id_ = from._impl_.room_id_;
+  // @@protoc_insertion_point(copy_constructor:yy.protocol.app.SelfJoinRoomReq)
 }
 
-inline void JoinRoomReq::SharedCtor(
+inline void SelfJoinRoomReq::SharedCtor(
     ::_pb::Arena* arena, bool is_message_owned) {
   (void)arena;
   (void)is_message_owned;
   new (&_impl_) Impl_{
       decltype(_impl_.user_token_){}
-    , decltype(_impl_.uid_){uint64_t{0u}}
+    , decltype(_impl_.joinner_data_){nullptr}
     , decltype(_impl_.room_id_){uint64_t{0u}}
     , /*decltype(_impl_._cached_size_)*/{}
   };
@@ -1698,8 +1871,8 @@ inline void JoinRoomReq::SharedCtor(
   #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
 }
 
-JoinRoomReq::~JoinRoomReq() {
-  // @@protoc_insertion_point(destructor:yy.protocol.app.JoinRoomReq)
+SelfJoinRoomReq::~SelfJoinRoomReq() {
+  // @@protoc_insertion_point(destructor:yy.protocol.app.SelfJoinRoomReq)
   if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
   (void)arena;
     return;
@@ -1707,57 +1880,60 @@ JoinRoomReq::~JoinRoomReq() {
   SharedDtor();
 }
 
-inline void JoinRoomReq::SharedDtor() {
+inline void SelfJoinRoomReq::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
   _impl_.user_token_.Destroy();
+  if (this != internal_default_instance()) delete _impl_.joinner_data_;
 }
 
-void JoinRoomReq::SetCachedSize(int size) const {
+void SelfJoinRoomReq::SetCachedSize(int size) const {
   _impl_._cached_size_.Set(size);
 }
 
-void JoinRoomReq::Clear() {
-// @@protoc_insertion_point(message_clear_start:yy.protocol.app.JoinRoomReq)
+void SelfJoinRoomReq::Clear() {
+// @@protoc_insertion_point(message_clear_start:yy.protocol.app.SelfJoinRoomReq)
   uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
   _impl_.user_token_.ClearToEmpty();
-  ::memset(&_impl_.uid_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.room_id_) -
-      reinterpret_cast<char*>(&_impl_.uid_)) + sizeof(_impl_.room_id_));
+  if (GetArenaForAllocation() == nullptr && _impl_.joinner_data_ != nullptr) {
+    delete _impl_.joinner_data_;
+  }
+  _impl_.joinner_data_ = nullptr;
+  _impl_.room_id_ = uint64_t{0u};
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* JoinRoomReq::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+const char* SelfJoinRoomReq::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   while (!ctx->Done(&ptr)) {
     uint32_t tag;
     ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // uint64 uid = 1;
+      // .yy.protocol.app.AccountBaseData joinner_data = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
-          _impl_.uid_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
+          ptr = ctx->ParseMessage(_internal_mutable_joinner_data(), ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // uint64 room_id = 2;
+      // string user_token = 2;
       case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
-          _impl_.room_id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
-          CHK_(ptr);
-        } else
-          goto handle_unusual;
-        continue;
-      // string user_token = 3;
-      case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
           auto str = _internal_mutable_user_token();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
-          CHK_(::_pbi::VerifyUTF8(str, "yy.protocol.app.JoinRoomReq.user_token"));
+          CHK_(::_pbi::VerifyUTF8(str, "yy.protocol.app.SelfJoinRoomReq.user_token"));
+        } else
+          goto handle_unusual;
+        continue;
+      // uint64 room_id = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 24)) {
+          _impl_.room_id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
@@ -1784,63 +1960,66 @@ failure:
 #undef CHK_
 }
 
-uint8_t* JoinRoomReq::_InternalSerialize(
+uint8_t* SelfJoinRoomReq::_InternalSerialize(
     uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:yy.protocol.app.JoinRoomReq)
+  // @@protoc_insertion_point(serialize_to_array_start:yy.protocol.app.SelfJoinRoomReq)
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // uint64 uid = 1;
-  if (this->_internal_uid() != 0) {
-    target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(1, this->_internal_uid(), target);
+  // .yy.protocol.app.AccountBaseData joinner_data = 1;
+  if (this->_internal_has_joinner_data()) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(1, _Internal::joinner_data(this),
+        _Internal::joinner_data(this).GetCachedSize(), target, stream);
   }
 
-  // uint64 room_id = 2;
-  if (this->_internal_room_id() != 0) {
-    target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(2, this->_internal_room_id(), target);
-  }
-
-  // string user_token = 3;
+  // string user_token = 2;
   if (!this->_internal_user_token().empty()) {
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_user_token().data(), static_cast<int>(this->_internal_user_token().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "yy.protocol.app.JoinRoomReq.user_token");
+      "yy.protocol.app.SelfJoinRoomReq.user_token");
     target = stream->WriteStringMaybeAliased(
-        3, this->_internal_user_token(), target);
+        2, this->_internal_user_token(), target);
+  }
+
+  // uint64 room_id = 3;
+  if (this->_internal_room_id() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(3, this->_internal_room_id(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
-  // @@protoc_insertion_point(serialize_to_array_end:yy.protocol.app.JoinRoomReq)
+  // @@protoc_insertion_point(serialize_to_array_end:yy.protocol.app.SelfJoinRoomReq)
   return target;
 }
 
-size_t JoinRoomReq::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:yy.protocol.app.JoinRoomReq)
+size_t SelfJoinRoomReq::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:yy.protocol.app.SelfJoinRoomReq)
   size_t total_size = 0;
 
   uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // string user_token = 3;
+  // string user_token = 2;
   if (!this->_internal_user_token().empty()) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
         this->_internal_user_token());
   }
 
-  // uint64 uid = 1;
-  if (this->_internal_uid() != 0) {
-    total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_uid());
+  // .yy.protocol.app.AccountBaseData joinner_data = 1;
+  if (this->_internal_has_joinner_data()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+        *_impl_.joinner_data_);
   }
 
-  // uint64 room_id = 2;
+  // uint64 room_id = 3;
   if (this->_internal_room_id() != 0) {
     total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_room_id());
   }
@@ -1848,17 +2027,17 @@ size_t JoinRoomReq::ByteSizeLong() const {
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData JoinRoomReq::_class_data_ = {
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData SelfJoinRoomReq::_class_data_ = {
     ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
-    JoinRoomReq::MergeImpl
+    SelfJoinRoomReq::MergeImpl
 };
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*JoinRoomReq::GetClassData() const { return &_class_data_; }
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*SelfJoinRoomReq::GetClassData() const { return &_class_data_; }
 
 
-void JoinRoomReq::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
-  auto* const _this = static_cast<JoinRoomReq*>(&to_msg);
-  auto& from = static_cast<const JoinRoomReq&>(from_msg);
-  // @@protoc_insertion_point(class_specific_merge_from_start:yy.protocol.app.JoinRoomReq)
+void SelfJoinRoomReq::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<SelfJoinRoomReq*>(&to_msg);
+  auto& from = static_cast<const SelfJoinRoomReq&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:yy.protocol.app.SelfJoinRoomReq)
   GOOGLE_DCHECK_NE(&from, _this);
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
@@ -1866,8 +2045,9 @@ void JoinRoomReq::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PR
   if (!from._internal_user_token().empty()) {
     _this->_internal_set_user_token(from._internal_user_token());
   }
-  if (from._internal_uid() != 0) {
-    _this->_internal_set_uid(from._internal_uid());
+  if (from._internal_has_joinner_data()) {
+    _this->_internal_mutable_joinner_data()->::yy::protocol::app::AccountBaseData::MergeFrom(
+        from._internal_joinner_data());
   }
   if (from._internal_room_id() != 0) {
     _this->_internal_set_room_id(from._internal_room_id());
@@ -1875,18 +2055,18 @@ void JoinRoomReq::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PR
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
-void JoinRoomReq::CopyFrom(const JoinRoomReq& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:yy.protocol.app.JoinRoomReq)
+void SelfJoinRoomReq::CopyFrom(const SelfJoinRoomReq& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:yy.protocol.app.SelfJoinRoomReq)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool JoinRoomReq::IsInitialized() const {
+bool SelfJoinRoomReq::IsInitialized() const {
   return true;
 }
 
-void JoinRoomReq::InternalSwap(JoinRoomReq* other) {
+void SelfJoinRoomReq::InternalSwap(SelfJoinRoomReq* other) {
   using std::swap;
   auto* lhs_arena = GetArenaForAllocation();
   auto* rhs_arena = other->GetArenaForAllocation();
@@ -1896,14 +2076,14 @@ void JoinRoomReq::InternalSwap(JoinRoomReq* other) {
       &other->_impl_.user_token_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(JoinRoomReq, _impl_.room_id_)
-      + sizeof(JoinRoomReq::_impl_.room_id_)
-      - PROTOBUF_FIELD_OFFSET(JoinRoomReq, _impl_.uid_)>(
-          reinterpret_cast<char*>(&_impl_.uid_),
-          reinterpret_cast<char*>(&other->_impl_.uid_));
+      PROTOBUF_FIELD_OFFSET(SelfJoinRoomReq, _impl_.room_id_)
+      + sizeof(SelfJoinRoomReq::_impl_.room_id_)
+      - PROTOBUF_FIELD_OFFSET(SelfJoinRoomReq, _impl_.joinner_data_)>(
+          reinterpret_cast<char*>(&_impl_.joinner_data_),
+          reinterpret_cast<char*>(&other->_impl_.joinner_data_));
 }
 
-::PROTOBUF_NAMESPACE_ID::Metadata JoinRoomReq::GetMetadata() const {
+::PROTOBUF_NAMESPACE_ID::Metadata SelfJoinRoomReq::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_room_2eproto_getter, &descriptor_table_room_2eproto_once,
       file_level_metadata_room_2eproto[4]);
@@ -1911,60 +2091,76 @@ void JoinRoomReq::InternalSwap(JoinRoomReq* other) {
 
 // ===================================================================
 
-class JoinRoomRsp::_Internal {
+class SelfJoinRoomRsp::_Internal {
  public:
-  static const ::yy::protocol::app::RoomDetailData& room_data(const JoinRoomRsp* msg);
+  static const ::yy::protocol::app::RoomDetailData& room_data(const SelfJoinRoomRsp* msg);
 };
 
 const ::yy::protocol::app::RoomDetailData&
-JoinRoomRsp::_Internal::room_data(const JoinRoomRsp* msg) {
+SelfJoinRoomRsp::_Internal::room_data(const SelfJoinRoomRsp* msg) {
   return *msg->_impl_.room_data_;
 }
-void JoinRoomRsp::clear_room_data() {
+void SelfJoinRoomRsp::clear_room_data() {
   if (GetArenaForAllocation() == nullptr && _impl_.room_data_ != nullptr) {
     delete _impl_.room_data_;
   }
   _impl_.room_data_ = nullptr;
 }
-JoinRoomRsp::JoinRoomRsp(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+SelfJoinRoomRsp::SelfJoinRoomRsp(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
   SharedCtor(arena, is_message_owned);
-  // @@protoc_insertion_point(arena_constructor:yy.protocol.app.JoinRoomRsp)
+  // @@protoc_insertion_point(arena_constructor:yy.protocol.app.SelfJoinRoomRsp)
 }
-JoinRoomRsp::JoinRoomRsp(const JoinRoomRsp& from)
+SelfJoinRoomRsp::SelfJoinRoomRsp(const SelfJoinRoomRsp& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
-  JoinRoomRsp* const _this = this; (void)_this;
+  SelfJoinRoomRsp* const _this = this; (void)_this;
   new (&_impl_) Impl_{
-      decltype(_impl_.room_data_){nullptr}
+      decltype(_impl_.room_ip_){}
+    , decltype(_impl_.room_data_){nullptr}
     , decltype(_impl_.uid_){}
     , decltype(_impl_.result_code_){}
+    , decltype(_impl_.room_port_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _impl_.room_ip_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.room_ip_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_room_ip().empty()) {
+    _this->_impl_.room_ip_.Set(from._internal_room_ip(), 
+      _this->GetArenaForAllocation());
+  }
   if (from._internal_has_room_data()) {
     _this->_impl_.room_data_ = new ::yy::protocol::app::RoomDetailData(*from._impl_.room_data_);
   }
   ::memcpy(&_impl_.uid_, &from._impl_.uid_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.result_code_) -
-    reinterpret_cast<char*>(&_impl_.uid_)) + sizeof(_impl_.result_code_));
-  // @@protoc_insertion_point(copy_constructor:yy.protocol.app.JoinRoomRsp)
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.room_port_) -
+    reinterpret_cast<char*>(&_impl_.uid_)) + sizeof(_impl_.room_port_));
+  // @@protoc_insertion_point(copy_constructor:yy.protocol.app.SelfJoinRoomRsp)
 }
 
-inline void JoinRoomRsp::SharedCtor(
+inline void SelfJoinRoomRsp::SharedCtor(
     ::_pb::Arena* arena, bool is_message_owned) {
   (void)arena;
   (void)is_message_owned;
   new (&_impl_) Impl_{
-      decltype(_impl_.room_data_){nullptr}
+      decltype(_impl_.room_ip_){}
+    , decltype(_impl_.room_data_){nullptr}
     , decltype(_impl_.uid_){uint64_t{0u}}
     , decltype(_impl_.result_code_){0}
+    , decltype(_impl_.room_port_){0u}
     , /*decltype(_impl_._cached_size_)*/{}
   };
+  _impl_.room_ip_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.room_ip_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
 }
 
-JoinRoomRsp::~JoinRoomRsp() {
-  // @@protoc_insertion_point(destructor:yy.protocol.app.JoinRoomRsp)
+SelfJoinRoomRsp::~SelfJoinRoomRsp() {
+  // @@protoc_insertion_point(destructor:yy.protocol.app.SelfJoinRoomRsp)
   if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
   (void)arena;
     return;
@@ -1972,32 +2168,34 @@ JoinRoomRsp::~JoinRoomRsp() {
   SharedDtor();
 }
 
-inline void JoinRoomRsp::SharedDtor() {
+inline void SelfJoinRoomRsp::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_.room_ip_.Destroy();
   if (this != internal_default_instance()) delete _impl_.room_data_;
 }
 
-void JoinRoomRsp::SetCachedSize(int size) const {
+void SelfJoinRoomRsp::SetCachedSize(int size) const {
   _impl_._cached_size_.Set(size);
 }
 
-void JoinRoomRsp::Clear() {
-// @@protoc_insertion_point(message_clear_start:yy.protocol.app.JoinRoomRsp)
+void SelfJoinRoomRsp::Clear() {
+// @@protoc_insertion_point(message_clear_start:yy.protocol.app.SelfJoinRoomRsp)
   uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
+  _impl_.room_ip_.ClearToEmpty();
   if (GetArenaForAllocation() == nullptr && _impl_.room_data_ != nullptr) {
     delete _impl_.room_data_;
   }
   _impl_.room_data_ = nullptr;
   ::memset(&_impl_.uid_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.result_code_) -
-      reinterpret_cast<char*>(&_impl_.uid_)) + sizeof(_impl_.result_code_));
+      reinterpret_cast<char*>(&_impl_.room_port_) -
+      reinterpret_cast<char*>(&_impl_.uid_)) + sizeof(_impl_.room_port_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* JoinRoomRsp::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+const char* SelfJoinRoomRsp::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   while (!ctx->Done(&ptr)) {
     uint32_t tag;
@@ -2011,12 +2209,12 @@ const char* JoinRoomRsp::_InternalParse(const char* ptr, ::_pbi::ParseContext* c
         } else
           goto handle_unusual;
         continue;
-      // .yy.protocol.app.JoinRoomRsp.Status result_code = 2;
+      // .yy.protocol.app.SelfJoinRoomRsp.Status result_code = 2;
       case 2:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
           uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
-          _internal_set_result_code(static_cast<::yy::protocol::app::JoinRoomRsp_Status>(val));
+          _internal_set_result_code(static_cast<::yy::protocol::app::SelfJoinRoomRsp_Status>(val));
         } else
           goto handle_unusual;
         continue;
@@ -2028,6 +2226,24 @@ const char* JoinRoomRsp::_InternalParse(const char* ptr, ::_pbi::ParseContext* c
         } else
           goto handle_unusual;
         continue;
+      // string room_ip = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 34)) {
+          auto str = _internal_mutable_room_ip();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "yy.protocol.app.SelfJoinRoomRsp.room_ip"));
+        } else
+          goto handle_unusual;
+        continue;
+      // uint32 room_port = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+          _impl_.room_port_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
       default:
         goto handle_unusual;
     }  // switch
@@ -2051,9 +2267,9 @@ failure:
 #undef CHK_
 }
 
-uint8_t* JoinRoomRsp::_InternalSerialize(
+uint8_t* SelfJoinRoomRsp::_InternalSerialize(
     uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:yy.protocol.app.JoinRoomRsp)
+  // @@protoc_insertion_point(serialize_to_array_start:yy.protocol.app.SelfJoinRoomRsp)
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -2063,7 +2279,7 @@ uint8_t* JoinRoomRsp::_InternalSerialize(
     target = ::_pbi::WireFormatLite::WriteUInt64ToArray(1, this->_internal_uid(), target);
   }
 
-  // .yy.protocol.app.JoinRoomRsp.Status result_code = 2;
+  // .yy.protocol.app.SelfJoinRoomRsp.Status result_code = 2;
   if (this->_internal_result_code() != 0) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteEnumToArray(
@@ -2077,21 +2293,44 @@ uint8_t* JoinRoomRsp::_InternalSerialize(
         _Internal::room_data(this).GetCachedSize(), target, stream);
   }
 
+  // string room_ip = 4;
+  if (!this->_internal_room_ip().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_room_ip().data(), static_cast<int>(this->_internal_room_ip().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "yy.protocol.app.SelfJoinRoomRsp.room_ip");
+    target = stream->WriteStringMaybeAliased(
+        4, this->_internal_room_ip(), target);
+  }
+
+  // uint32 room_port = 5;
+  if (this->_internal_room_port() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteUInt32ToArray(5, this->_internal_room_port(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
-  // @@protoc_insertion_point(serialize_to_array_end:yy.protocol.app.JoinRoomRsp)
+  // @@protoc_insertion_point(serialize_to_array_end:yy.protocol.app.SelfJoinRoomRsp)
   return target;
 }
 
-size_t JoinRoomRsp::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:yy.protocol.app.JoinRoomRsp)
+size_t SelfJoinRoomRsp::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:yy.protocol.app.SelfJoinRoomRsp)
   size_t total_size = 0;
 
   uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
+
+  // string room_ip = 4;
+  if (!this->_internal_room_ip().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_room_ip());
+  }
 
   // .yy.protocol.app.RoomDetailData room_data = 3;
   if (this->_internal_has_room_data()) {
@@ -2105,30 +2344,38 @@ size_t JoinRoomRsp::ByteSizeLong() const {
     total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_uid());
   }
 
-  // .yy.protocol.app.JoinRoomRsp.Status result_code = 2;
+  // .yy.protocol.app.SelfJoinRoomRsp.Status result_code = 2;
   if (this->_internal_result_code() != 0) {
     total_size += 1 +
       ::_pbi::WireFormatLite::EnumSize(this->_internal_result_code());
   }
 
+  // uint32 room_port = 5;
+  if (this->_internal_room_port() != 0) {
+    total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_room_port());
+  }
+
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData JoinRoomRsp::_class_data_ = {
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData SelfJoinRoomRsp::_class_data_ = {
     ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
-    JoinRoomRsp::MergeImpl
+    SelfJoinRoomRsp::MergeImpl
 };
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*JoinRoomRsp::GetClassData() const { return &_class_data_; }
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*SelfJoinRoomRsp::GetClassData() const { return &_class_data_; }
 
 
-void JoinRoomRsp::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
-  auto* const _this = static_cast<JoinRoomRsp*>(&to_msg);
-  auto& from = static_cast<const JoinRoomRsp&>(from_msg);
-  // @@protoc_insertion_point(class_specific_merge_from_start:yy.protocol.app.JoinRoomRsp)
+void SelfJoinRoomRsp::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<SelfJoinRoomRsp*>(&to_msg);
+  auto& from = static_cast<const SelfJoinRoomRsp&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:yy.protocol.app.SelfJoinRoomRsp)
   GOOGLE_DCHECK_NE(&from, _this);
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
+  if (!from._internal_room_ip().empty()) {
+    _this->_internal_set_room_ip(from._internal_room_ip());
+  }
   if (from._internal_has_room_data()) {
     _this->_internal_mutable_room_data()->::yy::protocol::app::RoomDetailData::MergeFrom(
         from._internal_room_data());
@@ -2139,32 +2386,41 @@ void JoinRoomRsp::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PR
   if (from._internal_result_code() != 0) {
     _this->_internal_set_result_code(from._internal_result_code());
   }
+  if (from._internal_room_port() != 0) {
+    _this->_internal_set_room_port(from._internal_room_port());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
-void JoinRoomRsp::CopyFrom(const JoinRoomRsp& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:yy.protocol.app.JoinRoomRsp)
+void SelfJoinRoomRsp::CopyFrom(const SelfJoinRoomRsp& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:yy.protocol.app.SelfJoinRoomRsp)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool JoinRoomRsp::IsInitialized() const {
+bool SelfJoinRoomRsp::IsInitialized() const {
   return true;
 }
 
-void JoinRoomRsp::InternalSwap(JoinRoomRsp* other) {
+void SelfJoinRoomRsp::InternalSwap(SelfJoinRoomRsp* other) {
   using std::swap;
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.room_ip_, lhs_arena,
+      &other->_impl_.room_ip_, rhs_arena
+  );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(JoinRoomRsp, _impl_.result_code_)
-      + sizeof(JoinRoomRsp::_impl_.result_code_)
-      - PROTOBUF_FIELD_OFFSET(JoinRoomRsp, _impl_.room_data_)>(
+      PROTOBUF_FIELD_OFFSET(SelfJoinRoomRsp, _impl_.room_port_)
+      + sizeof(SelfJoinRoomRsp::_impl_.room_port_)
+      - PROTOBUF_FIELD_OFFSET(SelfJoinRoomRsp, _impl_.room_data_)>(
           reinterpret_cast<char*>(&_impl_.room_data_),
           reinterpret_cast<char*>(&other->_impl_.room_data_));
 }
 
-::PROTOBUF_NAMESPACE_ID::Metadata JoinRoomRsp::GetMetadata() const {
+::PROTOBUF_NAMESPACE_ID::Metadata SelfJoinRoomRsp::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_room_2eproto_getter, &descriptor_table_room_2eproto_once,
       file_level_metadata_room_2eproto[5]);
@@ -2172,19 +2428,252 @@ void JoinRoomRsp::InternalSwap(JoinRoomRsp* other) {
 
 // ===================================================================
 
-class QuitRoomReq::_Internal {
+class OtherJoinRoomRsp::_Internal {
  public:
+  static const ::yy::protocol::app::AccountBaseData& joinner_data(const OtherJoinRoomRsp* msg);
 };
 
-QuitRoomReq::QuitRoomReq(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+const ::yy::protocol::app::AccountBaseData&
+OtherJoinRoomRsp::_Internal::joinner_data(const OtherJoinRoomRsp* msg) {
+  return *msg->_impl_.joinner_data_;
+}
+void OtherJoinRoomRsp::clear_joinner_data() {
+  if (GetArenaForAllocation() == nullptr && _impl_.joinner_data_ != nullptr) {
+    delete _impl_.joinner_data_;
+  }
+  _impl_.joinner_data_ = nullptr;
+}
+OtherJoinRoomRsp::OtherJoinRoomRsp(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
   SharedCtor(arena, is_message_owned);
-  // @@protoc_insertion_point(arena_constructor:yy.protocol.app.QuitRoomReq)
+  // @@protoc_insertion_point(arena_constructor:yy.protocol.app.OtherJoinRoomRsp)
 }
-QuitRoomReq::QuitRoomReq(const QuitRoomReq& from)
+OtherJoinRoomRsp::OtherJoinRoomRsp(const OtherJoinRoomRsp& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
-  QuitRoomReq* const _this = this; (void)_this;
+  OtherJoinRoomRsp* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.joinner_data_){nullptr}
+    , decltype(_impl_.result_code_){}
+    , /*decltype(_impl_._cached_size_)*/{}};
+
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  if (from._internal_has_joinner_data()) {
+    _this->_impl_.joinner_data_ = new ::yy::protocol::app::AccountBaseData(*from._impl_.joinner_data_);
+  }
+  _this->_impl_.result_code_ = from._impl_.result_code_;
+  // @@protoc_insertion_point(copy_constructor:yy.protocol.app.OtherJoinRoomRsp)
+}
+
+inline void OtherJoinRoomRsp::SharedCtor(
+    ::_pb::Arena* arena, bool is_message_owned) {
+  (void)arena;
+  (void)is_message_owned;
+  new (&_impl_) Impl_{
+      decltype(_impl_.joinner_data_){nullptr}
+    , decltype(_impl_.result_code_){0}
+    , /*decltype(_impl_._cached_size_)*/{}
+  };
+}
+
+OtherJoinRoomRsp::~OtherJoinRoomRsp() {
+  // @@protoc_insertion_point(destructor:yy.protocol.app.OtherJoinRoomRsp)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
+  SharedDtor();
+}
+
+inline void OtherJoinRoomRsp::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  if (this != internal_default_instance()) delete _impl_.joinner_data_;
+}
+
+void OtherJoinRoomRsp::SetCachedSize(int size) const {
+  _impl_._cached_size_.Set(size);
+}
+
+void OtherJoinRoomRsp::Clear() {
+// @@protoc_insertion_point(message_clear_start:yy.protocol.app.OtherJoinRoomRsp)
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  if (GetArenaForAllocation() == nullptr && _impl_.joinner_data_ != nullptr) {
+    delete _impl_.joinner_data_;
+  }
+  _impl_.joinner_data_ = nullptr;
+  _impl_.result_code_ = 0;
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* OtherJoinRoomRsp::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // .yy.protocol.app.OtherJoinRoomRsp.Status result_code = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_result_code(static_cast<::yy::protocol::app::OtherJoinRoomRsp_Status>(val));
+        } else
+          goto handle_unusual;
+        continue;
+      // .yy.protocol.app.AccountBaseData joinner_data = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
+          ptr = ctx->ParseMessage(_internal_mutable_joinner_data(), ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+uint8_t* OtherJoinRoomRsp::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:yy.protocol.app.OtherJoinRoomRsp)
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // .yy.protocol.app.OtherJoinRoomRsp.Status result_code = 2;
+  if (this->_internal_result_code() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+      2, this->_internal_result_code(), target);
+  }
+
+  // .yy.protocol.app.AccountBaseData joinner_data = 3;
+  if (this->_internal_has_joinner_data()) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(3, _Internal::joinner_data(this),
+        _Internal::joinner_data(this).GetCachedSize(), target, stream);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:yy.protocol.app.OtherJoinRoomRsp)
+  return target;
+}
+
+size_t OtherJoinRoomRsp::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:yy.protocol.app.OtherJoinRoomRsp)
+  size_t total_size = 0;
+
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // .yy.protocol.app.AccountBaseData joinner_data = 3;
+  if (this->_internal_has_joinner_data()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+        *_impl_.joinner_data_);
+  }
+
+  // .yy.protocol.app.OtherJoinRoomRsp.Status result_code = 2;
+  if (this->_internal_result_code() != 0) {
+    total_size += 1 +
+      ::_pbi::WireFormatLite::EnumSize(this->_internal_result_code());
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData OtherJoinRoomRsp::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    OtherJoinRoomRsp::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*OtherJoinRoomRsp::GetClassData() const { return &_class_data_; }
+
+
+void OtherJoinRoomRsp::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<OtherJoinRoomRsp*>(&to_msg);
+  auto& from = static_cast<const OtherJoinRoomRsp&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:yy.protocol.app.OtherJoinRoomRsp)
+  GOOGLE_DCHECK_NE(&from, _this);
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from._internal_has_joinner_data()) {
+    _this->_internal_mutable_joinner_data()->::yy::protocol::app::AccountBaseData::MergeFrom(
+        from._internal_joinner_data());
+  }
+  if (from._internal_result_code() != 0) {
+    _this->_internal_set_result_code(from._internal_result_code());
+  }
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void OtherJoinRoomRsp::CopyFrom(const OtherJoinRoomRsp& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:yy.protocol.app.OtherJoinRoomRsp)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool OtherJoinRoomRsp::IsInitialized() const {
+  return true;
+}
+
+void OtherJoinRoomRsp::InternalSwap(OtherJoinRoomRsp* other) {
+  using std::swap;
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(OtherJoinRoomRsp, _impl_.result_code_)
+      + sizeof(OtherJoinRoomRsp::_impl_.result_code_)
+      - PROTOBUF_FIELD_OFFSET(OtherJoinRoomRsp, _impl_.joinner_data_)>(
+          reinterpret_cast<char*>(&_impl_.joinner_data_),
+          reinterpret_cast<char*>(&other->_impl_.joinner_data_));
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata OtherJoinRoomRsp::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_room_2eproto_getter, &descriptor_table_room_2eproto_once,
+      file_level_metadata_room_2eproto[6]);
+}
+
+// ===================================================================
+
+class SelfQuitRoomReq::_Internal {
+ public:
+};
+
+SelfQuitRoomReq::SelfQuitRoomReq(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor(arena, is_message_owned);
+  // @@protoc_insertion_point(arena_constructor:yy.protocol.app.SelfQuitRoomReq)
+}
+SelfQuitRoomReq::SelfQuitRoomReq(const SelfQuitRoomReq& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  SelfQuitRoomReq* const _this = this; (void)_this;
   new (&_impl_) Impl_{
       decltype(_impl_.user_token_){}
     , decltype(_impl_.uid_){}
@@ -2203,10 +2692,10 @@ QuitRoomReq::QuitRoomReq(const QuitRoomReq& from)
   ::memcpy(&_impl_.uid_, &from._impl_.uid_,
     static_cast<size_t>(reinterpret_cast<char*>(&_impl_.room_id_) -
     reinterpret_cast<char*>(&_impl_.uid_)) + sizeof(_impl_.room_id_));
-  // @@protoc_insertion_point(copy_constructor:yy.protocol.app.QuitRoomReq)
+  // @@protoc_insertion_point(copy_constructor:yy.protocol.app.SelfQuitRoomReq)
 }
 
-inline void QuitRoomReq::SharedCtor(
+inline void SelfQuitRoomReq::SharedCtor(
     ::_pb::Arena* arena, bool is_message_owned) {
   (void)arena;
   (void)is_message_owned;
@@ -2222,8 +2711,8 @@ inline void QuitRoomReq::SharedCtor(
   #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
 }
 
-QuitRoomReq::~QuitRoomReq() {
-  // @@protoc_insertion_point(destructor:yy.protocol.app.QuitRoomReq)
+SelfQuitRoomReq::~SelfQuitRoomReq() {
+  // @@protoc_insertion_point(destructor:yy.protocol.app.SelfQuitRoomReq)
   if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
   (void)arena;
     return;
@@ -2231,17 +2720,17 @@ QuitRoomReq::~QuitRoomReq() {
   SharedDtor();
 }
 
-inline void QuitRoomReq::SharedDtor() {
+inline void SelfQuitRoomReq::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
   _impl_.user_token_.Destroy();
 }
 
-void QuitRoomReq::SetCachedSize(int size) const {
+void SelfQuitRoomReq::SetCachedSize(int size) const {
   _impl_._cached_size_.Set(size);
 }
 
-void QuitRoomReq::Clear() {
-// @@protoc_insertion_point(message_clear_start:yy.protocol.app.QuitRoomReq)
+void SelfQuitRoomReq::Clear() {
+// @@protoc_insertion_point(message_clear_start:yy.protocol.app.SelfQuitRoomReq)
   uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -2253,7 +2742,7 @@ void QuitRoomReq::Clear() {
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* QuitRoomReq::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+const char* SelfQuitRoomReq::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   while (!ctx->Done(&ptr)) {
     uint32_t tag;
@@ -2281,7 +2770,7 @@ const char* QuitRoomReq::_InternalParse(const char* ptr, ::_pbi::ParseContext* c
           auto str = _internal_mutable_user_token();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
-          CHK_(::_pbi::VerifyUTF8(str, "yy.protocol.app.QuitRoomReq.user_token"));
+          CHK_(::_pbi::VerifyUTF8(str, "yy.protocol.app.SelfQuitRoomReq.user_token"));
         } else
           goto handle_unusual;
         continue;
@@ -2308,9 +2797,9 @@ failure:
 #undef CHK_
 }
 
-uint8_t* QuitRoomReq::_InternalSerialize(
+uint8_t* SelfQuitRoomReq::_InternalSerialize(
     uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:yy.protocol.app.QuitRoomReq)
+  // @@protoc_insertion_point(serialize_to_array_start:yy.protocol.app.SelfQuitRoomReq)
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -2331,7 +2820,7 @@ uint8_t* QuitRoomReq::_InternalSerialize(
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_user_token().data(), static_cast<int>(this->_internal_user_token().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "yy.protocol.app.QuitRoomReq.user_token");
+      "yy.protocol.app.SelfQuitRoomReq.user_token");
     target = stream->WriteStringMaybeAliased(
         3, this->_internal_user_token(), target);
   }
@@ -2340,12 +2829,12 @@ uint8_t* QuitRoomReq::_InternalSerialize(
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
-  // @@protoc_insertion_point(serialize_to_array_end:yy.protocol.app.QuitRoomReq)
+  // @@protoc_insertion_point(serialize_to_array_end:yy.protocol.app.SelfQuitRoomReq)
   return target;
 }
 
-size_t QuitRoomReq::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:yy.protocol.app.QuitRoomReq)
+size_t SelfQuitRoomReq::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:yy.protocol.app.SelfQuitRoomReq)
   size_t total_size = 0;
 
   uint32_t cached_has_bits = 0;
@@ -2372,17 +2861,17 @@ size_t QuitRoomReq::ByteSizeLong() const {
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData QuitRoomReq::_class_data_ = {
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData SelfQuitRoomReq::_class_data_ = {
     ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
-    QuitRoomReq::MergeImpl
+    SelfQuitRoomReq::MergeImpl
 };
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*QuitRoomReq::GetClassData() const { return &_class_data_; }
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*SelfQuitRoomReq::GetClassData() const { return &_class_data_; }
 
 
-void QuitRoomReq::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
-  auto* const _this = static_cast<QuitRoomReq*>(&to_msg);
-  auto& from = static_cast<const QuitRoomReq&>(from_msg);
-  // @@protoc_insertion_point(class_specific_merge_from_start:yy.protocol.app.QuitRoomReq)
+void SelfQuitRoomReq::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<SelfQuitRoomReq*>(&to_msg);
+  auto& from = static_cast<const SelfQuitRoomReq&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:yy.protocol.app.SelfQuitRoomReq)
   GOOGLE_DCHECK_NE(&from, _this);
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
@@ -2399,18 +2888,18 @@ void QuitRoomReq::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PR
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
-void QuitRoomReq::CopyFrom(const QuitRoomReq& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:yy.protocol.app.QuitRoomReq)
+void SelfQuitRoomReq::CopyFrom(const SelfQuitRoomReq& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:yy.protocol.app.SelfQuitRoomReq)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool QuitRoomReq::IsInitialized() const {
+bool SelfQuitRoomReq::IsInitialized() const {
   return true;
 }
 
-void QuitRoomReq::InternalSwap(QuitRoomReq* other) {
+void SelfQuitRoomReq::InternalSwap(SelfQuitRoomReq* other) {
   using std::swap;
   auto* lhs_arena = GetArenaForAllocation();
   auto* rhs_arena = other->GetArenaForAllocation();
@@ -2420,34 +2909,34 @@ void QuitRoomReq::InternalSwap(QuitRoomReq* other) {
       &other->_impl_.user_token_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(QuitRoomReq, _impl_.room_id_)
-      + sizeof(QuitRoomReq::_impl_.room_id_)
-      - PROTOBUF_FIELD_OFFSET(QuitRoomReq, _impl_.uid_)>(
+      PROTOBUF_FIELD_OFFSET(SelfQuitRoomReq, _impl_.room_id_)
+      + sizeof(SelfQuitRoomReq::_impl_.room_id_)
+      - PROTOBUF_FIELD_OFFSET(SelfQuitRoomReq, _impl_.uid_)>(
           reinterpret_cast<char*>(&_impl_.uid_),
           reinterpret_cast<char*>(&other->_impl_.uid_));
 }
 
-::PROTOBUF_NAMESPACE_ID::Metadata QuitRoomReq::GetMetadata() const {
+::PROTOBUF_NAMESPACE_ID::Metadata SelfQuitRoomReq::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_room_2eproto_getter, &descriptor_table_room_2eproto_once,
-      file_level_metadata_room_2eproto[6]);
+      file_level_metadata_room_2eproto[7]);
 }
 
 // ===================================================================
 
-class QuitRoomRsp::_Internal {
+class SelfQuitRoomRsp::_Internal {
  public:
 };
 
-QuitRoomRsp::QuitRoomRsp(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+SelfQuitRoomRsp::SelfQuitRoomRsp(::PROTOBUF_NAMESPACE_ID::Arena* arena,
                          bool is_message_owned)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
   SharedCtor(arena, is_message_owned);
-  // @@protoc_insertion_point(arena_constructor:yy.protocol.app.QuitRoomRsp)
+  // @@protoc_insertion_point(arena_constructor:yy.protocol.app.SelfQuitRoomRsp)
 }
-QuitRoomRsp::QuitRoomRsp(const QuitRoomRsp& from)
+SelfQuitRoomRsp::SelfQuitRoomRsp(const SelfQuitRoomRsp& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
-  QuitRoomRsp* const _this = this; (void)_this;
+  SelfQuitRoomRsp* const _this = this; (void)_this;
   new (&_impl_) Impl_{
       decltype(_impl_.uid_){}
     , decltype(_impl_.room_id_){}
@@ -2458,10 +2947,10 @@ QuitRoomRsp::QuitRoomRsp(const QuitRoomRsp& from)
   ::memcpy(&_impl_.uid_, &from._impl_.uid_,
     static_cast<size_t>(reinterpret_cast<char*>(&_impl_.result_code_) -
     reinterpret_cast<char*>(&_impl_.uid_)) + sizeof(_impl_.result_code_));
-  // @@protoc_insertion_point(copy_constructor:yy.protocol.app.QuitRoomRsp)
+  // @@protoc_insertion_point(copy_constructor:yy.protocol.app.SelfQuitRoomRsp)
 }
 
-inline void QuitRoomRsp::SharedCtor(
+inline void SelfQuitRoomRsp::SharedCtor(
     ::_pb::Arena* arena, bool is_message_owned) {
   (void)arena;
   (void)is_message_owned;
@@ -2473,8 +2962,8 @@ inline void QuitRoomRsp::SharedCtor(
   };
 }
 
-QuitRoomRsp::~QuitRoomRsp() {
-  // @@protoc_insertion_point(destructor:yy.protocol.app.QuitRoomRsp)
+SelfQuitRoomRsp::~SelfQuitRoomRsp() {
+  // @@protoc_insertion_point(destructor:yy.protocol.app.SelfQuitRoomRsp)
   if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
   (void)arena;
     return;
@@ -2482,16 +2971,16 @@ QuitRoomRsp::~QuitRoomRsp() {
   SharedDtor();
 }
 
-inline void QuitRoomRsp::SharedDtor() {
+inline void SelfQuitRoomRsp::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
 }
 
-void QuitRoomRsp::SetCachedSize(int size) const {
+void SelfQuitRoomRsp::SetCachedSize(int size) const {
   _impl_._cached_size_.Set(size);
 }
 
-void QuitRoomRsp::Clear() {
-// @@protoc_insertion_point(message_clear_start:yy.protocol.app.QuitRoomRsp)
+void SelfQuitRoomRsp::Clear() {
+// @@protoc_insertion_point(message_clear_start:yy.protocol.app.SelfQuitRoomRsp)
   uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
@@ -2502,7 +2991,7 @@ void QuitRoomRsp::Clear() {
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* QuitRoomRsp::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+const char* SelfQuitRoomRsp::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   while (!ctx->Done(&ptr)) {
     uint32_t tag;
@@ -2524,12 +3013,12 @@ const char* QuitRoomRsp::_InternalParse(const char* ptr, ::_pbi::ParseContext* c
         } else
           goto handle_unusual;
         continue;
-      // .yy.protocol.app.QuitRoomRsp.Status result_code = 3;
+      // .yy.protocol.app.SelfQuitRoomRsp.Status result_code = 3;
       case 3:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 24)) {
           uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
-          _internal_set_result_code(static_cast<::yy::protocol::app::QuitRoomRsp_Status>(val));
+          _internal_set_result_code(static_cast<::yy::protocol::app::SelfQuitRoomRsp_Status>(val));
         } else
           goto handle_unusual;
         continue;
@@ -2556,9 +3045,9 @@ failure:
 #undef CHK_
 }
 
-uint8_t* QuitRoomRsp::_InternalSerialize(
+uint8_t* SelfQuitRoomRsp::_InternalSerialize(
     uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:yy.protocol.app.QuitRoomRsp)
+  // @@protoc_insertion_point(serialize_to_array_start:yy.protocol.app.SelfQuitRoomRsp)
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -2574,7 +3063,7 @@ uint8_t* QuitRoomRsp::_InternalSerialize(
     target = ::_pbi::WireFormatLite::WriteUInt64ToArray(2, this->_internal_room_id(), target);
   }
 
-  // .yy.protocol.app.QuitRoomRsp.Status result_code = 3;
+  // .yy.protocol.app.SelfQuitRoomRsp.Status result_code = 3;
   if (this->_internal_result_code() != 0) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteEnumToArray(
@@ -2585,12 +3074,12 @@ uint8_t* QuitRoomRsp::_InternalSerialize(
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
-  // @@protoc_insertion_point(serialize_to_array_end:yy.protocol.app.QuitRoomRsp)
+  // @@protoc_insertion_point(serialize_to_array_end:yy.protocol.app.SelfQuitRoomRsp)
   return target;
 }
 
-size_t QuitRoomRsp::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:yy.protocol.app.QuitRoomRsp)
+size_t SelfQuitRoomRsp::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:yy.protocol.app.SelfQuitRoomRsp)
   size_t total_size = 0;
 
   uint32_t cached_has_bits = 0;
@@ -2607,7 +3096,7 @@ size_t QuitRoomRsp::ByteSizeLong() const {
     total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_room_id());
   }
 
-  // .yy.protocol.app.QuitRoomRsp.Status result_code = 3;
+  // .yy.protocol.app.SelfQuitRoomRsp.Status result_code = 3;
   if (this->_internal_result_code() != 0) {
     total_size += 1 +
       ::_pbi::WireFormatLite::EnumSize(this->_internal_result_code());
@@ -2616,17 +3105,17 @@ size_t QuitRoomRsp::ByteSizeLong() const {
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData QuitRoomRsp::_class_data_ = {
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData SelfQuitRoomRsp::_class_data_ = {
     ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
-    QuitRoomRsp::MergeImpl
+    SelfQuitRoomRsp::MergeImpl
 };
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*QuitRoomRsp::GetClassData() const { return &_class_data_; }
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*SelfQuitRoomRsp::GetClassData() const { return &_class_data_; }
 
 
-void QuitRoomRsp::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
-  auto* const _this = static_cast<QuitRoomRsp*>(&to_msg);
-  auto& from = static_cast<const QuitRoomRsp&>(from_msg);
-  // @@protoc_insertion_point(class_specific_merge_from_start:yy.protocol.app.QuitRoomRsp)
+void SelfQuitRoomRsp::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<SelfQuitRoomRsp*>(&to_msg);
+  auto& from = static_cast<const SelfQuitRoomRsp&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:yy.protocol.app.SelfQuitRoomRsp)
   GOOGLE_DCHECK_NE(&from, _this);
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
@@ -2643,32 +3132,270 @@ void QuitRoomRsp::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PR
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
-void QuitRoomRsp::CopyFrom(const QuitRoomRsp& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:yy.protocol.app.QuitRoomRsp)
+void SelfQuitRoomRsp::CopyFrom(const SelfQuitRoomRsp& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:yy.protocol.app.SelfQuitRoomRsp)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool QuitRoomRsp::IsInitialized() const {
+bool SelfQuitRoomRsp::IsInitialized() const {
   return true;
 }
 
-void QuitRoomRsp::InternalSwap(QuitRoomRsp* other) {
+void SelfQuitRoomRsp::InternalSwap(SelfQuitRoomRsp* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(QuitRoomRsp, _impl_.result_code_)
-      + sizeof(QuitRoomRsp::_impl_.result_code_)
-      - PROTOBUF_FIELD_OFFSET(QuitRoomRsp, _impl_.uid_)>(
+      PROTOBUF_FIELD_OFFSET(SelfQuitRoomRsp, _impl_.result_code_)
+      + sizeof(SelfQuitRoomRsp::_impl_.result_code_)
+      - PROTOBUF_FIELD_OFFSET(SelfQuitRoomRsp, _impl_.uid_)>(
           reinterpret_cast<char*>(&_impl_.uid_),
           reinterpret_cast<char*>(&other->_impl_.uid_));
 }
 
-::PROTOBUF_NAMESPACE_ID::Metadata QuitRoomRsp::GetMetadata() const {
+::PROTOBUF_NAMESPACE_ID::Metadata SelfQuitRoomRsp::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_room_2eproto_getter, &descriptor_table_room_2eproto_once,
-      file_level_metadata_room_2eproto[7]);
+      file_level_metadata_room_2eproto[8]);
+}
+
+// ===================================================================
+
+class OtherQuitRoomRsp::_Internal {
+ public:
+};
+
+OtherQuitRoomRsp::OtherQuitRoomRsp(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor(arena, is_message_owned);
+  // @@protoc_insertion_point(arena_constructor:yy.protocol.app.OtherQuitRoomRsp)
+}
+OtherQuitRoomRsp::OtherQuitRoomRsp(const OtherQuitRoomRsp& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  OtherQuitRoomRsp* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.uid_){}
+    , decltype(_impl_.room_id_){}
+    , decltype(_impl_.result_code_){}
+    , /*decltype(_impl_._cached_size_)*/{}};
+
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  ::memcpy(&_impl_.uid_, &from._impl_.uid_,
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.result_code_) -
+    reinterpret_cast<char*>(&_impl_.uid_)) + sizeof(_impl_.result_code_));
+  // @@protoc_insertion_point(copy_constructor:yy.protocol.app.OtherQuitRoomRsp)
+}
+
+inline void OtherQuitRoomRsp::SharedCtor(
+    ::_pb::Arena* arena, bool is_message_owned) {
+  (void)arena;
+  (void)is_message_owned;
+  new (&_impl_) Impl_{
+      decltype(_impl_.uid_){uint64_t{0u}}
+    , decltype(_impl_.room_id_){uint64_t{0u}}
+    , decltype(_impl_.result_code_){0}
+    , /*decltype(_impl_._cached_size_)*/{}
+  };
+}
+
+OtherQuitRoomRsp::~OtherQuitRoomRsp() {
+  // @@protoc_insertion_point(destructor:yy.protocol.app.OtherQuitRoomRsp)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
+  SharedDtor();
+}
+
+inline void OtherQuitRoomRsp::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+}
+
+void OtherQuitRoomRsp::SetCachedSize(int size) const {
+  _impl_._cached_size_.Set(size);
+}
+
+void OtherQuitRoomRsp::Clear() {
+// @@protoc_insertion_point(message_clear_start:yy.protocol.app.OtherQuitRoomRsp)
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  ::memset(&_impl_.uid_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&_impl_.result_code_) -
+      reinterpret_cast<char*>(&_impl_.uid_)) + sizeof(_impl_.result_code_));
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* OtherQuitRoomRsp::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // uint64 uid = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
+          _impl_.uid_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // uint64 room_id = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
+          _impl_.room_id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // .yy.protocol.app.OtherQuitRoomRsp.Status result_code = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 24)) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_result_code(static_cast<::yy::protocol::app::OtherQuitRoomRsp_Status>(val));
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+uint8_t* OtherQuitRoomRsp::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:yy.protocol.app.OtherQuitRoomRsp)
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // uint64 uid = 1;
+  if (this->_internal_uid() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(1, this->_internal_uid(), target);
+  }
+
+  // uint64 room_id = 2;
+  if (this->_internal_room_id() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(2, this->_internal_room_id(), target);
+  }
+
+  // .yy.protocol.app.OtherQuitRoomRsp.Status result_code = 3;
+  if (this->_internal_result_code() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+      3, this->_internal_result_code(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:yy.protocol.app.OtherQuitRoomRsp)
+  return target;
+}
+
+size_t OtherQuitRoomRsp::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:yy.protocol.app.OtherQuitRoomRsp)
+  size_t total_size = 0;
+
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // uint64 uid = 1;
+  if (this->_internal_uid() != 0) {
+    total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_uid());
+  }
+
+  // uint64 room_id = 2;
+  if (this->_internal_room_id() != 0) {
+    total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_room_id());
+  }
+
+  // .yy.protocol.app.OtherQuitRoomRsp.Status result_code = 3;
+  if (this->_internal_result_code() != 0) {
+    total_size += 1 +
+      ::_pbi::WireFormatLite::EnumSize(this->_internal_result_code());
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData OtherQuitRoomRsp::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    OtherQuitRoomRsp::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*OtherQuitRoomRsp::GetClassData() const { return &_class_data_; }
+
+
+void OtherQuitRoomRsp::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<OtherQuitRoomRsp*>(&to_msg);
+  auto& from = static_cast<const OtherQuitRoomRsp&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:yy.protocol.app.OtherQuitRoomRsp)
+  GOOGLE_DCHECK_NE(&from, _this);
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from._internal_uid() != 0) {
+    _this->_internal_set_uid(from._internal_uid());
+  }
+  if (from._internal_room_id() != 0) {
+    _this->_internal_set_room_id(from._internal_room_id());
+  }
+  if (from._internal_result_code() != 0) {
+    _this->_internal_set_result_code(from._internal_result_code());
+  }
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void OtherQuitRoomRsp::CopyFrom(const OtherQuitRoomRsp& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:yy.protocol.app.OtherQuitRoomRsp)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool OtherQuitRoomRsp::IsInitialized() const {
+  return true;
+}
+
+void OtherQuitRoomRsp::InternalSwap(OtherQuitRoomRsp* other) {
+  using std::swap;
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(OtherQuitRoomRsp, _impl_.result_code_)
+      + sizeof(OtherQuitRoomRsp::_impl_.result_code_)
+      - PROTOBUF_FIELD_OFFSET(OtherQuitRoomRsp, _impl_.uid_)>(
+          reinterpret_cast<char*>(&_impl_.uid_),
+          reinterpret_cast<char*>(&other->_impl_.uid_));
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata OtherQuitRoomRsp::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_room_2eproto_getter, &descriptor_table_room_2eproto_once,
+      file_level_metadata_room_2eproto[9]);
 }
 
 // ===================================================================
@@ -2931,7 +3658,7 @@ void GetEnterSceneTokenReq::InternalSwap(GetEnterSceneTokenReq* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata GetEnterSceneTokenReq::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_room_2eproto_getter, &descriptor_table_room_2eproto_once,
-      file_level_metadata_room_2eproto[8]);
+      file_level_metadata_room_2eproto[10]);
 }
 
 // ===================================================================
@@ -3221,7 +3948,7 @@ void GetEnterSceneTokenRsp::InternalSwap(GetEnterSceneTokenRsp* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata GetEnterSceneTokenRsp::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_room_2eproto_getter, &descriptor_table_room_2eproto_once,
-      file_level_metadata_room_2eproto[9]);
+      file_level_metadata_room_2eproto[11]);
 }
 
 // ===================================================================
@@ -3524,7 +4251,7 @@ void BroadcastRoomReq::InternalSwap(BroadcastRoomReq* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata BroadcastRoomReq::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_room_2eproto_getter, &descriptor_table_room_2eproto_once,
-      file_level_metadata_room_2eproto[10]);
+      file_level_metadata_room_2eproto[12]);
 }
 
 // ===================================================================
@@ -3804,7 +4531,363 @@ void BroadcastRoomRsp::InternalSwap(BroadcastRoomRsp* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata BroadcastRoomRsp::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_room_2eproto_getter, &descriptor_table_room_2eproto_once,
-      file_level_metadata_room_2eproto[11]);
+      file_level_metadata_room_2eproto[13]);
+}
+
+// ===================================================================
+
+class UserDisconnectReq::_Internal {
+ public:
+};
+
+UserDisconnectReq::UserDisconnectReq(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor(arena, is_message_owned);
+  // @@protoc_insertion_point(arena_constructor:yy.protocol.app.UserDisconnectReq)
+}
+UserDisconnectReq::UserDisconnectReq(const UserDisconnectReq& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  UserDisconnectReq* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.uid_){}
+    , /*decltype(_impl_._cached_size_)*/{}};
+
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _this->_impl_.uid_ = from._impl_.uid_;
+  // @@protoc_insertion_point(copy_constructor:yy.protocol.app.UserDisconnectReq)
+}
+
+inline void UserDisconnectReq::SharedCtor(
+    ::_pb::Arena* arena, bool is_message_owned) {
+  (void)arena;
+  (void)is_message_owned;
+  new (&_impl_) Impl_{
+      decltype(_impl_.uid_){uint64_t{0u}}
+    , /*decltype(_impl_._cached_size_)*/{}
+  };
+}
+
+UserDisconnectReq::~UserDisconnectReq() {
+  // @@protoc_insertion_point(destructor:yy.protocol.app.UserDisconnectReq)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
+  SharedDtor();
+}
+
+inline void UserDisconnectReq::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+}
+
+void UserDisconnectReq::SetCachedSize(int size) const {
+  _impl_._cached_size_.Set(size);
+}
+
+void UserDisconnectReq::Clear() {
+// @@protoc_insertion_point(message_clear_start:yy.protocol.app.UserDisconnectReq)
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  _impl_.uid_ = uint64_t{0u};
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* UserDisconnectReq::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // uint64 uid = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
+          _impl_.uid_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+uint8_t* UserDisconnectReq::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:yy.protocol.app.UserDisconnectReq)
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // uint64 uid = 1;
+  if (this->_internal_uid() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(1, this->_internal_uid(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:yy.protocol.app.UserDisconnectReq)
+  return target;
+}
+
+size_t UserDisconnectReq::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:yy.protocol.app.UserDisconnectReq)
+  size_t total_size = 0;
+
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // uint64 uid = 1;
+  if (this->_internal_uid() != 0) {
+    total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_uid());
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData UserDisconnectReq::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    UserDisconnectReq::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*UserDisconnectReq::GetClassData() const { return &_class_data_; }
+
+
+void UserDisconnectReq::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<UserDisconnectReq*>(&to_msg);
+  auto& from = static_cast<const UserDisconnectReq&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:yy.protocol.app.UserDisconnectReq)
+  GOOGLE_DCHECK_NE(&from, _this);
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from._internal_uid() != 0) {
+    _this->_internal_set_uid(from._internal_uid());
+  }
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void UserDisconnectReq::CopyFrom(const UserDisconnectReq& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:yy.protocol.app.UserDisconnectReq)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool UserDisconnectReq::IsInitialized() const {
+  return true;
+}
+
+void UserDisconnectReq::InternalSwap(UserDisconnectReq* other) {
+  using std::swap;
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  swap(_impl_.uid_, other->_impl_.uid_);
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata UserDisconnectReq::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_room_2eproto_getter, &descriptor_table_room_2eproto_once,
+      file_level_metadata_room_2eproto[14]);
+}
+
+// ===================================================================
+
+class UserDisconnectRsp::_Internal {
+ public:
+};
+
+UserDisconnectRsp::UserDisconnectRsp(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor(arena, is_message_owned);
+  // @@protoc_insertion_point(arena_constructor:yy.protocol.app.UserDisconnectRsp)
+}
+UserDisconnectRsp::UserDisconnectRsp(const UserDisconnectRsp& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  UserDisconnectRsp* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.uid_){}
+    , /*decltype(_impl_._cached_size_)*/{}};
+
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _this->_impl_.uid_ = from._impl_.uid_;
+  // @@protoc_insertion_point(copy_constructor:yy.protocol.app.UserDisconnectRsp)
+}
+
+inline void UserDisconnectRsp::SharedCtor(
+    ::_pb::Arena* arena, bool is_message_owned) {
+  (void)arena;
+  (void)is_message_owned;
+  new (&_impl_) Impl_{
+      decltype(_impl_.uid_){uint64_t{0u}}
+    , /*decltype(_impl_._cached_size_)*/{}
+  };
+}
+
+UserDisconnectRsp::~UserDisconnectRsp() {
+  // @@protoc_insertion_point(destructor:yy.protocol.app.UserDisconnectRsp)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
+  SharedDtor();
+}
+
+inline void UserDisconnectRsp::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+}
+
+void UserDisconnectRsp::SetCachedSize(int size) const {
+  _impl_._cached_size_.Set(size);
+}
+
+void UserDisconnectRsp::Clear() {
+// @@protoc_insertion_point(message_clear_start:yy.protocol.app.UserDisconnectRsp)
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  _impl_.uid_ = uint64_t{0u};
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* UserDisconnectRsp::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // uint64 uid = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
+          _impl_.uid_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+uint8_t* UserDisconnectRsp::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:yy.protocol.app.UserDisconnectRsp)
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // uint64 uid = 1;
+  if (this->_internal_uid() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(1, this->_internal_uid(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:yy.protocol.app.UserDisconnectRsp)
+  return target;
+}
+
+size_t UserDisconnectRsp::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:yy.protocol.app.UserDisconnectRsp)
+  size_t total_size = 0;
+
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // uint64 uid = 1;
+  if (this->_internal_uid() != 0) {
+    total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_uid());
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData UserDisconnectRsp::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    UserDisconnectRsp::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*UserDisconnectRsp::GetClassData() const { return &_class_data_; }
+
+
+void UserDisconnectRsp::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<UserDisconnectRsp*>(&to_msg);
+  auto& from = static_cast<const UserDisconnectRsp&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:yy.protocol.app.UserDisconnectRsp)
+  GOOGLE_DCHECK_NE(&from, _this);
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from._internal_uid() != 0) {
+    _this->_internal_set_uid(from._internal_uid());
+  }
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void UserDisconnectRsp::CopyFrom(const UserDisconnectRsp& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:yy.protocol.app.UserDisconnectRsp)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool UserDisconnectRsp::IsInitialized() const {
+  return true;
+}
+
+void UserDisconnectRsp::InternalSwap(UserDisconnectRsp* other) {
+  using std::swap;
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  swap(_impl_.uid_, other->_impl_.uid_);
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata UserDisconnectRsp::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_room_2eproto_getter, &descriptor_table_room_2eproto_once,
+      file_level_metadata_room_2eproto[15]);
 }
 
 // ===================================================================
@@ -3836,11 +4919,11 @@ void CenterRoomServiceRpc::SearchRoom(::PROTOBUF_NAMESPACE_ID::RpcController* co
   done->Run();
 }
 
-void CenterRoomServiceRpc::JoinRoom(::PROTOBUF_NAMESPACE_ID::RpcController* controller,
-                         const ::yy::protocol::app::JoinRoomReq*,
-                         ::yy::protocol::app::JoinRoomRsp*,
+void CenterRoomServiceRpc::SelfJoinRoom(::PROTOBUF_NAMESPACE_ID::RpcController* controller,
+                         const ::yy::protocol::app::SelfJoinRoomReq*,
+                         ::yy::protocol::app::SelfJoinRoomRsp*,
                          ::google::protobuf::Closure* done) {
-  controller->SetFailed("Method JoinRoom() not implemented.");
+  controller->SetFailed("Method SelfJoinRoom() not implemented.");
   done->Run();
 }
 
@@ -3852,11 +4935,19 @@ void CenterRoomServiceRpc::GetEnterSceneToken(::PROTOBUF_NAMESPACE_ID::RpcContro
   done->Run();
 }
 
-void CenterRoomServiceRpc::QuitRoom(::PROTOBUF_NAMESPACE_ID::RpcController* controller,
-                         const ::yy::protocol::app::QuitRoomReq*,
-                         ::yy::protocol::app::QuitRoomRsp*,
+void CenterRoomServiceRpc::SelfQuitRoom(::PROTOBUF_NAMESPACE_ID::RpcController* controller,
+                         const ::yy::protocol::app::SelfQuitRoomReq*,
+                         ::yy::protocol::app::SelfQuitRoomRsp*,
                          ::google::protobuf::Closure* done) {
-  controller->SetFailed("Method QuitRoom() not implemented.");
+  controller->SetFailed("Method SelfQuitRoom() not implemented.");
+  done->Run();
+}
+
+void CenterRoomServiceRpc::UserDisconnect(::PROTOBUF_NAMESPACE_ID::RpcController* controller,
+                         const ::yy::protocol::app::UserDisconnectReq*,
+                         ::yy::protocol::app::UserDisconnectRsp*,
+                         ::google::protobuf::Closure* done) {
+  controller->SetFailed("Method UserDisconnect() not implemented.");
   done->Run();
 }
 
@@ -3884,10 +4975,10 @@ void CenterRoomServiceRpc::CallMethod(const ::PROTOBUF_NAMESPACE_ID::MethodDescr
              done);
       break;
     case 2:
-      JoinRoom(controller,
-             ::PROTOBUF_NAMESPACE_ID::internal::DownCast<const ::yy::protocol::app::JoinRoomReq*>(
+      SelfJoinRoom(controller,
+             ::PROTOBUF_NAMESPACE_ID::internal::DownCast<const ::yy::protocol::app::SelfJoinRoomReq*>(
                  request),
-             ::PROTOBUF_NAMESPACE_ID::internal::DownCast<::yy::protocol::app::JoinRoomRsp*>(
+             ::PROTOBUF_NAMESPACE_ID::internal::DownCast<::yy::protocol::app::SelfJoinRoomRsp*>(
                  response),
              done);
       break;
@@ -3900,10 +4991,18 @@ void CenterRoomServiceRpc::CallMethod(const ::PROTOBUF_NAMESPACE_ID::MethodDescr
              done);
       break;
     case 4:
-      QuitRoom(controller,
-             ::PROTOBUF_NAMESPACE_ID::internal::DownCast<const ::yy::protocol::app::QuitRoomReq*>(
+      SelfQuitRoom(controller,
+             ::PROTOBUF_NAMESPACE_ID::internal::DownCast<const ::yy::protocol::app::SelfQuitRoomReq*>(
                  request),
-             ::PROTOBUF_NAMESPACE_ID::internal::DownCast<::yy::protocol::app::QuitRoomRsp*>(
+             ::PROTOBUF_NAMESPACE_ID::internal::DownCast<::yy::protocol::app::SelfQuitRoomRsp*>(
+                 response),
+             done);
+      break;
+    case 5:
+      UserDisconnect(controller,
+             ::PROTOBUF_NAMESPACE_ID::internal::DownCast<const ::yy::protocol::app::UserDisconnectReq*>(
+                 request),
+             ::PROTOBUF_NAMESPACE_ID::internal::DownCast<::yy::protocol::app::UserDisconnectRsp*>(
                  response),
              done);
       break;
@@ -3922,11 +5021,13 @@ const ::PROTOBUF_NAMESPACE_ID::Message& CenterRoomServiceRpc::GetRequestPrototyp
     case 1:
       return ::yy::protocol::app::SearchRoomReq::default_instance();
     case 2:
-      return ::yy::protocol::app::JoinRoomReq::default_instance();
+      return ::yy::protocol::app::SelfJoinRoomReq::default_instance();
     case 3:
       return ::yy::protocol::app::GetEnterSceneTokenReq::default_instance();
     case 4:
-      return ::yy::protocol::app::QuitRoomReq::default_instance();
+      return ::yy::protocol::app::SelfQuitRoomReq::default_instance();
+    case 5:
+      return ::yy::protocol::app::UserDisconnectReq::default_instance();
     default:
       GOOGLE_LOG(FATAL) << "Bad method index; this should never happen.";
       return *::PROTOBUF_NAMESPACE_ID::MessageFactory::generated_factory()
@@ -3943,11 +5044,13 @@ const ::PROTOBUF_NAMESPACE_ID::Message& CenterRoomServiceRpc::GetResponsePrototy
     case 1:
       return ::yy::protocol::app::SearchRoomRsp::default_instance();
     case 2:
-      return ::yy::protocol::app::JoinRoomRsp::default_instance();
+      return ::yy::protocol::app::SelfJoinRoomRsp::default_instance();
     case 3:
       return ::yy::protocol::app::GetEnterSceneTokenRsp::default_instance();
     case 4:
-      return ::yy::protocol::app::QuitRoomRsp::default_instance();
+      return ::yy::protocol::app::SelfQuitRoomRsp::default_instance();
+    case 5:
+      return ::yy::protocol::app::UserDisconnectRsp::default_instance();
     default:
       GOOGLE_LOG(FATAL) << "Bad method index; this should never happen.";
       return *::PROTOBUF_NAMESPACE_ID::MessageFactory::generated_factory()
@@ -3980,9 +5083,9 @@ void CenterRoomServiceRpc_Stub::SearchRoom(::PROTOBUF_NAMESPACE_ID::RpcControlle
   channel_->CallMethod(descriptor()->method(1),
                        controller, request, response, done);
 }
-void CenterRoomServiceRpc_Stub::JoinRoom(::PROTOBUF_NAMESPACE_ID::RpcController* controller,
-                              const ::yy::protocol::app::JoinRoomReq* request,
-                              ::yy::protocol::app::JoinRoomRsp* response,
+void CenterRoomServiceRpc_Stub::SelfJoinRoom(::PROTOBUF_NAMESPACE_ID::RpcController* controller,
+                              const ::yy::protocol::app::SelfJoinRoomReq* request,
+                              ::yy::protocol::app::SelfJoinRoomRsp* response,
                               ::google::protobuf::Closure* done) {
   channel_->CallMethod(descriptor()->method(2),
                        controller, request, response, done);
@@ -3994,11 +5097,18 @@ void CenterRoomServiceRpc_Stub::GetEnterSceneToken(::PROTOBUF_NAMESPACE_ID::RpcC
   channel_->CallMethod(descriptor()->method(3),
                        controller, request, response, done);
 }
-void CenterRoomServiceRpc_Stub::QuitRoom(::PROTOBUF_NAMESPACE_ID::RpcController* controller,
-                              const ::yy::protocol::app::QuitRoomReq* request,
-                              ::yy::protocol::app::QuitRoomRsp* response,
+void CenterRoomServiceRpc_Stub::SelfQuitRoom(::PROTOBUF_NAMESPACE_ID::RpcController* controller,
+                              const ::yy::protocol::app::SelfQuitRoomReq* request,
+                              ::yy::protocol::app::SelfQuitRoomRsp* response,
                               ::google::protobuf::Closure* done) {
   channel_->CallMethod(descriptor()->method(4),
+                       controller, request, response, done);
+}
+void CenterRoomServiceRpc_Stub::UserDisconnect(::PROTOBUF_NAMESPACE_ID::RpcController* controller,
+                              const ::yy::protocol::app::UserDisconnectReq* request,
+                              ::yy::protocol::app::UserDisconnectRsp* response,
+                              ::google::protobuf::Closure* done) {
+  channel_->CallMethod(descriptor()->method(5),
                        controller, request, response, done);
 }
 // ===================================================================
@@ -4109,21 +5219,29 @@ template<> PROTOBUF_NOINLINE ::yy::protocol::app::SearchRoomRsp*
 Arena::CreateMaybeMessage< ::yy::protocol::app::SearchRoomRsp >(Arena* arena) {
   return Arena::CreateMessageInternal< ::yy::protocol::app::SearchRoomRsp >(arena);
 }
-template<> PROTOBUF_NOINLINE ::yy::protocol::app::JoinRoomReq*
-Arena::CreateMaybeMessage< ::yy::protocol::app::JoinRoomReq >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::yy::protocol::app::JoinRoomReq >(arena);
+template<> PROTOBUF_NOINLINE ::yy::protocol::app::SelfJoinRoomReq*
+Arena::CreateMaybeMessage< ::yy::protocol::app::SelfJoinRoomReq >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::yy::protocol::app::SelfJoinRoomReq >(arena);
 }
-template<> PROTOBUF_NOINLINE ::yy::protocol::app::JoinRoomRsp*
-Arena::CreateMaybeMessage< ::yy::protocol::app::JoinRoomRsp >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::yy::protocol::app::JoinRoomRsp >(arena);
+template<> PROTOBUF_NOINLINE ::yy::protocol::app::SelfJoinRoomRsp*
+Arena::CreateMaybeMessage< ::yy::protocol::app::SelfJoinRoomRsp >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::yy::protocol::app::SelfJoinRoomRsp >(arena);
 }
-template<> PROTOBUF_NOINLINE ::yy::protocol::app::QuitRoomReq*
-Arena::CreateMaybeMessage< ::yy::protocol::app::QuitRoomReq >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::yy::protocol::app::QuitRoomReq >(arena);
+template<> PROTOBUF_NOINLINE ::yy::protocol::app::OtherJoinRoomRsp*
+Arena::CreateMaybeMessage< ::yy::protocol::app::OtherJoinRoomRsp >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::yy::protocol::app::OtherJoinRoomRsp >(arena);
 }
-template<> PROTOBUF_NOINLINE ::yy::protocol::app::QuitRoomRsp*
-Arena::CreateMaybeMessage< ::yy::protocol::app::QuitRoomRsp >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::yy::protocol::app::QuitRoomRsp >(arena);
+template<> PROTOBUF_NOINLINE ::yy::protocol::app::SelfQuitRoomReq*
+Arena::CreateMaybeMessage< ::yy::protocol::app::SelfQuitRoomReq >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::yy::protocol::app::SelfQuitRoomReq >(arena);
+}
+template<> PROTOBUF_NOINLINE ::yy::protocol::app::SelfQuitRoomRsp*
+Arena::CreateMaybeMessage< ::yy::protocol::app::SelfQuitRoomRsp >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::yy::protocol::app::SelfQuitRoomRsp >(arena);
+}
+template<> PROTOBUF_NOINLINE ::yy::protocol::app::OtherQuitRoomRsp*
+Arena::CreateMaybeMessage< ::yy::protocol::app::OtherQuitRoomRsp >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::yy::protocol::app::OtherQuitRoomRsp >(arena);
 }
 template<> PROTOBUF_NOINLINE ::yy::protocol::app::GetEnterSceneTokenReq*
 Arena::CreateMaybeMessage< ::yy::protocol::app::GetEnterSceneTokenReq >(Arena* arena) {
@@ -4140,6 +5258,14 @@ Arena::CreateMaybeMessage< ::yy::protocol::app::BroadcastRoomReq >(Arena* arena)
 template<> PROTOBUF_NOINLINE ::yy::protocol::app::BroadcastRoomRsp*
 Arena::CreateMaybeMessage< ::yy::protocol::app::BroadcastRoomRsp >(Arena* arena) {
   return Arena::CreateMessageInternal< ::yy::protocol::app::BroadcastRoomRsp >(arena);
+}
+template<> PROTOBUF_NOINLINE ::yy::protocol::app::UserDisconnectReq*
+Arena::CreateMaybeMessage< ::yy::protocol::app::UserDisconnectReq >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::yy::protocol::app::UserDisconnectReq >(arena);
+}
+template<> PROTOBUF_NOINLINE ::yy::protocol::app::UserDisconnectRsp*
+Arena::CreateMaybeMessage< ::yy::protocol::app::UserDisconnectRsp >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::yy::protocol::app::UserDisconnectRsp >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
 

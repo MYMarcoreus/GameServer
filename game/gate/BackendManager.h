@@ -2,12 +2,11 @@
 
 #include "AccountRpcClient.h"
 #include "IServer.h"
-#include "IGameBase.h"
 #include "account.pb.h"
 #include "ProtobufDispatcher.h"
 #include "RpcStubConnectionPool.hpp"
-#include "ThreadPool.h"
-#include "ZkServiceManager.h"
+#include "ZkServiceClient.h"
+#include "UserConnection.h"
 
 namespace yy::app::gate
 {

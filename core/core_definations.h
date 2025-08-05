@@ -5,11 +5,6 @@
 #include <memory>
 #include <string>
 
-using std::shared_ptr;
-using std::unique_ptr;
-using std::make_unique;
-using std::make_shared;
-
 namespace google::protobuf {
 class Descriptor;            // descriptor.h
 class ServiceDescriptor;     // descriptor.h
@@ -39,6 +34,8 @@ class SequentialBuffer;
 
 
 namespace yy::core {
+using UID_t = uint64_t;
+
 class IServer;
 class UserConnection;
 using UserConnectionPtr = std::shared_ptr<UserConnection>;

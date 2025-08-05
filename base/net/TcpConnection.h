@@ -8,6 +8,8 @@
 #include <atomic>
 #include <any>
 
+#include "noncopyable.h"
+
 
 namespace yy::net {
 

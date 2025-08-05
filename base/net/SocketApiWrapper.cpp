@@ -139,9 +139,9 @@ void shutdown(const socket_t sockfd, const int how) {
 
 int get_socket_error(socket_t sockfd) {
     int optval;
-    socklen_t optlen = static_cast<socklen_t>(sizeof optval);
+    socklen_t optlen = (sizeof optval);
 
-    if (::getsockopt(sockfd, SOL_SOCKET, SO_ERROR, reinterpret_cast<char*>(&optval), &optlen) < 0) {
+    if (::getsockopt(sockfd, SOL_SOCKET, SO_ERROR, (&optval), &optlen) < 0) {
         return get_last_socket_error();
     } else {
         return optval;

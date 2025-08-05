@@ -7,6 +7,8 @@
 #include "UdpSession.h"
 #include "TcpConnection.h"
 
+using namespace yy::net;
+
 namespace yy::core {
 
 
@@ -20,9 +22,10 @@ UserConnection::UserConnection(const TcpConnectionPtr& conn, ProtobufTcpCodec & 
 
 }
 
-void UserConnection::Shutdown() const
+void UserConnection::Shutdown()
 {
     m_tcpChannel->Shutdown();
+    m_state.store(E_UserBaseState::eFree);
 }
 
 uint64_t UserConnection::GetConnID() const { return m_tcpChannel->GetConnID(); }

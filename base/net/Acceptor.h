@@ -28,7 +28,9 @@ public:
 
     void StopListen();
 
-    bool IsListening() const { return m_IsListening; };
+    bool IsListening() const { return m_IsListening; }
+
+    IPAddressPtr GetListenAddr() const { return m_ListenAddr; }
 private:
     ///@brief 接受新连接，并执行m_NewConnectionCallback
     void HandleAcceptAll();

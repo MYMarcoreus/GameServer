@@ -93,7 +93,7 @@ auto acceptAll(socket_t sockfd, bool isNewSockNonBlock) -> std::unordered_map<so
         }
     }
 
-    return std::move(Connfd2Addrs);
+    return Connfd2Addrs;
 }
 
 

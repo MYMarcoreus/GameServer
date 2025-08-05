@@ -15,8 +15,6 @@ class RpcServer;
 
 namespace yy::core::zk { class ZkServiceClient; }
 
-using namespace yy::net;
-using namespace yy::core;
 
 // 业务层
 namespace yy::app::logic {
@@ -29,11 +27,11 @@ class LogicServerManager final : public Singleton<LogicServerManager>
 {
     SINGLETON_NECESSITY(LogicServerManager)
 public:
-    using F_CommandCallback = std::function<void(const UserConnectionPtr &, const MessagePtr &, MessageNetType)>;
+    using F_CommandCallback = std::function<void(const core::UserConnectionPtr &, const core::MessagePtr &, core::MessageNetType)>;
     void RunApp();
 
-    IServer& GetServer() const { return *m_server; }
-    rpc::RpcServer&     GetRpcServer() const { return *m_rpcServer; }
+    core::IServer& GetServer() const { return *m_frontend; }
+    core::rpc::RpcServer&     GetRpcServer() const { return *m_backend; }
 
     void SetCommandCallback(F_CommandCallback cb) { m_cmdCallback = std::move(cb); }
 
@@ -43,16 +41,13 @@ private:
 
     void Init();
 
-    void AppNotifier_Secutiry(const UserConnectionPtr& userdata) ;
-    void AppNotifier_Disconnect(const UserConnectionPtr& userdata) ;
+    std::unique_ptr<net::EventLoop>                  m_accpetorLoop{};
+    std::unique_ptr<core::IServer>                   m_frontend{};
+    std::unique_ptr<core::rpc::RpcServer>            m_backend{};
+    F_CommandCallback                                m_cmdCallback{};
 
-    unique_ptr<EventLoop>                   m_accpetorLoop{};
-    unique_ptr<IServer>                     m_server{};
-    unique_ptr<rpc::RpcServer>              m_rpcServer{};
-    F_CommandCallback                       m_cmdCallback{};
-
-    unique_ptr<zk::ZkServiceClient>         m_zk{};
-    unique_ptr<rpc_client::CenterRpcClient> m_centerRpcClient{};
+    std::unique_ptr<core::zk::ZkServiceClient>       m_zk{};
+    std::unique_ptr<rpc_client::CenterRpcClient>     m_centerRpcClient{};
 };
 
 

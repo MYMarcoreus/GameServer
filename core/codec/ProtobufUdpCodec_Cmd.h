@@ -15,14 +15,6 @@ class NetBuffer;
 
 namespace yy::core {
 
-using MessagePtr = std::shared_ptr<google::protobuf::Message>;
-
-
-
-
-
-
-
 /*
 Message回调的传递路线(SetCallback)：
                                     调用MessageCallback(NetBuffer&)

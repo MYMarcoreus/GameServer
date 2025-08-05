@@ -11,6 +11,9 @@
 #include "RpcServer.h"
 #include "AccountRedisDAO.h"
 
+using namespace yy::net;
+using namespace yy::core;
+using namespace yy::protocol::app;
 
 namespace yy::app::account
 {
@@ -26,10 +29,9 @@ AccountRpcServiceImpl::AccountRpcServiceImpl(EventLoop * loop):
     // 初始化MySql
     mysql_dao_.Start(loop);
 
-    center_client_.Start(
-        [](const TcpConnectionPtr & ) {
-        YLOG_INFO("连接至CenterRpc服务器！");
-    });
+    center_client_.SetConnectionEstablishedCallback([](const TcpConnectionPtr & ) {
+            YLOG_INFO("连接至CenterRpc服务器！");
+        });
 }
 
 // 该函数仅需填充response并调用done->Run()

@@ -1,11 +1,8 @@
 #pragma once
 #include"Timestamp.h"
-#include<cstdint>
 #include<functional>
-#include<memory>
-#include<atomic>
-
-#include"net_definations.h"
+#include "net_definations.h"
+#include "noncopyable.h"
 
 namespace yy::net {
 

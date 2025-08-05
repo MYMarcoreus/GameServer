@@ -3,19 +3,14 @@
 #include "IPAddress.h"
 #include "AppXmlConfig.h"
 #include "UnboundedLockedQueue.hpp"
-
 #include <atomic>
-#include <map>
 
-namespace yy::util
-{
-class SignalManager;
-}
 
 namespace yy::net {
 
 class Acceptor;
 class EventLoopThreadPool;
+class SignalManager;
 
 class TcpServer {
 public:
@@ -25,8 +20,8 @@ public:
     ///@note 注意其实不要将线程数量作为构造函数的参数，不要在构造函数里构造Loop线程池，因为我们需要再Start中才一个一个创建线程，
     /// 而非在构造函数中（即使在构造函数中没有创建线程，但为了语义上歧义少点，请不要这么做）
     TcpServer(EventLoop *acceptorLoop, IPAddress::ptr listenAddr, bool reusePort,
-        const int32_t send_bytes_one, const int32_t send_bytes_max,
-        const int32_t recv_bytes_one, const int32_t recv_bytes_max, const uint8_t xor_code) noexcept;
+        int32_t send_bytes_one, int32_t send_bytes_max,
+        int32_t recv_bytes_one, int32_t recv_bytes_max, uint8_t xor_code) noexcept;
     ~TcpServer();
 
     ///@brief 启动连接池并开启监听套接字
@@ -43,13 +38,12 @@ public:
     /* ! 注意：当使用线程池时，不要把recvBuf的引用或指针作为参数传递给另一线程（如线程池中的线程），
        ! MessageCallback需在的调用者线程中（即TcpConnection对象所在线程，即在onMessage中）完成对recvBuf数据的拷贝，
        ! 否则可能在成recvBuf的线程不安全 */
-    void SetMessageCallback(const F_TcpMessageCallback& cb) { m_MessageCallback = cb; };
+    void SetMessageCallback(const F_TcpMessageCallback& cb) { m_MessageCallback = cb; }
 
-    size_t GetConnectionsCount() { return m_NumConnect; }
-
-    bool IsRunning() const { return m_IsStarted; }
-
-    EventLoop * GetAcceptorLoop() const { return m_AcceptorLoop; }
+    auto GetConnectionsCount() -> size_t { return m_NumConnect; }
+    auto GetAcceptorLoop() const -> EventLoop* { return m_AcceptorLoop; }
+    auto GetListenAddr() const -> IPAddressPtr ;
+    bool IsRunning() const { return m_IsStarted.load(std::memory_order_acquire); }
 
 private:
     //! Acceptor回调
@@ -86,7 +80,7 @@ private:
     std::unordered_map<uint64_t , TcpConnectionPtr> m_ConnectionMap;
 
 #ifdef ____LINUX
-    std::unique_ptr<util::SignalManager> m_SignalManager;
+    std::unique_ptr<SignalManager> m_SignalManager;
 #endif
 };
 

@@ -44,7 +44,7 @@ class RpcStubConnectionPool
 public:
     using StubConnType =  RpcStubConnection<ServiceType_Stub>;
 
-    explicit RpcStubConnectionPool(const size_t poolsize, const std::string & service_root = "/rpc_services", const bool CanRetry = true) :
+    explicit RpcStubConnectionPool(const size_t poolsize, const std::string & service_root = "/rpc_services") :
         thread_{std::make_unique<net::EventLoopThread>(nullptr, 500ms)},
         loop_{thread_->CreateLoop()},
         service_root_(service_root),
@@ -52,36 +52,43 @@ public:
         pool_size_{poolsize}
     { }
 
-    explicit RpcStubConnectionPool(const std::string & service_root = "/rpc_services", const bool CanRetry = true)
-        : RpcStubConnectionPool(0, service_root, CanRetry)
+    explicit RpcStubConnectionPool(const std::string & service_root = "/rpc_services")
+        : RpcStubConnectionPool(0, service_root)
     { }
 
+    ///@brief 获取服务名
     static std::string GetServiceName()
     {
         return ServiceType_Stub::descriptor()->name();
     }
 
-    auto GetServerNames() -> std::vector<std::pair<std::string, net::IPAddressPtr>>
+    ///@brief 获取所有可选的服务提供方的名称和地址
+    auto GetServerNames() -> std::unordered_map<std::string, net::IPAddressPtr>
     {
-        std::unique_lock lg{pool_mutex_};
-        std::vector<std::pair<std::string, net::IPAddressPtr>> names_and_addrs;
+        std::unordered_map<std::string, net::IPAddressPtr> names_and_addrs;
         names_and_addrs.reserve(pool_size_);
-        for (auto& [name, client] : pool_) {
-            names_and_addrs.emplace_back(name, client->GetServerAddr());
+
+        std::unique_lock lg{pool_mutex_};
+        for (auto& [name, conn] : pool_) {
+            names_and_addrs.emplace(name, conn->GetServerAddr());
         }
         return names_and_addrs;
     }
 
+    ///@brief 设置服务上线和下线回调
     void SetServiceChangeCallback (const zk::ZkServiceClient::WatcherCallback & cb)
     {
         m_ServiceChangeCallback = cb;
     }
 
+    ///@brief 阻塞连接：
+    /// 阻塞点(1) 一直服务发现直到服务上线；
+    /// 阻塞点(2). 阻塞同步连接服务提供方。
     void Start(typename StubConnType::F_RpcStubConnectionEstablishedCallback cb)
     {
         assert(m_ServiceChangeCallback);
 
-        // 启动获取所有服务的地址
+        //! 阻塞：进行服务发现
         zkServiceManager_.Start(service_root_);
         while (pool_size_ == 0) {
             zkServiceManager_.FetchRemote(service_name_);
@@ -97,7 +104,7 @@ public:
         net::ThreadPool temp_thread_pool("temp connect_thread_pool");
         temp_thread_pool.Start(loop_, thread_size);
         // 连接任务：阻塞直到连接成功
-        auto connect_task = [this, cb]() -> bool
+        auto Connect_Task = [this, cb]() -> bool
         {
             // 创建连接
             std::unique_ptr<StubConnType> stub_conn = std::make_unique<StubConnType>(loop_);
@@ -113,20 +120,22 @@ public:
                 YLOG_ERROR("RpcStubPool无法连接服务{}", stub_conn->GetServiceName())
                 return false;
             }
-            // 连接成功将连接加入连接池中
+
+            // 服务器名称 = IP:Port
             auto server_name = std::format("{}:{}", addr->GetIPStr(), addr->GetPort());
 
+            // 连接成功将连接加入连接池中
             std::unique_lock lg(pool_mutex_);
             pool_.emplace(server_name, std::move(stub_conn));
             return true;
         };
         YLOG_INFO("{}RPC连接池大小 = {}", GetServiceName(), pool_size_)
+
         // 启动并发连接任务，n个连接启动n个线程，每个线程负责一个连接定时任务
         for (int i = 0; i <  pool_size_ ;++i) {
             // 循环任务控制，若任务完成则取消循环任务，否则继续执行该任务
-            auto fun = [connect_task]
-            {
-                while (connect_task() == false) {
+            auto fun = [Connect_Task] {
+                while (Connect_Task() == false) {
                     YLOG_ERROR("RpcStubPool连接失败，再次尝试连接{}", GetServiceName())
                 }
             };
@@ -136,13 +145,14 @@ public:
         // 阻塞直到所有连接完成
         while (temp_thread_pool.TaskQueueSize() > 0) { /* spin */ }
 
-        // 监听zookeeper在服务根目录下的变化，首次调用时会拉取服务下的所有可用地址
-        zkServiceManager_.Watch(service_name_, [this](const std::string& service_path, std::vector<net::IPAddressPtr> && endpoints) {
-            rr_idx_.store(0, std::memory_order_release);
+        // 监听zookeeper在服务根目录下的变化
+        zkServiceManager_.Watch(service_name_, false,
+            [this](const std::string& service_base, std::unordered_map<std::string, net::IPAddressPtr> endpoints) {
+                rr_idx_.store(0, std::memory_order_release);
 
-            if (m_ServiceChangeCallback)
-                m_ServiceChangeCallback(service_path, std::move(endpoints));
-        });
+                if (m_ServiceChangeCallback)
+                    m_ServiceChangeCallback(service_base, std::move(endpoints));
+            });
     }
 
     std::shared_ptr<StubConnType> Acquire_Random(net::Microseconds delay)

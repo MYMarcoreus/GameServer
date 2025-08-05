@@ -31,7 +31,7 @@ static constexpr ::_pbi::MigrationSchema* schemas = nullptr;
 static constexpr ::_pb::Message* const* file_default_instances = nullptr;
 
 const char descriptor_table_protodef_msg_5fcmd_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
-  "\n\rmsg_cmd.proto\022\013yy.protocol*\272\007\n\016Message"
+  "\n\rmsg_cmd.proto\022\013yy.protocol*\200\010\n\016Message"
   "Command\022\017\n\013MSG_Unknown\020\000\022\022\n\rMSG_HeartBod"
   "y\020\364\003\022\023\n\016MSG_XorBodyRsp\020\365\003\022\031\n\024MSG_Securit"
   "yCheckReq\020\366\003\022\031\n\024MSG_SecurityCheckRsp\020\367\003\022"
@@ -40,26 +40,28 @@ const char descriptor_table_protodef_msg_5fcmd_2eproto[] PROTOBUF_SECTION_VARIAB
   "MSG_LoginRsp\020\351\007\022\024\n\017MSG_RegisterReq\020\352\007\022\024\n"
   "\017MSG_RegisterRsp\020\353\007\022\026\n\021MSG_CreateRoomReq"
   "\020\320\017\022\026\n\021MSG_CreateRoomRsp\020\321\017\022\026\n\021MSG_Searc"
-  "hRoomReq\020\322\017\022\026\n\021MSG_SearchRoomRsp\020\323\017\022\024\n\017M"
-  "SG_JoinRoomReq\020\324\017\022\024\n\017MSG_JoinRoomRsp\020\325\017\022"
-  "\024\n\017MSG_QuitRoomReq\020\326\017\022\024\n\017MSG_QuitRoomRsp"
-  "\020\327\017\022\036\n\031MSG_GetEnterSceneTokenReq\020\330\017\022\036\n\031M"
-  "SG_GetEnterSceneTokenRsp\020\331\017\022\031\n\024MSG_Broad"
-  "castRoomReq\020\374\021\022\031\n\024MSG_BroadcastRoomRsp\020\375"
-  "\021\022\023\n\016MSG_NewRoomReq\020\304\023\022\023\n\016MSG_NewRoomRsp"
-  "\020\305\023\022\026\n\021MSG_DeleteRoomReq\020\307\023\022\026\n\021MSG_Delet"
-  "eRoomRsp\020\310\023\022\026\n\021MSG_SceneLoginReq\020\270\027\022\026\n\021M"
-  "SG_SceneLoginRsp\020\271\027\022\026\n\021MSG_C2SEnterScene"
-  "\020\272\027\022\026\n\021MSG_S2CEnterScene\020\273\027\022\026\n\021MSG_C2SLe"
-  "aveScene\020\274\027\022\026\n\021MSG_S2CLeaveScene\020\275\027\022\020\n\013M"
-  "SG_C2SMove\020\276\027\022\020\n\013MSG_S2CMove\020\277\027\022\032\n\025MSG_C"
-  "2SJumpAndGravity\020\300\027\022\032\n\025MSG_S2CJumpAndGra"
-  "vity\020\301\027\022\033\n\026MSG_C2SOtherPlayerData\020\302\027\022\033\n\026"
-  "MSG_S2COtherPlayerData\020\303\027b\006proto3"
+  "hRoomReq\020\322\017\022\026\n\021MSG_SearchRoomRsp\020\323\017\022\030\n\023M"
+  "SG_SelfJoinRoomReq\020\324\017\022\030\n\023MSG_SelfJoinRoo"
+  "mRsp\020\325\017\022\030\n\023MSG_SelfQuitRoomReq\020\326\017\022\030\n\023MSG"
+  "_SelfQuitRoomRsp\020\327\017\022\031\n\024MSG_OtherJoinRoom"
+  "Rsp\020\330\017\022\031\n\024MSG_OtherQuitRoomRsp\020\331\017\022\036\n\031MSG"
+  "_GetEnterSceneTokenReq\020\332\017\022\036\n\031MSG_GetEnte"
+  "rSceneTokenRsp\020\333\017\022\031\n\024MSG_BroadcastRoomRe"
+  "q\020\374\021\022\031\n\024MSG_BroadcastRoomRsp\020\375\021\022\023\n\016MSG_N"
+  "ewRoomReq\020\304\023\022\023\n\016MSG_NewRoomRsp\020\305\023\022\026\n\021MSG"
+  "_DeleteRoomReq\020\307\023\022\026\n\021MSG_DeleteRoomRsp\020\310"
+  "\023\022\026\n\021MSG_SceneLoginReq\020\270\027\022\026\n\021MSG_SceneLo"
+  "ginRsp\020\271\027\022\026\n\021MSG_C2SEnterScene\020\272\027\022\026\n\021MSG"
+  "_S2CEnterScene\020\273\027\022\026\n\021MSG_C2SLeaveScene\020\274"
+  "\027\022\026\n\021MSG_S2CLeaveScene\020\275\027\022\020\n\013MSG_C2SMove"
+  "\020\276\027\022\020\n\013MSG_S2CMove\020\277\027\022\032\n\025MSG_C2SJumpAndG"
+  "ravity\020\300\027\022\032\n\025MSG_S2CJumpAndGravity\020\301\027\022\033\n"
+  "\026MSG_C2SOtherPlayerData\020\302\027\022\033\n\026MSG_S2COth"
+  "erPlayerData\020\303\027b\006proto3"
   ;
 static ::_pbi::once_flag descriptor_table_msg_5fcmd_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_msg_5fcmd_2eproto = {
-    false, false, 993, descriptor_table_protodef_msg_5fcmd_2eproto,
+    false, false, 1063, descriptor_table_protodef_msg_5fcmd_2eproto,
     "msg_cmd.proto",
     &descriptor_table_msg_5fcmd_2eproto_once, nullptr, 0, 0,
     schemas, file_default_instances, TableStruct_msg_5fcmd_2eproto::offsets,
@@ -101,6 +103,8 @@ bool MessageCommand_IsValid(int value) {
     case 2007:
     case 2008:
     case 2009:
+    case 2010:
+    case 2011:
     case 2300:
     case 2301:
     case 2500:

@@ -5,15 +5,8 @@
 #include "AccountData.h"
 #include "Singleton.h"
 
-namespace yy::core::mysql
-{
-class MySqlClient;
-}
-
-namespace yy::net
-{
-class EventLoop;
-}
+namespace yy::core::mysql { class MySqlClient; }
+namespace yy::net { class EventLoop; }
 
 namespace yy::app::account
 {

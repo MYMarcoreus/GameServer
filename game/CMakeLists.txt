@@ -16,6 +16,12 @@ set(LocalSrc
         center/RoomInfoController.cpp
         center/LogicServerController.cpp
         center/LogicInfoController.cpp
+        account/AccountRedisDAO.cpp
+        account/AccountData.cpp
+        account/AccountMysqlDAO.cpp
+        gate/GateRedisDAO.cpp
+        center/CenterRedisDAO.cpp
+        logic/LogicRedisDAO.cpp
 )
 
 #! 给本地相对路径添加前缀，变为绝对路径

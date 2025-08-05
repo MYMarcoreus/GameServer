@@ -22,13 +22,15 @@ namespace yy::net {
 
 class EventLoop;
 
-
+///@brief 对标Tcp的Acceptor
 class UdpTransport  {
     using F_UdpRecievedCallback = std::function<void(NetBuffer &, IPAddressPtr)>;
 public:
-    explicit UdpTransport(EventLoop * recvLoop, std::optional<uint16_t> app_udp_port, const int32_t recv_bytes_one, const int32_t m_send_thread_num);
+    explicit UdpTransport(EventLoop * recvLoop, const IPAddressPtr & recv_addr, int32_t recv_bytes_one, int32_t m_send_thread_num);
 
     ~UdpTransport();
+
+    void StartRecv();
 
     ///Region 发送UDP数据：将待发送数据message添加至输出缓冲中（如果输出缓冲为空，则直接发送，无需等待事件触发）
     void SendUDP(const std::string_view & message, const IPAddressPtr & peerAddr);
@@ -37,8 +39,9 @@ public:
     ///End
 
     ///Region GETTER
-    EventLoop *                 GetLoop()          const { return m_recvLoop; }
-    SocketApiWrapper::socket_t  GetSocketFD()      const ;
+    auto GetLoop() const -> EventLoop* { return m_recvLoop; }
+    auto GetSocketFD() const -> SocketApiWrapper::socket_t ;
+    auto GetRecvAddr() const -> IPAddressPtr;
     ///End
 
     ///Region SETTER
@@ -46,7 +49,9 @@ public:
     ///End
 
 private:
-    uint16_t m_udp_port;
+    void StartRecvInLoop();
+
+
     int32_t  m_recv_bytes_one;
     int32_t  m_send_thread_num;
 

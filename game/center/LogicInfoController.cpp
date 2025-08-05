@@ -1,6 +1,4 @@
 #include "LogicInfoController.h"
-
-#include <atomic>
 #include "IPAddress.h"
 
 namespace yy::app::center
@@ -17,15 +15,11 @@ auto LogicInfoController::FindServerInfo(const std::string& name) -> LogicServer
     return it == logic_server_infos_.end() ? nullptr : it->second;
 }
 
-bool LogicInfoController::AddServerInfo(std::string ip, uint16_t port, const std::string& server_name)
+void LogicInfoController::AddServerInfo(const std::string& server_name, net::IPAddressPtr addr)
 {
-    if (FindServerInfo(server_name) != nullptr) {
-        return false;
-    }
-    auto info = std::make_shared<LogicServerInfo>(ip, port, server_name, 0);
+    const auto info = std::make_shared<LogicServerInfo>(server_name, addr);
     util::WriteLockGuard lg(mutex_);
-    auto [it, is_insert] = logic_server_infos_.emplace(info->get_name(), info);
-    return is_insert;
+    logic_server_infos_[info->get_name()] = info;
 }
 
 bool LogicInfoController::RemoveServerInfo(const std::string& name)

@@ -2,9 +2,7 @@
 #include <vector>
 #include <unordered_map>
 #include <queue>
-#include <cstdint>
 #include <memory>
-#include <functional>
 
 #include "Timestamp.h"
 #include "net_definations.h"

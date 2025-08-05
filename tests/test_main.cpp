@@ -1,13 +1,27 @@
 #include "util_functions.h"
 #include <iostream>
-
 #include "Timestamp.h"
+#include "core_definations.h"
+#include "msg_cmd.pb.h"
+#include <google/protobuf/descriptor.h>
+#include <google/protobuf/message.h>
+
+#include "account.pb.h"
+#include "connection.pb.h"
+#include "room.pb.h"
+#include "game.pb.h"
+#include "inner_room.pb.h"
+
+
+using namespace yy::protocol;
+using namespace yy::protocol::app;
+using namespace yy::protocol::core;
+
+
+
+
+
 
 int main()
 {
-    std::cout << yy::util::GenerateToken() << std::endl;
-    std::cout << yy::util::GenerateRoomID() << std::endl;
-    const auto tick_interval = std::chrono::duration_cast<yy::net::Nanoseconds>(std::chrono::duration<double>(1.0 / 128));
-    std::cout << tick_interval << std::endl;
-    std::cout << std::chrono::duration<double>(1.0 / 128) << std::endl;
 }

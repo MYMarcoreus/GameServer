@@ -57,9 +57,10 @@ public:
 
     explicit IPv4Address(uint32_t ipv4, uint16_t port);
 
-    ///@brief 只给出端口
+    ///@brief 只给出端口，在bind中表示监听所有本机网卡上的 IPv4 地址
     explicit IPv4Address(uint16_t port);
 
+    ///@brief 只给出ip，在bind中表示随机分配端口
     explicit IPv4Address(const std::string & ipv4_str);
 
     ~IPv4Address() override = default;

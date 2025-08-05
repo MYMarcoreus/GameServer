@@ -2,17 +2,10 @@
 #include <functional>
 #include <memory>
 #include <chrono>
-#include "noncopyable.h"
-#include "copyable.h"
-// #include "Timestamp.h"
 
 
 using namespace std::placeholders;
 using namespace std::chrono_literals;
-
-
-
-
 
 namespace yy::net {
 
@@ -43,11 +36,11 @@ using ConnectorPtr      = std::shared_ptr<Connector>;
 
 using UdpTransportPtr   = std::shared_ptr<UdpTransport>;
 
-using F_ConnectionEstablishedCallback   = std::function<void(const TcpConnectionPtr &)>;
-using F_ConnectionDestroyedCallback     = std::function<void(const TcpConnectionPtr &)>;
-using F_ConnectionWriteCompleteCallback = std::function<void(const TcpConnectionPtr &)>;
-using F_ConnectionShutdownCallback      = std::function<void(const TcpConnectionPtr &)>;
-using F_ConnectionCloseCallback         = std::function<void(const TcpConnectionPtr &)>;
+using F_ConnectionEstablishedCallback    = std::function<void(const TcpConnectionPtr &)>;
+using F_ConnectionDestroyedCallback      = std::function<void(const TcpConnectionPtr &)>;
+using F_ConnectionWriteCompleteCallback  = std::function<void(const TcpConnectionPtr &)>;
+using F_ConnectionShutdownCallback       = std::function<void(const TcpConnectionPtr &)>;
+using F_ConnectionCloseCallback          = std::function<void(const TcpConnectionPtr &)>;
 using F_ThreadInitCallback               = std::function<void(EventLoop *)>;
 using F_CloseShutdownConnectionsCallback = std::function<void()>;
 

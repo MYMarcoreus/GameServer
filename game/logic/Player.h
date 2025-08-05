@@ -4,21 +4,17 @@
 
 namespace yy::app::logic
 {
-
-using core::UserConnectionPtr;
 using PlayerBaseDataPtr = std::shared_ptr<protocol::app::PlayerBaseData>;
-using UID_t = uint64_t;
-
 
 class Player {
 public:
-    Player(const UserConnectionPtr& conn, const PlayerBaseDataPtr& basedata): conn_{conn}, basedata_{basedata} { }
+    Player(const core::UserConnectionPtr& conn, const PlayerBaseDataPtr& basedata): conn_{conn}, basedata_{basedata} { }
 
-    UID_t GetUID() const { return basedata_->account_data().uid(); }
-    UserConnectionPtr GetConn() const { return conn_; }
-    PlayerBaseDataPtr GetBaseData() const { return basedata_; }
+    core::UID_t get_uid() const { return basedata_->account_data().uid(); }
+    core::UserConnectionPtr get_conn() const { return conn_; }
+    PlayerBaseDataPtr get_base_data() const { return basedata_; }
 private:
-    UserConnectionPtr conn_;
+    core::UserConnectionPtr conn_;
     PlayerBaseDataPtr basedata_;
 };
 

@@ -7,32 +7,36 @@
 
 namespace yy::net
 {
+class EventLoopThreadPool;
 class EventLoopThread;
 }
 
 namespace yy::app::logic
 {
 
-// 负责房间的增删查改，使用读写锁
+// 负责房间的增删查改，使用Actor模式
+// todo 封装Actor框架
 class RoomManager {
-    static constexpr Milliseconds ROOM_TICK = std::chrono::duration_cast<Milliseconds>(std::chrono::duration<double>(1.0 / 128));
+    static constexpr net::Milliseconds ROOM_TICK = std::chrono::duration_cast<net::Milliseconds>(std::chrono::duration<double>(1.0 / 128));
 public:
-    RoomManager();
+    explicit RoomManager(net::EventLoop * base_loop);
 
-    RoomPtr AddRoom(EventLoop* loop, RoomDetailData room_data);
-    bool RemoveRoom(ROOM_ID_t room_id);
+    void AddRoom(protocol::app::RoomDetailData room_data, std::function<void(RoomPtr)> done);
+    void RemoveRoom(ROOM_ID_t room_id, std::function<void(bool)> done);
 
-    auto FindRoomByUID(UID_t uid) -> RoomPtr;
-    auto FindRoomByRoomID(ROOM_ID_t room_id) -> RoomPtr;
-    auto FindPlayer(UID_t uid) -> PlayerPtr;
-    auto FindPlayer(ROOM_ID_t room_id, UID_t uid) -> PlayerPtr;
+    void FindRoomByUID(core::UID_t uid, std::function<void(RoomPtr)> done);
+    void FindRoomByRoomID(ROOM_ID_t room_id, std::function<void(RoomPtr)> done);
+
+    void AddPlayerToRoom(ROOM_ID_t room_id, core::UID_t uid, const core::UserConnectionPtr & userconn, std::function<void(RoomPtr)> done);
 
 private:
-    auto FindRoomIDByUID(UID_t uid) -> std::optional<ROOM_ID_t>;
+    void FindRoomIDByUID(core::UID_t uid, std::function<void(std::optional<ROOM_ID_t>)> done);
 
+    net::EventLoop *                                base_loop_;
     std::unordered_map<ROOM_ID_t, RoomPtr>          rooms_;
-    std::unordered_map<UID_t, ROOM_ID_t>            uid_to_roomid_;
+    std::unordered_map<core::UID_t, ROOM_ID_t>      uid_to_roomid_;
     util::RWMutex                                   mutex_;
+    std::unique_ptr<net::EventLoopThreadPool>       work_threads;
 };
 
 }

@@ -27,11 +27,11 @@ const int32_t recv_bytes_one, const int32_t recv_bytes_max, const uint8_t xor_co
     m_Acceptor(std::make_unique<Acceptor>(m_AcceptorLoop, Socket::Type::TCP, listenAddr, reusePort)),
     m_IOThreadPool(std::make_unique<EventLoopThreadPool>(acceptorLoop))
 #ifdef ____LINUX
-     ,m_SignalManager(std::make_unique<yy::util::SignalManager>(acceptorLoop, [this](){ this->HandleSignal(); }))
+     ,m_SignalManager(std::make_unique<SignalManager>(acceptorLoop, [this](){ this->HandleSignal(); }))
 #endif
 {
 #ifdef ____LINUX
-    util::SignalManager::set_signal_ignore(SIGPIPE);
+    SignalManager::set_signal_ignore(SIGPIPE);
 #endif
 }
 
@@ -60,6 +60,11 @@ void TcpServer::Stop() const
     m_Acceptor->StopListen();
 }
 
+
+auto TcpServer::GetListenAddr() const -> IPAddressPtr
+{
+    return m_Acceptor->GetListenAddr();
+}
 
 void TcpServer::HandleNewConnection(SocketApiWrapper::socket_t sockfd, IPAddressPtr peerAddr) {
     m_AcceptorLoop->AssertInLoopingThread();
@@ -128,7 +133,7 @@ void TcpServer::SetCloseSocketsCallback(const F_CloseShutdownConnectionsCallback
 
 void TcpServer::HandleSignal() {
 #ifdef ____LINUX
-    auto sigs = util::SignalManager::ReadPipe();
+    auto sigs = SignalManager::ReadPipe();
 
     for(int i = 0 ; i < sigs.size() ; ++i) {
         switch(sigs[i]) {

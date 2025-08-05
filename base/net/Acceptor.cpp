@@ -13,14 +13,15 @@ Acceptor::Acceptor(EventLoop *loop, const Socket::Type socketType, const IPAddre
         : m_AcceptorLoop(loop),
           m_AcceptSocket(socketType, static_cast<Socket::Family>(listenAddr->GetFamily()), true),
           m_AcceptChannel(loop, m_AcceptSocket.GetFD(), "Acceptor Channel"), //! 非阻塞监听套接字
-          m_IsListening(false),
-          m_ListenAddr(listenAddr)
+          m_IsListening(false)
 {
     //! 初始化监听套接字（尚未开始监听）
     m_AcceptSocket.SetOpt_ReuseAddr(reusePort);
     //m_AcceptSocket.SetOpt_ReusePort(reusePort);
     m_AcceptSocket.SetOpt_Linger(true);
+    // 如果端口为0，在bind时会随机分配端口
     m_AcceptSocket.Bind(listenAddr);
+    m_ListenAddr = m_AcceptSocket.GetLocalAddr();
 }
 
 Acceptor::~Acceptor() {
@@ -40,8 +41,8 @@ void Acceptor::StartListenInLoop() {
     m_AcceptChannel.SetReadCallback([this](){ this->HandleAcceptAll(); });
     m_AcceptChannel.EnableReading();
     m_AcceptSocket.Listen();
-    YLOG_INFO("线程<{}>开始监听，监听地址为：<{}:{}>，监听套接字为{}", GetStrThreadID(),
-              m_ListenAddr->GetIPStr().c_str(), m_ListenAddr->GetPort(), m_AcceptSocket.GetFD());
+    YLOG_INFO("线程<{}>开始监听Tcp，监听地址为：<{}:{}>，监听套接字为{}", GetStrThreadID(),
+             m_ListenAddr->GetIPStr() , m_ListenAddr->GetPort(), m_AcceptSocket.GetFD());
 }
 
 void Acceptor::HandleAcceptAll() {

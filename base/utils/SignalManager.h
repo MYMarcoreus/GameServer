@@ -13,9 +13,7 @@ class EventLoop;
 class IOChannel;
 }
 
-using namespace yy::net;
-
-namespace yy::util
+namespace yy::net
 {
 
 
@@ -26,7 +24,7 @@ public:
     static auto WritePipe(int sig) -> void;
     static auto ReadPipe() -> std::string;
 
-    static FullDuplexPipe pipe_;
+    static util::FullDuplexPipe pipe_;
 
     /// @brief 设置信号SIGXXXX的处理函数为sighandler，
     static void set_signal_handler(int SIGXXXX, sighandler_t sighandler);

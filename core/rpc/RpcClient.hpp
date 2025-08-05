@@ -6,7 +6,7 @@
 
 namespace yy::core::rpc
 {
-
+///@brief 懒汉模式
 template<IsValidStub ServiceStub>
 class RpcClient final : public Singleton<RpcClient<ServiceStub>>
 {
@@ -17,32 +17,36 @@ public:
     using StubConnPoolType = RpcStubConnectionPool<ServiceStub>;
     using StubConnType = typename StubConnPoolType::StubConnType;
 
-    explicit RpcClient() {  }
-
     static std::string GetServiceName()
     {
         return RpcStubConnectionPool<ServiceStub>::GetServiceName();
     }
 
-    void Start(const size_t pool_size, typename StubConnType::F_RpcStubConnectionEstablishedCallback cb)
+    void SetConnectionEstablishedCallback(typename StubConnType::F_RpcStubConnectionEstablishedCallback cb)
+    {
+        cb_ = std::move(cb);
+    }
+
+    void Start(const size_t pool_size)
     {
         if (pool_ == nullptr) {
             pool_ = std::make_unique<RpcStubConnectionPool<ServiceStub>>(pool_size);
             pool_->SetServiceChangeCallback(
-                [this](const std::string & path, std::vector<net::IPAddressPtr>&&) {
-                    YLOG_INFO("ServiceChange to {}", path)
+                [this](const std::string & service_base, std::unordered_map<std::string, net::IPAddressPtr> providers) {
+                    YLOG_INFO("ServiceChange to {}", service_base)
                 });
-            pool_->Start(std::move(cb));
+            pool_->Start(std::move(cb_));
         }
     }
 
-    void Start(typename StubConnType::F_RpcStubConnectionEstablishedCallback cb)
+    void Start()
     {
-        Start(0, std::move(cb));
+        Start(0);
     }
 
-    auto GetServerNames() -> std::vector<std::pair<std::string, net::IPAddressPtr>>
+    auto GetServerNames() -> std::unordered_map<std::string, net::IPAddressPtr>
     {
+        Start();
         return pool_->GetServerNames();
     }
 
@@ -52,7 +56,8 @@ public:
     template<IsProtobufMessage Request, IsProtobufMessage Response>
     bool CallRemoteAsync_Random(const std::shared_ptr<Request>& request, FinishedCallback<Response> cb)
     {
-        assert(pool_ != nullptr);
+        Start();
+
         auto conn = pool_->Acquire_Random(5s);
         if (conn == nullptr) return false;
         if (request == nullptr) return false;
@@ -76,9 +81,10 @@ public:
     }
 
     template<IsProtobufMessage Request, IsProtobufMessage Response>
-    bool CallRemoteAsync_Random(Request& request, FinishedCallback<Response> cb)
+    bool CallRemoteAsync_Random(const Request& request, FinishedCallback<Response> cb)
     {
-        assert(pool_ != nullptr);
+        Start();
+
         auto conn = pool_->Acquire_Random(5s);
         if (conn == nullptr) return false;
 
@@ -103,7 +109,8 @@ public:
     template<IsProtobufMessage Request, IsProtobufMessage Response>
     bool CallRemoteAsync_From(std::string server_name, const std::shared_ptr<Request>& request, FinishedCallback<Response> cb)
     {
-        assert(pool_ != nullptr);
+        Start();
+
         auto conn = pool_->Acquire_From(server_name, 5s);
         if (conn == nullptr) return false;
         if (request == nullptr) return false;
@@ -127,9 +134,10 @@ public:
     }
 
     template<IsProtobufMessage Request, IsProtobufMessage Response>
-    bool CallRemoteAsync_From(const std::string & server_name, Request& request, FinishedCallback<Response> cb)
+    bool CallRemoteAsync_From(const std::string & server_name, const Request& request, FinishedCallback<Response> cb)
     {
-        assert(pool_ != nullptr);
+        Start();
+
         auto conn = pool_->Acquire_From(server_name, 5s);
         if (conn == nullptr) return false;
 
@@ -154,9 +162,10 @@ private:
     ///@brief 调用具体客户端ServiceStub的对应方法，若有新的服务和新的方法，仅需在别的源文件中实现模板特化，调用stub->MethodName即可（如stub->Login或stub->Register等）
     template<typename Request, typename Response>
     void DoCall(ServiceStub& stub, RpcControllerImpl* controller,
-            Request* request, Response* response, google::protobuf::Closure* done);
+            const Request* request, Response* response, google::protobuf::Closure* done);
 
     std::unique_ptr<RpcStubConnectionPool<ServiceStub>>  pool_ = nullptr;
+    typename StubConnType::F_RpcStubConnectionEstablishedCallback cb_;
 };
 
 

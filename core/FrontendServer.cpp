@@ -16,11 +16,10 @@ using yy::core::MessageHeader_Cmd;
 
 namespace yy::core {
 
-FrontendServer::FrontendServer(EventLoop *accpetorLoop, const IPAddressPtr& listenAddr) :
-    m_listenAddr{listenAddr},
-    m_appConfigvar(config::g_app_config),
+FrontendServer::FrontendServer(EventLoop *accpetorLoop, const IPAddressPtr& tcp_addr, const IPAddressPtr& udp_addr) :
     m_accpetorLoop{accpetorLoop},
-    m_tcpServer(accpetorLoop, listenAddr, true,
+    m_appConfigvar(config::g_app_config),
+    m_tcpServer(accpetorLoop, tcp_addr, true,
         m_appConfigvar->GetValue().send_bytes_one(),
         m_appConfigvar->GetValue().send_bytes_max(),
         m_appConfigvar->GetValue().recv_bytes_one(),
@@ -32,8 +31,7 @@ FrontendServer::FrontendServer(EventLoop *accpetorLoop, const IPAddressPtr& list
     m_tcpCodec([this](const TcpConnectionPtr& conn, const MessagePtr& msg) {
         m_tcpDispatcher.OnProtobufMessage(conn, msg);
     }),
-    m_udpServer(accpetorLoop, true,
-        m_appConfigvar->GetValue().app_udp_port(),
+    m_udpServer(accpetorLoop, udp_addr, true,
         m_appConfigvar->GetValue().recv_bytes_one(),
         m_appConfigvar->GetValue().udp_io_thread_num(),
         m_appConfigvar->GetValue().app_xor_code()),
@@ -62,7 +60,7 @@ FrontendServer::FrontendServer(EventLoop *accpetorLoop, const IPAddressPtr& list
 
     m_tcpServer.SetConnectionShutdownCallback(
         [this](const TcpConnectionPtr& conn) {
-            this->AfterShutdownConnection(conn);
+            this->OnConnectionShutdown(conn);
         });
 
     m_udpServer.SetMessageCallback(
@@ -101,11 +99,20 @@ void FrontendServer::OnUnknownUdpMessage(const UdpSessionPtr & sess, const Messa
     m_NotifierCommand(FindUser(sess->GetConnID()), message, MessageNetType::UDP);
 }
 
+void FrontendServer::OnConnectionShutdown(const TcpConnectionPtr & conn) {
+    //! 应用层处理
+    if(m_NotifierDisconnect)
+        m_NotifierDisconnect(FindUser(conn->GetConnID()));
+
+    //! 核心层处理
+    DelUser(conn->GetConnID());
+}
+
 void FrontendServer::OnConnectionEstablished(const TcpConnectionPtr  & conn) {
     YLOG_INFO("███████████████████连接成功<{}:{}, {}>！",
               conn->GetPeerAddr()->GetIPStr().c_str(), conn->GetPeerAddr()->GetPort(), conn->GetSocketFD());
 
-    auto userdata = std::make_shared<UserConnection>(conn, m_tcpCodec, m_udpCodec);
+    const auto userdata = std::make_shared<UserConnection>(conn, m_tcpCodec, m_udpCodec);
     AddUser(conn->GetConnID(), userdata);
     AddCheckTimer(conn, userdata);
     SendXorCode(conn);
@@ -115,39 +122,39 @@ void FrontendServer::AddCheckTimer(const TcpConnectionPtr & conn, const UserConn
     /* ***** 需要是弱引用，不能因为这个回调函数延长TcpConnection的生命周期 ***** */
     //! ①检查是否在指定时间内完成安全连接的认证，若未认证，则关闭连接
     conn->GetIOLoop()->RunAfter(Seconds{GetAppConfig().time_security_max()},
-                                [weak_userdata = std::weak_ptr{userdata}] {
-        if(auto userdata = weak_userdata.lock()) {
-            if (userdata->IsConnected() and !userdata->IsSecure()) {
-                YLOG_WARN("<{},{}>主线程Update_CheckDisconnetion: 用户安全验证超时，关闭用户连接！", userdata->GetSocketFD(), userdata->GetConnID());
-                userdata->Shutdown();
+        [weak_userdata = std::weak_ptr{userdata}]
+        {
+            if(auto userdata = weak_userdata.lock()) {
+                if (userdata->IsConnected() and !userdata->IsSecure()) {
+                    YLOG_WARN("<{},{}>主线程Update_CheckDisconnetion: 用户安全验证超时，关闭用户连接！", userdata->GetSocketFD(), userdata->GetConnID());
+                    userdata->Shutdown();
+                }
             }
-        }
-    });
+        });
 
     //! ②检查是否收到心跳包，如未收到，则shutdown连接
     conn->GetIOLoop()->RunAfter(Seconds{GetAppConfig().time_heart_max()},
-                                [this, weak_userdata = std::weak_ptr{userdata}] {
-        if(const auto user_connection = weak_userdata.lock()) {
-            this->CheckHeart(user_connection);
-        }
-    });
-}
-
-void FrontendServer::CheckHeart(const UserConnectionPtr & userdata) {
-    const auto & conn = userdata->GetConnection();
-    if(!conn->IsConnected() or Timestamp::Now() - conn->GetHeartTime() > Seconds{m_appConfigvar->GetValue().time_heart_max()}) {
-        YLOG_WARN("<{}>主线程Update_CheckDisconnetion: 用户心跳包超时，关闭用户连接！", conn->GetSocketFD());
-        conn->Shutdown();
-        // conn->GetLoop()->CancelTimer(this->m_heartTimerID); //! 不生效因为执行该函数时Timer不在列表中，执行完才加入列表
-    } else {
-        //! 需要是弱引用，不能因为这个回调函数延长TcpConnection的生命周期
-        conn->GetIOLoop()->RunAfter(Seconds{GetAppConfig().time_heart_max()},
-                                    [this, weak_userdata = std::weak_ptr{userdata}]
-        {
+        [this, weak_userdata = std::weak_ptr{userdata}] {
             if(const auto user_connection = weak_userdata.lock()) {
                 this->CheckHeart(user_connection);
             }
         });
+}
+
+void FrontendServer::CheckHeart(const UserConnectionPtr & userdata) {
+    const auto & conn = userdata->GetConnection();
+    if(!conn->IsConnected() or Timestamp::Now() - conn->GetHeartTime() > Seconds{GetAppConfig().time_heart_max()}) {
+        YLOG_WARN("<{}>主线程Update_CheckDisconnetion: 用户心跳包超时，关闭用户连接！", conn->GetSocketFD());
+        conn->Shutdown();
+    } else {
+        //! 使用RunAfter进行定时器的链式调用，若连接失效则不会续期定时器
+        conn->GetIOLoop()->RunAfter(Seconds{GetAppConfig().time_heart_max()},
+            [this, weak_userdata = std::weak_ptr{userdata}] //! 需要是弱引用，不能因为这个回调函数延长TcpConnection的生命周期
+            {
+                if(const auto user_connection = weak_userdata.lock()) {
+                    this->CheckHeart(user_connection);
+                }
+            });
     }
 }
 
@@ -194,8 +201,8 @@ void FrontendServer::OnSecurity(const TcpConnectionPtr & conn, const C2SSecurity
     snprintf(Arr, sizeof(Arr), "%s_%d", m_appConfigvar->GetValue().security_code(), conn->GetXorCode());
     md5::EncryptMD5str(md5Arr, reinterpret_cast<unsigned char*>(Arr), static_cast<int>(strlen(Arr)));
 
-    YLOG_DEBUG("服务器: {}, {}, {}", GetAppConfig().app_id(), GetAppConfig().app_version(), md5Arr)
-    YLOG_DEBUG("客户端: {}, {}, {}", message->app_id(),message->app_version(), message->app_md5().c_str())
+    YLOG_TRACE("服务器: {}, {}, {}", GetAppConfig().app_id(), GetAppConfig().app_version(), md5Arr)
+    YLOG_TRACE("客户端: {}, {}, {}", message->app_id(),message->app_version(), message->app_md5().c_str())
 
     //! 进行安全验证
     protocol::core::SecurityCheckRsp::ResultCode resultCode;
@@ -211,24 +218,25 @@ void FrontendServer::OnSecurity(const TcpConnectionPtr & conn, const C2SSecurity
         resultCode = protocol::core::SecurityCheckRsp_ResultCode_eSuccess;
     }
 
-    //! 发送安全验证结果
-    protocol::core::SecurityCheckRsp resultBody;
-    resultBody.set_result_code(resultCode);
-    resultBody.set_server_udp_port(m_udpServer.GetPort());
-    resultBody.set_session_id(conn->GetConnID());
-    m_tcpCodec.SendTCP(conn, resultBody);
-
     //! 安全验证通过：交由业务层
-    if(resultBody.result_code() == protocol::core::SecurityCheckRsp_ResultCode_eSuccess) {
-        ++m_numSecurity;
+    if(resultCode == protocol::core::SecurityCheckRsp_ResultCode_eSuccess) {
+        //! 发送安全验证结果
+        protocol::core::SecurityCheckRsp resultBody;
+        resultBody.set_result_code(resultCode);
+        resultBody.set_server_udp_port(m_udpServer.GetRecvAddr()->GetPort());
+        resultBody.set_session_id(conn->GetConnID());
+        m_tcpCodec.SendTCP(conn, resultBody);
+
+        const auto userconn = FindUser(conn->GetConnID());
+        userconn->SetState(UserConnection::E_UserBaseState::eSecure);
         if(m_NotifierSecurity)
-            m_NotifierSecurity(FindUser(conn->GetConnID()));
-        YLOG_INFO("<{}>解包执行：安全验证通过", conn->GetConnID())
+            m_NotifierSecurity(userconn);
+        YLOG_TRACE("<{}>解包执行：安全验证通过", conn->GetConnID())
     }
-    //? 安全验证失败：需要关闭用户连接吗？
+    //! 安全验证失败：关闭用户连接
     else {
         conn->Shutdown();
-        YLOG_INFO("<{}>解包执行：用户安全验证失败！", conn->GetConnID())
+        YLOG_TRACE("<{}>解包执行：用户安全验证失败！", conn->GetConnID())
     }
 }
 
@@ -239,8 +247,8 @@ void FrontendServer::OnUdpPortRegisterRequest(const TcpConnectionPtr & conn, con
         conn->Shutdown();
     }
 
-    auto client_ip   = message->client_udp_ip();
-    auto client_port = message->client_udp_port();
+    std::string client_ip = message->client_udp_ip();
+    uint32_t client_port = message->client_udp_port();
     IPAddressPtr udpAddr = std::make_shared<IPv4Address>(client_ip, client_port);
     YLOG_INFO("<{}>客户端Udp地址[{}:{}]", conn->GetConnID(), client_ip, client_port);
 
@@ -257,29 +265,25 @@ void FrontendServer::OnUdpPortRegisterRequest(const TcpConnectionPtr & conn, con
 
 
 
-TimerID FrontendServer::RunAt(Timestamp time, F_TaskCallback cb) {
+TimerID FrontendServer::RunAt(const Timestamp time, F_TaskCallback cb) {
     return m_accpetorLoop->RunAt(time, std::move(cb));
 }
 
-TimerID FrontendServer::RunAfter(Microseconds delay, F_TaskCallback cb) {
+TimerID FrontendServer::RunAfter(const Microseconds delay, F_TaskCallback cb) {
     return m_accpetorLoop->RunAfter(delay, std::move(cb));
 }
 
-TimerID FrontendServer::RunEvery(Microseconds interval, F_TaskCallback cb) {
+TimerID FrontendServer::RunEvery(const Microseconds interval, F_TaskCallback cb) {
     return m_accpetorLoop->RunEvery(interval, std::move(cb));
 }
 
-void FrontendServer::CancelTimer(TimerID timerid) {
+void FrontendServer::CancelTimer(const TimerID timerid) {
     m_accpetorLoop->CancelTimer(timerid);
 }
 
 
 
-void FrontendServer::AfterShutdownConnection(const TcpConnectionPtr & conn) {
-    //! 应用层处理
-    if(m_NotifierDisconnect)
-        m_NotifierDisconnect(FindUser(conn->GetConnID()));
-}
+
 
 
 
@@ -293,7 +297,11 @@ UserConnectionPtr FrontendServer::FindUser(const uint64_t conn_id) {
 void FrontendServer::DelUser(const uint64_t conn_id) {
     util::WriteLockGuard lg{m_usersMutex};
 
-    m_users.erase(conn_id);
+    const auto it = m_users.find(conn_id);
+    if(it != m_users.end()) {
+        it->second->SetState(UserConnection::E_UserBaseState::eFree);
+        m_users.erase(it);
+    }
 }
 
 void FrontendServer::AddUser(const uint64_t conn_id, const UserConnectionPtr & userdata) {

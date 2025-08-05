@@ -11,7 +11,7 @@ namespace yy::core::zk
 
 void ZkClient::global_watcher(zhandle_t* zh, int type, int state, const char* path, void* watcherCtx)
 {
-	auto zk_client = static_cast<ZkClient*>(watcherCtx);
+	const auto zk_client = static_cast<ZkClient*>(watcherCtx);
 
 	if (type == ZOO_SESSION_EVENT) {
 		if (state == ZOO_CONNECTED_STATE) {
@@ -63,13 +63,11 @@ void ZkClient::Start()
 		const std::string zk_host = std::format("{}:{}", ip, port);
 		host_ = zk_host;
 	}
-	/*
-		zookeeper_mt：多线程版本
-		zookeeper的API客户端程序提供了三个线程
-		API调用线程
-		网络I/O线程  pthread_create  poll
-		watcher回调线程 pthread_create
-	*/
+	if (zhandle_) {
+        YLOG_DEBUG("[ZkClient] zookeeper_init repeated initialization!");
+		return;
+	}
+
     zhandle_ = zookeeper_init(host_.c_str(), global_watcher, 30000, nullptr, this, 0);
     if (nullptr == zhandle_)
     {
@@ -88,7 +86,10 @@ void ZkClient::Start()
 void ZkClient::Stop()
 {
 	if (zhandle_ != nullptr) {
-		zookeeper_close(zhandle_); // 关闭句柄，释放资源
+		const int err = zookeeper_close(zhandle_); // 关闭句柄，释放资源
+		if (err == ZOK) {
+			connected_.store(false, std::memory_order_release);
+		}
 		zhandle_ = nullptr;
 	}
 }
@@ -129,8 +130,6 @@ void ZkClient::CreateNode(const std::string& path, const std::string& data, int 
 	} else {
 		YLOG_FATAL("[ZkClient] znode create error... <{}:{}>, error: {}", path, data, errcode);
 	}
-
-
 }
 
 
@@ -177,7 +176,7 @@ std::string ZkClient::GetNodeVal(const std::string& node_path)
 
 
 
-void ZkClient::AddChildrenWatcher(const std::string& path, WatcherCallback callback)
+void ZkClient::AddChildrenWatcher(const std::string& path, const bool trigger_now, WatcherCallback callback)
 {
 	{
 		std::unique_lock lock(watcher_cb_mutex_);
@@ -185,7 +184,8 @@ void ZkClient::AddChildrenWatcher(const std::string& path, WatcherCallback callb
 	}
 
 	// 拉取当前子节点并设置 watcher
-	OnChildrenChanged(path);
+	if (trigger_now)
+		OnChildrenChanged(path);
 }
 
 void ZkClient::OnChildrenChanged(const std::string& path)
@@ -201,7 +201,7 @@ void ZkClient::OnChildrenChanged(const std::string& path)
 
 std::vector<std::string> ZkClient::GetNodeChildren(const std::string& path)
 {
-	struct String_vector children;
+	struct ::String_vector children;
 	const int ret = zoo_wget_children(zhandle_, path.c_str(), child_watcher, this, &children);
 	if (ret != ZOK) {
 		YLOG_WARN("[ZkClient] Failed to get children for path: {}, error: {}", path, ret);

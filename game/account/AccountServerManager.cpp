@@ -92,11 +92,11 @@ void AccountServerManager::Init()
     m_accpetorLoop = std::make_unique<EventLoop>(500ms);
 
     //! ④、初始化监听的端口和IP地址(IP地址未给出，则使用INADDR_ANY绑定所有IP地址)
-    const IPAddressPtr listenAddr = std::make_shared<IPv4Address>(
-            config::g_app_config->GetValue().app_tcp_port());
+    const IPAddressPtr tcp_addr = std::make_shared<IPv4Address>(config::g_app_config->GetValue().app_tcp_port());
+    const IPAddressPtr udp_addr = std::make_shared<IPv4Address>(config::g_app_config->GetValue().app_udp_port());
 
     //! ⑤、初始化服务器对象（③和④）
-    m_server = std::make_unique<AccountServer>(m_accpetorLoop.get(), listenAddr);
+    m_server = std::make_unique<AccountServer>(m_accpetorLoop.get(), tcp_addr, udp_addr);
     m_server->SetNotifier_Security(
         [this](const UserConnectionPtr& userdata) {
             this->AppNotifier_Secutiry(userdata);

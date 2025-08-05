@@ -7,21 +7,14 @@
 
 
 
-namespace yy::net
-{
-class EventLoop;
-}
-
+namespace yy::net { class EventLoop; }
 namespace yy::core
 {
-namespace zk
-{
-    class ZkServiceClient;
-}
-namespace rpc { class RpcServer; }
-namespace redis { class RedisClient; }
-namespace mysql { class MySqlClient; }
-class IServer;
+    namespace zk { class ZkServiceClient; }
+    namespace rpc { class RpcServer; }
+    namespace redis { class RedisClient; }
+    namespace mysql { class MySqlClient; }
+    class IServer;
 }
 
 namespace yy::app::account

@@ -38,7 +38,7 @@ private:
     }
 
     template<typename To, typename From>
-    std::shared_ptr<To> down_pointer_cast(const shared_ptr<From>& f) {
+    std::shared_ptr<To> down_pointer_cast(const std::shared_ptr<From>& f) {
         if (false) {
             implicit_cast<From*, To*>(0);
         }

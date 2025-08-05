@@ -20,7 +20,6 @@ public:
     void Start();
     void Stop();
 
-
     ///@brief 服务提供者：在zkserver上根据指定的path创建znode节点
     void CreateNode(const std::string& path, const std::string& data="", int flags=0);
 
@@ -30,7 +29,7 @@ public:
     auto GetNodeChildren(const std::string& path) -> std::vector<std::string>;
 
     ///@brief 服务调用者：注册并监听 path 子节点变化
-    void AddChildrenWatcher(const std::string& path, WatcherCallback callback);
+    void AddChildrenWatcher(const std::string& path, bool trigger_now, WatcherCallback callback);
 
 private:
 

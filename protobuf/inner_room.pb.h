@@ -23,6 +23,7 @@
 #include <google/protobuf/io/coded_stream.h>
 #include <google/protobuf/arena.h>
 #include <google/protobuf/arenastring.h>
+#include <google/protobuf/generated_message_bases.h>
 #include <google/protobuf/generated_message_util.h>
 #include <google/protobuf/metadata_lite.h>
 #include <google/protobuf/generated_message_reflection.h>
@@ -55,6 +56,12 @@ extern DeleteRoomReqDefaultTypeInternal _DeleteRoomReq_default_instance_;
 class DeleteRoomRsp;
 struct DeleteRoomRspDefaultTypeInternal;
 extern DeleteRoomRspDefaultTypeInternal _DeleteRoomRsp_default_instance_;
+class GetLogicAddrReq;
+struct GetLogicAddrReqDefaultTypeInternal;
+extern GetLogicAddrReqDefaultTypeInternal _GetLogicAddrReq_default_instance_;
+class GetLogicAddrRsp;
+struct GetLogicAddrRspDefaultTypeInternal;
+extern GetLogicAddrRspDefaultTypeInternal _GetLogicAddrRsp_default_instance_;
 class NewRoomReq;
 struct NewRoomReqDefaultTypeInternal;
 extern NewRoomReqDefaultTypeInternal _NewRoomReq_default_instance_;
@@ -67,6 +74,8 @@ extern NewRoomRspDefaultTypeInternal _NewRoomRsp_default_instance_;
 PROTOBUF_NAMESPACE_OPEN
 template<> ::yy::protocol::app::DeleteRoomReq* Arena::CreateMaybeMessage<::yy::protocol::app::DeleteRoomReq>(Arena*);
 template<> ::yy::protocol::app::DeleteRoomRsp* Arena::CreateMaybeMessage<::yy::protocol::app::DeleteRoomRsp>(Arena*);
+template<> ::yy::protocol::app::GetLogicAddrReq* Arena::CreateMaybeMessage<::yy::protocol::app::GetLogicAddrReq>(Arena*);
+template<> ::yy::protocol::app::GetLogicAddrRsp* Arena::CreateMaybeMessage<::yy::protocol::app::GetLogicAddrRsp>(Arena*);
 template<> ::yy::protocol::app::NewRoomReq* Arena::CreateMaybeMessage<::yy::protocol::app::NewRoomReq>(Arena*);
 template<> ::yy::protocol::app::NewRoomRsp* Arena::CreateMaybeMessage<::yy::protocol::app::NewRoomRsp>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
@@ -75,6 +84,288 @@ namespace protocol {
 namespace app {
 
 // ===================================================================
+
+class GetLogicAddrReq final :
+    public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:yy.protocol.app.GetLogicAddrReq) */ {
+ public:
+  inline GetLogicAddrReq() : GetLogicAddrReq(nullptr) {}
+  explicit PROTOBUF_CONSTEXPR GetLogicAddrReq(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  GetLogicAddrReq(const GetLogicAddrReq& from);
+  GetLogicAddrReq(GetLogicAddrReq&& from) noexcept
+    : GetLogicAddrReq() {
+    *this = ::std::move(from);
+  }
+
+  inline GetLogicAddrReq& operator=(const GetLogicAddrReq& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline GetLogicAddrReq& operator=(GetLogicAddrReq&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const GetLogicAddrReq& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const GetLogicAddrReq* internal_default_instance() {
+    return reinterpret_cast<const GetLogicAddrReq*>(
+               &_GetLogicAddrReq_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    0;
+
+  friend void swap(GetLogicAddrReq& a, GetLogicAddrReq& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(GetLogicAddrReq* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(GetLogicAddrReq* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  GetLogicAddrReq* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<GetLogicAddrReq>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyFrom;
+  inline void CopyFrom(const GetLogicAddrReq& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl(*this, from);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeFrom;
+  void MergeFrom(const GetLogicAddrReq& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl(*this, from);
+  }
+  public:
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "yy.protocol.app.GetLogicAddrReq";
+  }
+  protected:
+  explicit GetLogicAddrReq(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // @@protoc_insertion_point(class_scope:yy.protocol.app.GetLogicAddrReq)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+  };
+  friend struct ::TableStruct_inner_5froom_2eproto;
+};
+// -------------------------------------------------------------------
+
+class GetLogicAddrRsp final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:yy.protocol.app.GetLogicAddrRsp) */ {
+ public:
+  inline GetLogicAddrRsp() : GetLogicAddrRsp(nullptr) {}
+  ~GetLogicAddrRsp() override;
+  explicit PROTOBUF_CONSTEXPR GetLogicAddrRsp(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  GetLogicAddrRsp(const GetLogicAddrRsp& from);
+  GetLogicAddrRsp(GetLogicAddrRsp&& from) noexcept
+    : GetLogicAddrRsp() {
+    *this = ::std::move(from);
+  }
+
+  inline GetLogicAddrRsp& operator=(const GetLogicAddrRsp& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline GetLogicAddrRsp& operator=(GetLogicAddrRsp&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const GetLogicAddrRsp& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const GetLogicAddrRsp* internal_default_instance() {
+    return reinterpret_cast<const GetLogicAddrRsp*>(
+               &_GetLogicAddrRsp_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    1;
+
+  friend void swap(GetLogicAddrRsp& a, GetLogicAddrRsp& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(GetLogicAddrRsp* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(GetLogicAddrRsp* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  GetLogicAddrRsp* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<GetLogicAddrRsp>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const GetLogicAddrRsp& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const GetLogicAddrRsp& from) {
+    GetLogicAddrRsp::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(GetLogicAddrRsp* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "yy.protocol.app.GetLogicAddrRsp";
+  }
+  protected:
+  explicit GetLogicAddrRsp(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kIpFieldNumber = 3,
+    kPortFieldNumber = 4,
+  };
+  // string ip = 3;
+  void clear_ip();
+  const std::string& ip() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_ip(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_ip();
+  PROTOBUF_NODISCARD std::string* release_ip();
+  void set_allocated_ip(std::string* ip);
+  private:
+  const std::string& _internal_ip() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_ip(const std::string& value);
+  std::string* _internal_mutable_ip();
+  public:
+
+  // uint32 port = 4;
+  void clear_port();
+  uint32_t port() const;
+  void set_port(uint32_t value);
+  private:
+  uint32_t _internal_port() const;
+  void _internal_set_port(uint32_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:yy.protocol.app.GetLogicAddrRsp)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr ip_;
+    uint32_t port_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_inner_5froom_2eproto;
+};
+// -------------------------------------------------------------------
 
 class NewRoomReq final :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:yy.protocol.app.NewRoomReq) */ {
@@ -124,7 +415,7 @@ class NewRoomReq final :
                &_NewRoomReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    0;
+    2;
 
   friend void swap(NewRoomReq& a, NewRoomReq& b) {
     a.Swap(&b);
@@ -297,7 +588,7 @@ class NewRoomRsp final :
                &_NewRoomRsp_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    1;
+    3;
 
   friend void swap(NewRoomRsp& a, NewRoomRsp& b) {
     a.Swap(&b);
@@ -483,7 +774,7 @@ class DeleteRoomReq final :
                &_DeleteRoomReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    2;
+    4;
 
   friend void swap(DeleteRoomReq& a, DeleteRoomReq& b) {
     a.Swap(&b);
@@ -631,7 +922,7 @@ class DeleteRoomRsp final :
                &_DeleteRoomRsp_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    3;
+    5;
 
   friend void swap(DeleteRoomRsp& a, DeleteRoomRsp& b) {
     a.Swap(&b);
@@ -763,6 +1054,10 @@ class LogicRoomServiceRpc : public ::PROTOBUF_NAMESPACE_ID::Service {
                        const ::yy::protocol::app::DeleteRoomReq* request,
                        ::yy::protocol::app::DeleteRoomRsp* response,
                        ::google::protobuf::Closure* done);
+  virtual void GetLogicAddr(::PROTOBUF_NAMESPACE_ID::RpcController* controller,
+                       const ::yy::protocol::app::GetLogicAddrReq* request,
+                       ::yy::protocol::app::GetLogicAddrRsp* response,
+                       ::google::protobuf::Closure* done);
 
   // implements Service ----------------------------------------------
 
@@ -800,6 +1095,10 @@ class LogicRoomServiceRpc_Stub : public LogicRoomServiceRpc {
                        const ::yy::protocol::app::DeleteRoomReq* request,
                        ::yy::protocol::app::DeleteRoomRsp* response,
                        ::google::protobuf::Closure* done);
+  void GetLogicAddr(::PROTOBUF_NAMESPACE_ID::RpcController* controller,
+                       const ::yy::protocol::app::GetLogicAddrReq* request,
+                       ::yy::protocol::app::GetLogicAddrRsp* response,
+                       ::google::protobuf::Closure* done);
  private:
   ::PROTOBUF_NAMESPACE_ID::RpcChannel* channel_;
   bool owns_channel_;
@@ -816,6 +1115,84 @@ class LogicRoomServiceRpc_Stub : public LogicRoomServiceRpc {
   #pragma GCC diagnostic push
   #pragma GCC diagnostic ignored "-Wstrict-aliasing"
 #endif  // __GNUC__
+// GetLogicAddrReq
+
+// -------------------------------------------------------------------
+
+// GetLogicAddrRsp
+
+// string ip = 3;
+inline void GetLogicAddrRsp::clear_ip() {
+  _impl_.ip_.ClearToEmpty();
+}
+inline const std::string& GetLogicAddrRsp::ip() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.GetLogicAddrRsp.ip)
+  return _internal_ip();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void GetLogicAddrRsp::set_ip(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.ip_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:yy.protocol.app.GetLogicAddrRsp.ip)
+}
+inline std::string* GetLogicAddrRsp::mutable_ip() {
+  std::string* _s = _internal_mutable_ip();
+  // @@protoc_insertion_point(field_mutable:yy.protocol.app.GetLogicAddrRsp.ip)
+  return _s;
+}
+inline const std::string& GetLogicAddrRsp::_internal_ip() const {
+  return _impl_.ip_.Get();
+}
+inline void GetLogicAddrRsp::_internal_set_ip(const std::string& value) {
+  
+  _impl_.ip_.Set(value, GetArenaForAllocation());
+}
+inline std::string* GetLogicAddrRsp::_internal_mutable_ip() {
+  
+  return _impl_.ip_.Mutable(GetArenaForAllocation());
+}
+inline std::string* GetLogicAddrRsp::release_ip() {
+  // @@protoc_insertion_point(field_release:yy.protocol.app.GetLogicAddrRsp.ip)
+  return _impl_.ip_.Release();
+}
+inline void GetLogicAddrRsp::set_allocated_ip(std::string* ip) {
+  if (ip != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.ip_.SetAllocated(ip, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.ip_.IsDefault()) {
+    _impl_.ip_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:yy.protocol.app.GetLogicAddrRsp.ip)
+}
+
+// uint32 port = 4;
+inline void GetLogicAddrRsp::clear_port() {
+  _impl_.port_ = 0u;
+}
+inline uint32_t GetLogicAddrRsp::_internal_port() const {
+  return _impl_.port_;
+}
+inline uint32_t GetLogicAddrRsp::port() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.GetLogicAddrRsp.port)
+  return _internal_port();
+}
+inline void GetLogicAddrRsp::_internal_set_port(uint32_t value) {
+  
+  _impl_.port_ = value;
+}
+inline void GetLogicAddrRsp::set_port(uint32_t value) {
+  _internal_set_port(value);
+  // @@protoc_insertion_point(field_set:yy.protocol.app.GetLogicAddrRsp.port)
+}
+
+// -------------------------------------------------------------------
+
 // NewRoomReq
 
 // .yy.protocol.app.RoomDetailData room_data = 1;
@@ -1138,6 +1515,10 @@ inline void DeleteRoomRsp::set_room_id(uint64_t value) {
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

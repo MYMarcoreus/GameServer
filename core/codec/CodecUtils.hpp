@@ -11,64 +11,81 @@
 #include "game.pb.h"
 #include "inner_room.pb.h"
 
+#define ADD_PROTO(msg) {MSG_##msg, &msg::default_instance()}
+
+
 using namespace yy::protocol;
 using namespace yy::protocol::app;
 using namespace yy::protocol::core;
 
 namespace yy::core
 {
-inline std::unordered_map<MessageCommand, std::string> g_cmd_to_name = {
-    {MSG_Unknown, ""},
+inline std::unordered_map<MessageCommand, const google::protobuf::Message*> g_cmd_to_prototype =
+{
+    {MSG_Unknown, nullptr},
 
     // 连接相关
-    {MSG_HeartBody, HeartBody::descriptor()->full_name()},
-    {MSG_XorBodyRsp, XorBodyRsp::descriptor()->full_name()},
-    {MSG_SecurityCheckReq, SecurityCheckReq::descriptor()->full_name()},
-    {MSG_SecurityCheckRsp, SecurityCheckRsp::descriptor()->full_name()},
-    {MSG_UdpPortRegisterReq, UdpPortRegisterReq::descriptor()->full_name()},
-    {MSG_UdpPortRegisterRsp, UdpPortRegisterRsp::descriptor()->full_name()},
+    ADD_PROTO(HeartBody),
+    ADD_PROTO(XorBodyRsp),
+    ADD_PROTO(SecurityCheckReq),
+    ADD_PROTO(SecurityCheckRsp),
+    ADD_PROTO(UdpPortRegisterReq),
+    ADD_PROTO(UdpPortRegisterRsp),
 
-    // 登录模块：网关服->账号服
-    {MSG_LoginReq, LoginReq::descriptor()->full_name()},
-    {MSG_LoginRsp, LoginRsp::descriptor()->full_name()},
-    {MSG_RegisterReq, RegisterReq::descriptor()->full_name()},
-    {MSG_RegisterRsp, RegisterRsp::descriptor()->full_name()},
+    // 登录模块：客户端->网关服->账号服
+    ADD_PROTO(LoginReq),
+    ADD_PROTO(LoginRsp),
+    ADD_PROTO(RegisterReq),
+    ADD_PROTO(RegisterRsp),
 
-    // 房间模块：网关服->中心服
-    {MSG_CreateRoomReq, CreateRoomReq::descriptor()->full_name()},
-    {MSG_CreateRoomRsp, CreateRoomRsp::descriptor()->full_name()},
-    {MSG_SearchRoomReq, SearchRoomReq::descriptor()->full_name()},
-    {MSG_SearchRoomRsp, SearchRoomRsp::descriptor()->full_name()},
-    {MSG_JoinRoomReq, JoinRoomReq::descriptor()->full_name()},
-    {MSG_JoinRoomRsp, JoinRoomRsp::descriptor()->full_name()},
-    {MSG_QuitRoomReq, QuitRoomReq::descriptor()->full_name()},
-    {MSG_QuitRoomRsp, QuitRoomRsp::descriptor()->full_name()},
-    {MSG_GetEnterSceneTokenReq, GetEnterSceneTokenReq::descriptor()->full_name()},
-    {MSG_GetEnterSceneTokenRsp, GetEnterSceneTokenRsp::descriptor()->full_name()},
+    // 房间模块：客户端->网关服->中心服
+    ADD_PROTO(CreateRoomReq),
+    ADD_PROTO(CreateRoomRsp),
+    ADD_PROTO(SearchRoomReq),
+    ADD_PROTO(SearchRoomRsp),
+    ADD_PROTO(SelfJoinRoomReq),
+    ADD_PROTO(SelfJoinRoomRsp),
+    ADD_PROTO(SelfQuitRoomReq),
+    ADD_PROTO(SelfQuitRoomRsp),
+    ADD_PROTO(OtherJoinRoomRsp),
+    ADD_PROTO(OtherQuitRoomRsp),
+    ADD_PROTO(GetEnterSceneTokenReq),
+    ADD_PROTO(GetEnterSceneTokenRsp),
     // 房间广播：中心服->网关服
-    {MSG_BroadcastRoomReq, BroadcastRoomReq::descriptor()->full_name()},
-    {MSG_BroadcastRoomRsp, BroadcastRoomRsp::descriptor()->full_name()},
+    ADD_PROTO(BroadcastRoomReq),
+    ADD_PROTO(BroadcastRoomRsp),
 
     // 房间增删：中心服->逻辑服
-    {MSG_NewRoomReq, NewRoomReq::descriptor()->full_name()},
-    {MSG_NewRoomRsp, NewRoomRsp::descriptor()->full_name()},
-    {MSG_DeleteRoomReq, DeleteRoomReq::descriptor()->full_name()},
-    {MSG_DeleteRoomRsp, DeleteRoomRsp::descriptor()->full_name()},
+    ADD_PROTO(NewRoomReq),
+    ADD_PROTO(NewRoomRsp),
+    ADD_PROTO(DeleteRoomReq),
+    ADD_PROTO(DeleteRoomRsp),
 
-    // 场景模块：逻辑服->客户端
-    {MSG_SceneLoginReq, SceneLoginReq::descriptor()->full_name()},
-    {MSG_SceneLoginRsp, SceneLoginRsp::descriptor()->full_name()},
-    {MSG_C2SEnterScene, C2SEnterScene::descriptor()->full_name()},
-    {MSG_S2CEnterScene, S2CEnterScene::descriptor()->full_name()},
-    {MSG_C2SLeaveScene, C2SLeaveScene::descriptor()->full_name()},
-    {MSG_S2CLeaveScene, S2CLeaveScene::descriptor()->full_name()},
-    {MSG_C2SMove, C2SMove::descriptor()->full_name()},
-    {MSG_S2CMove, S2CMove::descriptor()->full_name()},
-    {MSG_C2SJumpAndGravity, C2SJumpAndGravity::descriptor()->full_name()},
-    {MSG_S2CJumpAndGravity, S2CJumpAndGravity::descriptor()->full_name()},
-    {MSG_C2SOtherPlayerData, C2SOtherPlayerData::descriptor()->full_name()},
-    {MSG_S2COtherPlayerData, S2COtherPlayerData::descriptor()->full_name()},
+    // 场景模块：客户端->逻辑服
+    ADD_PROTO(SceneLoginReq),
+    ADD_PROTO(SceneLoginRsp),
+    ADD_PROTO(C2SEnterScene),
+    ADD_PROTO(S2CEnterScene),
+    ADD_PROTO(C2SLeaveScene),
+    ADD_PROTO(S2CLeaveScene),
+    ADD_PROTO(C2SMove),
+    ADD_PROTO(S2CMove),
+    ADD_PROTO(C2SJumpAndGravity),
+    ADD_PROTO(S2CJumpAndGravity),
+    ADD_PROTO(C2SOtherPlayerData),
+    ADD_PROTO(S2COtherPlayerData),
 };
+
+
+inline std::unordered_map<MessageCommand, std::string> g_cmd_to_name = [] {
+    std::unordered_map<MessageCommand, std::string> map;
+    for (const auto& [cmd, prototype] : g_cmd_to_prototype) {
+        if (prototype and prototype->GetDescriptor()) {
+            map[cmd] = prototype->GetDescriptor()->full_name();
+        }
+    }
+    return map;
+}();
 
 inline std::unordered_map<std::string, MessageCommand> g_name_to_cmd = [] {
     std::unordered_map<std::string, MessageCommand> map;
@@ -82,7 +99,6 @@ inline std::unordered_map<std::string, MessageCommand> g_name_to_cmd = [] {
 
 inline MessagePtr CreateMessage(const std::string &typeName) {
     using namespace google::protobuf;
-
     MessagePtr message = nullptr;
     const Descriptor * des = DescriptorPool::generated_pool()->FindMessageTypeByName(typeName);
     if(des)
@@ -96,8 +112,14 @@ inline MessagePtr CreateMessage(const std::string &typeName) {
 }
 
 inline MessagePtr CreateMessage(const MessageCommand msg_cmd) {
-    const std::string & msg_name = g_cmd_to_name[msg_cmd];
-    return CreateMessage(msg_name);
+    // const std::string & msg_name = g_cmd_to_name[msg_cmd];
+    // return CreateMessage(msg_name);
+    MessagePtr message = nullptr;
+    const google::protobuf::Message* const prototype = g_cmd_to_prototype[msg_cmd];
+    if (prototype) {
+        message.reset(prototype->New());
+    }
+    return message;
 }
 
 }

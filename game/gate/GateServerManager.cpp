@@ -48,11 +48,6 @@ void GateServerManager::OnFrontend_Secutiry(const UserConnectionPtr& userconn) {
 
 void GateServerManager::OnFrontend_Disconnect(const UserConnectionPtr& userconn) {
     YLOG_INFO("[GateServerManager::OnFrontend_Disconnect] 用户<{}>断开连接", userconn->GetUID())
-
-    const bool is_del = m_redisDAO.DelToken(userconn->GetUID());
-    if (is_del) {
-        YLOG_INFO("[GateServerManager::OnFrontend_Disconnect] 用户<{}>Token被删除", userconn->GetUID())
-    }
     m_forwarder->OnFrontend_Disconnect(userconn);
 }
 

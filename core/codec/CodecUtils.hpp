@@ -39,6 +39,8 @@ inline std::unordered_map<MessageCommand, const google::protobuf::Message*> g_cm
     ADD_PROTO(LoginRsp),
     ADD_PROTO(RegisterReq),
     ADD_PROTO(RegisterRsp),
+    ADD_PROTO(QuitLoginReq),
+    ADD_PROTO(QuitLoginRsp),
 
     // 房间模块：客户端->网关服->中心服
     ADD_PROTO(CreateRoomReq),

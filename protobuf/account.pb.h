@@ -56,6 +56,12 @@ extern LoginReqDefaultTypeInternal _LoginReq_default_instance_;
 class LoginRsp;
 struct LoginRspDefaultTypeInternal;
 extern LoginRspDefaultTypeInternal _LoginRsp_default_instance_;
+class QuitLoginReq;
+struct QuitLoginReqDefaultTypeInternal;
+extern QuitLoginReqDefaultTypeInternal _QuitLoginReq_default_instance_;
+class QuitLoginRsp;
+struct QuitLoginRspDefaultTypeInternal;
+extern QuitLoginRspDefaultTypeInternal _QuitLoginRsp_default_instance_;
 class RegisterReq;
 struct RegisterReqDefaultTypeInternal;
 extern RegisterReqDefaultTypeInternal _RegisterReq_default_instance_;
@@ -68,6 +74,8 @@ extern RegisterRspDefaultTypeInternal _RegisterRsp_default_instance_;
 PROTOBUF_NAMESPACE_OPEN
 template<> ::yy::protocol::app::LoginReq* Arena::CreateMaybeMessage<::yy::protocol::app::LoginReq>(Arena*);
 template<> ::yy::protocol::app::LoginRsp* Arena::CreateMaybeMessage<::yy::protocol::app::LoginRsp>(Arena*);
+template<> ::yy::protocol::app::QuitLoginReq* Arena::CreateMaybeMessage<::yy::protocol::app::QuitLoginReq>(Arena*);
+template<> ::yy::protocol::app::QuitLoginRsp* Arena::CreateMaybeMessage<::yy::protocol::app::QuitLoginRsp>(Arena*);
 template<> ::yy::protocol::app::RegisterReq* Arena::CreateMaybeMessage<::yy::protocol::app::RegisterReq>(Arena*);
 template<> ::yy::protocol::app::RegisterRsp* Arena::CreateMaybeMessage<::yy::protocol::app::RegisterRsp>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
@@ -128,6 +136,33 @@ inline bool RegisterRsp_Status_Parse(
     ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, RegisterRsp_Status* value) {
   return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<RegisterRsp_Status>(
     RegisterRsp_Status_descriptor(), name, value);
+}
+enum QuitLoginRsp_Status : int {
+  QuitLoginRsp_Status_eSuccess = 0,
+  QuitLoginRsp_Status_eAccountNotExist = 1,
+  QuitLoginRsp_Status_eNotLogin = 2,
+  QuitLoginRsp_Status_eUnknownError = 3,
+  QuitLoginRsp_Status_QuitLoginRsp_Status_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
+  QuitLoginRsp_Status_QuitLoginRsp_Status_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
+};
+bool QuitLoginRsp_Status_IsValid(int value);
+constexpr QuitLoginRsp_Status QuitLoginRsp_Status_Status_MIN = QuitLoginRsp_Status_eSuccess;
+constexpr QuitLoginRsp_Status QuitLoginRsp_Status_Status_MAX = QuitLoginRsp_Status_eUnknownError;
+constexpr int QuitLoginRsp_Status_Status_ARRAYSIZE = QuitLoginRsp_Status_Status_MAX + 1;
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* QuitLoginRsp_Status_descriptor();
+template<typename T>
+inline const std::string& QuitLoginRsp_Status_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, QuitLoginRsp_Status>::value ||
+    ::std::is_integral<T>::value,
+    "Incorrect type passed to function QuitLoginRsp_Status_Name.");
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
+    QuitLoginRsp_Status_descriptor(), enum_t_value);
+}
+inline bool QuitLoginRsp_Status_Parse(
+    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, QuitLoginRsp_Status* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<QuitLoginRsp_Status>(
+    QuitLoginRsp_Status_descriptor(), name, value);
 }
 // ===================================================================
 
@@ -878,6 +913,347 @@ class RegisterRsp final :
   union { Impl_ _impl_; };
   friend struct ::TableStruct_account_2eproto;
 };
+// -------------------------------------------------------------------
+
+class QuitLoginReq final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:yy.protocol.app.QuitLoginReq) */ {
+ public:
+  inline QuitLoginReq() : QuitLoginReq(nullptr) {}
+  ~QuitLoginReq() override;
+  explicit PROTOBUF_CONSTEXPR QuitLoginReq(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  QuitLoginReq(const QuitLoginReq& from);
+  QuitLoginReq(QuitLoginReq&& from) noexcept
+    : QuitLoginReq() {
+    *this = ::std::move(from);
+  }
+
+  inline QuitLoginReq& operator=(const QuitLoginReq& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline QuitLoginReq& operator=(QuitLoginReq&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const QuitLoginReq& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const QuitLoginReq* internal_default_instance() {
+    return reinterpret_cast<const QuitLoginReq*>(
+               &_QuitLoginReq_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    4;
+
+  friend void swap(QuitLoginReq& a, QuitLoginReq& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(QuitLoginReq* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(QuitLoginReq* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  QuitLoginReq* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<QuitLoginReq>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const QuitLoginReq& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const QuitLoginReq& from) {
+    QuitLoginReq::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(QuitLoginReq* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "yy.protocol.app.QuitLoginReq";
+  }
+  protected:
+  explicit QuitLoginReq(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kUidFieldNumber = 1,
+  };
+  // uint64 uid = 1;
+  void clear_uid();
+  uint64_t uid() const;
+  void set_uid(uint64_t value);
+  private:
+  uint64_t _internal_uid() const;
+  void _internal_set_uid(uint64_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:yy.protocol.app.QuitLoginReq)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    uint64_t uid_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_account_2eproto;
+};
+// -------------------------------------------------------------------
+
+class QuitLoginRsp final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:yy.protocol.app.QuitLoginRsp) */ {
+ public:
+  inline QuitLoginRsp() : QuitLoginRsp(nullptr) {}
+  ~QuitLoginRsp() override;
+  explicit PROTOBUF_CONSTEXPR QuitLoginRsp(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  QuitLoginRsp(const QuitLoginRsp& from);
+  QuitLoginRsp(QuitLoginRsp&& from) noexcept
+    : QuitLoginRsp() {
+    *this = ::std::move(from);
+  }
+
+  inline QuitLoginRsp& operator=(const QuitLoginRsp& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline QuitLoginRsp& operator=(QuitLoginRsp&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const QuitLoginRsp& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const QuitLoginRsp* internal_default_instance() {
+    return reinterpret_cast<const QuitLoginRsp*>(
+               &_QuitLoginRsp_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    5;
+
+  friend void swap(QuitLoginRsp& a, QuitLoginRsp& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(QuitLoginRsp* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(QuitLoginRsp* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  QuitLoginRsp* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<QuitLoginRsp>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const QuitLoginRsp& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const QuitLoginRsp& from) {
+    QuitLoginRsp::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(QuitLoginRsp* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "yy.protocol.app.QuitLoginRsp";
+  }
+  protected:
+  explicit QuitLoginRsp(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  typedef QuitLoginRsp_Status Status;
+  static constexpr Status eSuccess =
+    QuitLoginRsp_Status_eSuccess;
+  static constexpr Status eAccountNotExist =
+    QuitLoginRsp_Status_eAccountNotExist;
+  static constexpr Status eNotLogin =
+    QuitLoginRsp_Status_eNotLogin;
+  static constexpr Status eUnknownError =
+    QuitLoginRsp_Status_eUnknownError;
+  static inline bool Status_IsValid(int value) {
+    return QuitLoginRsp_Status_IsValid(value);
+  }
+  static constexpr Status Status_MIN =
+    QuitLoginRsp_Status_Status_MIN;
+  static constexpr Status Status_MAX =
+    QuitLoginRsp_Status_Status_MAX;
+  static constexpr int Status_ARRAYSIZE =
+    QuitLoginRsp_Status_Status_ARRAYSIZE;
+  static inline const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
+  Status_descriptor() {
+    return QuitLoginRsp_Status_descriptor();
+  }
+  template<typename T>
+  static inline const std::string& Status_Name(T enum_t_value) {
+    static_assert(::std::is_same<T, Status>::value ||
+      ::std::is_integral<T>::value,
+      "Incorrect type passed to function Status_Name.");
+    return QuitLoginRsp_Status_Name(enum_t_value);
+  }
+  static inline bool Status_Parse(::PROTOBUF_NAMESPACE_ID::ConstStringParam name,
+      Status* value) {
+    return QuitLoginRsp_Status_Parse(name, value);
+  }
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kUidFieldNumber = 1,
+    kResultCodeFieldNumber = 2,
+  };
+  // uint64 uid = 1;
+  void clear_uid();
+  uint64_t uid() const;
+  void set_uid(uint64_t value);
+  private:
+  uint64_t _internal_uid() const;
+  void _internal_set_uid(uint64_t value);
+  public:
+
+  // .yy.protocol.app.QuitLoginRsp.Status result_code = 2;
+  void clear_result_code();
+  ::yy::protocol::app::QuitLoginRsp_Status result_code() const;
+  void set_result_code(::yy::protocol::app::QuitLoginRsp_Status value);
+  private:
+  ::yy::protocol::app::QuitLoginRsp_Status _internal_result_code() const;
+  void _internal_set_result_code(::yy::protocol::app::QuitLoginRsp_Status value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:yy.protocol.app.QuitLoginRsp)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    uint64_t uid_;
+    int result_code_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_account_2eproto;
+};
 // ===================================================================
 
 class AccountServiceRpc_Stub;
@@ -1363,9 +1739,81 @@ inline void RegisterRsp::set_uid(uint64_t value) {
   // @@protoc_insertion_point(field_set:yy.protocol.app.RegisterRsp.uid)
 }
 
+// -------------------------------------------------------------------
+
+// QuitLoginReq
+
+// uint64 uid = 1;
+inline void QuitLoginReq::clear_uid() {
+  _impl_.uid_ = uint64_t{0u};
+}
+inline uint64_t QuitLoginReq::_internal_uid() const {
+  return _impl_.uid_;
+}
+inline uint64_t QuitLoginReq::uid() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.QuitLoginReq.uid)
+  return _internal_uid();
+}
+inline void QuitLoginReq::_internal_set_uid(uint64_t value) {
+  
+  _impl_.uid_ = value;
+}
+inline void QuitLoginReq::set_uid(uint64_t value) {
+  _internal_set_uid(value);
+  // @@protoc_insertion_point(field_set:yy.protocol.app.QuitLoginReq.uid)
+}
+
+// -------------------------------------------------------------------
+
+// QuitLoginRsp
+
+// uint64 uid = 1;
+inline void QuitLoginRsp::clear_uid() {
+  _impl_.uid_ = uint64_t{0u};
+}
+inline uint64_t QuitLoginRsp::_internal_uid() const {
+  return _impl_.uid_;
+}
+inline uint64_t QuitLoginRsp::uid() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.QuitLoginRsp.uid)
+  return _internal_uid();
+}
+inline void QuitLoginRsp::_internal_set_uid(uint64_t value) {
+  
+  _impl_.uid_ = value;
+}
+inline void QuitLoginRsp::set_uid(uint64_t value) {
+  _internal_set_uid(value);
+  // @@protoc_insertion_point(field_set:yy.protocol.app.QuitLoginRsp.uid)
+}
+
+// .yy.protocol.app.QuitLoginRsp.Status result_code = 2;
+inline void QuitLoginRsp::clear_result_code() {
+  _impl_.result_code_ = 0;
+}
+inline ::yy::protocol::app::QuitLoginRsp_Status QuitLoginRsp::_internal_result_code() const {
+  return static_cast< ::yy::protocol::app::QuitLoginRsp_Status >(_impl_.result_code_);
+}
+inline ::yy::protocol::app::QuitLoginRsp_Status QuitLoginRsp::result_code() const {
+  // @@protoc_insertion_point(field_get:yy.protocol.app.QuitLoginRsp.result_code)
+  return _internal_result_code();
+}
+inline void QuitLoginRsp::_internal_set_result_code(::yy::protocol::app::QuitLoginRsp_Status value) {
+  
+  _impl_.result_code_ = value;
+}
+inline void QuitLoginRsp::set_result_code(::yy::protocol::app::QuitLoginRsp_Status value) {
+  _internal_set_result_code(value);
+  // @@protoc_insertion_point(field_set:yy.protocol.app.QuitLoginRsp.result_code)
+}
+
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------
@@ -1390,6 +1838,11 @@ template <> struct is_proto_enum< ::yy::protocol::app::RegisterRsp_Status> : ::s
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::yy::protocol::app::RegisterRsp_Status>() {
   return ::yy::protocol::app::RegisterRsp_Status_descriptor();
+}
+template <> struct is_proto_enum< ::yy::protocol::app::QuitLoginRsp_Status> : ::std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::yy::protocol::app::QuitLoginRsp_Status>() {
+  return ::yy::protocol::app::QuitLoginRsp_Status_descriptor();
 }
 
 PROTOBUF_NAMESPACE_CLOSE

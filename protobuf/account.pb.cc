@@ -80,11 +80,38 @@ struct RegisterRspDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 RegisterRspDefaultTypeInternal _RegisterRsp_default_instance_;
+PROTOBUF_CONSTEXPR QuitLoginReq::QuitLoginReq(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.uid_)*/uint64_t{0u}
+  , /*decltype(_impl_._cached_size_)*/{}} {}
+struct QuitLoginReqDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR QuitLoginReqDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
+  ~QuitLoginReqDefaultTypeInternal() {}
+  union {
+    QuitLoginReq _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 QuitLoginReqDefaultTypeInternal _QuitLoginReq_default_instance_;
+PROTOBUF_CONSTEXPR QuitLoginRsp::QuitLoginRsp(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.uid_)*/uint64_t{0u}
+  , /*decltype(_impl_.result_code_)*/0
+  , /*decltype(_impl_._cached_size_)*/{}} {}
+struct QuitLoginRspDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR QuitLoginRspDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
+  ~QuitLoginRspDefaultTypeInternal() {}
+  union {
+    QuitLoginRsp _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 QuitLoginRspDefaultTypeInternal _QuitLoginRsp_default_instance_;
 }  // namespace app
 }  // namespace protocol
 }  // namespace yy
-static ::_pb::Metadata file_level_metadata_account_2eproto[4];
-static const ::_pb::EnumDescriptor* file_level_enum_descriptors_account_2eproto[2];
+static ::_pb::Metadata file_level_metadata_account_2eproto[6];
+static const ::_pb::EnumDescriptor* file_level_enum_descriptors_account_2eproto[3];
 static const ::_pb::ServiceDescriptor* file_level_service_descriptors_account_2eproto[1];
 
 const uint32_t TableStruct_account_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
@@ -121,12 +148,29 @@ const uint32_t TableStruct_account_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
   ~0u,  // no _inlined_string_donated_
   PROTOBUF_FIELD_OFFSET(::yy::protocol::app::RegisterRsp, _impl_.result_code_),
   PROTOBUF_FIELD_OFFSET(::yy::protocol::app::RegisterRsp, _impl_.uid_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::QuitLoginReq, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::QuitLoginReq, _impl_.uid_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::QuitLoginRsp, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::QuitLoginRsp, _impl_.uid_),
+  PROTOBUF_FIELD_OFFSET(::yy::protocol::app::QuitLoginRsp, _impl_.result_code_),
 };
 static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::yy::protocol::app::LoginReq)},
   { 8, -1, -1, sizeof(::yy::protocol::app::LoginRsp)},
   { 17, -1, -1, sizeof(::yy::protocol::app::RegisterReq)},
   { 25, -1, -1, sizeof(::yy::protocol::app::RegisterRsp)},
+  { 33, -1, -1, sizeof(::yy::protocol::app::QuitLoginReq)},
+  { 40, -1, -1, sizeof(::yy::protocol::app::QuitLoginRsp)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -134,6 +178,8 @@ static const ::_pb::Message* const file_default_instances[] = {
   &::yy::protocol::app::_LoginRsp_default_instance_._instance,
   &::yy::protocol::app::_RegisterReq_default_instance_._instance,
   &::yy::protocol::app::_RegisterRsp_default_instance_._instance,
+  &::yy::protocol::app::_QuitLoginReq_default_instance_._instance,
+  &::yy::protocol::app::_QuitLoginRsp_default_instance_._instance,
 };
 
 const char descriptor_table_protodef_account_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
@@ -150,21 +196,26 @@ const char descriptor_table_protodef_account_2eproto[] PROTOBUF_SECTION_VARIABLE
   "\n\013RegisterRsp\0228\n\013result_code\030\002 \001(\0162#.yy."
   "protocol.app.RegisterRsp.Status\022\013\n\003uid\030\004"
   " \001(\004\"C\n\006Status\022\014\n\010eSuccess\020\000\022\030\n\024eAccount"
-  "AlreadyExist\020\002\022\021\n\reUnknownError\020\0032\232\001\n\021Ac"
-  "countServiceRpc\022=\n\005Login\022\031.yy.protocol.a"
-  "pp.LoginReq\032\031.yy.protocol.app.LoginRsp\022F"
-  "\n\010Register\022\034.yy.protocol.app.RegisterReq"
-  "\032\034.yy.protocol.app.RegisterRspB\003\200\001\001b\006pro"
-  "to3"
+  "AlreadyExist\020\002\022\021\n\reUnknownError\020\003\"\033\n\014Qui"
+  "tLoginReq\022\013\n\003uid\030\001 \001(\004\"\246\001\n\014QuitLoginRsp\022"
+  "\013\n\003uid\030\001 \001(\004\0229\n\013result_code\030\002 \001(\0162$.yy.p"
+  "rotocol.app.QuitLoginRsp.Status\"N\n\006Statu"
+  "s\022\014\n\010eSuccess\020\000\022\024\n\020eAccountNotExist\020\001\022\r\n"
+  "\teNotLogin\020\002\022\021\n\reUnknownError\020\0032\232\001\n\021Acco"
+  "untServiceRpc\022=\n\005Login\022\031.yy.protocol.app"
+  ".LoginReq\032\031.yy.protocol.app.LoginRsp\022F\n\010"
+  "Register\022\034.yy.protocol.app.RegisterReq\032\034"
+  ".yy.protocol.app.RegisterRspB\003\200\001\001b\006proto"
+  "3"
   ;
 static const ::_pbi::DescriptorTable* const descriptor_table_account_2eproto_deps[1] = {
   &::descriptor_table_account_5fdata_2eproto,
 };
 static ::_pbi::once_flag descriptor_table_account_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_account_2eproto = {
-    false, false, 723, descriptor_table_protodef_account_2eproto,
+    false, false, 921, descriptor_table_protodef_account_2eproto,
     "account.proto",
-    &descriptor_table_account_2eproto_once, descriptor_table_account_2eproto_deps, 1, 4,
+    &descriptor_table_account_2eproto_once, descriptor_table_account_2eproto_deps, 1, 6,
     schemas, file_default_instances, TableStruct_account_2eproto::offsets,
     file_level_metadata_account_2eproto, file_level_enum_descriptors_account_2eproto,
     file_level_service_descriptors_account_2eproto,
@@ -227,6 +278,31 @@ constexpr RegisterRsp_Status RegisterRsp::eUnknownError;
 constexpr RegisterRsp_Status RegisterRsp::Status_MIN;
 constexpr RegisterRsp_Status RegisterRsp::Status_MAX;
 constexpr int RegisterRsp::Status_ARRAYSIZE;
+#endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* QuitLoginRsp_Status_descriptor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_account_2eproto);
+  return file_level_enum_descriptors_account_2eproto[2];
+}
+bool QuitLoginRsp_Status_IsValid(int value) {
+  switch (value) {
+    case 0:
+    case 1:
+    case 2:
+    case 3:
+      return true;
+    default:
+      return false;
+  }
+}
+
+#if (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
+constexpr QuitLoginRsp_Status QuitLoginRsp::eSuccess;
+constexpr QuitLoginRsp_Status QuitLoginRsp::eAccountNotExist;
+constexpr QuitLoginRsp_Status QuitLoginRsp::eNotLogin;
+constexpr QuitLoginRsp_Status QuitLoginRsp::eUnknownError;
+constexpr QuitLoginRsp_Status QuitLoginRsp::Status_MIN;
+constexpr QuitLoginRsp_Status QuitLoginRsp::Status_MAX;
+constexpr int QuitLoginRsp::Status_ARRAYSIZE;
 #endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 
 // ===================================================================
@@ -1236,6 +1312,398 @@ void RegisterRsp::InternalSwap(RegisterRsp* other) {
 
 // ===================================================================
 
+class QuitLoginReq::_Internal {
+ public:
+};
+
+QuitLoginReq::QuitLoginReq(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor(arena, is_message_owned);
+  // @@protoc_insertion_point(arena_constructor:yy.protocol.app.QuitLoginReq)
+}
+QuitLoginReq::QuitLoginReq(const QuitLoginReq& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  QuitLoginReq* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.uid_){}
+    , /*decltype(_impl_._cached_size_)*/{}};
+
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _this->_impl_.uid_ = from._impl_.uid_;
+  // @@protoc_insertion_point(copy_constructor:yy.protocol.app.QuitLoginReq)
+}
+
+inline void QuitLoginReq::SharedCtor(
+    ::_pb::Arena* arena, bool is_message_owned) {
+  (void)arena;
+  (void)is_message_owned;
+  new (&_impl_) Impl_{
+      decltype(_impl_.uid_){uint64_t{0u}}
+    , /*decltype(_impl_._cached_size_)*/{}
+  };
+}
+
+QuitLoginReq::~QuitLoginReq() {
+  // @@protoc_insertion_point(destructor:yy.protocol.app.QuitLoginReq)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
+  SharedDtor();
+}
+
+inline void QuitLoginReq::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+}
+
+void QuitLoginReq::SetCachedSize(int size) const {
+  _impl_._cached_size_.Set(size);
+}
+
+void QuitLoginReq::Clear() {
+// @@protoc_insertion_point(message_clear_start:yy.protocol.app.QuitLoginReq)
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  _impl_.uid_ = uint64_t{0u};
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* QuitLoginReq::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // uint64 uid = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
+          _impl_.uid_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+uint8_t* QuitLoginReq::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:yy.protocol.app.QuitLoginReq)
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // uint64 uid = 1;
+  if (this->_internal_uid() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(1, this->_internal_uid(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:yy.protocol.app.QuitLoginReq)
+  return target;
+}
+
+size_t QuitLoginReq::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:yy.protocol.app.QuitLoginReq)
+  size_t total_size = 0;
+
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // uint64 uid = 1;
+  if (this->_internal_uid() != 0) {
+    total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_uid());
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData QuitLoginReq::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    QuitLoginReq::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*QuitLoginReq::GetClassData() const { return &_class_data_; }
+
+
+void QuitLoginReq::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<QuitLoginReq*>(&to_msg);
+  auto& from = static_cast<const QuitLoginReq&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:yy.protocol.app.QuitLoginReq)
+  GOOGLE_DCHECK_NE(&from, _this);
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from._internal_uid() != 0) {
+    _this->_internal_set_uid(from._internal_uid());
+  }
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void QuitLoginReq::CopyFrom(const QuitLoginReq& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:yy.protocol.app.QuitLoginReq)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool QuitLoginReq::IsInitialized() const {
+  return true;
+}
+
+void QuitLoginReq::InternalSwap(QuitLoginReq* other) {
+  using std::swap;
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  swap(_impl_.uid_, other->_impl_.uid_);
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata QuitLoginReq::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_account_2eproto_getter, &descriptor_table_account_2eproto_once,
+      file_level_metadata_account_2eproto[4]);
+}
+
+// ===================================================================
+
+class QuitLoginRsp::_Internal {
+ public:
+};
+
+QuitLoginRsp::QuitLoginRsp(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor(arena, is_message_owned);
+  // @@protoc_insertion_point(arena_constructor:yy.protocol.app.QuitLoginRsp)
+}
+QuitLoginRsp::QuitLoginRsp(const QuitLoginRsp& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  QuitLoginRsp* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.uid_){}
+    , decltype(_impl_.result_code_){}
+    , /*decltype(_impl_._cached_size_)*/{}};
+
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  ::memcpy(&_impl_.uid_, &from._impl_.uid_,
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.result_code_) -
+    reinterpret_cast<char*>(&_impl_.uid_)) + sizeof(_impl_.result_code_));
+  // @@protoc_insertion_point(copy_constructor:yy.protocol.app.QuitLoginRsp)
+}
+
+inline void QuitLoginRsp::SharedCtor(
+    ::_pb::Arena* arena, bool is_message_owned) {
+  (void)arena;
+  (void)is_message_owned;
+  new (&_impl_) Impl_{
+      decltype(_impl_.uid_){uint64_t{0u}}
+    , decltype(_impl_.result_code_){0}
+    , /*decltype(_impl_._cached_size_)*/{}
+  };
+}
+
+QuitLoginRsp::~QuitLoginRsp() {
+  // @@protoc_insertion_point(destructor:yy.protocol.app.QuitLoginRsp)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
+  SharedDtor();
+}
+
+inline void QuitLoginRsp::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+}
+
+void QuitLoginRsp::SetCachedSize(int size) const {
+  _impl_._cached_size_.Set(size);
+}
+
+void QuitLoginRsp::Clear() {
+// @@protoc_insertion_point(message_clear_start:yy.protocol.app.QuitLoginRsp)
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  ::memset(&_impl_.uid_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&_impl_.result_code_) -
+      reinterpret_cast<char*>(&_impl_.uid_)) + sizeof(_impl_.result_code_));
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* QuitLoginRsp::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // uint64 uid = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
+          _impl_.uid_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // .yy.protocol.app.QuitLoginRsp.Status result_code = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          _internal_set_result_code(static_cast<::yy::protocol::app::QuitLoginRsp_Status>(val));
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+uint8_t* QuitLoginRsp::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:yy.protocol.app.QuitLoginRsp)
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // uint64 uid = 1;
+  if (this->_internal_uid() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(1, this->_internal_uid(), target);
+  }
+
+  // .yy.protocol.app.QuitLoginRsp.Status result_code = 2;
+  if (this->_internal_result_code() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+      2, this->_internal_result_code(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:yy.protocol.app.QuitLoginRsp)
+  return target;
+}
+
+size_t QuitLoginRsp::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:yy.protocol.app.QuitLoginRsp)
+  size_t total_size = 0;
+
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // uint64 uid = 1;
+  if (this->_internal_uid() != 0) {
+    total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_uid());
+  }
+
+  // .yy.protocol.app.QuitLoginRsp.Status result_code = 2;
+  if (this->_internal_result_code() != 0) {
+    total_size += 1 +
+      ::_pbi::WireFormatLite::EnumSize(this->_internal_result_code());
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData QuitLoginRsp::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    QuitLoginRsp::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*QuitLoginRsp::GetClassData() const { return &_class_data_; }
+
+
+void QuitLoginRsp::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<QuitLoginRsp*>(&to_msg);
+  auto& from = static_cast<const QuitLoginRsp&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:yy.protocol.app.QuitLoginRsp)
+  GOOGLE_DCHECK_NE(&from, _this);
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from._internal_uid() != 0) {
+    _this->_internal_set_uid(from._internal_uid());
+  }
+  if (from._internal_result_code() != 0) {
+    _this->_internal_set_result_code(from._internal_result_code());
+  }
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void QuitLoginRsp::CopyFrom(const QuitLoginRsp& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:yy.protocol.app.QuitLoginRsp)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool QuitLoginRsp::IsInitialized() const {
+  return true;
+}
+
+void QuitLoginRsp::InternalSwap(QuitLoginRsp* other) {
+  using std::swap;
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(QuitLoginRsp, _impl_.result_code_)
+      + sizeof(QuitLoginRsp::_impl_.result_code_)
+      - PROTOBUF_FIELD_OFFSET(QuitLoginRsp, _impl_.uid_)>(
+          reinterpret_cast<char*>(&_impl_.uid_),
+          reinterpret_cast<char*>(&other->_impl_.uid_));
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata QuitLoginRsp::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_account_2eproto_getter, &descriptor_table_account_2eproto_once,
+      file_level_metadata_account_2eproto[5]);
+}
+
+// ===================================================================
+
 AccountServiceRpc::~AccountServiceRpc() {}
 
 const ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor* AccountServiceRpc::descriptor() {
@@ -1368,6 +1836,14 @@ Arena::CreateMaybeMessage< ::yy::protocol::app::RegisterReq >(Arena* arena) {
 template<> PROTOBUF_NOINLINE ::yy::protocol::app::RegisterRsp*
 Arena::CreateMaybeMessage< ::yy::protocol::app::RegisterRsp >(Arena* arena) {
   return Arena::CreateMessageInternal< ::yy::protocol::app::RegisterRsp >(arena);
+}
+template<> PROTOBUF_NOINLINE ::yy::protocol::app::QuitLoginReq*
+Arena::CreateMaybeMessage< ::yy::protocol::app::QuitLoginReq >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::yy::protocol::app::QuitLoginReq >(arena);
+}
+template<> PROTOBUF_NOINLINE ::yy::protocol::app::QuitLoginRsp*
+Arena::CreateMaybeMessage< ::yy::protocol::app::QuitLoginRsp >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::yy::protocol::app::QuitLoginRsp >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
 

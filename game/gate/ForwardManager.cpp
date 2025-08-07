@@ -27,7 +27,7 @@ ForwardManager::ForwardManager(EventLoop * base_loop):
     RegisterRpcForward<LoginReq, LoginRsp>(m_accountRpcClient,
         nullptr,
         [this](const UserConnectionPtr & userconn, const LoginRsp & response) -> bool {
-            return OnFrontend_LoginRsp(userconn, response);
+            return OnBackend_LoginRsp(userconn, response);
         });
     RegisterRpcForward<RegisterReq, RegisterRsp>(m_accountRpcClient, nullptr, nullptr);
     // 房间服务
@@ -56,6 +56,9 @@ ForwardManager::ForwardManager(EventLoop * base_loop):
             return FilterMessage<GetEnterSceneTokenReq>(conn, req);
         },
         nullptr);
+
+    RegisterHandler(this, this->m_dispatcher  , &ForwardManager::OnFrontend_QuitLoginReq);
+
 }
 
 void ForwardManager::Start()
@@ -74,7 +77,7 @@ void ForwardManager::Start()
     );
 }
 
-bool ForwardManager::OnFrontend_LoginRsp(const UserConnectionPtr& userconn, const LoginRsp& response)
+bool ForwardManager::OnBackend_LoginRsp(const UserConnectionPtr& userconn, const LoginRsp& response)
 {
     if (response.result_code() == LoginRsp_Status_eSuccess) {
         userconn->SetState(UserConnection::E_UserBaseState::eLoggedIn);
@@ -89,13 +92,11 @@ bool ForwardManager::OnFrontend_LoginRsp(const UserConnectionPtr& userconn, cons
 
 void ForwardManager::OnFrontend_Disconnect(const UserConnectionPtr& userconn)
 {
-    if (userconn->IsLoggedIn()) {
-        m_uid_to_user.Erase(userconn->GetUID());
-    }
+    HandleQuitLogin(userconn);
 
+    // 通告中心服删掉玩家房间数据
     UserDisconnectReq req;
     req.set_uid(userconn->GetUID());
-
     SendRpcRequest<UserDisconnectReq, UserDisconnectRsp>(m_centerRpcClient, req, nullptr);
 }
 
@@ -122,5 +123,28 @@ void ForwardManager::ForwardToBackend(const UserConnectionPtr& userconn, const M
     m_dispatcher.OnProtobufMessage(userconn, request);
 }
 
+void ForwardManager::OnFrontend_QuitLoginReq(const UserConnectionPtr& userconn, const Ptr<QuitLoginReq>& req)
+{
+    HandleQuitLogin(userconn);
 
+    // 发送响应
+    QuitLoginRsp rsp;
+    rsp.set_uid(req->uid());
+    if (userconn->IsLoggedIn()) {
+        rsp.set_result_code(QuitLoginRsp_Status_eSuccess);
+    } else {
+        rsp.set_result_code(QuitLoginRsp_Status_eNotLogin);
+    }
+    userconn->SendTCP(rsp);
+}
+
+void ForwardManager::HandleQuitLogin(const UserConnectionPtr& userconn)
+{
+    // 删掉token和前端映射
+    const bool is_del = m_redisDAO.DelToken(userconn->GetUID());
+    if (is_del) {
+        YLOG_INFO("[GateServerManager::OnFrontend_Disconnect] 用户<{}>Token被删除", userconn->GetUID())
+    }
+    m_uid_to_user.Erase(userconn->GetUID());
+}
 }

@@ -36,6 +36,20 @@ message RegisterRsp {
     uint64 uid = 4;
 }
 
+message QuitLoginReq {
+    uint64 uid = 1;
+}
+message QuitLoginRsp {
+    enum Status {
+        eSuccess = 0;
+        eAccountNotExist = 1;
+        eNotLogin = 2;
+        eUnknownError = 3;
+    }
+    uint64 uid = 1;
+    Status result_code = 2;
+}
+
 
 service AccountServiceRpc
 {

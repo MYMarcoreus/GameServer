@@ -60,6 +60,8 @@ enum MessageCommand : int {
   MSG_LoginRsp = 1001,
   MSG_RegisterReq = 1002,
   MSG_RegisterRsp = 1003,
+  MSG_QuitLoginReq = 1004,
+  MSG_QuitLoginRsp = 1005,
   MSG_CreateRoomReq = 2000,
   MSG_CreateRoomRsp = 2001,
   MSG_SearchRoomReq = 2002,

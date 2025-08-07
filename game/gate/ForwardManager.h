@@ -4,6 +4,7 @@
 #include "ProtobufDispatcher.h"
 #include "core_definations.h"
 #include "EventLoop.h"
+#include "GameData.h"
 #include "GateRedisDAO.h"
 #include "UnorderedMapInLoop.hpp"
 #include "UserConnection.h"
@@ -31,33 +32,46 @@ public:
 
     void Start();
 
-    //Region m_uid_to_user相关，记录已登录的前端连接，用于广播
-    bool OnFrontend_LoginRsp(const core::UserConnectionPtr & userconn, const protocol::app::LoginRsp & response);
-    void OnFrontend_Disconnect(const core::UserConnectionPtr & userconn);
+    //Region 登录状态相关
+    ///@brief 账号服的登录响应
+    bool OnBackend_LoginRsp(const UserConnectionPtr & userconn, const protocol::app::LoginRsp & response);
+    ///@brief 前端连接断开，通告中心服
+    void OnFrontend_Disconnect(const UserConnectionPtr & userconn);
+    ///@brief 将后端响应广播至指定用户
     void BroadcastToFrontend(const protocol::app::BroadcastRoomReq & msg);
+    ///@brief 前端主动退出登录
+    void OnFrontend_QuitLoginReq(const UserConnectionPtr& userconn, const Ptr<protocol::app::QuitLoginReq> & req);
+    ///@brief 处理用户下线（主动退出登录/连接关闭））
+    void HandleQuitLogin(const UserConnectionPtr& userconn);
     //End
 
     ///@brief 转发已注册的前端消息到后端
-    void ForwardToBackend(const core::UserConnectionPtr & userconn, const core::MessagePtr & request, core::MessageNetType type);
+    void ForwardToBackend(const UserConnectionPtr & userconn, const MessagePtr & request, core::MessageNetType type);
 
 private:
     ///@brief 注册要转发到后端的前端消息
     template<core::IsProtobufMessage Request, core::IsProtobufMessage Response, core::rpc::IsValidStub ServiceStub>
     void RegisterRpcForward(core::rpc::RpcClient<ServiceStub> & rpcClient,
-                            std::function<bool(const core::UserConnectionPtr &, const Request &)> onReqCb,
-                            std::function<bool(const core::UserConnectionPtr &, const Response &)> onRspCb);
+                            std::function<bool(const UserConnectionPtr &, const Request &)> onReqCb,
+                            std::function<bool(const UserConnectionPtr &, const Response &)> onRspCb);
 
     ///@brief 过滤前端的消息
     template<core::IsProtobufMessage Request> requires core::HasTokenMethod<Request>
-    bool FilterMessage(const core::UserConnectionPtr &, const Request &);
+    bool FilterMessage(const UserConnectionPtr &, const Request &);
 
+    ///@brief 主动发送请求，用于通知其它服务器
     template<core::IsProtobufMessage Request, core::IsProtobufMessage Response, core::rpc::IsValidStub ServiceStub>
     void SendRpcRequest(core::rpc::RpcClient<ServiceStub> & rpcClient, const Request & request,
         std::function<void(const Response &)> onRspCb);
 
+    ///@brief 注册网关本地处理的消息（无需转发）
+    template <core::IsProtobufMessage MsgT, typename ClassT> requires core::MessageHandlerInvocable<ClassT, MsgT>
+    void RegisterHandler(ClassT* self, core::ProtobufDispatcher<UserConnectionPtr>& dispatcher,
+        void(ClassT::*handler)(const UserConnectionPtr&, const std::shared_ptr<MsgT>&));
+
 private:
     net::EventLoop * m_baseLoop;
-    core::ProtobufDispatcher<core::UserConnectionPtr> m_dispatcher; // 处理下层(core层)分发传来的无法处理的消息
+    core::ProtobufDispatcher<UserConnectionPtr> m_dispatcher; // 处理下层(core层)分发传来的无法处理的消息
     GateRedisDAO& m_redisDAO; // 用于过滤前端消息：验证token
 
     // 后端连接：用于转发RPC消息
@@ -65,7 +79,7 @@ private:
     rpc_client::CenterRpcClient&    m_centerRpcClient;
 
     // 前端连接：记录已登录的用户连接，用于广播消息
-    net::UnorderedMapInLoop<core::UID_t, core::UserConnectionPtr> m_uid_to_user;
+    net::UnorderedMapInLoop<UID_t, UserConnectionPtr> m_uid_to_user;
 };
 
 
@@ -73,13 +87,13 @@ private:
 
 template<core::IsProtobufMessage Request, core::IsProtobufMessage Response, core::rpc::IsValidStub ServiceStub>
 void ForwardManager::RegisterRpcForward(core::rpc::RpcClient<ServiceStub> & rpcClient,
-    std::function<bool(const core::UserConnectionPtr &, const Request &)> onReqCb,
-    std::function<bool(const core::UserConnectionPtr &, const Response &)> onRspCb)
+    std::function<bool(const UserConnectionPtr &, const Request &)> onReqCb,
+    std::function<bool(const UserConnectionPtr &, const Response &)> onRspCb)
 {
     m_dispatcher.RegisterMessageCallback<Request>(
         //! 【收到客户端请求】
         [this, &rpcClient, onReqCb = std::move(onReqCb), onRspCb = std::move(onRspCb)]
-        (const core::UserConnectionPtr& userconn, const std::shared_ptr<Request>& request)
+        (const UserConnectionPtr& userconn, const std::shared_ptr<Request>& request)
         {
             if (!userconn or !request) {
                 YLOG_INFO("RPC响应时：连接失效 或 {}请求为空", Request::descriptor()->name());
@@ -128,7 +142,7 @@ void ForwardManager::RegisterRpcForward(core::rpc::RpcClient<ServiceStub> & rpcC
 }
 
 template<core::IsProtobufMessage Request> requires core::HasTokenMethod<Request>
-bool ForwardManager::FilterMessage(const core::UserConnectionPtr& userconn, const Request& request)
+bool ForwardManager::FilterMessage(const UserConnectionPtr& userconn, const Request& request)
 {
     if (!userconn) return false;
 
@@ -173,5 +187,16 @@ void ForwardManager::SendRpcRequest(core::rpc::RpcClient<ServiceStub>& rpcClient
     if (not success) {
         YLOG_WARN("{}请求发送失败", Request::descriptor()->name());
     }
+}
+
+template <core::IsProtobufMessage MsgT, typename ClassT> requires core::MessageHandlerInvocable<ClassT, MsgT>
+void ForwardManager::RegisterHandler(ClassT* self, core::ProtobufDispatcher<UserConnectionPtr>& dispatcher,
+    void(ClassT::* handler)(const UserConnectionPtr&, const std::shared_ptr<MsgT>&))
+{
+    dispatcher.RegisterMessageCallback<MsgT>(
+        [this, handler](const UserConnectionPtr& user, const std::shared_ptr<MsgT>& msg) {
+            (this->*handler)(user, msg);
+        }
+    );
 }
 }

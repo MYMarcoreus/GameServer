@@ -6,9 +6,10 @@
 #include "CenterServerManager.h"
 #include "ZkServiceClient.h"
 #include "MySqlClient.h"
-#include "RpcServer.h"
 #include "RedisClient.h"
 #include "CodecUtils.hpp"
+#include "EventLoop.h"
+#include "room.pb.h"
 
 using namespace yy::protocol::app;
 using namespace yy::net;

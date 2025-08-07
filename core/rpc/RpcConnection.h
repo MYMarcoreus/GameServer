@@ -3,11 +3,14 @@
 #include <atomic>
 #include <condition_variable>
 #include <google/protobuf/service.h>
+#include "core_definations.h"
+#include "net_definations.h"
 #include "Timestamp.h"
 
-#include "RpcCodec.h"
-#include "TcpClient.h"
-
+namespace yy::net
+{
+class TcpClient;
+}
 
 namespace yy::core::rpc
 {
@@ -52,9 +55,9 @@ private:
         net::Timestamp                      sendTime;
     };
 
-    net::EventLoop *    loop_;
-    net::TcpConnectionPtr   conn_;
-    RpcCodec                codec_;
+    net::EventLoop *            loop_;
+    net::TcpConnectionPtr       conn_;
+    std::unique_ptr<RpcCodec>   codec_;
 
     std::binary_semaphore is_connected_{0};
 

@@ -9,7 +9,7 @@ struct AccountData
 {
     std::string username;
     std::string password;
-    uint64_t uid;
+    uint64_t    uid;
 };
 
 }

@@ -4,6 +4,9 @@
 #include "NetBuffer.h"
 #include "log.h"
 #include <google/protobuf/message.h>
+#include <string_view>
+
+#include "RpcHeader.h"
 
 namespace yy::core::rpc
 {

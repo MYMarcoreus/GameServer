@@ -2,6 +2,7 @@
 #include "log.h"
 
 #include <iostream>
+#include "EventLoop.h"
 
 
 namespace yy::core::redis {
@@ -27,7 +28,7 @@ RedisPool::RedisPool(net::EventLoop * loop, const std::string& uri, size_t pool_
         });
     }
     catch (sw::redis::Error & e) {
-        std::cerr << "RedisPool Init Error: " << e.what() << std::endl;
+        YLOG_ERROR("RedisPool Init Error: ", e.what());
     }
 }
 
@@ -71,12 +72,12 @@ bool RedisPool::reconnect(long long timestamp)
             pool_.push(std::move(new_conn));
         }
 
-        std::cout << "Redis connection reconnect success" << std::endl;
+        YLOG_INFO("Redis connection reconnect success");
         return true;
 
     }
     catch (const sw::redis::Error & e) {
-        std::cerr << "Redis Reconnect failed, error is " << e.what() << std::endl;
+        YLOG_ERROR("Redis Reconnect failed, error is ", e.what());
         return false;
     }
 }
@@ -115,7 +116,7 @@ void RedisPool::check_connection()
                 con->last_oper_time = timestamp;
             }
             catch (const sw::redis::Error & e) {
-                std::cout << "Error keeping redis connection alive: " << e.what() << std::endl;
+                YLOG_ERROR("Error keeping redis connection alive: ", e.what());
                 is_healthy = false;
                 ++_fail_count;
             }

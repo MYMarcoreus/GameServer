@@ -1,4 +1,6 @@
 #include "CenterServerManager.h"
+
+#include "AppXmlConfig.h"
 #include "CenterRpcServiceImpl.h"
 #include "log.h"
 #include "EventLoop.h"

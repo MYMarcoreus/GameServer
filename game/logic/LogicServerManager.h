@@ -27,7 +27,7 @@ class LogicServerManager final : public Singleton<LogicServerManager>
 {
     SINGLETON_NECESSITY(LogicServerManager)
 public:
-    using F_CommandCallback = std::function<void(const core::UserConnectionPtr &, const core::MessagePtr &, core::MessageNetType)>;
+    using F_CommandCallback = std::function<void(const UserConnectionPtr &, const MessagePtr &, core::MessageNetType)>;
     void RunApp();
 
     core::IServer& GetServer() const { return *m_frontend; }

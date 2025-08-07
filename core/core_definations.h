@@ -13,6 +13,7 @@ class Message;               // message.h
 class Closure;
 class RpcController;
 class Service;
+class RpcChannel;
 }
 
 
@@ -34,6 +35,14 @@ class SequentialBuffer;
 
 
 namespace yy::core {
+
+namespace rpc
+{
+class RpcCodec;
+using RpcMessagePtr = std::shared_ptr<protocol::core::RpcMessage>;
+
+}
+
 using UID_t = uint64_t;
 
 class IServer;

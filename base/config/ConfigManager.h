@@ -3,12 +3,6 @@
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 
-#include "Singleton.h"
-#include "tinyxml/tinyxml2.h"
-#include "RWLock.h"
-#include "util_functions.h"
-
-#include <string>
 #include <unordered_map>
 #include <algorithm>
 #include <vector>
@@ -19,8 +13,13 @@
 #include <set>
 #include <utility>
 #include <filesystem>
-#include <functional>
 #include <cassert>
+#include <string>
+#include <functional>
+
+#include "tinyxml/tinyxml2.h"
+#include "RWLock.h"
+#include "util_functions.h"
 
 using namespace tinyxml2;
 

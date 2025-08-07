@@ -5,7 +5,6 @@
 #include "core_definations.h"
 #include "net_definations.h"
 #include "noncopyable.h"
-#include "socket_definations.h"
 
 namespace yy::core {
 
@@ -15,7 +14,6 @@ namespace yy::core {
 class UserConnection: util::noncopyable
 {
 public:
-    using ptr = std::shared_ptr<UserConnection>;
 
     enum class E_UserBaseState {
         eFree         = 0,
@@ -66,8 +64,6 @@ public:
     uint64_t    GetConnID() const;
 
     std::string GetToken() const { return m_token; }
-
-    SocketApiWrapper::socket_t GetSocketFD() const;
     //End GETTER
 
     //Region 定时器相关

@@ -1,11 +1,12 @@
 #pragma once
 
 #include <atomic>
-#include <functional>
 #include <shared_mutex>
 #include <string>
+#include <functional>
 #include <vector>
 #include <zookeeper/zookeeper.h>
+
 
 namespace yy::core::zk
 {
@@ -14,14 +15,14 @@ class ZkClient
 {
     using WatcherCallback = std::function<void(const std::string&, std::vector<std::string>&&)>;
 public:
-    explicit ZkClient(const std::string & host = "");
+    explicit ZkClient(const std::string & host = {});
     ~ZkClient();
     // zkclient启动连接zkserver
     void Start();
     void Stop();
 
     ///@brief 服务提供者：在zkserver上根据指定的path创建znode节点
-    void CreateNode(const std::string& path, const std::string& data="", int flags=0);
+    void CreateNode(const std::string& path, const std::string& data = {}, int flags=0);
 
     ///@brief 服务调用者：根据参数指定的znode节点路径，或者znode节点的值
     auto GetNodeVal(const std::string& node_path) -> std::string;

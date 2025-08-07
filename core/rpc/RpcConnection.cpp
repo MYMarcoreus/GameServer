@@ -4,6 +4,8 @@
 #include "rpc.pb.h"
 #include "RpcControllerImpl.h"
 #include "TcpConnection.h"
+#include "TcpClient.h"
+#include "RpcCodec.h"
 
 
 using yy::protocol::core::RpcMessage;
@@ -13,9 +15,9 @@ namespace yy::core::rpc
 RpcConnection::RpcConnection(net::EventLoop * loop, const net::TcpConnectionPtr& _conn):
     loop_(loop),
     conn_(_conn),
-    codec_([this](const net::TcpConnectionPtr& conn, const RpcMessagePtr& buf) {
-        this->OnRpcResponse(conn, buf);
-    }),
+    codec_(std::make_unique<RpcCodec>([this](const net::TcpConnectionPtr& conn, const RpcMessagePtr& buf) {
+            this->OnRpcResponse(conn, buf);
+        })),
     tcp_client_{std::make_unique<net::TcpClient>(loop,
         config::g_remote_config->GetValue().sendBytesOne,
         config::g_remote_config->GetValue().sendBytesMax,
@@ -25,7 +27,7 @@ RpcConnection::RpcConnection(net::EventLoop * loop, const net::TcpConnectionPtr&
 {
     tcp_client_->SetMessageCallback(
         [this](const net::TcpConnectionPtr& conn, net::NetBuffer & buf) {
-            codec_.OnTcpData(conn, buf);
+            codec_->OnTcpData(conn, buf);
         });
 
     tcp_client_->SetConnectionEstablishedCallback(
@@ -91,7 +93,7 @@ void RpcConnection::CallMethod(const google::protobuf::MethodDescriptor* method,
     }
 
     //! 发送RPC请求
-    codec_.SendTCP(conn_, message);
+    codec_->SendTCP(conn_, message);
 }
 
 bool RpcConnection::Connect(const net::IPAddressPtr& server_addr)

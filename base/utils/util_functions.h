@@ -106,8 +106,6 @@ extern std::string GetErrorInfo(int64_t err);
 extern std::string GenerateTokenOld(size_t length = 32);
 extern std::string GenerateToken();
 
-extern std::string GenerateServerName(const net::IPAddressPtr& server_addr);
-
 extern uint8_t GenerateXorCode();
 }
 

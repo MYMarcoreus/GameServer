@@ -1,6 +1,7 @@
 #include "RoomInfoController.h"
-
+#include "room_data.pb.h"
 #include "log.h"
+#include "account_data.pb.h"
 
 using namespace yy::core;
 
@@ -8,6 +9,20 @@ namespace yy::app::center
 {
 
 using namespace yy::protocol::app;
+
+ROOM_ID_t RoomInfo::get_room_id() const
+{ return data_.load(std::memory_order::acquire)->room_id(); }
+
+RoomDetailDataPtr RoomInfo::get_room_data() const
+{ return data_.load(std::memory_order::acquire); }
+
+google::protobuf::RepeatedPtrField<AccountBaseData> RoomInfo::get_all_players() const
+{
+    return data_.load(std::memory_order::acquire)->exist_player_datas();
+}
+
+size_t RoomInfo::get_player_count() const
+{ return data_.load(std::memory_order::acquire)->exist_player_datas_size(); }
 
 bool RoomInfo::AddPlayer(const AccountBaseData& account_data)
 {
@@ -24,8 +39,8 @@ bool RoomInfo::AddPlayer(const AccountBaseData& account_data)
 
         // CAS 尝试更新
         if (data_.compare_exchange_weak(data_ptr, new_data,
-                                       std::memory_order_release,   // 能更新，写入
-                                       std::memory_order_relaxed    // 不能更新，无需写入
+                                        std::memory_order_release,   // 能更新，写入
+                                        std::memory_order_relaxed    // 不能更新，无需写入
         )){
             return true;
         }
@@ -59,7 +74,7 @@ bool RoomInfo::DelPlayer(const UID_t uid)
 
         // CAS 尝试更新
         if (data_.compare_exchange_weak(data_ptr, new_data,
-            std::memory_order_release, std::memory_order_relaxed))
+                                        std::memory_order_release, std::memory_order_relaxed))
         {
             return true;
         }
@@ -116,6 +131,34 @@ bool RoomInfoController::DelRoomIfEmpty(const ROOM_ID_t room_id)
     return rooms_.erase(room_id) > 0;
 }
 
+auto RoomInfoController::FindRoomByUID(const UID_t uid) -> RoomInfoPtr
+{
+    const auto room_id = FindRoomIDByUID(uid);
+    return room_id ? FindRoomByRoomID(room_id.value()) : nullptr;
+}
+
+
+auto RoomInfoController::FindRoomByRoomID(const ROOM_ID_t room_id) -> RoomInfoPtr
+{
+    util::ReadLockGuard lg(mutex_);
+    const auto it = rooms_.find(room_id);
+    return it != rooms_.end() ? it->second : nullptr;
+}
+
+auto RoomInfoController::GetAllRoomData() -> std::vector<RoomDetailData>
+{
+    std::vector<RoomDetailData> result;
+    result.reserve(rooms_.size());  // 提前分配，避免多次扩容
+    for (const auto& room_ptr : rooms_ | std::views::values) {
+        if (room_ptr) {
+            result.push_back(*room_ptr->get_room_data());
+        }
+    }
+
+    return result;
+}
+
+
 auto RoomInfoController::AddPlayer(const ROOM_ID_t room_id, const AccountBaseData& account_data)
     -> std::pair<AddPlayerResultCode, RoomInfoPtr>
 {
@@ -143,7 +186,6 @@ auto RoomInfoController::AddPlayer(const ROOM_ID_t room_id, const AccountBaseDat
     return {AddPlayerResultCode::eSuccess, room};
 }
 
-
 auto RoomInfoController::DelPlayer(const ROOM_ID_t room_id, const UID_t uid) -> std::pair<bool, RoomInfoPtr>
 {
     const auto room = FindRoomByRoomID(room_id);
@@ -168,33 +210,6 @@ auto RoomInfoController::DelPlayer(const UID_t uid) -> std::pair<bool, RoomInfoP
     }
 
     return {room->DelPlayer(uid), room};
-}
-
-
-auto RoomInfoController::FindRoomByUID(const UID_t uid) -> RoomInfoPtr
-{
-    const auto room_id = FindRoomIDByUID(uid);
-    return room_id ? FindRoomByRoomID(room_id.value()) : nullptr;
-}
-
-auto RoomInfoController::FindRoomByRoomID(const ROOM_ID_t room_id) -> RoomInfoPtr
-{
-    util::ReadLockGuard lg(mutex_);
-    const auto it = rooms_.find(room_id);
-    return it != rooms_.end() ? it->second : nullptr;
-}
-
-auto RoomInfoController::GetAllRoomData() -> std::vector<RoomDetailData>
-{
-    std::vector<RoomDetailData> result;
-    result.reserve(rooms_.size());  // 提前分配，避免多次扩容
-    for (const auto& room_ptr : rooms_ | std::views::values) {
-        if (room_ptr) {
-            result.push_back(*room_ptr->get_room_data());
-        }
-    }
-
-    return result;
 }
 
 bool RoomInfoController::FindPlayer(const UID_t uid, AccountBaseData& out_player)

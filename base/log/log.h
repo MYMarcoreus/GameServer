@@ -6,6 +6,7 @@
 #include "ILogAppender.h"
 
 #include <unordered_map>
+#include <format>
 #include <utility>
 #include <vector>
 #include <string>
@@ -13,7 +14,6 @@
 #include <mutex>
 #include <fstream>  // std::ofstream
 #include <sstream>  // std::stringstream
-#include <iostream> // std::cout
 #include <thread>
 #include <atomic>
 #include <ranges>

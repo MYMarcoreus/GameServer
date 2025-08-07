@@ -101,6 +101,21 @@ void Room::OnPlayerDisconnect(const UserConnectionPtr& userconn)
     });
 }
 
+auto Room::get_room_data() const -> RoomDetailData
+{ return room_data_; }
+
+auto Room::get_owner_uid() const -> core::UID_t
+{ return room_data_.owner_uid(); }
+
+auto Room::get_name() const -> const std::string&
+{ return room_data_.name(); }
+
+auto Room::get_id() const -> ROOM_ID_t
+{ return room_data_.room_id(); }
+
+auto Room::get_capacity() const -> int
+{ return room_data_.capacity(); }
+
 void Room::InitPlayerData(const PlayerBaseDataPtr& self_data, AccountBaseData account_data) //NOLINT
 {
     self_data->mutable_account_data()->CopyFrom(std::move(account_data));

@@ -1,10 +1,11 @@
 #pragma once
+#include <atomic>
 #include <string>
 #include <unordered_map>
 
 #include "IPAddress.h"
 #include "net_definations.h"
-#include "ZkServiceClient.h"
+#include "RWLock.h"
 
 namespace yy::core::zk
 {

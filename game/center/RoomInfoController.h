@@ -1,9 +1,8 @@
 #pragma once
 #include <unordered_map>
+#include <google/protobuf/repeated_ptr_field.h>
 
 #include "GameData.h"
-#include "room_data.pb.h"
-#include "account_data.pb.h"
 #include "LogicInfoController.h"
 #include "RWLock.h"
 #include "util_functions.h"
@@ -11,8 +10,6 @@
 namespace yy::app::center
 {
 
-using ROOM_ID_t = uint64_t;
-using RoomDetailDataPtr  = std::shared_ptr<protocol::app::RoomDetailData>;
 
 class RoomInfo {
     friend class RoomInfoController;
@@ -21,10 +18,10 @@ public:
         : data_(data), server_info_(server_name)
     { }
 
-    [[nodiscard]] ROOM_ID_t get_room_id() const { return data_.load(std::memory_order::acquire)->room_id(); }
-    [[nodiscard]] auto get_room_data() const { return data_.load(std::memory_order::acquire); }
-    [[nodiscard]] auto get_all_players() const { return data_.load(std::memory_order::acquire)->exist_player_datas(); }
-    [[nodiscard]] size_t get_player_count() const { return data_.load(std::memory_order::acquire)->exist_player_datas_size(); }
+    [[nodiscard]] auto get_room_id() const -> ROOM_ID_t;
+    [[nodiscard]] auto get_room_data() const -> RoomDetailDataPtr;
+    [[nodiscard]] auto get_all_players() const -> google::protobuf::RepeatedPtrField<protocol::app::AccountBaseData>;
+    [[nodiscard]] auto get_player_count() const -> size_t;
     [[nodiscard]] LogicServerInfoPtr get_server_info() const { return server_info_; }
 
 private:
@@ -32,8 +29,8 @@ private:
     [[nodiscard]] bool DelPlayer(core::UID_t uid);
     [[nodiscard]] bool FindPlayer(core::UID_t uid, protocol::app::AccountBaseData & out_player) const;
 
-    std::atomic<RoomDetailDataPtr> data_;
-    LogicServerInfoPtr server_info_;
+    std::atomic<RoomDetailDataPtr>  data_;
+    LogicServerInfoPtr              server_info_;
 };
 
 using RoomInfoPtr = std::shared_ptr<RoomInfo>;

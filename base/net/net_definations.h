@@ -1,7 +1,7 @@
 #pragma once
-#include <functional>
 #include <memory>
 #include <chrono>
+#include <functional>
 
 
 using namespace std::placeholders;
@@ -23,6 +23,8 @@ class IPAddress;
 class NetBuffer;
 class Timestamp;
 class Connector;
+class UdpServer;
+class TcpServer;
 
 using F_TaskCallback = std::function<void()>;
 using TimerID = int64_t;

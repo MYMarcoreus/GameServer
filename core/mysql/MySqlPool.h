@@ -1,6 +1,5 @@
 #pragma once
 
-#include "net_definations.h"
 #include <mysqlx/xdevapi.h> // 这个可能需要ZkServiceManager.h在MySqlClient.h之前导入
 #include <mutex>
 #include <condition_variable>
@@ -8,7 +7,7 @@
 #include <queue>
 #include <memory>
 #include <chrono>
-
+#include "net_definations.h"
 
 
 namespace yy::core::mysql

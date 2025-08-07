@@ -1,11 +1,7 @@
 #pragma once
 
-#include <cstdint>
-#include <cstddef>
-#include <random>
-#include <array>
-
 #include "core_definations.h"
+#include <array>
 
 namespace google::protobuf
 {
@@ -30,8 +26,7 @@ namespace yy::core {
 // #pragma pack(push, packing) // 保存当前字节对齐状态
 // #pragma pack(1) // 设为单字节对齐
 
-/*************************** 游戏协议消息头 ***************************/
-//! 消息头不是POD类型；保证消息头内的数据是未加密的、人类可读的。
+/*************************** 通信协议消息头 ***************************/
 class MessageHeader_Cmd
 {
 public:
@@ -57,9 +52,6 @@ public:
     const auto& GetCheckCode() const { return m_CheckCode; }
     uint32_t    GetBodyLength() const { return m_BodyLength; }
     uint16_t    GetTypeCmd() const { return m_TypeCmd; }
-
-    // 随机产生一个异或码
-    static uint8_t GenerateXorCode();
 
 private:
     ///@brief 设置首部结构的所有字段

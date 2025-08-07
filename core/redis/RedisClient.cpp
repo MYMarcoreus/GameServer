@@ -1,6 +1,7 @@
 #include "RedisClient.h"
 
 #include "log.h"
+#include "RedisPool.h"
 
 namespace yy::core::redis {
 

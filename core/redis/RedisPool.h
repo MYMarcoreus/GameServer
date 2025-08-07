@@ -6,7 +6,11 @@
 #include <condition_variable>
 #include <memory>
 #include <string>
-#include "EventLoop.h"
+
+namespace yy::net
+{
+class EventLoop;
+}
 
 namespace yy::core::redis {
 

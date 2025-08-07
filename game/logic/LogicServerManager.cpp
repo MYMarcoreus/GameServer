@@ -5,6 +5,7 @@
 #include "LogicServer.h"
 #include "ZkServiceClient.h"
 #include "RpcServer.h"
+#include "UserConnection.h"
 #include <future>
 #include <functional>
 
@@ -15,8 +16,7 @@ using namespace yy::core;
 namespace yy::app::logic {
 
 
-LogicServerManager::LogicServerManager() :
-    m_zk(std::make_unique<zk::ZkServiceClient>())
+LogicServerManager::LogicServerManager() : m_zk{std::make_unique<zk::ZkServiceClient>()}
 {
 }
 

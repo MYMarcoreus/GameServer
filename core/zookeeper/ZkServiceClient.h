@@ -1,8 +1,8 @@
 #pragma once
 
-#include "ZkClient.h"
 #include "net_definations.h"
 #include "RWLock.h"
+#include "ZkClient.h"
 
 namespace yy::core::zk
 {
@@ -11,6 +11,9 @@ class ZkServiceClient  {
     mutable std::once_flag  zk_client_init_flag_;
 public:
     using WatcherCallback = std::function<void(const std::string&, std::unordered_map<std::string, net::IPAddressPtr>)>;
+
+    ZkServiceClient();
+
     void Start(const std::string & service_root);
 
     // 注册服务（服务名 + 实例地址）
@@ -32,7 +35,7 @@ private:
     auto StrEndpointsToIpAddr(const std::string& service_base, const std::vector<std::string> & providers) -> std::vector<net::IPAddressPtr>;
 
 private:
-    ZkClient zk_client_;
+    std::unique_ptr<ZkClient> zk_client_;
     std::string     service_root_;
     std::unordered_map<std::string, std::vector<net::IPAddressPtr>> service_endpoint_map_; // 服务地址本地缓存
     util::RWMutex                                                   service_endpoint_mutex_;

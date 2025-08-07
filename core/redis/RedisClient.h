@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include "Singleton.h"
 #include "RedisPool.h"
 #include <string>
@@ -7,8 +9,13 @@
 #include <optional>
 
 
-namespace yy::core::redis {
+namespace yy::net
+{
+class EventLoop;
+}
 
+namespace yy::core::redis {
+class RedisPool;
 
 class RedisClient final : public Singleton<RedisClient> {
     SINGLETON_NECESSITY(RedisClient)
@@ -36,7 +43,7 @@ public:
     bool HDel(const std::string& key, const std::string& field);
 
 private:
-    std::unique_ptr<RedisPool> pool_ = nullptr;
+    std::unique_ptr<RedisPool> pool_{};
 };
 
 }

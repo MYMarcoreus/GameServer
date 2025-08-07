@@ -31,7 +31,7 @@ MySqlPool::MySqlPool(net::EventLoop * loop, const std::string& ip, const int por
         });
     }
     catch (const mysqlx::Error& e) {
-        std::cerr << "MySqlPool init failed, error is " << e.what()<< std::endl;
+        YLOG_ERROR("MySqlPool init failed, error is {}", e.what());
         std::terminate();
     }
 }
@@ -77,11 +77,11 @@ void MySqlPool::check_connection()
         //解锁后做检查/重连逻辑
         if (timestamp - con->last_oper_time >= 5) {
             try {
-                con->conn.sql("SELECT 1").execute().count() > 0;
+                con->conn.sql("SELECT 1").execute().count();
                 con->last_oper_time = timestamp;
             }
             catch (const mysqlx::Error& e) {
-                std::cerr << "Error keeping mysql connection alive: " << e.what() << std::endl;
+                YLOG_ERROR("Error keeping mysql connection alive: {}", e.what());
                 healthy = false;
                 ++_fail_count;
             }
@@ -121,11 +121,11 @@ bool MySqlPool::reconnect(long long timestamp)
             pool_.push(std::move(new_conn));
         }
 
-        std::cout << "MySql connection reconnect success" << std::endl;
+        YLOG_ERROR("MySql connection reconnect success");
         return true;
     }
     catch (const mysqlx::Error & e) {
-        std::cerr << "MySql Reconnect failed, error is " << e.what() << std::endl;
+        YLOG_ERROR("MySql Reconnect failed, error is ", e.what());
         return false;
     }
 }

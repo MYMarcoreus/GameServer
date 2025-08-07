@@ -7,7 +7,10 @@
 #include "UserConnection.h"
 #include "EventLoop.h"
 #include "Socket.h"
-
+#include "ProtobufTcpCodec_Cmd.h"
+#include "ProtobufUdpCodec_Cmd.h"
+#include "TcpServer.h"
+#include "UdpServer.h"
 #include <google/protobuf/message.h>
 
 using namespace yy::net;
@@ -19,28 +22,30 @@ namespace yy::core {
 FrontendServer::FrontendServer(EventLoop *accpetorLoop, const IPAddressPtr& tcp_addr, const IPAddressPtr& udp_addr) :
     m_accpetorLoop{accpetorLoop},
     m_appConfigvar(config::g_app_config),
-    m_tcpServer(accpetorLoop, tcp_addr, true,
+    m_tcpServer(std::make_unique<TcpServer>(accpetorLoop, tcp_addr, true,
         m_appConfigvar->GetValue().send_bytes_one(),
         m_appConfigvar->GetValue().send_bytes_max(),
         m_appConfigvar->GetValue().recv_bytes_one(),
         m_appConfigvar->GetValue().recv_bytes_max(),
-        m_appConfigvar->GetValue().app_xor_code()),
+        m_appConfigvar->GetValue().app_xor_code())
+    ),
     m_tcpDispatcher([this](const TcpConnectionPtr& conn, const MessagePtr& msg) {
         this->OnUnknownTcpMessage(conn, msg);
     }),
-    m_tcpCodec([this](const TcpConnectionPtr& conn, const MessagePtr& msg) {
+    m_tcpCodec(std::make_unique<ProtobufTcpCodec>([this](const TcpConnectionPtr& conn, const MessagePtr& msg) {
         m_tcpDispatcher.OnProtobufMessage(conn, msg);
-    }),
-    m_udpServer(accpetorLoop, udp_addr, true,
+    })),
+    m_udpServer(std::make_unique<UdpServer>(accpetorLoop, udp_addr, true,
         m_appConfigvar->GetValue().recv_bytes_one(),
         m_appConfigvar->GetValue().udp_io_thread_num(),
-        m_appConfigvar->GetValue().app_xor_code()),
+        m_appConfigvar->GetValue().app_xor_code())
+    ),
     m_udpDispatcher([this](const UdpSessionPtr& conn, const MessagePtr& msg) {
         this->OnUnknownUdpMessage(conn, msg);
     }),
-    m_udpCodec([this](const UdpSessionPtr& conn, const MessagePtr& msg) {
+    m_udpCodec(std::make_unique<ProtobufUdpCodec>([this](const UdpSessionPtr& conn, const MessagePtr& msg) {
         m_udpDispatcher.OnProtobufMessage(conn, msg);
-    })
+    }))
 {
     //! 消息回调注册
     m_tcpDispatcher.RegisterMessageCallback<protocol::core::HeartBody>( [this](const TcpConnectionPtr& conn, const HeartPtr& msg) { this->OnTcpHeart(conn, msg); });
@@ -48,24 +53,24 @@ FrontendServer::FrontendServer(EventLoop *accpetorLoop, const IPAddressPtr& tcp_
     m_tcpDispatcher.RegisterMessageCallback<protocol::core::UdpPortRegisterReq>( [this](const TcpConnectionPtr& conn, const UdpPortRegisterReqPtr& msg) { this->OnUdpPortRegisterRequest(conn, msg); });
     m_udpDispatcher.RegisterMessageCallback<protocol::core::HeartBody>( [this](const UdpSessionPtr& conn, const HeartPtr& msg) { this->OnUdpHeart(conn, msg); });
 
-    m_tcpServer.SetMessageCallback(
+    m_tcpServer->SetMessageCallback(
         [this](const TcpConnectionPtr& conn, NetBuffer& buf) {
-            m_tcpCodec.OnTcpData(conn, buf);
+            m_tcpCodec->OnTcpData(conn, buf);
         });
 
-    m_tcpServer.SetConnectionEstablishedCallback(
+    m_tcpServer->SetConnectionEstablishedCallback(
         [this](const TcpConnectionPtr& conn) {
             this->OnConnectionEstablished(conn);
         });
 
-    m_tcpServer.SetConnectionShutdownCallback(
+    m_tcpServer->SetConnectionShutdownCallback(
         [this](const TcpConnectionPtr& conn) {
             this->OnConnectionShutdown(conn);
         });
 
-    m_udpServer.SetMessageCallback(
+    m_udpServer->SetMessageCallback(
         [this](const UdpSessionPtr& conn, NetBuffer& buf) {
-            m_udpCodec.OnData(conn, buf);
+            m_udpCodec->OnData(conn, buf);
         });
 }
 
@@ -76,13 +81,22 @@ FrontendServer::~FrontendServer()
 
 
 void FrontendServer::Start(const F_ThreadInitCallback& cb) {
-    m_tcpServer.Start(config::g_app_config->GetValue().tcp_io_thread_num(), 500ms, cb);
-    m_udpServer.Start(1, 500ms);
+    m_tcpServer->Start(config::g_app_config->GetValue().tcp_io_thread_num(), 500ms, cb);
+    m_udpServer->Start(1, 500ms);
 }
 
 void FrontendServer::Stop() {
     m_accpetorLoop->QuitLoop();
 }
+
+bool FrontendServer::IsRunning() const
+{ return m_tcpServer->IsRunning(); }
+
+const config::AppXmlConfig& FrontendServer::GetAppConfig()
+{ return m_appConfigvar->GetValue(); }
+
+auto FrontendServer::GetTcpListenAddr() const -> net::IPAddressPtr
+{ return m_tcpServer->GetListenAddr(); }
 
 
 void FrontendServer::OnUnknownTcpMessage(const TcpConnectionPtr & conn, const MessagePtr &message) {
@@ -112,7 +126,7 @@ void FrontendServer::OnConnectionEstablished(const TcpConnectionPtr  & conn) {
     YLOG_INFO("███████████████████连接成功<{}:{}, {}>！",
               conn->GetPeerAddr()->GetIPStr().c_str(), conn->GetPeerAddr()->GetPort(), conn->GetSocketFD());
 
-    const auto userdata = std::make_shared<UserConnection>(conn, m_tcpCodec, m_udpCodec);
+    const auto userdata = std::make_shared<UserConnection>(conn, *m_tcpCodec, *m_udpCodec);
     AddUser(conn->GetConnID(), userdata);
     AddCheckTimer(conn, userdata);
     SendXorCode(conn);
@@ -126,7 +140,7 @@ void FrontendServer::AddCheckTimer(const TcpConnectionPtr & conn, const UserConn
         {
             if(auto userdata = weak_userdata.lock()) {
                 if (userdata->IsConnected() and !userdata->IsSecure()) {
-                    YLOG_WARN("<{},{}>主线程Update_CheckDisconnetion: 用户安全验证超时，关闭用户连接！", userdata->GetSocketFD(), userdata->GetConnID());
+                    YLOG_WARN("<{}>主线程Update_CheckDisconnetion: 用户安全验证超时，关闭用户连接！", userdata->GetConnID());
                     userdata->Shutdown();
                 }
             }
@@ -164,7 +178,7 @@ void FrontendServer::SendXorCode(const TcpConnectionPtr &conn) {
     protocol::core::XorBodyRsp xorBody;
     xorBody.set_xor_code(gen_val ^ GetAppConfig().app_xor_code()); //! 记得与初始异或码异或
 
-    m_tcpCodec.SendTCP(conn, xorBody);
+    m_tcpCodec->SendTCP(conn, xorBody);
     conn->SetXorCode(gen_val); //! 必须在Send后面
 
     YLOG_TRACE("Thread_Accepter: 封包异或码<{},{}>给用户<{}>，<{},{}>异或标识头<{},{}>", gen_val, xorBody.xor_code(), conn->GetSocketFD(),
@@ -181,7 +195,7 @@ void FrontendServer::OnTcpHeart(const TcpConnectionPtr & conn, const HeartPtr & 
     // YLOG_DEBUG("收到TCP心跳包");
     // 只需发一个只有消息头的包
     protocol::core::HeartBody heartBody;
-    m_tcpCodec.SendTCP(conn, heartBody);
+    m_tcpCodec->SendTCP(conn, heartBody);
 }
 
 void FrontendServer::OnUdpHeart(const UdpSessionPtr & conn, const HeartPtr & message) {
@@ -189,7 +203,7 @@ void FrontendServer::OnUdpHeart(const UdpSessionPtr & conn, const HeartPtr & mes
     // YLOG_DEBUG("收到UDP心跳包");
     // 只需发一个只有消息头的包
     protocol::core::HeartBody heartBody;
-    m_udpCodec.SendUDP(conn, heartBody);
+    m_udpCodec->SendUDP(conn, heartBody);
 }
 
 void FrontendServer::OnSecurity(const TcpConnectionPtr & conn, const C2SSecurityPtr & message)
@@ -223,9 +237,9 @@ void FrontendServer::OnSecurity(const TcpConnectionPtr & conn, const C2SSecurity
         //! 发送安全验证结果
         protocol::core::SecurityCheckRsp resultBody;
         resultBody.set_result_code(resultCode);
-        resultBody.set_server_udp_port(m_udpServer.GetRecvAddr()->GetPort());
+        resultBody.set_server_udp_port(m_udpServer->GetRecvAddr()->GetPort());
         resultBody.set_session_id(conn->GetConnID());
-        m_tcpCodec.SendTCP(conn, resultBody);
+        m_tcpCodec->SendTCP(conn, resultBody);
 
         const auto userconn = FindUser(conn->GetConnID());
         userconn->SetState(UserConnection::E_UserBaseState::eSecure);
@@ -252,13 +266,13 @@ void FrontendServer::OnUdpPortRegisterRequest(const TcpConnectionPtr & conn, con
     IPAddressPtr udpAddr = std::make_shared<IPv4Address>(client_ip, client_port);
     YLOG_INFO("<{}>客户端Udp地址[{}:{}]", conn->GetConnID(), client_ip, client_port);
 
-    const UdpSessionPtr udpSession = std::make_unique<UdpSession>(conn->GetConnID(), m_udpServer.GetUdpTran(), udpAddr, m_appConfigvar->GetValue().app_xor_code());
+    const UdpSessionPtr udpSession = std::make_unique<UdpSession>(conn->GetConnID(), m_udpServer->GetUdpTran(), udpAddr, m_appConfigvar->GetValue().app_xor_code());
     FindUser(conn->GetConnID())->BindUdp(udpSession);
 
     protocol::core::UdpPortRegisterRsp response;
     response.set_session_id(conn->GetConnID());
     response.set_status(protocol::core::UdpPortRegisterRsp_Status_eSuccess);
-    m_tcpCodec.SendTCP(conn, response);
+    m_tcpCodec->SendTCP(conn, response);
 }
 
 

@@ -1,14 +1,14 @@
 #pragma once
-#include <functional>
-#include <google/protobuf/stubs/casts.h>
 
-#include "net_definations.h"
 #include "noncopyable.h"
-#include "RpcHeader.h"
+#include "core_definations.h"
+#include "net_definations.h"
+#include <google/protobuf/stubs/casts.h>
+#include <functional>
 
 namespace yy::core::rpc
 {
-using RpcMessagePtr = std::shared_ptr<protocol::core::RpcMessage>;
+class RpcHeader;
 
 class RpcCodec: public util::noncopyable {
     using F_ProtobufMessageDispatchCallback = std::function<void(const net::TcpConnectionPtr &, const RpcMessagePtr &)>;

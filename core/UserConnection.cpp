@@ -81,10 +81,5 @@ void UserConnection::BindUdp(const UdpSessionPtr& u) {
     m_udpChannel = u;
 }
 
-SocketApiWrapper::socket_t UserConnection::GetSocketFD() const {
-    return m_tcpChannel->GetSocketFD();
-}
-
-
 }
 

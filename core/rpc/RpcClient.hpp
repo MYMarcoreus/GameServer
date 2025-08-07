@@ -3,6 +3,7 @@
 #include "RpcControllerImpl.h"
 #include "RpcStubConnectionPool.hpp"
 #include "Singleton.h"
+#include <google/protobuf/stubs/callback.h>
 
 namespace yy::core::rpc
 {
@@ -17,27 +18,11 @@ public:
     using StubConnPoolType = RpcStubConnectionPool<ServiceStub>;
     using StubConnType = typename StubConnPoolType::StubConnType;
 
-    static std::string GetServiceName()
-    {
-        return RpcStubConnectionPool<ServiceStub>::GetServiceName();
-    }
+    static std::string GetServiceName();
 
-    void SetConnectionEstablishedCallback(typename StubConnType::F_RpcStubConnectionEstablishedCallback cb)
-    {
-        cb_ = std::move(cb);
-    }
+    void SetConnectionEstablishedCallback(typename StubConnType::F_RpcStubConnectionEstablishedCallback cb);
 
-    void Start(const size_t pool_size)
-    {
-        if (pool_ == nullptr) {
-            pool_ = std::make_unique<RpcStubConnectionPool<ServiceStub>>(pool_size);
-            pool_->SetServiceChangeCallback(
-                [this](const std::string & service_base, std::unordered_map<std::string, net::IPAddressPtr> providers) {
-                    YLOG_INFO("ServiceChange to {}", service_base)
-                });
-            pool_->Start(std::move(cb_));
-        }
-    }
+    void Start(const size_t pool_size);
 
     void Start()
     {
@@ -45,118 +30,25 @@ public:
     }
 
     auto GetServerNames() -> std::unordered_map<std::string, net::IPAddressPtr>
-    {
-        Start();
-        return pool_->GetServerNames();
-    }
+    ;
 
     ///@brief 请求的发送的同步的，响应的等待是异步的
     /// Request消息的生命周期由调用者自己管理
     /// Respone消息的生命周期由该函数自动管理
     template<IsProtobufMessage Request, IsProtobufMessage Response>
-    bool CallRemoteAsync_Random(const std::shared_ptr<Request>& request, FinishedCallback<Response> cb)
-    {
-        Start();
-
-        auto conn = pool_->Acquire_Random(5s);
-        if (conn == nullptr) return false;
-        if (request == nullptr) return false;
-
-        auto response = new Response;
-        // 设置请求参数
-        auto controller = new RpcControllerImpl;
-        controller->set_wait_for_ready(true);
-        controller->set_timeout(5s);
-
-        // 设置响应回调，并使用unique_ptr接管裸指针（响应消息和RpcController的生命周期在此自动管理）
-        auto lambda_closure = rpc::NewLambdaClosureT(
-            [this, response, controller, cb = std::move(cb)]() mutable  {
-                if (cb) cb(std::unique_ptr<Response>(response), std::unique_ptr<RpcControllerImpl>(controller));
-            });
-
-        // 通过特化模板函数DoCall调用客户端的`RpcConnection::CallMethod`来同步发送请求
-        DoCall<Request, Response>(conn->Stub(), controller, request.get(), response, lambda_closure);
-
-        return true;
-    }
+    bool CallRemoteAsync_Random(const std::shared_ptr<Request>& request, FinishedCallback<Response> cb);
 
     template<IsProtobufMessage Request, IsProtobufMessage Response>
-    bool CallRemoteAsync_Random(const Request& request, FinishedCallback<Response> cb)
-    {
-        Start();
-
-        auto conn = pool_->Acquire_Random(5s);
-        if (conn == nullptr) return false;
-
-        auto response = new Response;
-        auto controller = new RpcControllerImpl;
-        controller->set_wait_for_ready(true);
-        controller->set_timeout(5s);
-
-        auto lambda_closure = rpc::NewLambdaClosureT(
-            [this, response, controller, cb = std::move(cb)]() mutable {
-                if (cb) cb(std::unique_ptr<Response>(response), std::unique_ptr<RpcControllerImpl>(controller));
-            });
-
-        DoCall<Request, Response>(conn->Stub(), controller, &request, response, lambda_closure);
-
-        return true;
-    }
+    bool CallRemoteAsync_Random(const Request& request, FinishedCallback<Response> cb);
 
     ///@brief 请求的发送的同步的，响应的等待是异步的
     /// Request消息的生命周期由调用者自己管理
     /// Respone消息的生命周期由该函数自动管理
     template<IsProtobufMessage Request, IsProtobufMessage Response>
-    bool CallRemoteAsync_From(std::string server_name, const std::shared_ptr<Request>& request, FinishedCallback<Response> cb)
-    {
-        Start();
-
-        auto conn = pool_->Acquire_From(server_name, 5s);
-        if (conn == nullptr) return false;
-        if (request == nullptr) return false;
-
-        auto response = new Response;
-        // 设置请求参数
-        auto controller = new RpcControllerImpl;
-        controller->set_wait_for_ready(true);
-        controller->set_timeout(5s);
-
-        // 设置响应回调，并使用unique_ptr接管裸指针（响应消息和RpcController的生命周期在此自动管理）
-        auto lambda_closure = rpc::NewLambdaClosureT(
-            [this, response, controller, cb = std::move(cb)]() mutable  {
-                if (cb) cb(std::unique_ptr<Response>(response), std::unique_ptr<RpcControllerImpl>(controller));
-            });
-
-        // 通过特化模板函数DoCall调用客户端的`RpcConnection::CallMethod`来同步发送请求
-        DoCall<Request, Response>(conn->Stub(), controller, request.get(), response, lambda_closure);
-
-        return true;
-    }
+    bool CallRemoteAsync_From(std::string server_name, const std::shared_ptr<Request>& request, FinishedCallback<Response> cb);
 
     template<IsProtobufMessage Request, IsProtobufMessage Response>
-    bool CallRemoteAsync_From(const std::string & server_name, const Request& request, FinishedCallback<Response> cb)
-    {
-        Start();
-
-        auto conn = pool_->Acquire_From(server_name, 5s);
-        if (conn == nullptr) return false;
-
-        auto response = new Response;
-        auto controller = new RpcControllerImpl;
-        controller->set_wait_for_ready(true);
-        controller->set_timeout(5s);
-
-        auto lambda_closure = rpc::NewLambdaClosureT(
-            [this, response, controller, cb = std::move(cb)]() mutable {
-                if (cb) cb(std::unique_ptr<Response>(response), std::unique_ptr<RpcControllerImpl>(controller));
-            });
-
-        DoCall<Request, Response>(conn->Stub(), controller, &request, response, lambda_closure);
-
-        return true;
-    }
-
-
+    bool CallRemoteAsync_From(const std::string & server_name, const Request& request, FinishedCallback<Response> cb);
 
 private:
     ///@brief 调用具体客户端ServiceStub的对应方法，若有新的服务和新的方法，仅需在别的源文件中实现模板特化，调用stub->MethodName即可（如stub->Login或stub->Register等）
@@ -165,12 +57,9 @@ private:
             const Request* request, Response* response, google::protobuf::Closure* done);
 
     std::unique_ptr<RpcStubConnectionPool<ServiceStub>>  pool_ = nullptr;
-    typename StubConnType::F_RpcStubConnectionEstablishedCallback cb_;
+    StubConnType::F_RpcStubConnectionEstablishedCallback cb_;
 };
 
 
-
-
-
-
+#include "RpcClient.inl"
 }

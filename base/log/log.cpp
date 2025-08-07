@@ -16,6 +16,7 @@
 #include <cassert>
 #include <algorithm>
 #include <chrono>
+#include <iostream>
 using namespace std::chrono_literals;
 
 
@@ -181,7 +182,7 @@ bool LoggerManager::delLogger(const std::string& name)
 void LoggerManager::ReadConfigs()
 {
     if(!config::ConfigManager::GetIsLoaded()) {
-        std::cerr << "日志配置项未加载，请先加载日志配置项！" << std::endl;
+        std::cerr << std::format("日志配置项未加载，请先加载日志配置项！\n");
         std::terminate();
     }
 
@@ -210,8 +211,8 @@ void LoggerManager::ReadConfigs()
                 case config::LogXmlConfig::Logger::Appender::Type::STDOUT:
                     logAppender = std::make_shared<StdoutLogApeender>(log_format);
                     break;
-                default:
-                    std::cerr << "预料之外的Appender类型！" << std::endl;
+            default:
+                    std::cerr << std::format("预料之外的Appender类型！\n");
                     std::terminate();
             }
 
@@ -256,9 +257,9 @@ LoggerManager::~LoggerManager()
 void LoggerManager::StartAsyncThread()
 {
     m_async_thread = std::thread( [this](){
-        std::cout << "异步写线程开启！" << std::endl;
+        std::cout << std::format("异步写线程开启！\n");
         AsyncLogFlushThread();
-        std::cout << "异步写线程结束！" << std::endl;
+        std::cout << std::format("异步写线程结束！\n");
     } );
 
     // 等待异步写线程启动完毕才能返回给使用者使用

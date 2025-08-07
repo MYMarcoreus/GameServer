@@ -5,10 +5,7 @@
 #include "log.h"
 #include "AccountServerManager.h"
 #include "RedisClient.h"
-#include "ZkServiceClient.h"
 #include "MySqlClient.h"
-#include "RemoteXmlConfig.h"
-#include "RpcServer.h"
 #include "AccountRedisDAO.h"
 
 using namespace yy::net;

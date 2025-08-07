@@ -1,16 +1,18 @@
 #pragma once
 
 #include "core_definations.h"
-#include "RpcConnection.h"
 #include "log.h"
-#include "RpcCodec.h"
-#include "TcpServer.h"
-#include "ZkServiceClient.h"
-#include <google/protobuf/message.h>
-#include <google/protobuf/service.h>
 
 
+namespace yy::net
+{
+class TcpServer;
+}
 
+namespace yy::core::zk
+{
+class ZkServiceClient;
+}
 
 
 namespace yy::core::rpc
@@ -48,7 +50,7 @@ public:
 
     auto GetServiceRoot() const -> const std::string& { return service_root_; }
 
-    auto GetZkServiceManager() -> zk::ZkServiceClient& { return zkServiceManager_; }
+    auto GetZkServiceManager() -> zk::ZkServiceClient& { return *zkServiceManager_; }
 
 private:
     void OnRpcRequest(const net::TcpConnectionPtr& conn, const RpcMessagePtr& msg);
@@ -60,11 +62,11 @@ private:
 
     const std::string service_root_;
     net::EventLoop* loop_;
-    net::TcpServer      server_;
-    RpcCodec            codec_;
+    std::unique_ptr<net::TcpServer>      server_;
+    std::unique_ptr<RpcCodec>            codec_;
     std::unordered_map<std::string, std::unique_ptr<google::protobuf::Service>> services_;
     net::IPAddressPtr   listenAddr_;
-    zk::ZkServiceClient zkServiceManager_;
+    std::unique_ptr<zk::ZkServiceClient> zkServiceManager_;
 };
 
 template <typename ServiceType, typename... Args>

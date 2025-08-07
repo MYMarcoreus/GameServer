@@ -68,6 +68,9 @@ private:
     net::UnorderedMapInLoop<core::UID_t, core::UserConnectionPtr> m_uid_to_user;
 };
 
+
+
+
 template<core::IsProtobufMessage Request, core::IsProtobufMessage Response, core::rpc::IsValidStub ServiceStub>
 void ForwardManager::RegisterRpcForward(core::rpc::RpcClient<ServiceStub> & rpcClient,
     std::function<bool(const core::UserConnectionPtr &, const Request &)> onReqCb,

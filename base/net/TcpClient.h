@@ -10,9 +10,9 @@ namespace yy::net {
 class TcpClient {
 public:
     TcpClient(EventLoop * loop,
-        const int32_t send_bytes_one, const int32_t send_bytes_max,
-        const int32_t recv_bytes_one, const int32_t recv_bytes_max,
-        const uint8_t xor_code, IPAddressPtr serverAddr = nullptr);
+              int32_t send_bytes_one, int32_t send_bytes_max,
+              int32_t recv_bytes_one, int32_t recv_bytes_max,
+              uint8_t xor_code, IPAddressPtr serverAddr = nullptr);
 
 
     ~TcpClient();

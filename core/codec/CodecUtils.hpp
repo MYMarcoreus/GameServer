@@ -20,6 +20,8 @@ using namespace yy::protocol::core;
 
 namespace yy::core
 {
+
+///@brief 消息命令与消息对象的映射
 inline std::unordered_map<MessageCommand, const google::protobuf::Message*> g_cmd_to_prototype =
 {
     {MSG_Unknown, nullptr},
@@ -77,6 +79,7 @@ inline std::unordered_map<MessageCommand, const google::protobuf::Message*> g_cm
 };
 
 
+///@brief 消息命令与消息名称的映射
 inline std::unordered_map<MessageCommand, std::string> g_cmd_to_name = [] {
     std::unordered_map<MessageCommand, std::string> map;
     for (const auto& [cmd, prototype] : g_cmd_to_prototype) {
@@ -87,6 +90,7 @@ inline std::unordered_map<MessageCommand, std::string> g_cmd_to_name = [] {
     return map;
 }();
 
+///@brief 消息名称与消息命令的映射
 inline std::unordered_map<std::string, MessageCommand> g_name_to_cmd = [] {
     std::unordered_map<std::string, MessageCommand> map;
     for (const auto& [cmd, name] : g_cmd_to_name) {
@@ -97,6 +101,7 @@ inline std::unordered_map<std::string, MessageCommand> g_name_to_cmd = [] {
     return map;
 }();
 
+///@brief 根据消息名称生成消息对象
 inline MessagePtr CreateMessage(const std::string &typeName) {
     using namespace google::protobuf;
     MessagePtr message = nullptr;
@@ -111,6 +116,7 @@ inline MessagePtr CreateMessage(const std::string &typeName) {
     return message;
 }
 
+///@brief 根据枚举命令生成为消息对象
 inline MessagePtr CreateMessage(const MessageCommand msg_cmd) {
     // const std::string & msg_name = g_cmd_to_name[msg_cmd];
     // return CreateMessage(msg_name);

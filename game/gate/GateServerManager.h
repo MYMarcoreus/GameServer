@@ -44,7 +44,7 @@ private:
     std::unique_ptr<core::IServer>          m_frontend;
     std::unique_ptr<core::rpc::RpcServer>   m_backend;
     std::unique_ptr<ForwardManager>         m_forwarder;
-    GateRedisDAO& m_redisDAO; // 用于过滤前端消息：验证token
+    GateRedisDAO&                           m_redisDAO; // 用于过滤前端消息：验证token
 };
 
 

@@ -302,10 +302,6 @@ std::string GenerateToken()
     return uuids::to_string(uuid);
 }
 
-std::string GenerateServerName(const net::IPAddressPtr& server_addr)
-{
-    return std::format("{}:{}", server_addr->GetIPStr(), server_addr->GetPort());
-}
 
 uint8_t GenerateXorCode()
 {

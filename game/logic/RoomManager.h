@@ -27,7 +27,7 @@ public:
     void FindRoomByUID(core::UID_t uid, std::function<void(RoomPtr)> done);
     void FindRoomByRoomID(ROOM_ID_t room_id, std::function<void(RoomPtr)> done);
 
-    void AddPlayerToRoom(ROOM_ID_t room_id, protocol::app::AccountBaseData account_data, const core::UserConnectionPtr & userconn, std::function<void(RoomPtr)> done);
+    void AddPlayerToRoom(ROOM_ID_t room_id, protocol::app::AccountBaseData account_data, const UserConnectionPtr & userconn, std::function<void(RoomPtr)> done);
 
 private:
     void FindRoomIDByUID(core::UID_t uid, std::function<void(std::optional<ROOM_ID_t>)> done);

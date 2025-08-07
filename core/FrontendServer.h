@@ -1,10 +1,6 @@
 #pragma once
 
 #include "IServer.h"
-#include "TcpServer.h"
-#include "UdpServer.h"
-#include "ProtobufTcpCodec_Cmd.h"
-#include "ProtobufUdpCodec_Cmd.h"
 #include "ProtobufDispatcher.h"
 #include "net_definations.h"
 #include "core_definations.h"
@@ -35,56 +31,59 @@ public:
     /// @brief 结束服务器
     void Stop() override;
 
-    bool IsRunning() const override { return m_tcpServer.IsRunning(); }
-    const config::AppXmlConfig & GetAppConfig() override { return m_appConfigvar->GetValue(); }
-    auto GetTcpListenAddr() const -> net::IPAddressPtr override { return m_tcpServer.GetListenAddr(); }
+    bool IsRunning() const override;
+    auto GetAppConfig() -> const config::AppXmlConfig& override;
+    auto GetTcpListenAddr() const -> net::IPAddressPtr override;
 
-    /* * 由业务层定义并传入 * */
+    //Region 业务层定义的回调函数
     void SetNotifier_Security  (const F_Notifier cb) override { m_NotifierSecurity   = cb; }
     void SetNotifier_DisConnect(const F_Notifier cb) override { m_NotifierDisconnect = cb; }
     void SetNotifier_Command(const F_NotifierCommand cb) override { m_NotifierCommand = cb; }
+    //End
 
-    /* * 在Acceptor中运行定时器（其实可以新建一个定时器线程） * */
+    //Region 定时器相关：在Acceptor中运行定时器
     net::TimerID RunAt(net::Timestamp time, net::F_TaskCallback cb) override;
     net::TimerID RunAfter(net::Microseconds delay, net::F_TaskCallback cb) override;
     net::TimerID RunEvery(net::Microseconds interval, net::F_TaskCallback cb) override;
     void CancelTimer(net::TimerID timerid) override;
+    //End
 
 private:
-    /* * 根据用户连接名称来寻找用户基础数据 * */
+    //Region 用户连接管理函数
     UserConnectionPtr   FindUser(uint64_t conn_id);
     void                DelUser (uint64_t conn_id);
     void                AddUser (uint64_t conn_id, const UserConnectionPtr & userdata);
+    //End
 
+    ///Region 调用m_NotifierCommand，将消息传递至业务层
     void OnUnknownTcpMessage(const net::TcpConnectionPtr &conn, const MessagePtr& message);
     void OnUnknownUdpMessage(const net::UdpSessionPtr &sess, const MessagePtr& message);
+    //End
 
-    //Region
+    //Region 连接建立后的协议验证部分
     void OnConnectionEstablished(const net::TcpConnectionPtr & conn);
     void AddCheckTimer(const net::TcpConnectionPtr & conn, const UserConnectionPtr & userdata);
     void CheckHeart(const UserConnectionPtr & userdata);
     void SendXorCode(const net::TcpConnectionPtr &conn);
-
-    void OnConnectionShutdown(const net::TcpConnectionPtr &conn);
-    //End
-
     void OnTcpHeart(const net::TcpConnectionPtr &conn, const HeartPtr & message);
     void OnUdpHeart(const net::UdpSessionPtr &conn, const HeartPtr & message);
     void OnSecurity(const net::TcpConnectionPtr & conn, const C2SSecurityPtr & message);
     void OnUdpPortRegisterRequest(const net::TcpConnectionPtr & conn, const UdpPortRegisterReqPtr & message);
+    //End
 
+    void OnConnectionShutdown(const net::TcpConnectionPtr &conn);
 
 private:
-    net::EventLoop *                                    m_accpetorLoop;
-    config::ConfigVar<config::AppXmlConfig>::ptr        m_appConfigvar; // 用于获取配置项
+    net::EventLoop *                                            m_accpetorLoop;
+    std::shared_ptr<config::ConfigVar<config::AppXmlConfig>>    m_appConfigvar; // 用于获取配置项
 
-    net::TcpServer                                      m_tcpServer;
+    std::unique_ptr<net::TcpServer>                     m_tcpServer;
     ProtobufDispatcher<net::TcpConnectionPtr>           m_tcpDispatcher; // 处理下层(net层)分发传来的无法处理的消息
-    ProtobufTcpCodec                                    m_tcpCodec;
+    std::unique_ptr<ProtobufTcpCodec>                   m_tcpCodec;
 
-    net::UdpServer                                      m_udpServer;
+    std::unique_ptr<net::UdpServer>                     m_udpServer;
     ProtobufDispatcher<net::UdpSessionPtr>              m_udpDispatcher; // 处理下层(net层)分发传来的无法处理的消息
-    ProtobufUdpCodec                                    m_udpCodec;
+    std::unique_ptr<ProtobufUdpCodec>                   m_udpCodec;
 
     /* 这几个回调函数由业务层实现，然后通过对应的set方法传入设置 */
     F_Notifier        m_NotifierSecurity;    // 用户安全验证通过后，执行业务层回调函数

@@ -1,5 +1,6 @@
 #include "LogicInfoController.h"
 #include "IPAddress.h"
+#include "RWLock.h"
 
 namespace yy::app::center
 {

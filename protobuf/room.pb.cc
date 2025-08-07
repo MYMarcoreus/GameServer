@@ -476,60 +476,61 @@ const char descriptor_table_protodef_room_2eproto[] PROTOBUF_SECTION_VARIABLE(pr
   "RoomDetailData\"n\n\017SelfJoinRoomReq\0226\n\014joi"
   "nner_data\030\001 \001(\0132 .yy.protocol.app.Accoun"
   "tBaseData\022\022\n\nuser_token\030\002 \001(\t\022\017\n\007room_id"
-  "\030\003 \001(\004\"\362\001\n\017SelfJoinRoomRsp\022\013\n\003uid\030\001 \001(\004\022"
+  "\030\003 \001(\004\"\225\002\n\017SelfJoinRoomRsp\022\013\n\003uid\030\001 \001(\004\022"
   "<\n\013result_code\030\002 \001(\0162\'.yy.protocol.app.S"
   "elfJoinRoomRsp.Status\0222\n\troom_data\030\003 \001(\013"
   "2\037.yy.protocol.app.RoomDetailData\022\017\n\007roo"
-  "m_ip\030\004 \001(\t\022\021\n\troom_port\030\005 \001(\r\"<\n\006Status\022"
+  "m_ip\030\004 \001(\t\022\021\n\troom_port\030\005 \001(\r\"_\n\006Status\022"
+  "\014\n\010eSuccess\020\000\022\021\n\reRoomNotExist\020\001\022\r\n\teRoo"
+  "mFull\020\002\022\022\n\016eAlreadyJoined\020\003\022\021\n\reUnknownE"
+  "rror\020\004\"\307\001\n\020OtherJoinRoomRsp\0226\n\014joinner_d"
+  "ata\030\003 \001(\0132 .yy.protocol.app.AccountBaseD"
+  "ata\022=\n\013result_code\030\002 \001(\0162(.yy.protocol.a"
+  "pp.OtherJoinRoomRsp.Status\"<\n\006Status\022\014\n\010"
+  "eSuccess\020\000\022\021\n\reRoomNotExist\020\001\022\021\n\reUnknow"
+  "nError\020\002\"C\n\017SelfQuitRoomReq\022\013\n\003uid\030\001 \001(\004"
+  "\022\022\n\nuser_token\030\003 \001(\t\022\017\n\007room_id\030\002 \001(\004\"\253\001"
+  "\n\017SelfQuitRoomRsp\022\013\n\003uid\030\001 \001(\004\022\017\n\007room_i"
+  "d\030\002 \001(\004\022<\n\013result_code\030\003 \001(\0162\'.yy.protoc"
+  "ol.app.SelfQuitRoomRsp.Status\"<\n\006Status\022"
   "\014\n\010eSuccess\020\000\022\021\n\reRoomNotExist\020\001\022\021\n\reUnk"
-  "nownError\020\002\"\307\001\n\020OtherJoinRoomRsp\0226\n\014join"
-  "ner_data\030\003 \001(\0132 .yy.protocol.app.Account"
-  "BaseData\022=\n\013result_code\030\002 \001(\0162(.yy.proto"
-  "col.app.OtherJoinRoomRsp.Status\"<\n\006Statu"
-  "s\022\014\n\010eSuccess\020\000\022\021\n\reRoomNotExist\020\001\022\021\n\reU"
-  "nknownError\020\002\"C\n\017SelfQuitRoomReq\022\013\n\003uid\030"
-  "\001 \001(\004\022\022\n\nuser_token\030\003 \001(\t\022\017\n\007room_id\030\002 \001"
-  "(\004\"\253\001\n\017SelfQuitRoomRsp\022\013\n\003uid\030\001 \001(\004\022\017\n\007r"
-  "oom_id\030\002 \001(\004\022<\n\013result_code\030\003 \001(\0162\'.yy.p"
-  "rotocol.app.SelfQuitRoomRsp.Status\"<\n\006St"
-  "atus\022\014\n\010eSuccess\020\000\022\021\n\reRoomNotExist\020\001\022\021\n"
-  "\reUnknownError\020\002\"\255\001\n\020OtherQuitRoomRsp\022\013\n"
-  "\003uid\030\001 \001(\004\022\017\n\007room_id\030\002 \001(\004\022=\n\013result_co"
-  "de\030\003 \001(\0162(.yy.protocol.app.OtherQuitRoom"
-  "Rsp.Status\"<\n\006Status\022\014\n\010eSuccess\020\000\022\021\n\reR"
-  "oomNotExist\020\001\022\021\n\reUnknownError\020\002\"I\n\025GetE"
-  "nterSceneTokenReq\022\013\n\003uid\030\001 \001(\004\022\022\n\nuser_t"
-  "oken\030\003 \001(\t\022\017\n\007room_id\030\002 \001(\004\"\314\001\n\025GetEnter"
-  "SceneTokenRsp\022\013\n\003uid\030\001 \001(\004\022B\n\013result_cod"
-  "e\030\002 \001(\0162-.yy.protocol.app.GetEnterSceneT"
-  "okenRsp.Status\022\017\n\007room_id\030\003 \001(\004\022\023\n\013scene"
-  "_token\030\004 \001(\t\"<\n\006Status\022\014\n\010eSuccess\020\000\022\021\n\r"
-  "eRoomNotExist\020\001\022\021\n\reUnknownError\020\002\"w\n\020Br"
-  "oadcastRoomReq\022\017\n\007room_id\030\001 \001(\004\022\023\n\013targe"
-  "t_uids\030\002 \003(\004\022,\n\007msg_cmd\030\003 \001(\0162\033.yy.proto"
-  "col.MessageCommand\022\017\n\007payload\030\004 \001(\014\"w\n\020B"
-  "roadcastRoomRsp\022\017\n\007room_id\030\001 \001(\004\022\023\n\013fail"
-  "ed_uids\030\002 \003(\004\022,\n\007msg_cmd\030\003 \001(\0162\033.yy.prot"
-  "ocol.MessageCommand\022\017\n\007success\030\004 \001(\010\" \n\021"
-  "UserDisconnectReq\022\013\n\003uid\030\001 \001(\004\" \n\021UserDi"
-  "sconnectRsp\022\013\n\003uid\030\001 \001(\0042\232\004\n\024CenterRoomS"
-  "erviceRpc\022L\n\nCreateRoom\022\036.yy.protocol.ap"
-  "p.CreateRoomReq\032\036.yy.protocol.app.Create"
-  "RoomRsp\022L\n\nSearchRoom\022\036.yy.protocol.app."
-  "SearchRoomReq\032\036.yy.protocol.app.SearchRo"
-  "omRsp\022R\n\014SelfJoinRoom\022 .yy.protocol.app."
-  "SelfJoinRoomReq\032 .yy.protocol.app.SelfJo"
-  "inRoomRsp\022d\n\022GetEnterSceneToken\022&.yy.pro"
-  "tocol.app.GetEnterSceneTokenReq\032&.yy.pro"
-  "tocol.app.GetEnterSceneTokenRsp\022R\n\014SelfQ"
-  "uitRoom\022 .yy.protocol.app.SelfQuitRoomRe"
-  "q\032 .yy.protocol.app.SelfQuitRoomRsp\022X\n\016U"
-  "serDisconnect\022\".yy.protocol.app.UserDisc"
-  "onnectReq\032\".yy.protocol.app.UserDisconne"
-  "ctRsp2k\n\022GateRoomServiceRpc\022U\n\rBroadcast"
-  "Room\022!.yy.protocol.app.BroadcastRoomReq\032"
-  "!.yy.protocol.app.BroadcastRoomRspB\003\200\001\001b"
-  "\006proto3"
+  "nownError\020\002\"\255\001\n\020OtherQuitRoomRsp\022\013\n\003uid\030"
+  "\001 \001(\004\022\017\n\007room_id\030\002 \001(\004\022=\n\013result_code\030\003 "
+  "\001(\0162(.yy.protocol.app.OtherQuitRoomRsp.S"
+  "tatus\"<\n\006Status\022\014\n\010eSuccess\020\000\022\021\n\reRoomNo"
+  "tExist\020\001\022\021\n\reUnknownError\020\002\"I\n\025GetEnterS"
+  "ceneTokenReq\022\013\n\003uid\030\001 \001(\004\022\022\n\nuser_token\030"
+  "\003 \001(\t\022\017\n\007room_id\030\002 \001(\004\"\314\001\n\025GetEnterScene"
+  "TokenRsp\022\013\n\003uid\030\001 \001(\004\022B\n\013result_code\030\002 \001"
+  "(\0162-.yy.protocol.app.GetEnterSceneTokenR"
+  "sp.Status\022\017\n\007room_id\030\003 \001(\004\022\023\n\013scene_toke"
+  "n\030\004 \001(\t\"<\n\006Status\022\014\n\010eSuccess\020\000\022\021\n\reRoom"
+  "NotExist\020\001\022\021\n\reUnknownError\020\002\"w\n\020Broadca"
+  "stRoomReq\022\017\n\007room_id\030\001 \001(\004\022\023\n\013target_uid"
+  "s\030\002 \003(\004\022,\n\007msg_cmd\030\003 \001(\0162\033.yy.protocol.M"
+  "essageCommand\022\017\n\007payload\030\004 \001(\014\"w\n\020Broadc"
+  "astRoomRsp\022\017\n\007room_id\030\001 \001(\004\022\023\n\013failed_ui"
+  "ds\030\002 \003(\004\022,\n\007msg_cmd\030\003 \001(\0162\033.yy.protocol."
+  "MessageCommand\022\017\n\007success\030\004 \001(\010\" \n\021UserD"
+  "isconnectReq\022\013\n\003uid\030\001 \001(\004\" \n\021UserDisconn"
+  "ectRsp\022\013\n\003uid\030\001 \001(\0042\232\004\n\024CenterRoomServic"
+  "eRpc\022L\n\nCreateRoom\022\036.yy.protocol.app.Cre"
+  "ateRoomReq\032\036.yy.protocol.app.CreateRoomR"
+  "sp\022L\n\nSearchRoom\022\036.yy.protocol.app.Searc"
+  "hRoomReq\032\036.yy.protocol.app.SearchRoomRsp"
+  "\022R\n\014SelfJoinRoom\022 .yy.protocol.app.SelfJ"
+  "oinRoomReq\032 .yy.protocol.app.SelfJoinRoo"
+  "mRsp\022d\n\022GetEnterSceneToken\022&.yy.protocol"
+  ".app.GetEnterSceneTokenReq\032&.yy.protocol"
+  ".app.GetEnterSceneTokenRsp\022R\n\014SelfQuitRo"
+  "om\022 .yy.protocol.app.SelfQuitRoomReq\032 .y"
+  "y.protocol.app.SelfQuitRoomRsp\022X\n\016UserDi"
+  "sconnect\022\".yy.protocol.app.UserDisconnec"
+  "tReq\032\".yy.protocol.app.UserDisconnectRsp"
+  "2k\n\022GateRoomServiceRpc\022U\n\rBroadcastRoom\022"
+  "!.yy.protocol.app.BroadcastRoomReq\032!.yy."
+  "protocol.app.BroadcastRoomRspB\003\200\001\001b\006prot"
+  "o3"
   ;
 static const ::_pbi::DescriptorTable* const descriptor_table_room_2eproto_deps[3] = {
   &::descriptor_table_account_5fdata_2eproto,
@@ -538,7 +539,7 @@ static const ::_pbi::DescriptorTable* const descriptor_table_room_2eproto_deps[3
 };
 static ::_pbi::once_flag descriptor_table_room_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_room_2eproto = {
-    false, false, 2807, descriptor_table_protodef_room_2eproto,
+    false, false, 2842, descriptor_table_protodef_room_2eproto,
     "room.proto",
     &descriptor_table_room_2eproto_once, descriptor_table_room_2eproto_deps, 3, 16,
     schemas, file_default_instances, TableStruct_room_2eproto::offsets,
@@ -586,6 +587,8 @@ bool SelfJoinRoomRsp_Status_IsValid(int value) {
     case 0:
     case 1:
     case 2:
+    case 3:
+    case 4:
       return true;
     default:
       return false;
@@ -595,6 +598,8 @@ bool SelfJoinRoomRsp_Status_IsValid(int value) {
 #if (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 constexpr SelfJoinRoomRsp_Status SelfJoinRoomRsp::eSuccess;
 constexpr SelfJoinRoomRsp_Status SelfJoinRoomRsp::eRoomNotExist;
+constexpr SelfJoinRoomRsp_Status SelfJoinRoomRsp::eRoomFull;
+constexpr SelfJoinRoomRsp_Status SelfJoinRoomRsp::eAlreadyJoined;
 constexpr SelfJoinRoomRsp_Status SelfJoinRoomRsp::eUnknownError;
 constexpr SelfJoinRoomRsp_Status SelfJoinRoomRsp::Status_MIN;
 constexpr SelfJoinRoomRsp_Status SelfJoinRoomRsp::Status_MAX;

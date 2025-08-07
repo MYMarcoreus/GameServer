@@ -72,7 +72,6 @@ void ForwardManager::Start()
                 conn->GetLocalAddr()->GetIPStr().c_str(), conn->GetLocalAddr()->GetPort());
         }
     );
-    m_redisDAO.Start(m_baseLoop);
 }
 
 bool ForwardManager::OnFrontend_LoginRsp(const UserConnectionPtr& userconn, const LoginRsp& response)
@@ -82,6 +81,8 @@ bool ForwardManager::OnFrontend_LoginRsp(const UserConnectionPtr& userconn, cons
         userconn->SetUID(response.account_data().uid());
         userconn->SetToken(response.token());
         m_uid_to_user.Insert(userconn->GetUID(), userconn);
+
+        m_redisDAO.SetAccountData(response.account_data().uid(), response.account_data().username());
     }
     return true;
 }

@@ -50,7 +50,9 @@ message SelfJoinRoomRsp {
     enum Status {
         eSuccess = 0;
         eRoomNotExist = 1;
-        eUnknownError = 2;
+        eRoomFull = 2;
+        eAlreadyJoined = 3;
+        eUnknownError = 4;
     }
 
     uint64          uid = 1;

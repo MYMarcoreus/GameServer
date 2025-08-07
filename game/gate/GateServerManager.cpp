@@ -32,7 +32,7 @@ using namespace yy::protocol::app;
 namespace yy::app::gate {
 
 
-GateServerManager::GateServerManager()
+GateServerManager::GateServerManager(): m_redisDAO(GateRedisDAO::Instance())
 {
 }
 
@@ -47,7 +47,12 @@ void GateServerManager::OnFrontend_Secutiry(const UserConnectionPtr& userconn) {
 }
 
 void GateServerManager::OnFrontend_Disconnect(const UserConnectionPtr& userconn) {
-    YLOG_INFO("↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ 用户<{}>断开连接", userconn->GetUID())
+    YLOG_INFO("[GateServerManager::OnFrontend_Disconnect] 用户<{}>断开连接", userconn->GetUID())
+
+    const bool is_del = m_redisDAO.DelToken(userconn->GetUID());
+    if (is_del) {
+        YLOG_INFO("[GateServerManager::OnFrontend_Disconnect] 用户<{}>Token被删除", userconn->GetUID())
+    }
     m_forwarder->OnFrontend_Disconnect(userconn);
 }
 
@@ -66,6 +71,8 @@ void GateServerManager::RunApp()
     Ylog::LoggerManager::Instance().ReadConfigs();
 
     m_accpetorLoop = std::make_unique<EventLoop>(500ms);
+
+    m_redisDAO.Start(m_accpetorLoop.get());
 
     /*********** 启动转发器 ***********/
     m_forwarder = std::make_unique<ForwardManager>(m_accpetorLoop.get());

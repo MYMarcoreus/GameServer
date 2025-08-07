@@ -30,7 +30,8 @@ void RoomManager::AddRoom(RoomDetailData room_data, std::function<void(RoomPtr)>
 
          // 加入房间列表
         rooms_.emplace(room->get_id(), room);
-        uid_to_roomid_.emplace(room->get_owner_uid(), room->get_id());
+        // uid_to_roomid_.emplace(room->get_owner_uid(), room->get_id());
+        uid_to_roomid_[room->get_owner_uid()] = room->get_id();
         return done(room);
     });
 }
@@ -93,20 +94,20 @@ void RoomManager::FindRoomIDByUID(const UID_t uid, std::function<void(std::optio
     });
 }
 
-void RoomManager::AddPlayerToRoom(ROOM_ID_t room_id, UID_t uid, const UserConnectionPtr & userconn, std::function<void(RoomPtr)> done)
+void RoomManager::AddPlayerToRoom(ROOM_ID_t room_id, AccountBaseData account_data, const UserConnectionPtr & userconn, std::function<void(RoomPtr)> done)
 {
     assert(done);
     if (!done) return;
 
-    base_loop_->RunCallbackInLoop([this, room_id, uid, done = std::move(done), userconn] {
+    base_loop_->RunCallbackInLoop([this, room_id, account_data = std::move(account_data), done = std::move(done), userconn] {
         // 查找要加入的房间
         const auto it_room = rooms_.find(room_id);
         const auto room = (it_room != rooms_.end() ? it_room->second : nullptr);
         if (room == nullptr) {
             return done(nullptr);
         }
-        room->AddPlayer(userconn, uid);
-        uid_to_roomid_.emplace(uid, room->get_id());
+        room->AddPlayer(userconn, account_data);
+        uid_to_roomid_[account_data.uid()] = room->get_id();
         return done(room);
     });
 }

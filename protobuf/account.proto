@@ -12,7 +12,8 @@ message LoginRsp {
         eSuccess = 0;
         eAccountNotExist = 1;
         ePasswordError = 2;
-        eUnknownError = 3;
+        eAlreadyLoggedIn = 3;
+        eUnknownError = 4;
     }
     Status result_code = 1;
 

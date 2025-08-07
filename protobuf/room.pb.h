@@ -154,7 +154,9 @@ inline bool CreateRoomRsp_Status_Parse(
 enum SelfJoinRoomRsp_Status : int {
   SelfJoinRoomRsp_Status_eSuccess = 0,
   SelfJoinRoomRsp_Status_eRoomNotExist = 1,
-  SelfJoinRoomRsp_Status_eUnknownError = 2,
+  SelfJoinRoomRsp_Status_eRoomFull = 2,
+  SelfJoinRoomRsp_Status_eAlreadyJoined = 3,
+  SelfJoinRoomRsp_Status_eUnknownError = 4,
   SelfJoinRoomRsp_Status_SelfJoinRoomRsp_Status_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
   SelfJoinRoomRsp_Status_SelfJoinRoomRsp_Status_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
 };
@@ -1360,6 +1362,10 @@ class SelfJoinRoomRsp final :
     SelfJoinRoomRsp_Status_eSuccess;
   static constexpr Status eRoomNotExist =
     SelfJoinRoomRsp_Status_eRoomNotExist;
+  static constexpr Status eRoomFull =
+    SelfJoinRoomRsp_Status_eRoomFull;
+  static constexpr Status eAlreadyJoined =
+    SelfJoinRoomRsp_Status_eAlreadyJoined;
   static constexpr Status eUnknownError =
     SelfJoinRoomRsp_Status_eUnknownError;
   static inline bool Status_IsValid(int value) {

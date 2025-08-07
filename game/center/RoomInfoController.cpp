@@ -12,15 +12,18 @@ using namespace yy::protocol::app;
 bool RoomInfo::AddPlayer(const AccountBaseData& account_data)
 {
     while (true) {
-        auto data_ptr = data.load(std::memory_order::acquire);
+        auto data_ptr = data_.load(std::memory_order::acquire);
         if (!data_ptr) return false;
 
         // 创建副本并添加玩家
+        if (data_ptr->exist_player_datas_size() >= data_ptr->capacity())
+            return false;
+
         const auto new_data = std::make_shared<RoomDetailData>(*data_ptr);
         new_data->add_exist_player_datas()->CopyFrom(account_data);
 
         // CAS 尝试更新
-        if (data.compare_exchange_weak(data_ptr, new_data,
+        if (data_.compare_exchange_weak(data_ptr, new_data,
                                        std::memory_order_release,   // 能更新，写入
                                        std::memory_order_relaxed    // 不能更新，无需写入
         )){
@@ -36,7 +39,7 @@ bool RoomInfo::AddPlayer(const AccountBaseData& account_data)
 bool RoomInfo::DelPlayer(const UID_t uid)
 {
     while (true) {
-        auto data_ptr = data.load(std::memory_order::acquire);
+        auto data_ptr = data_.load(std::memory_order::acquire);
         if (!data_ptr) return false;
 
         // 删除玩家
@@ -55,7 +58,7 @@ bool RoomInfo::DelPlayer(const UID_t uid)
         new_data->mutable_exist_player_datas()->DeleteSubrange(idx, 1);
 
         // CAS 尝试更新
-        if (data.compare_exchange_weak(data_ptr, new_data,
+        if (data_.compare_exchange_weak(data_ptr, new_data,
             std::memory_order_release, std::memory_order_relaxed))
         {
             return true;
@@ -67,9 +70,9 @@ bool RoomInfo::DelPlayer(const UID_t uid)
     return false;
 }
 
-bool RoomInfo::FindPlayer(const UID_t uid, AccountBaseData& out_player)
+bool RoomInfo::FindPlayer(const UID_t uid, AccountBaseData& out_player) const
 {
-    const auto room_data = data.load(std::memory_order::acquire);
+    const auto room_data = data_.load(std::memory_order::acquire);
     if (!room_data) return false;
 
     for (const auto& player : room_data->exist_player_datas()) {
@@ -81,7 +84,7 @@ bool RoomInfo::FindPlayer(const UID_t uid, AccountBaseData& out_player)
     return false;
 }
 
-RoomInfoPtr RoomInfoController::AddRoom(const RoomDetailData& room_data, LogicServerInfoPtr server_info)
+RoomInfoPtr RoomInfoController::AddRoom(const RoomDetailData& room_data, LogicServerInfoPtr server_info, const AccountBaseData& owner_data)
 {
     const auto room_data_ptr = std::make_shared<RoomDetailData>(room_data);
     auto room_info = std::make_shared<RoomInfo>(room_data_ptr, server_info);
@@ -89,6 +92,11 @@ RoomInfoPtr RoomInfoController::AddRoom(const RoomDetailData& room_data, LogicSe
         util::WriteLockGuard lg(mutex_);
         uid_to_roomid_.emplace(room_data_ptr->owner_uid(), room_data_ptr->room_id());
         rooms_.emplace(room_data_ptr->room_id(), room_info);
+    }
+    //! 中央服务器添加玩家
+    const auto is_added = room_info->AddPlayer(owner_data);
+    if (not is_added) {
+        DelRoomIfEmpty(room_info->get_room_id());
     }
 
     return room_info;
@@ -108,25 +116,58 @@ bool RoomInfoController::DelRoomIfEmpty(const ROOM_ID_t room_id)
     return rooms_.erase(room_id) > 0;
 }
 
-bool RoomInfoController::AddPlayer(const ROOM_ID_t room_id, const AccountBaseData& account_data) {
+auto RoomInfoController::AddPlayer(const ROOM_ID_t room_id, const AccountBaseData& account_data)
+    -> std::pair<AddPlayerResultCode, RoomInfoPtr>
+{
     const auto room = FindRoomByRoomID(room_id);
-    if (!room) return false;
-    return  room->AddPlayer(account_data);
+    if (!room) return {AddPlayerResultCode::eRoomNotExist, nullptr};
+
+    {
+        util::ReadLockGuard lg(mutex_);
+        if (uid_to_roomid_.contains(account_data.uid())) {
+            return {AddPlayerResultCode::eAlreadyJoined, room};
+        }
+    }
+
+    // 注意：先尝试加入房间，成功后再更新映射，避免脏数据
+    const bool ok = room->AddPlayer(account_data);
+    if (!ok) {
+        return {AddPlayerResultCode::eRoomFull, room};
+    }
+
+    {
+        util::WriteLockGuard lg(mutex_);
+        uid_to_roomid_[account_data.uid()] = room_id;
+    }
+
+    return {AddPlayerResultCode::eSuccess, room};
 }
 
 
-
-bool RoomInfoController::DelPlayer(const ROOM_ID_t room_id, const UID_t uid) {
+auto RoomInfoController::DelPlayer(const ROOM_ID_t room_id, const UID_t uid) -> std::pair<bool, RoomInfoPtr>
+{
     const auto room = FindRoomByRoomID(room_id);
-    if (!room) return false;
-    return room->DelPlayer(uid);
+    if (!room) return {false, nullptr};
+
+    {
+        util::WriteLockGuard lg(mutex_);
+        uid_to_roomid_.erase(uid);
+    }
+
+    return {room->DelPlayer(uid), room};
 }
 
-bool RoomInfoController::DelPlayer(const UID_t uid)
+auto RoomInfoController::DelPlayer(const UID_t uid) -> std::pair<bool, RoomInfoPtr>
 {
     const auto room = FindRoomByUID(uid);
-    if (!room) return false;
-    return room->DelPlayer(uid);
+    if (!room) return {false, nullptr};
+
+    {
+        util::WriteLockGuard lg(mutex_);
+        uid_to_roomid_.erase(uid);
+    }
+
+    return {room->DelPlayer(uid), room};
 }
 
 

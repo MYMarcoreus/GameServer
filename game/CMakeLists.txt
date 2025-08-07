@@ -2,6 +2,7 @@ set(LocalSrc
         rpc_clients/CenterRpcClient.cpp
         rpc_clients/LogicRpcClient.cpp
         rpc_clients/AccountRpcClient.cpp
+        rpc_clients/GateRpcClient.cpp
         logic/LogicServerManager.cpp
         logic/GameService.cpp
         logic/TestService.cpp
@@ -10,7 +11,6 @@ set(LocalSrc
         logic/RoomManager.cpp
         account/AccountServerManager.cpp
         account/AccountRpcServiceImpl.cpp
-        gate/GateServerManager.cpp
         center/CenterRpcServiceImpl.cpp
         center/CenterServerManager.cpp
         center/RoomInfoController.cpp
@@ -19,9 +19,12 @@ set(LocalSrc
         account/AccountRedisDAO.cpp
         account/AccountData.cpp
         account/AccountMysqlDAO.cpp
-        gate/GateRedisDAO.cpp
         center/CenterRedisDAO.cpp
         logic/LogicRedisDAO.cpp
+        gate/GateRedisDAO.cpp
+        gate/GateServerManager.cpp
+        gate/GateRpcServiceImpl.cpp
+        gate/ForwardManager.cpp
 )
 
 #! 给本地相对路径添加前缀，变为绝对路径

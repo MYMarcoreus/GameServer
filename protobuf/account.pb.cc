@@ -139,29 +139,30 @@ static const ::_pb::Message* const file_default_instances[] = {
 const char descriptor_table_protodef_account_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
   "\n\raccount.proto\022\017yy.protocol.app\032\022accoun"
   "t_data.proto\".\n\010LoginReq\022\020\n\010username\030\003 \001"
-  "(\t\022\020\n\010password\030\004 \001(\t\"\335\001\n\010LoginRsp\0225\n\013res"
+  "(\t\022\020\n\010password\030\004 \001(\t\"\363\001\n\010LoginRsp\0225\n\013res"
   "ult_code\030\001 \001(\0162 .yy.protocol.app.LoginRs"
   "p.Status\0226\n\014account_data\030\002 \001(\0132 .yy.prot"
   "ocol.app.AccountBaseData\022\r\n\005token\030\003 \001(\t\""
-  "S\n\006Status\022\014\n\010eSuccess\020\000\022\024\n\020eAccountNotEx"
-  "ist\020\001\022\022\n\016ePasswordError\020\002\022\021\n\reUnknownErr"
-  "or\020\003\"1\n\013RegisterReq\022\020\n\010username\030\003 \001(\t\022\020\n"
-  "\010password\030\004 \001(\t\"\231\001\n\013RegisterRsp\0228\n\013resul"
-  "t_code\030\002 \001(\0162#.yy.protocol.app.RegisterR"
-  "sp.Status\022\013\n\003uid\030\004 \001(\004\"C\n\006Status\022\014\n\010eSuc"
-  "cess\020\000\022\030\n\024eAccountAlreadyExist\020\002\022\021\n\reUnk"
-  "nownError\020\0032\232\001\n\021AccountServiceRpc\022=\n\005Log"
-  "in\022\031.yy.protocol.app.LoginReq\032\031.yy.proto"
-  "col.app.LoginRsp\022F\n\010Register\022\034.yy.protoc"
-  "ol.app.RegisterReq\032\034.yy.protocol.app.Reg"
-  "isterRspB\003\200\001\001b\006proto3"
+  "i\n\006Status\022\014\n\010eSuccess\020\000\022\024\n\020eAccountNotEx"
+  "ist\020\001\022\022\n\016ePasswordError\020\002\022\024\n\020eAlreadyLog"
+  "gedIn\020\003\022\021\n\reUnknownError\020\004\"1\n\013RegisterRe"
+  "q\022\020\n\010username\030\003 \001(\t\022\020\n\010password\030\004 \001(\t\"\231\001"
+  "\n\013RegisterRsp\0228\n\013result_code\030\002 \001(\0162#.yy."
+  "protocol.app.RegisterRsp.Status\022\013\n\003uid\030\004"
+  " \001(\004\"C\n\006Status\022\014\n\010eSuccess\020\000\022\030\n\024eAccount"
+  "AlreadyExist\020\002\022\021\n\reUnknownError\020\0032\232\001\n\021Ac"
+  "countServiceRpc\022=\n\005Login\022\031.yy.protocol.a"
+  "pp.LoginReq\032\031.yy.protocol.app.LoginRsp\022F"
+  "\n\010Register\022\034.yy.protocol.app.RegisterReq"
+  "\032\034.yy.protocol.app.RegisterRspB\003\200\001\001b\006pro"
+  "to3"
   ;
 static const ::_pbi::DescriptorTable* const descriptor_table_account_2eproto_deps[1] = {
   &::descriptor_table_account_5fdata_2eproto,
 };
 static ::_pbi::once_flag descriptor_table_account_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_account_2eproto = {
-    false, false, 701, descriptor_table_protodef_account_2eproto,
+    false, false, 723, descriptor_table_protodef_account_2eproto,
     "account.proto",
     &descriptor_table_account_2eproto_once, descriptor_table_account_2eproto_deps, 1, 4,
     schemas, file_default_instances, TableStruct_account_2eproto::offsets,
@@ -187,6 +188,7 @@ bool LoginRsp_Status_IsValid(int value) {
     case 1:
     case 2:
     case 3:
+    case 4:
       return true;
     default:
       return false;
@@ -197,6 +199,7 @@ bool LoginRsp_Status_IsValid(int value) {
 constexpr LoginRsp_Status LoginRsp::eSuccess;
 constexpr LoginRsp_Status LoginRsp::eAccountNotExist;
 constexpr LoginRsp_Status LoginRsp::ePasswordError;
+constexpr LoginRsp_Status LoginRsp::eAlreadyLoggedIn;
 constexpr LoginRsp_Status LoginRsp::eUnknownError;
 constexpr LoginRsp_Status LoginRsp::Status_MIN;
 constexpr LoginRsp_Status LoginRsp::Status_MAX;

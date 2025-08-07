@@ -101,9 +101,9 @@ void Room::OnPlayerDisconnect(const UserConnectionPtr& userconn)
     });
 }
 
-void Room::InitPlayerData(const PlayerBaseDataPtr& self_data, const uint64_t uid) //NOLINT
+void Room::InitPlayerData(const PlayerBaseDataPtr& self_data, AccountBaseData account_data) //NOLINT
 {
-    self_data->mutable_account_data()->set_uid(uid);
+    self_data->mutable_account_data()->CopyFrom(std::move(account_data));
     self_data->set_hp_current(100);
     self_data->set_hp_max(100);
 
@@ -124,16 +124,16 @@ void Room::InitPlayerData(const PlayerBaseDataPtr& self_data, const uint64_t uid
     movement->set_ani_speed(0);
 }
 
-void Room::AddPlayer(const UserConnectionPtr& self_conn, const UID_t uid)
+void Room::AddPlayer(const UserConnectionPtr& self_conn, AccountBaseData account_data)
 {
-    loop_->RunCallbackInLoop([self_conn, uid, this] {
+    loop_->RunCallbackInLoop([self_conn, account_data = std::move(account_data), this] {
         // 初始化进入玩家对象，加入玩家数据列表
-        self_conn->SetUID(uid);
+        self_conn->SetUID(account_data.uid());
         const auto self_data = players_pool_.Acquire(2s);
         if(self_data == nullptr) {
             return;
         }
-        InitPlayerData(self_data, uid);
+        InitPlayerData(self_data, account_data);
 
         //! room_data_
         room_data_.add_exist_player_datas()->CopyFrom(self_data->account_data());
@@ -253,7 +253,7 @@ void Room::OnEnterScene(const UserConnectionPtr& self_conn, const Ptr<protocol::
     otherPlayerDataResponse.mutable_other_data()->CopyFrom(*self_data);
     Broadcast(self_player,  otherPlayerDataResponse);
 
-    YLOG_INFO("玩家<{}>进入场景", self_data->account_data().uid())
+    YLOG_INFO("玩家<{}>进入场景", self_data->account_data().ShortDebugString())
 }
 
 void Room::OnLeaveScene(const UserConnectionPtr& leave_conn, const Ptr<protocol::app::C2SLeaveScene> & req) //NOLINT

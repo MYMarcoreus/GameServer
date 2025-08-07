@@ -33,6 +33,7 @@ public:
     auto GetAndRefreshEx(const std::string& key, std::chrono::seconds expire_seconds) -> std::optional<std::string>;
 
     bool Del(const std::string& key);
+    bool HDel(const std::string& key, const std::string& field);
 
 private:
     std::unique_ptr<RedisPool> pool_ = nullptr;

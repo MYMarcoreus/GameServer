@@ -14,8 +14,6 @@ namespace yy::app::logic
 
 using ROOM_ID_t = uint64_t;
 
-class RoomManager;
-
 // 管理一个房间内的玩家：一个房间在一个线程中处理，线程安全，无锁
 class Room: public std::enable_shared_from_this<Room>{
 public:
@@ -40,7 +38,7 @@ public:
     //End
 
     //Region 暴露给外部的接口，需要将任务投递给Room所在线程
-    void AddPlayer(const core::UserConnectionPtr& self_conn, core::UID_t uid);
+    void AddPlayer(const core::UserConnectionPtr& self_conn, protocol::app::AccountBaseData account_data);
     [[nodiscard]] auto GetAllPlayers() -> std::unordered_map<core::UID_t, PlayerPtr>;
     //End
 
@@ -51,7 +49,7 @@ private:
 
     [[nodiscard]] auto FindPlayer(core::UID_t uid) -> PlayerPtr;
     [[nodiscard]] auto RemovePlayer(core::UID_t uid) -> PlayerPtr;
-    void InitPlayerData(const PlayerBaseDataPtr& self_data, uint64_t uid);
+    void InitPlayerData(const PlayerBaseDataPtr& self_data, protocol::app::AccountBaseData account_data);
 
     //Region 房间广播
     void Broadcast(const PlayerPtr& from, const google::protobuf::Message &data);

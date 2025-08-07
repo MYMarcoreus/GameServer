@@ -69,8 +69,18 @@ void CenterRpcServiceImpl::Update()
     for (auto& [room_id, room]: room_controller.GetAllRoom()) {
         const auto is_del = room_controller.DelRoomIfEmpty(room_id);
         if (is_del) {
-            YLOG_INFO("\t删除房间<{}, {}>", room->get_room_id(), room->get_room_data()->name())
+            YLOG_INFO("\t中心服删除房间<{}, {}>", room->get_room_id(), room->get_room_data()->name())
+            // 通知逻辑服
+            DeleteRoomReq del_req;
+            del_req.set_room_id(room->get_room_id());
+            logic_rpc_client_.CallRemoteAsync_From<DeleteRoomReq, DeleteRoomRsp>(room->get_server_info()->get_name(), del_req,
+                [](std::unique_ptr<DeleteRoomRsp> && response, std::unique_ptr<rpc::RpcControllerImpl> && controller) {
+                    if (response->success()) {
+                        YLOG_INFO("\t逻辑服删除房间<{}>", response->room_id())
+                    }
+                });
         }
+
     }
 }
 
@@ -109,11 +119,9 @@ void CenterRpcServiceImpl::CreateRoom(RpcController* controller,
             if(rsp_NewRoom->success()) {
                 response->set_room_ip(rsp_NewRoom->ip());
                 response->set_room_port(rsp_NewRoom->port());
-                //! 中央服务器添加房间
-                const RoomInfoPtr room = get_room_info_controller().AddRoom(room_data, server_info);
-                //! 中央服务器添加玩家
-                const auto is_added = room->AddPlayer(owner_data);
-                if (is_added) {
+                //! 中央服务器添加房间，并将创建者加入房间
+                const RoomInfoPtr room = get_room_info_controller().AddRoom(room_data, server_info, owner_data);
+                if (room) {
                     response->set_result_code(CreateRoomRsp_Status_eSuccess);
                     response->mutable_room_data()->CopyFrom(*room->get_room_data());
                 } else {
@@ -143,44 +151,45 @@ void CenterRpcServiceImpl::SearchRoom(RpcController* controller,
 void CenterRpcServiceImpl::SelfJoinRoom(RpcController* controller,
     const SelfJoinRoomReq* request, SelfJoinRoomRsp* response, Closure* done)
 {
-    YLOG_INFO("正在执行 CenterRpcServiceImpl::JoinRoom 服务");
+    YLOG_INFO("正在执行 CenterRpcServiceImpl::JoinRoom 服务：{}", request->ShortDebugString());
 
-    const auto uid = request->joinner_data().uid();
-    const auto room_id = request->room_id();
-    response->set_uid(uid);
+    response->set_uid(request->joinner_data().uid());
 
-    const auto room = get_room_info_controller().FindRoomByRoomID(room_id);
-    if (!room) {
+    auto [rst_code, room] = get_room_info_controller().AddPlayer(request->room_id(), request->joinner_data());
+    switch (rst_code) {
+    case RoomInfoController::AddPlayerResultCode::eSuccess: {
+        if (!room)  break;
+        // 加入成功，填写房间信息
+        const auto room_addr = get_logic_info_controller().FindServerInfo(room->get_server_info()->get_name());
+        response->set_room_ip(room_addr->get_ip());
+        response->set_room_port(room_addr->get_port());
+        response->set_result_code(SelfJoinRoomRsp_Status_eSuccess);
+        response->mutable_room_data()->CopyFrom(*room->get_room_data());
+        break;
+    }
+    case RoomInfoController::AddPlayerResultCode::eRoomNotExist:
         response->set_result_code(SelfJoinRoomRsp_Status_eRoomNotExist);
-        done->Run();
-        return;
-    }
-
-    if (get_room_info_controller().IsJoined(room_id, uid)) {
+        break;
+    case RoomInfoController::AddPlayerResultCode::eAlreadyJoined:
+        response->set_result_code(SelfJoinRoomRsp_Status_eAlreadyJoined);
+        break;
+    case RoomInfoController::AddPlayerResultCode::eRoomFull:
+        response->set_result_code(SelfJoinRoomRsp_Status_eRoomFull);
+        break;
+    case RoomInfoController::AddPlayerResultCode::eInternalError:
         response->set_result_code(SelfJoinRoomRsp_Status_eUnknownError);
-        done->Run();
-        return;
+        break;
     }
-
-    if (!room->AddPlayer(request->joinner_data())) {
-        response->set_result_code(SelfJoinRoomRsp_Status_eUnknownError);
-        done->Run();
-        return;
-    }
-
-    // 加入成功，填写房间信息
-    const auto room_addr = get_logic_info_controller().FindServerInfo(room->get_server_info()->get_name());
-    response->set_room_ip(room_addr->get_ip());
-    response->set_room_port(room_addr->get_port());
-    response->set_result_code(SelfJoinRoomRsp_Status_eSuccess);
-    response->mutable_room_data()->CopyFrom(*room->get_room_data());
+    // 发送响应
     done->Run();
 
-    // 发送广播
-    OtherJoinRoomRsp msg;
-    msg.mutable_joinner_data()->CopyFrom(request->joinner_data());
-    msg.set_result_code(OtherJoinRoomRsp_Status_eSuccess);
-    BroadcastRoom(request->room_id(), request->joinner_data().uid(), MSG_OtherJoinRoomRsp, msg.SerializeAsString());
+    if (rst_code == RoomInfoController::AddPlayerResultCode::eSuccess) {
+        // 发送广播
+        OtherJoinRoomRsp msg;
+        msg.mutable_joinner_data()->CopyFrom(request->joinner_data());
+        msg.set_result_code(OtherJoinRoomRsp_Status_eSuccess);
+        BroadcastRoom(request->room_id(), request->joinner_data().uid(), MSG_OtherJoinRoomRsp, msg.SerializeAsString());
+    }
 }
 
 void CenterRpcServiceImpl::SelfQuitRoom(RpcController* controller,
@@ -189,7 +198,7 @@ void CenterRpcServiceImpl::SelfQuitRoom(RpcController* controller,
     YLOG_INFO("正在执行 CenterRpcServiceImpl::QuitRoom 服务")
 
     // 响应请求方
-    const bool is_removed = get_room_info_controller().DelPlayer(request->room_id(), request->uid());
+    const auto [is_removed, room] = get_room_info_controller().DelPlayer(request->room_id(), request->uid());
     if(not is_removed) {
         response->set_result_code(SelfQuitRoomRsp_Status_eUnknownError);
         YLOG_INFO("玩家退出房间失败");
@@ -232,16 +241,11 @@ void CenterRpcServiceImpl::UserDisconnect(RpcController* controller, const UserD
     YLOG_INFO("正在执行 CenterRpcServiceImpl::UserDisconnect 服务")
     response->set_uid(request->uid());
 
-    const auto room = get_room_info_controller().FindRoomByUID(request->uid());
-    if(room == nullptr) {
-        done->Run();
+    const auto [is_removed, room] = get_room_info_controller().DelPlayer(request->uid());
+    done->Run();
+
+    if (!room)
         return;
-    }
-    const bool is_removed = room->DelPlayer(request->uid());
-    if(not is_removed){
-        done->Run();
-        return;
-    }
 
     // 发送广播
     OtherQuitRoomRsp msg;
@@ -253,15 +257,21 @@ void CenterRpcServiceImpl::UserDisconnect(RpcController* controller, const UserD
 
 void CenterRpcServiceImpl::BroadcastRoom(const ROOM_ID_t room_id, const UID_t from_uid, const MessageCommand msg_cmd, std::string && msg_str)
 {
-    BroadcastRoomReq broadcast_req;
-    broadcast_req.set_msg_cmd(msg_cmd);
-    broadcast_req.set_room_id(room_id);
     const RoomInfoPtr room = get_room_info_controller().FindRoomByRoomID(room_id);
     if (!room) {
-        YLOG_WARN("BroadcastRoom 找不到房间: {}", room_id);
+        YLOG_WARN("[CenterRpcServiceImpl::BroadcastRoom] 找不到房间: {}", room_id);
         return;
     }
-    for (auto& player_data : room->get_all_players()) {
+    BroadcastRoom(*room, from_uid, msg_cmd, std::move(msg_str));
+}
+
+void CenterRpcServiceImpl::BroadcastRoom(const RoomInfo & room, const UID_t from_uid, MessageCommand msg_cmd, std::string&& msg_str)
+{
+    BroadcastRoomReq broadcast_req;
+    broadcast_req.set_msg_cmd(msg_cmd);
+    broadcast_req.set_room_id(room.get_room_id());
+
+    for (auto& player_data : room.get_all_players()) {
         if (player_data.uid() == from_uid) {
             continue;
         }
@@ -272,8 +282,8 @@ void CenterRpcServiceImpl::BroadcastRoom(const ROOM_ID_t room_id, const UID_t fr
 
     // 发送给gate server
     gate_rpc_client_.CallRemoteAsync_Random<BroadcastRoomReq, BroadcastRoomRsp>(broadcast_req,
-        [](std::unique_ptr<BroadcastRoomRsp> && response, std::unique_ptr<rpc::RpcControllerImpl> && controller) {
-            YLOG_INFO("SelfQuitRoom广播成功")
+        [msg_cmd](std::unique_ptr<BroadcastRoomRsp> && response, std::unique_ptr<rpc::RpcControllerImpl> && controller) {
+            YLOG_INFO("[CenterRpcServiceImpl::BroadcastRoom] {}广播成功", g_cmd_to_name[msg_cmd])
         });
 }
 

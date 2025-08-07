@@ -137,14 +137,6 @@ include_directories(
 
 
 set(COMMON_SOURCES
-        game/rpc_clients/GateRpcClient.cpp
-        game/rpc_clients/GateRpcClient.h
-        game/gate/GateRpcServiceImpl.cpp
-        game/gate/GateRpcServiceImpl.h
-        game/gate/ForwardManager.cpp
-        game/gate/ForwardManager.h
-        base/net/UnorderedMapInLoop.hpp
-
 )
 # 调用子目录下的cmake
 add_subdirectory(base)

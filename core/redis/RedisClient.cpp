@@ -104,4 +104,10 @@ bool RedisClient::Del(const std::string& key)
     const auto conn = pool_->Acquire();
     return conn->conn.del(key) > 0;
 }
+
+bool RedisClient::HDel(const std::string& key, const std::string& field)
+{
+    const auto conn = pool_->Acquire();
+    return conn->conn.hdel(key, field) > 0;
+}
 }

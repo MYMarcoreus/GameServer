@@ -30,7 +30,9 @@ public:
                 google::protobuf::Message* response,
                 google::protobuf::Closure* done) override;
 
+    ///@brief 阻塞连接
     bool Connect(const net::IPAddressPtr& server_addr = nullptr);
+
     void Disconnect();
 
 

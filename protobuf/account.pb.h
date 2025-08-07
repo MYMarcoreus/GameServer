@@ -79,7 +79,8 @@ enum LoginRsp_Status : int {
   LoginRsp_Status_eSuccess = 0,
   LoginRsp_Status_eAccountNotExist = 1,
   LoginRsp_Status_ePasswordError = 2,
-  LoginRsp_Status_eUnknownError = 3,
+  LoginRsp_Status_eAlreadyLoggedIn = 3,
+  LoginRsp_Status_eUnknownError = 4,
   LoginRsp_Status_LoginRsp_Status_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
   LoginRsp_Status_LoginRsp_Status_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
 };
@@ -424,6 +425,8 @@ class LoginRsp final :
     LoginRsp_Status_eAccountNotExist;
   static constexpr Status ePasswordError =
     LoginRsp_Status_ePasswordError;
+  static constexpr Status eAlreadyLoggedIn =
+    LoginRsp_Status_eAlreadyLoggedIn;
   static constexpr Status eUnknownError =
     LoginRsp_Status_eUnknownError;
   static inline bool Status_IsValid(int value) {

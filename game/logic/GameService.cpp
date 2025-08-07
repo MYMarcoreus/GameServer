@@ -98,9 +98,10 @@ void GameService::DeleteRoom(google::protobuf::RpcController* controller, const 
         [response, done] (const bool is_removed) {
             // 填写响应
             response->set_success(is_removed);
+            YLOG_INFO("执行完毕 GameService::DeleteRoom 服务: {}", response->ShortDebugString())
+
             // 发送响应
             done->Run();
-            YLOG_INFO("执行完毕 GameService::DeleteRoom 服务: {}", response->ShortDebugString())
         });
 }
 
@@ -157,16 +158,22 @@ void GameService::OnSceneLoginReq(const UserConnectionPtr& conn, const Ptr<Scene
 
     // 加入房间（异步）
     const ROOM_ID_t room_id = req->room_id();
-    m_roomManager->FindRoomByRoomID(room_id, [this, conn, uid, room_id](const RoomPtr& room) {
-        if (room) {
-            m_roomManager->AddPlayerToRoom(room_id, uid, conn,
-                [uid](const RoomPtr& _room) {
-                    YLOG_INFO("UID {} 登录成功，加入房间 {}:{}", uid, _room->get_name(), _room->get_id());
-                });
-        } else {
-            YLOG_ERROR("找不到房间 room_id = {}", room_id);
-        }
-    });
+    auto redis_account_data = m_redisDAO.GetAccountData(uid);
+    if (not redis_account_data.has_value()) {
+        YLOG_ERROR("获取redis账号数据失败");
+        return;
+    }
+    AccountBaseData account_data;
+    account_data.set_uid(redis_account_data->uid);
+    account_data.set_username(redis_account_data->username);
+    m_roomManager->AddPlayerToRoom(room_id, std::move(account_data), conn,
+        [uid](const RoomPtr& room) {
+           if (room) {
+               YLOG_INFO("[GameService::OnSceneLoginReq] UID {} 验证成功，成功加入房间 {}:{}", uid, room->get_name(), room->get_id());
+           } else {
+               YLOG_INFO("[GameService::OnSceneLoginReq] UID {} 验证成功，但房间不存在", uid);
+           }
+        });
 }
 
 

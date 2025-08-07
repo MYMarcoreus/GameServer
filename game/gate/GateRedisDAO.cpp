@@ -13,14 +13,28 @@ void GateRedisDAO::Start(net::EventLoop* loop)
     redis_client_.Start(loop, 5);
 }
 
+auto GateRedisDAO::SetAccountData(const uint64_t uid, const std::string& username) -> bool
+{
+    const std::string uid_str = std::to_string(uid);
+    const auto key = std::format("{}_{}", ACT_field, uid_str);
+    return redis_client_.HSet(key, USR_field, username);
+}
+
 auto GateRedisDAO::GetToken(const uint64_t uid) const -> std::optional<std::string>
 {
     const auto uid_str = std::to_string(uid);
     const auto key = std::format("{}_{}", USR_TKN_field, uid_str);
-    return redis_client_.HGet(key, USR_TKN_field);
+    return redis_client_.Get(key);
 }
 
-auto GateRedisDAO::SetTokenExprieTime(uint64_t uid, std::chrono::seconds) -> bool
+auto GateRedisDAO::DelToken(const uint64_t uid) const -> bool
+{
+    const auto uid_str = std::to_string(uid);
+    const auto key = std::format("{}_{}", USR_TKN_field, uid_str);
+    return redis_client_.Del(key);
+}
+
+auto GateRedisDAO::SetTokenExprieTime(const uint64_t uid, std::chrono::seconds) -> bool
 {
     const auto uid_str = std::to_string(uid);
     const auto key = std::format("{}_{}", USR_TKN_field, uid_str);

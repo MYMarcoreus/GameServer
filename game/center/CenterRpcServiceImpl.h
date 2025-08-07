@@ -45,6 +45,7 @@ private:
 
     void Update();
     void BroadcastRoom(ROOM_ID_t room_id, core::UID_t from_uid, protocol::MessageCommand msg_cmd, std::string && msg_str);
+    void BroadcastRoom(const RoomInfo& room, core::UID_t from_uid, protocol::MessageCommand msg_cmd, std::string && msg_str);
     static auto GenerateSceneToken() -> std::string;
     static auto GenerateRoomId() -> uint64_t;
 

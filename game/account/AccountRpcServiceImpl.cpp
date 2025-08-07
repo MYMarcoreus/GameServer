@@ -55,12 +55,24 @@ void AccountRpcServiceImpl::Login(google::protobuf::RpcController* controller,
     // 构造响应
     response->set_result_code(login_status);
     if (login_status == LoginRsp_Status_eSuccess) {
+        const UID_t uid = account_data->uid;
+
+        // 检查重复登录
+        const auto existing_token = redis_dao_.GetToken(uid);
+        if (existing_token.has_value()) {
+            // 此处根据业务选择踢出旧登录 或 拒绝新登录
+            login_status = LoginRsp_Status_eAlreadyLoggedIn;
+            response->set_result_code(login_status);
+            done->Run();
+            return;
+        }
+
         // 生成token并保存至redis
         auto token = GenerateToken();
-        redis_dao_.SetToken(account_data->uid, token);
+        redis_dao_.SetToken(uid, token);
         response->set_token(token);
 
-        response->mutable_account_data()->set_uid(account_data->uid);
+        response->mutable_account_data()->set_uid(uid);
         response->mutable_account_data()->set_username(username);
     }
 

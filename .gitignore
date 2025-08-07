@@ -1,5 +1,12 @@
-/cmake-build-debug
-/cmake-build-release
+/cmake-build-debug-linux
+/cmake-build-debug-linux-remote
+/cmake-build-debug-mingw
+/cmake-build-debug-msvc
+/cmake-build-release-linux
+/cmake-build-release-linux-remote
+/cmake-build-release-mingw
+/cmake-build-release-msvc
+/.idea
 .clang-tidy
 /.VSCodeCounter
 /out-of-date

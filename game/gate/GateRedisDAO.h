@@ -22,7 +22,9 @@ public:
     explicit GateRedisDAO();
     void Start(net::EventLoop* loop);
 
+    auto SetAccountData(uint64_t uid, const std::string& username) -> bool;
     auto GetToken(uint64_t uid) const -> std::optional<std::string>;
+    auto DelToken(uint64_t uid) const -> bool;
     auto SetTokenExprieTime(uint64_t uid, std::chrono::seconds) -> bool;
     auto GetTokenAndRefreshEx(uint64_t uid) const -> std::optional<std::string>;
 

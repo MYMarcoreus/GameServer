@@ -26,7 +26,6 @@ RpcServer::RpcServer(net::EventLoop* accpetorLoop, const net::IPAddressPtr& list
         config::g_app_config->GetValue().app_xor_code())
     ),
     codec_(std::make_unique<RpcCodec>([this](const net::TcpConnectionPtr & conn, const RpcMessagePtr & msg) { this->OnRpcRequest(conn, msg); })),
-    listenAddr_(listenAddr),
     zkServiceManager_{std::make_unique<zk::ZkServiceClient>()}
 {
     server_->SetMessageCallback(
@@ -59,15 +58,17 @@ void RpcServer::Start(const int ioThreadNum, const net::Milliseconds ioWaitTimeo
         std::cerr << "[RPC Server] No services were provided." << std::endl;
         std::terminate();
     }
-    const auto & ip = listenAddr_->GetIPStr();
-    const auto & port = listenAddr_->GetPortStr();
+
+    server_->Start(ioThreadNum, ioWaitTimeout, cb);
+    const auto listenAddr = server_->GetListenAddr();
+
+    const auto & ip = listenAddr->GetIPStr();
+    const auto & port = listenAddr->GetPortStr();
     //! 启动时注册zookeeper服务
     for (auto & [service_name, service] : services_)
     {
         zkServiceManager_->Register(service_name, ip, port);
     }
-
-    server_->Start(ioThreadNum, ioWaitTimeout, cb);
 }
 
 void RpcServer::Stop()
@@ -76,11 +77,11 @@ void RpcServer::Stop()
 }
 
 
-void RpcServer::OnRpcRequest(const net::TcpConnectionPtr& conn, const RpcMessagePtr & msg)
+void RpcServer::OnRpcRequest(const net::TcpConnectionPtr& conn, const RpcMessagePtr & req)
 {
-    const std::string & service_name = msg->service();
-    const std::string & method_name = msg->method();
-    auto id = msg->id();
+    const std::string & service_name = req->service();
+    const std::string & method_name = req->method();
+    auto rsp_id = req->id();
 
     RpcMessage::Status errcode = RpcMessage::NO_ERROR;
 
@@ -89,7 +90,7 @@ void RpcServer::OnRpcRequest(const net::TcpConnectionPtr& conn, const RpcMessage
         errcode = RpcMessage::NO_SERVICE;
         RpcMessage message;
         message.set_type(RpcMessage::RESPONSE);
-        message.set_id(id);
+        message.set_id(rsp_id);
         message.set_error(errcode);
         codec_->SendTCP(conn, message);
         YLOG_WARN("RPC Server：收到Rpc的服务请求，但是Server未注册该服务<{}>", service_name)
@@ -103,7 +104,7 @@ void RpcServer::OnRpcRequest(const net::TcpConnectionPtr& conn, const RpcMessage
         errcode = RpcMessage::NO_METHOD;
         RpcMessage message;
         message.set_type(RpcMessage::RESPONSE);
-        message.set_id(id);
+        message.set_id(rsp_id);
         message.set_error(errcode);
         codec_->SendTCP(conn, message);
         YLOG_WARN("RPC Server：Server已注册服务<{}>，但是查找不到其下的方法<{}>", service_name, method_name)
@@ -112,8 +113,8 @@ void RpcServer::OnRpcRequest(const net::TcpConnectionPtr& conn, const RpcMessage
 
     //! 读取请求消息
     const std::unique_ptr<google::protobuf::Message> request{service.GetRequestPrototype(method).New()}; //! 函数结束后自动析构（如果实现的Rpc方法是异步的且需要用到请求消息，则需要拷贝请求消息）
-    if (msg->has_request()) {
-        if (request->ParseFromString(msg->request()) == false) {
+    if (req->has_request()) {
+        if (request->ParseFromString(req->request()) == false) {
             errcode = RpcMessage::INVALID_REQUEST;
             YLOG_WARN("RPC Server：request parse error")
         }
@@ -129,7 +130,7 @@ void RpcServer::OnRpcRequest(const net::TcpConnectionPtr& conn, const RpcMessage
             // 给下面的method方法的调用，绑定一个Closure的回调函数
             google::protobuf::Closure* done = google::protobuf::NewCallback
                 <RpcServer, net::TcpConnectionPtr, std::pair<google::protobuf::Message*, int64_t>> //!FIXED_BUG：这是异步回调函数,TcpConnectionPtr需要增加一个引用计数，
-                (this, &RpcServer::SendRpcResponse, conn, {response, id});
+                (this, &RpcServer::SendRpcResponse, conn, {response, rsp_id});
 
             // 在框架上根据远端rpc请求，调用当前rpc节点上发布的方法
             service.CallMethod(method, nullptr, request.get(), response, done);
@@ -138,7 +139,7 @@ void RpcServer::OnRpcRequest(const net::TcpConnectionPtr& conn, const RpcMessage
         default: {
             RpcMessage message;
             message.set_type(RpcMessage::RESPONSE);
-            message.set_id(id);
+            message.set_id(rsp_id);
             message.set_error(errcode);
             codec_->SendTCP(conn, message);
             break;

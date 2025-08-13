@@ -1,25 +1,29 @@
-## cmake选项
+#### 项目组织结构
 
-1. 添加vcpkg路径：类似`-DCMAKE_TOOLCHAIN_FILE=C:\Users\yy572\.vcpkg-clion\vcpkg\scripts\buildsystems\vcpkg.cmake`
+- `/base`（基础网络层）：
 
-   - CLion安装vcpkg时会让你选择是否添加该选项
+  - `/util`：实现了阻塞队列、线性缓冲区、环形缓冲区、基于阻塞队列的线程池、对象池、可继承的单例类等通用数据结构；
+  - `/public`：包含了md5编解码和`tinyxml2`解析的具体代码；
+  - `/config`：实现了强类型配置反序列化框架，利用SFINAE与模板特化支持任意类型的序列化/反序列化；
+  - `/log`：实现了基于C++20`std::format`的异步双缓冲日志库，支持多级别日志及自定义格式与输出目标；
+  - `/net`：基于主从Reactor模型，实现了高效的事件驱动型网络框架。框架支持TCP和UDP通信，提供连接管理及消息收发功能，并通过回调机制为上层的提供接口。
 
-     <img src="./images/image-20250524164103208.png" alt="image-20250524164103208" style="zoom: 67%;" /> 
+- `/core`（核心基础设施层）：实现了不依赖具体业务的通用组件
 
-   - 后续添加只需手动复制即可
+  - `/zk`：基于ZooKeeper C API，封装了服务注册与发现客户端，支持服务实例的动态注册与监听和本地缓存
 
-     <img src="./images/image-20250524164414397.png" alt="image-20250524164414397" style="zoom:50%;" />
+  - `/redis`：基于redis++库，提供带连接池的单例Redis客户端，支持自动心跳和重连，封装常用的redis操作。
 
-2. Mingw额外选项：vcpkg默认下载的软件包是MSVC的版本，对于mingw应使用该选项进行切换：`-DVCPKG_TARGET_TRIPLET=x64-mingw-static`
+    `/mysql`：基于MySQL Connector/C++ X DevAPI，提供带连接池的单例MySQL客户端，支持自动心跳和重连。
 
-   <img src="./images/image-20250524164641049.png" alt="image-20250524164641049" style="zoom:50%;" />
+  - `/rpc`：实现了基于异步通信的RPC框架，采用Protobuf自定义消息格式，利用线程池高效处理请求与响应，并集成ZooKeeper实现动态服务管理与负载均衡。
 
-## 无需`EPOLLONESHOT`
+  - `/frontend`：支持TCP和UDP通信的事件驱动型服务器，采用Protobuf自定义协议。实现连接管理、消息编解码、异或加密、安全认证、UDP端口注册、消息分发及心跳检测等功能。
 
-> - 含义：`EPOLLONESHOT` 是 `epoll` 的一个事件选项，表示**某个文件描述符上的事件只会触发一次**。事件被触发后，`epoll` 会自动将其从监听队列中禁用，**必须手动通过 `epoll_ctl(..., EPOLL_CTL_MOD, ...)` 重新激活**，才能再次监听该 fd 的事件。
->
-> - 作用：**对于`one-loop multi-thread`模型，防止多个线程同时处理同一个socket所带来的数据竞争**。
+- `/game`（业务服务层）：实现了具体的后端业务
 
-
-
-本框架采用的是 **“one-loop per-thread”** 模型，每个TCP连接的套接字只在所属的 `EventLoop`（即一个IO线程）中处理事件，即一个连接只会被一个IO线程处理，处理完之后传递给上层的工作线程 ———— 然后继续处理该连接的IO事件....。**天然避免了多个线程同时操作同一个连接的问题**。
+  - `gate`：网关服务器核心模块，集成事件驱动型服务器和异步RPC框架，实现游戏客户端与后端服务的异步消息转发和用户广播功能。结合Redis实现基于Token的消息过滤机制，并支持完善的连接管理与断线通告。
+  - `account`：账号服务器，负责账号的注册与登录，利用`stduuid`库随机生成登录token并保存至redis，并通过查找redis的用户token防止重复登录；
+  - `center`：中心服务器，负责房间的管理和逻辑服的负载均衡；
+  - `logic`：游戏逻辑服务器，负责房间内玩家的同步；
+  - `rpc_clients`：以上4个服务器用于发起对任意一方的RPC请求的客户端。

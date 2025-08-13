@@ -2,18 +2,16 @@
 #include "log.h"
 #include "EventLoop.h"
 #include "GateServer.h"
-#include "room.pb.h"
 #include "future"
 #include "IPAddress.h"
 #include "AccountRpcClient.h"
-#include "ThreadPool.h"
 #include "RpcControllerImpl.h"
 #include "GateRedisDAO.h"
 
 #include <functional>
 
 #include "ForwardManager.h"
-#include "GateRpcServiceImpl.h"
+#include "GateServiceRpc_Impl.h"
 #include "RpcServer.h"
 
 using namespace std::chrono_literals;
@@ -101,7 +99,7 @@ void GateServerManager::RunApp()
     /*********** 初始化后端 ***********/
     IPAddressPtr listenAddr_backend = std::make_shared<IPv4Address>(config::g_app_config->GetValue().rpc_port());
     m_backend = std::make_unique<rpc::RpcServer>(m_accpetorLoop.get(), listenAddr_backend);
-    m_backend->RegisterService<GateRpcServiceImpl>(m_accpetorLoop.get(), *m_forwarder);
+    m_backend->RegisterService<GateServiceRpc_Impl>(m_accpetorLoop.get(), *m_forwarder);
 
     //! 启动服务器
     m_backend->Start(2, 500ms);

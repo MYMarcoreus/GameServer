@@ -16,7 +16,7 @@ public:
 
     void Start(const std::string & service_root);
 
-    // 注册服务（服务名 + 实例地址）
+    ///@brief 注册服务（服务名 + 实例地址ip:port）
     bool Register(const std::string& service_name, const std::string& ip, const std::string& port);
 
     // 注销服务
@@ -29,6 +29,9 @@ public:
     auto FetchAllRemote() -> std::unordered_map<std::string, std::vector<net::IPAddressPtr>>;
     size_t EndpointSize(const std::string& service_name);
 
+    ///@param service_name 监听的服务名
+    ///@param trigger_now 监听后是否立刻触发一次监听回调
+    ///@param watcher_cb 监听回调
     void Watch(const std::string& service_name, bool trigger_now, WatcherCallback watcher_cb);
 
 private:
@@ -36,9 +39,9 @@ private:
 
 private:
     std::unique_ptr<ZkClient> zk_client_;
-    std::string     service_root_;
+    std::string service_root_;
     std::unordered_map<std::string, std::vector<net::IPAddressPtr>> service_endpoint_map_; // 服务地址本地缓存
-    util::RWMutex                                                   service_endpoint_mutex_;
+    util::RWMutex service_endpoint_mutex_;
 };
 
 }

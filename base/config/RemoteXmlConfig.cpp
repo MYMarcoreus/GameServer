@@ -8,7 +8,7 @@ template<>
 class XmlElementTo<RemoteXmlConfig::RemoteNode>
 {
 public:
-    RemoteXmlConfig::RemoteNode operator() (const XMLElement * xml_remote_node) const
+    RemoteXmlConfig::RemoteNode operator() (const tinyxml2::XMLElement * xml_remote_node) const
     {
         return {
             XmlAttributeTo<std::string>(xml_remote_node->FindAttribute( "username")),
@@ -27,7 +27,7 @@ public:
  class XmlElementTo<RemoteXmlConfig>
  {
  public:
-     RemoteXmlConfig operator()(const XMLElement *xml_remote) const
+     RemoteXmlConfig operator()(const tinyxml2::XMLElement *xml_remote) const
      {
          RemoteXmlConfig remoteXmlConfig;
 

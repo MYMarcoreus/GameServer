@@ -102,27 +102,29 @@ bool RoomInfo::FindPlayer(const UID_t uid, AccountBaseData& out_player) const
 RoomInfoPtr RoomInfoController::AddRoom(const RoomDetailData& room_data, LogicServerInfoPtr server_info, const AccountBaseData& owner_data)
 {
     const auto room_data_ptr = std::make_shared<RoomDetailData>(room_data);
-    auto room_info = std::make_shared<RoomInfo>(room_data_ptr, server_info);
-    {
-        util::WriteLockGuard lg(mutex_);
-        uid_to_roomid_.emplace(room_data_ptr->owner_uid(), room_data_ptr->room_id());
-        rooms_.emplace(room_data_ptr->room_id(), room_info);
+    // 创建房间
+    RoomInfoPtr room_info = std::make_shared<RoomInfo>(room_data_ptr, server_info);
+    if (not room_info) {
+        return nullptr;
     }
-    //! 中央服务器添加玩家
+    // 房间加入创建者
     const auto is_added = room_info->AddPlayer(owner_data);
     if (not is_added) {
-        DelRoomIfEmpty(room_info->get_room_id());
+        return nullptr;
     }
-
+    // 将房间加入房间列表
+    util::WriteLockGuard lg(mutex_);
+    uid_to_roomid_.emplace(room_data_ptr->owner_uid(), room_data_ptr->room_id());
+    rooms_.emplace(room_data_ptr->room_id(), room_info);
     return room_info;
 }
 
 bool RoomInfoController::DelRoomIfEmpty(const ROOM_ID_t room_id)
 {
-    const auto room = FindRoomByRoomID(room_id);
-    if (!room) return false;
+    const auto room_info = FindRoomByRoomID(room_id);
+    if (!room_info) return false;
 
-    const auto room_data = room->get_room_data();
+    const auto room_data = room_info->get_room_data();
     if (!room_data or !room_data->exist_player_datas().empty()) {
         return false;
     }

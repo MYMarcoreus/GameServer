@@ -16,10 +16,10 @@ namespace yy::app::center
 {
 class CenterRedisDAO;
 
-class CenterRpcServiceImpl final : public protocol::app::CenterRoomServiceRpc {
+class CenterServiceRpc_Impl final : public protocol::app::CenterRoomServiceRpc {
 
 public:
-    explicit CenterRpcServiceImpl(net::EventLoop * base_loop);
+    explicit CenterServiceRpc_Impl(net::EventLoop * base_loop);
 
     void CreateRoom(google::protobuf::RpcController* controller, const protocol::app::CreateRoomReq* request,
                     protocol::app::CreateRoomRsp* response, google::protobuf::Closure* done) override;
@@ -49,7 +49,6 @@ private:
     static auto GenerateSceneToken() -> std::string;
     static auto GenerateRoomId() -> uint64_t;
 
-    core::rpc::RpcServer&                               rpc_server_;
     core::mysql::MySqlClient&                           mysql_pool_;
     std::unique_ptr<LogicServerController>              logic_controller_;
     CenterRedisDAO&                                     redis_dao_;

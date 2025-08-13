@@ -6,7 +6,7 @@ namespace yy::net {
 using namespace yy::util;
 
 
-Timer::Timer(TimerID id, F_TaskCallback timerCallback, const Timestamp expiredTime, const Microseconds interval)
+Timer::Timer(const TimerID id, F_TaskCallback timerCallback, const Timestamp expiredTime, const Microseconds interval)
         : m_Interval(interval),
           m_Callback(std::move(timerCallback)),
           m_IsRepeat(interval.count() > 0),

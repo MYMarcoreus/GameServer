@@ -14,7 +14,7 @@ namespace yy::app::logic
 {
 RoomManager::RoomManager(EventLoop * base_loop): base_loop_(base_loop)
 {
-    work_threads = std::make_unique<EventLoopThreadPool>(base_loop);
+    work_threads = std::make_unique<EventLoopThreadPool>(base_loop_);
     work_threads->Start(config::g_app_config->GetValue().work_thread_num(), 500ms); //! 启动服务器的工作线程：即时处理
 }
 
@@ -25,10 +25,10 @@ void RoomManager::AddRoom(RoomDetailData room_data, std::function<void(RoomPtr)>
 
     base_loop_->RunCallbackInLoop([this, room_data = std::move(room_data), done = std::move(done)] {
         // 初始化房间对象，分配房间对应的线程，开启Update
-         auto room = std::make_shared<Room>(work_threads->GetNextLoop(), room_data);
-         room->Init(ROOM_TICK);
+        auto room = std::make_shared<Room>(work_threads->GetNextLoop(), room_data);
+        room->Init(ROOM_TICK);
 
-         // 加入房间列表
+        // 加入房间列表
         rooms_.emplace(room->get_id(), room);
         // uid_to_roomid_.emplace(room->get_owner_uid(), room->get_id());
         uid_to_roomid_[room->get_owner_uid()] = room->get_id();

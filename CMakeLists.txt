@@ -121,10 +121,10 @@ include_directories(
         base/log
         base/net
         core
-        core/codec
+        core/frontend
         core/redis
         core/mysql
-        core/zookeeper
+        core/zk
         core/rpc
         protobuf
         game

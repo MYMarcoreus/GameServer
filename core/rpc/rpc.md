@@ -1,56 +1,72 @@
+# Rpc框架
+
+## UML类图
+
+![](//www.plantuml.com/plantuml/png/ZLPRJzn657xthvW-9Q7TbTg-hP0LH9keKb0Zw5CLQMMy0rYrFOuzcugsaO0GkYJB1JL5rKA1ROX0hSf5g5nsIVRFUEpbYR_GOy-mjjTswPlddE-S-Svbpl5zXoeshHgwz16TmWP6b4nBqXt4jbj-SyPRViTMtagQIR4zeQWOZLhgy9HYcbX7WuCziIoZ7oM4FaR3YgwFO3f5AdVlISzZTcFOVgQf-5QZKF0Gqo-mezgQHOaToKRnqofsw6ERK4AdBNpt7a8bvB_PTrlBhBR1sgtkuPbtFEUTrhpPmyZAiOZfuBXPqehziiHQRuJLyo3u43jUdG3OjbTRzHlptkOIUzNqZzlNbpL_j-L-U7rzkIYfkk8uQ4XLITMa8aJ8a8Zh4PdKJ45_54zg3WGUfYNFhZn6g-EXSG6fFClbKYpb0v-Wxj4BeCvUdaP9yzOll9DVsShQrSmiJq3yzXBYcl38rGb24U964WC94fpq7UGr5xojKs_dd7LUG2fu624_0Z2LQiGKx7L2BA3-vJDiqaVmFS1Z0XX8lr6joE0njOMkWbLGLaqDgbosg3qOEWQf70AeQfLLNGE7ILJWBHJBsSqahXAdhqtmUjCIFAvu5DGckexjhmnB5v5GpS2a2dT2CcnYabB9q7HTSp04Kt52oFUAHiiJn2xRMAbC0tAS43tKJ2YQZYiWKIWnD7KmK72Q3gPbuLemqvnoqf6GZs7w87JJnvO7FIYw9-WSML2su9PK9WD0BEi0IPX6oHl51g5uo9asrVAeObQ8mOcab0_idceic24PhTsZ6J93o5-yOFNrY7ps2v313tSp321iz_3PJWI842FNpqE5ujkuX9Z_S18-AFKMBXoJxKMuITKYguGssF7NadnU_1qvW4mKEE4Ye-i3URmy-VsGtKfy-dLVpVbp5snr2R7QqOsiimKx0WKJyhSTTZGVMltmdN0refZA9BR1mxSt8fue66ITZMwppft0_F6NZqAcG-hJgcRZNkULaDjUPhiDz_nFRsNL_R31BU0-piOz__kgiU9jjhhBPsnbtJsV0IGd5VV7czMXjcPE8bCnC3Zc5bxzPtRGw0lGtpk26uIRT8EB3490s1Q9Si93QZ9nZFp_9fp3C-Jq4WvC8DFY-s0BSWHJDqfrDC_uOkmD3BEI67A9UI_AS5FiODB9uKRqJlRPGZr-MIBQ4UmuK4i85mvYLqPw4GTektjl_PtPE2RyctXvuf-q8T7knQAKi_SA1JdPxC6QFcZwgmkmXTdQUxQsxsrkvrl_9AEKBd3HtlCMEsapRY7EafIucUkYnIkbjWD79CIIbFci42eM0OfIoY3dnpimFdYGQMj42WMK4oxOrcUzpKK73b0j-1zvOhhjTzbezxm5W8mB1k22LChRysor1bMB1gQ0fMEBu7TG10yAcKzxl-dztk5pyucPkm6ar0RX2UyTIsBsIdqx0kK2aqi0vGEJWpuN9aKp8BDGcMygkqgyGE5BuM3-c-VzC-lllvPCGZ6Yn49a8k8X8SGE_l1gP_vVXt7qzMK3L9yM8sIfrBUvGVzPCLtGKeclYQBuSxo-h7F7lN_HWjptT_LviQzzsEvyy5xVh_djpQkPXjjfIZ2DK121T1--geR-Bm00)
+
+## 一次RPC调用的具体流程，以AccountServiceRpc为例
+
 ```protobuf
 syntax = "proto3";
 package yy.protocol.app;
-
-// 重要，开启该选项才会生成service代码
 option cc_generic_services = true;
+import "account_data.proto";
 
 message LoginReq {
-    uint64 session_id = 1;
-
-    string account_name = 3;
+    string username = 3;
     string password = 4;
 }
-
 message LoginRsp {
-    uint64 session_id = 1;
-
     enum Status {
         eSuccess = 0;
-        eAccountNoExist = 1;
+        eAccountNotExist = 1;
         ePasswordError = 2;
+        eAlreadyLoggedIn = 3;
+        eUnknownError = 4;
+    }
+    Status result_code = 1;
+    AccountBaseData account_data = 2;
+    string token = 3;
+}
+
+message RegisterReq {
+    string username = 3;
+    string password = 4;
+}
+message RegisterRsp {
+    enum Status {
+        eSuccess = 0;
+        eAccountAlreadyExist = 2;
         eUnknownError = 3;
     }
     Status result_code = 2;
-    optional uint64 logic_server_id = 3;
-    optional uint64 account_id = 4;
-    optional string account_name = 5;
+    uint64 uid = 4;
 }
-
 
 service AccountServiceRpc
 {
     rpc Login(LoginReq) returns(LoginRsp);
+    rpc Register(RegisterReq) returns(RegisterRsp);
 }
 ```
 
-
+### RPC调用流程
 
 ```mermaid
 sequenceDiagram
     participant C as MyRpcClient
-    participant AcntSvc_Stub as AccountServiceRpc_Stub(继承自AccountServiceRpc)
+    participant AcntSvc_Stub as AccountServiceRpc_Stub
     participant CC as RpcChannel
     participant TCPC as TcpConnection
     participant S as RpcServer
-	participant AcntSvc as LoginService(继承自AccountServiceRpc)
+	participant AcntSvc as AccountServiceRpc_Impl
 	
     activate C
-	C->>AcntSvc_Stub: Login(nullptr, request, response, done:LoginFinished )
-    AcntSvc_Stub->>CC: CallMethod(service, method, request, response, done)
+	C->>AcntSvc_Stub: Login(请求, 响应, 响应回调:LoginFinished )
+    AcntSvc_Stub->>CC: CallMethod(服务, 方法, 请求, 响应, 响应回调)
     activate CC
-    Note right of CC: 生成唯一ID
-    CC->>CC: 创建PendingCallContext<br/>(response, done, controller)
+    Note right of CC: 生成请求消息并赋予其RPC请求消息id
+    CC->>CC: 创建PendingCallContext<br/>(响应, 响应回调, controller)
     CC->>TCPC: codec_.SendTCP(RpcMessage.REQUEST)
     deactivate CC
 
@@ -58,12 +74,13 @@ sequenceDiagram
     deactivate C
     
     activate S
-    S->>S: OnRpcRequest(conn, msg)
+    S->>S: OnRpcRequest(conn, RPC请求消息)
     alt 服务存在且方法有效
-        S->>AcntSvc: service.CallMethod(method, request, response, closure)
+        S->>AcntSvc: service.CallMethod(方法, 请求, 响应, closure)
         activate AcntSvc
         AcntSvc->>AcntSvc: Login()
         AcntSvc-->>S: 服务处理完成，调用Closure回调SendRpcResponse
+        S->>TCPC: SendRpcResponse(conn, 响应, RPC请求消息id)
         deactivate AcntSvc
     else 服务不存在
         S->>TCPC: 发送NO_SERVICE响应
@@ -72,84 +89,15 @@ sequenceDiagram
     end
     deactivate S
 
-    S->>TCPC: SendRpcResponse(conn, response, id)
-    activate S
-    S->>TCPC: 发送RpcMessage.RESPONSE
-    S->>TCPC: conn->Shutdown()
-    deactivate S
-
     TCPC-->>CC: 网络传输RESPONSE
     activate CC
     CC->>CC: OnRpcResponse(conn, msg)
     CC->>CC: 查找匹配的PendingCallContext
     CC->>+CC: response->ParseFromString()
     CC->>CC: done->Run()
-    CC->>C: LoginFinished(response)
+    CC->>C: 响应回调LoginFinished(响应)
     deactivate CC
 ```
 
 
-
-
-
-
-
-```mermaid
-classDiagram
-    class Service {
-        <<interface>>
-        +GetDescriptor() 
-        +CallMethod() 接口: 服务端调用
-        +GetRequestPrototype()  用于创建请求消息
-        +GetResponsePrototype() 用于创建响应消息
-    }
-
-    class AccountServiceRpc {
-        +Login()    默认实现
-        +Register() 默认实现
-        +CallMethod()    重写 
-        +GetDescriptor() 重写
-    }
-    class LoginService {
-        +Login() 重写
-        +CallMethod() 继承：根据Method调用具体的处理函数
-    }
-    class RegisterService {
-        +Register() 重写
-        +CallMethod() 继承：根据Method调用具体的处理函数
-    }    
-
-    class AccountServiceRpc_Stub {
-        +Login()    继承：被客户端调用
-        +Register() 继承：被客户端调用
-        -channel_: RpcChannel指针
-    }
-
-    class RpcChannel {
-        <<interface>>
-        +CallMethod() 接口
-    }
-    
-    class MyRpcChannel {
-        +CallMethod() 重写：向服务端发送调用请求
-    }
-
-    class RpcServer {
-        -services_: 服务名和服务对象的映射表
-        +RegisterService() void
-        +OnRpcRequest() void
-        +SendRpcResponse() void
-    }
-    
-    
-
-
-    Service <|.. AccountServiceRpc
-    RpcChannel        <|.. MyRpcChannel
-    AccountServiceRpc <|.. AccountServiceRpc_Stub
-    AccountServiceRpc <|.. LoginService
-    AccountServiceRpc <|.. RegisterService
-	AccountServiceRpc_Stub --> RpcChannel: 调用RpcChannel的CallMethod(具体要调用的Method指针)
-    RpcServer *-- Service: 注册
-```
 

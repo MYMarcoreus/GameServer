@@ -6,7 +6,6 @@
 #include "GateRedisDAO.h"
 #include "ProtobufDispatcher.h"
 #include "RpcStubConnectionPool.hpp"
-#include "UserConnection.h"
 
 
 namespace yy::app::gate
@@ -35,9 +34,9 @@ private:
     GateServerManager();
     ~GateServerManager() override;
 
-    void OnFrontend_Secutiry(const core::UserConnectionPtr& userconn) ;
-    void OnFrontend_Disconnect(const core::UserConnectionPtr& userconn) ;
-    void OnFrontend_Message(const core::UserConnectionPtr & userconn, const core::MessagePtr & message, core::MessageNetType type);
+    void OnFrontend_Secutiry(const UserConnectionPtr& userconn) ;
+    void OnFrontend_Disconnect(const UserConnectionPtr& userconn) ;
+    void OnFrontend_Message(const UserConnectionPtr & userconn, const MessagePtr & message, core::MessageNetType type);
 
 private:
     std::unique_ptr<net::EventLoop>         m_accpetorLoop;

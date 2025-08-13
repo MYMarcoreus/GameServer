@@ -57,6 +57,7 @@ ForwardManager::ForwardManager(EventLoop * base_loop):
         },
         nullptr);
 
+    // 注册本地处理的消息，不转发
     RegisterHandler(this, this->m_dispatcher  , &ForwardManager::OnFrontend_QuitLoginReq);
 
 }

@@ -7,7 +7,7 @@ template<>
 class XmlElementTo<LogXmlConfig::Logger::Appender>
 {
 public:
-    LogXmlConfig::Logger::Appender operator()(const XMLElement * xml_appender)
+    LogXmlConfig::Logger::Appender operator()(const tinyxml2::XMLElement * xml_appender)
     {
         // 读取appender元素的属性type、logformat、filepath(如果type是file)
         auto type = XmlAttributeTo<std::string>(xml_appender->FindAttribute("type"));
@@ -42,7 +42,7 @@ template<>
 class XmlElementTo<LogXmlConfig::Logger>
 {
 public:
-    LogXmlConfig::Logger operator()(const XMLElement * xml_logger)
+    LogXmlConfig::Logger operator()(const tinyxml2::XMLElement * xml_logger)
     {
         return {
                 XmlAttributeTo<std::string>(xml_logger->FindAttribute("m_TypeName")),
@@ -60,7 +60,7 @@ template<>
 class XmlElementTo<LogXmlConfig>
  {
  public:
-     LogXmlConfig operator()(const XMLElement *xml_log)
+     LogXmlConfig operator()(const tinyxml2::XMLElement *xml_log)
      {
         return {
             .m_loggers = XmlElementTo<decltype(LogXmlConfig::m_loggers)>{}(xml_log)
@@ -73,10 +73,10 @@ class XmlElementTo<LogXmlConfig>
 
 LogXmlConfig::Logger::Appender::Type LogXmlConfig::Logger::Appender::StringtoType(std::string type_str)
 {
-    std::transform(type_str.begin(), type_str.end(), type_str.begin(), ::tolower);
+    std::transform(type_str.begin(), type_str.end(), type_str.begin(), tolower);
 
-    if (type_str == "file"  ) return LogXmlConfig::Logger::Appender::Type::FILE;
-    if (type_str == "stdout") return LogXmlConfig::Logger::Appender::Type::STDOUT;
+    if (type_str == "file"  ) return Type::FILE;
+    if (type_str == "stdout") return Type::STDOUT;
     else throw std::invalid_argument(type_str);
 }
 
@@ -98,8 +98,7 @@ LogXmlConfig::Logger::Appender::Type LogXmlConfig::Logger::Appender::StringtoTyp
 如fromXmlElement内的实现所需要的函数或类也要在头文件中有声明，
 但是XmlElementTo<LogXmlConfig>在头文件中并无声明，只在LogXmlConfig中有定义，
 所以若需要声明ConfigVar<LogXmlConfig>类型的变量，只能在LogXmlConfig.cpp中声明！*/
-config::ConfigVar<config::LogXmlConfig>::ptr g_log_config
-        = config::ConfigManager::LookUpOrAdd<config::LogXmlConfig>("root.log", {}, "");
+ConfigVar<LogXmlConfig>::ptr g_log_config = ConfigManager::LookUpOrAdd<LogXmlConfig>("root.log", {}, "");
 
 
 

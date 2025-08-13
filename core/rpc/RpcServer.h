@@ -30,30 +30,30 @@ public:
     /// @brief 结束服务器
     void Stop();
 
-    template <typename ServiceType, typename... Args>
-    requires requires(ServiceType t) {
-        requires std::derived_from<ServiceType, google::protobuf::Service>;
+    template <typename ServiceImpl, typename... Args>
+    requires requires(ServiceImpl t) {
+        requires std::derived_from<ServiceImpl, google::protobuf::Service>;
         requires (!requires {
             { t.channel() } -> std::convertible_to<google::protobuf::RpcChannel*>;
         });
     }
     void RegisterService(Args&&... args);
 
-    template <typename ServiceType>
-    requires requires(ServiceType t) {
-        requires std::derived_from<ServiceType, google::protobuf::Service>;
+    template <typename ServiceImpl>
+    requires requires(ServiceImpl t) {
+        requires std::derived_from<ServiceImpl, google::protobuf::Service>;
         requires (!requires {
             { t.channel() } -> std::convertible_to<google::protobuf::RpcChannel*>;
         });
     }
-    void RegisterService(std::unique_ptr<ServiceType> && service);
+    void RegisterService(std::unique_ptr<ServiceImpl> && service);
 
     auto GetServiceRoot() const -> const std::string& { return service_root_; }
 
     auto GetZkServiceManager() -> zk::ZkServiceClient& { return *zkServiceManager_; }
 
 private:
-    void OnRpcRequest(const net::TcpConnectionPtr& conn, const RpcMessagePtr& msg);
+    void OnRpcRequest(const net::TcpConnectionPtr& conn, const RpcMessagePtr& req);
     void SendRpcResponse(net::TcpConnectionPtr conn, std::pair<google::protobuf::Message*, int64_t> pair_response_id);
 
     ///@return 默认情况下，std::optional<T> 不能保存引用，比如std::optional<google::protobuf::Service&>是不合法❌的
@@ -65,21 +65,20 @@ private:
     std::unique_ptr<net::TcpServer>      server_;
     std::unique_ptr<RpcCodec>            codec_;
     std::unordered_map<std::string, std::unique_ptr<google::protobuf::Service>> services_;
-    net::IPAddressPtr   listenAddr_;
     std::unique_ptr<zk::ZkServiceClient> zkServiceManager_;
 };
 
-template <typename ServiceType, typename... Args>
-requires requires(ServiceType t) {
+template <typename ServiceImpl, typename... Args>
+requires requires(ServiceImpl t) {
     // 必须继承自 protobuf::Service
-    requires std::derived_from<ServiceType, google::protobuf::Service>;
+    requires std::derived_from<ServiceImpl, google::protobuf::Service>;
     requires (!requires {
         { t.channel() } -> std::convertible_to<google::protobuf::RpcChannel*>;
     });
 }
 void RpcServer::RegisterService(Args&&... args)
 {
-    auto service = std::make_unique<ServiceType>(std::forward<Args>(args)...);
+    auto service = std::make_unique<ServiceImpl>(std::forward<Args>(args)...);
     const auto* service_desc = service->GetDescriptor();
     const std::string service_name = service_desc->name();
 
@@ -94,11 +93,11 @@ void RpcServer::RegisterService(Args&&... args)
     YLOG_INFO("[RPC Server] Registered service {} in Local", service_name);
 }
 
-template <typename ServiceType> requires requires (ServiceType t) {
-    requires std::derived_from<ServiceType, google::protobuf::Service>;
+template <typename ServiceImpl> requires requires (ServiceImpl t) {
+    requires std::derived_from<ServiceImpl, google::protobuf::Service>;
     requires (!requires { { t.channel() } -> std::convertible_to<google::protobuf::RpcChannel*>; });
 }
-void RpcServer::RegisterService(std::unique_ptr<ServiceType> && service)
+void RpcServer::RegisterService(std::unique_ptr<ServiceImpl> && service)
 {
     const auto* service_desc = service->GetDescriptor();
     const std::string service_name = service_desc->name();

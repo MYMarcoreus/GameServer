@@ -1,5 +1,6 @@
 #include "LogicServerController.h"
 
+#include "EventLoop.h"
 #include "IPAddress.h"
 #include "RoomInfoController.h"
 #include "LogicInfoController.h"
@@ -8,20 +9,25 @@
 
 namespace yy::app::center
 {
-LogicServerController::LogicServerController(const std::string& logic_service_name) :
+LogicServerController::LogicServerController(const std::string& logic_service_name, net::EventLoop * loop) :
     logic_info_controller_{logic_service_name},
     room_info_controller_{},
-    logic_client_(rpc_client::LogicRpcClient::Instance())
+    logic_client_(rpc_client::LogicRpcClient::Instance()),
+    base_loop_{loop}
 {
-
 }
 
 void LogicServerController::Init()
 {
-    auto server_names = logic_client_.GetServerNames();
+    // 心跳检测逻辑服
+    base_loop_->RunEvery(1s, [this] { UpdateLogicInfo(); });
+}
 
+void LogicServerController::UpdateLogicInfo()
+{
     // 根据逻辑服内部地址获取逻辑服外部地址
-    for (auto& [name, inner_addr] : server_names) {
+    for (auto& [name, inner_addr] : logic_client_.GetServerNames())
+    {
         protocol::app::GetLogicAddrReq req;
         logic_client_.CallRemoteAsync_From<protocol::app::GetLogicAddrReq, protocol::app::GetLogicAddrRsp>(name,
             req,
@@ -33,8 +39,6 @@ void LogicServerController::Init()
                 logic_info_controller_.AddServerInfo(name, outter_addr);
             });
     }
-
-    (void)0;
 }
 
 

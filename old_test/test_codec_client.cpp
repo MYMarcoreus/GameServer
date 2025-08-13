@@ -3,8 +3,8 @@
 #include "EventLoop.h"
 #include "IPAddress.h"
 #include "log.h"
-#include "codec/ProtobufTcpCodec.h"
-#include "codec/ProtobufDispatcher.h"
+#include "frontend/ProtobufTcpCodec.h"
+#include "frontend/ProtobufDispatcher.h"
 #include "query.pb.h"
 #include "RemoteXmlConfig.h"
 #include <stdio.h>

@@ -8,13 +8,6 @@
 #include "ProtobufDispatcher.h"
 #include "RpcClient.hpp"
 
-namespace yy::net
-{
-class EventLoopThreadPool;
-}
-
-
-
 namespace yy::app::logic {
 class LogicRedisDAO;
 

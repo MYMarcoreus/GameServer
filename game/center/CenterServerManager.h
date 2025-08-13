@@ -16,7 +16,6 @@ class CenterServerManager final : public Singleton<CenterServerManager> {
 public:
     void RunApp();
 
-    core::rpc::RpcServer& GetRpcServer() const { return *m_rpcServer; }
 private:
     CenterServerManager();
     ~CenterServerManager() override;

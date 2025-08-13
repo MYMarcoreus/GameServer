@@ -66,8 +66,8 @@ void GameService::OnPlayerDisconnect(const UserConnectionPtr& userconn)
         });
 }
 
-void GameService::NewRoom(google::protobuf::RpcController* controller, const NewRoomReq* request, NewRoomRsp* response,
-                          google::protobuf::Closure* done)
+void GameService::NewRoom(google::protobuf::RpcController* controller,
+    const NewRoomReq* request, NewRoomRsp* response, google::protobuf::Closure* done)
 {
     YLOG_INFO("正在执行 GameService::NewRoom 服务: {}", request->ShortDebugString())
     // 需要在新建房间时为房间分配线程，分配器需要保证在其所在的线程中进行分配，所以使用异步
@@ -87,8 +87,8 @@ void GameService::NewRoom(google::protobuf::RpcController* controller, const New
         });
 }
 
-void GameService::DeleteRoom(google::protobuf::RpcController* controller, const DeleteRoomReq* request,
-    DeleteRoomRsp* response, google::protobuf::Closure* done)
+void GameService::DeleteRoom(google::protobuf::RpcController* controller,
+    const DeleteRoomReq* request, DeleteRoomRsp* response, google::protobuf::Closure* done)
 {
     YLOG_INFO("正在执行 GameService::DeleteRoom 服务: {}", request->ShortDebugString())
     response->set_room_id(request->room_id());
@@ -108,6 +108,7 @@ void GameService::DeleteRoom(google::protobuf::RpcController* controller, const 
 void GameService::GetLogicAddr(google::protobuf::RpcController* controller,
     const GetLogicAddrReq* request, GetLogicAddrRsp* response, google::protobuf::Closure* done)
 {
+    // 获取逻辑服对游戏客户端开放的地址
     const auto frontend_addr = m_frontend.GetTcpListenAddr();
     response->set_ip(frontend_addr->GetIPStr());
     response->set_port(frontend_addr->GetPort());

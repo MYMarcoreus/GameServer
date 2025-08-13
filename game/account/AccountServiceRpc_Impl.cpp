@@ -1,4 +1,4 @@
-#include "AccountRpcServiceImpl.h"
+#include "AccountServiceRpc_Impl.h"
 
 #include "AccountMysqlDAO.h"
 #include "IPAddress.h"
@@ -14,9 +14,7 @@ using namespace yy::protocol::app;
 
 namespace yy::app::account
 {
-AccountRpcServiceImpl::AccountRpcServiceImpl(EventLoop * loop):
-    server_(AccountServerManager::Instance().GetServer()),
-    rpc_server_(AccountServerManager::Instance().GetRpcServer()),
+AccountServiceRpc_Impl::AccountServiceRpc_Impl(EventLoop * loop):
     redis_dao_(AccountRedisDAO::Instance()),
     mysql_dao_(AccountMysqlDAO::Instance()),
     center_client_(rpc_client::CenterRpcClient::Instance())
@@ -32,10 +30,10 @@ AccountRpcServiceImpl::AccountRpcServiceImpl(EventLoop * loop):
 }
 
 // 该函数仅需填充response并调用done->Run()
-void AccountRpcServiceImpl::Login(google::protobuf::RpcController* controller,
+void AccountServiceRpc_Impl::Login(google::protobuf::RpcController* controller,
     const LoginReq* request, LoginRsp* response, google::protobuf::Closure* done)
 {
-    YLOG_INFO("正在执行 AccountRpcServiceImpl::Login 服务，填充响应体");
+    YLOG_INFO("正在执行 AccountServiceRpc_Impl::Login 服务，填充响应体");
 
     const std::string& username = request->username();
     const std::string& password = request->password();
@@ -77,10 +75,10 @@ void AccountRpcServiceImpl::Login(google::protobuf::RpcController* controller,
     done->Run();
 }
 
-void AccountRpcServiceImpl::Register(google::protobuf::RpcController* controller,
+void AccountServiceRpc_Impl::Register(google::protobuf::RpcController* controller,
     const RegisterReq* request, RegisterRsp* response, google::protobuf::Closure* done)
 {
-    YLOG_TRACE("正在执行 AccountRpcServiceImpl::Register 服务，填充响应体")
+    YLOG_TRACE("正在执行 AccountServiceRpc_Impl::Register 服务，填充响应体")
 
     // 验证注册
     if (not mysql_dao_.HasAccountData(request->username())) {
@@ -95,7 +93,7 @@ void AccountRpcServiceImpl::Register(google::protobuf::RpcController* controller
     done->Run();
 }
 
-auto AccountRpcServiceImpl::GenerateToken() -> std::string
+auto AccountServiceRpc_Impl::GenerateToken() -> std::string
 {
     return util::GenerateToken();
 }

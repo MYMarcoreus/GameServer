@@ -10,8 +10,8 @@ set(LocalSrc
         logic/Player.cpp
         logic/RoomManager.cpp
         account/AccountServerManager.cpp
-        account/AccountRpcServiceImpl.cpp
-        center/CenterRpcServiceImpl.cpp
+        account/AccountServiceRpc_Impl.cpp
+        center/CenterServiceRpc_Impl.cpp
         center/CenterServerManager.cpp
         center/RoomInfoController.cpp
         center/LogicServerController.cpp
@@ -23,7 +23,7 @@ set(LocalSrc
         logic/LogicRedisDAO.cpp
         gate/GateRedisDAO.cpp
         gate/GateServerManager.cpp
-        gate/GateRpcServiceImpl.cpp
+        gate/GateServiceRpc_Impl.cpp
         gate/ForwardManager.cpp
 )
 

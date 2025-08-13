@@ -7,8 +7,12 @@
 #include "cross_platform_defines.h"
 
 namespace yy::Ylog {
-
-/// @brief 日志输出至文件
+/**
+ * @brief FileLogAppender类实现了将日志信息写入到指定文件的功能。该类继承自ILogAppender接口。
+ * 通过构造函数可以设置日志文件的路径、日志格式模式、缓冲区大小以及刷新间隔时间。
+ * 内部使用了两个缓冲区来存储日志数据，并定期或在需要时将这些数据写入磁盘上的日志文件。
+ * 日志消息首先被添加到当前活动的缓冲区中，当达到一定条件（如缓冲区满或超过设定的时间间隔）时，会触发缓冲区内容的刷新操作，将日志数据从内存写入到文件中。
+ */
 class FileLogAppender final : public ILogAppender
 {
 public:

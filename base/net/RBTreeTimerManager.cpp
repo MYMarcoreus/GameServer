@@ -344,7 +344,8 @@ void RBTreeTimerManager::ResetAndFreeExpiredTimers(std::vector<TimerPtr> &expire
 
 
 bool RBTreeTimerManager::TimerComparator::operator()(const TimerPtr &a, const TimerPtr &b) const {
-    //! 如果有一个指针为空，则按照原生指针的地址来比较
+
+    //! 如果有一个指针为空，则按照原生指针的地址来比较；否则调用Timer的比较函数
     return (!a or !b) ? a.get() < b.get() : *a < *b;
 }
 

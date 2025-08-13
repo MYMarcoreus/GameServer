@@ -82,7 +82,7 @@ void Room::OnPlayerDisconnect(const UserConnectionPtr& userconn)
         //! 给其他玩家客户端发送离线通告
          S2CLeaveScene playerLeave;
          playerLeave.set_uid(userconn->GetUID());
-         Broadcast(userconn->GetUID(), playerLeave);
+         BroadcastUDP(userconn->GetUID(), playerLeave);
          YLOG_INFO("玩家<{}>被动离开", playerLeave.uid())
 
          userconn->SetState(UserConnection::E_UserBaseState::eSavingData);
@@ -192,38 +192,67 @@ auto Room::GetAllPlayers() -> std::unordered_map<UID_t, PlayerPtr>
     return players_;
 }
 
-void Room::Broadcast(const PlayerPtr& from, const google::protobuf::Message& data)
+void Room::BroadcastUDP(const PlayerPtr& from, const google::protobuf::Message& data)
 {
     for(const auto& to : players_ | std::views::values)
     {
         if(to->get_uid() == from->get_uid())
             continue;
 
-        YLOG_TRACE("Broadcast<{}>: from {} to {}, ", data.GetDescriptor()->full_name(), from->get_uid(), to->get_uid())
+        YLOG_TRACE("BroadcastUDP<{}>: from {} to {}, ", data.GetDescriptor()->full_name(), from->get_uid(), to->get_uid())
         to->get_conn()->SendUDP(data);
     }
 }
 
-void Room::Broadcast(const PlayerPtr& from, const MessagePtr& data)
+void Room::BroadcastUDP(const PlayerPtr& from, const MessagePtr& data)
 {
     if (from and data) {
-        this->Broadcast(from, *data);
+        this->BroadcastUDP(from, *data);
     }
 }
 
-void Room::Broadcast(const UID_t from_uid, const google::protobuf::Message& data)
+void Room::BroadcastUDP(const UID_t from_uid, const google::protobuf::Message& data)
 {
     for(const auto& to : players_ | std::views::values)
     {
         if(to->get_uid() == from_uid)
             continue;
 
-        YLOG_TRACE("Broadcast<{}>: from {} to {}, ", data.GetDescriptor()->full_name(), from_uid, to->get_uid())
+        YLOG_TRACE("BroadcastUDP<{}>: from {} to {}, ", data.GetDescriptor()->full_name(), from_uid, to->get_uid())
         to->get_conn()->SendUDP(data);
     }
 }
 
+void Room::BroadcastTCP(const PlayerPtr& from, const google::protobuf::Message& data)
+{
+    for(const auto& to : players_ | std::views::values)
+    {
+        if(to->get_uid() == from->get_uid())
+            continue;
 
+        YLOG_TRACE("BroadcastUDP<{}>: from {} to {}, ", data.GetDescriptor()->full_name(), from->get_uid(), to->get_uid())
+        to->get_conn()->SendTCP(data);
+    }
+}
+
+void Room::BroadcastTCP(const PlayerPtr& from, const MessagePtr& data)
+{
+    if (from and data) {
+        this->BroadcastTCP(from, *data);
+    }
+}
+
+void Room::BroadcastTCP(const UID_t from_uid, const google::protobuf::Message& data)
+{
+    for(const auto& to : players_ | std::views::values)
+    {
+        if(to->get_uid() == from_uid)
+            continue;
+
+        YLOG_TRACE("BroadcastUDP<{}>: from {} to {}, ", data.GetDescriptor()->full_name(), from_uid, to->get_uid())
+        to->get_conn()->SendTCP(data);
+    }
+}
 
 
 
@@ -266,7 +295,7 @@ void Room::OnEnterScene(const UserConnectionPtr& self_conn, const Ptr<protocol::
     otherPlayerDataResponse.set_uid(req->uid());
     otherPlayerDataResponse.set_room_id(req->room_id());
     otherPlayerDataResponse.mutable_other_data()->CopyFrom(*self_data);
-    Broadcast(self_player,  otherPlayerDataResponse);
+    BroadcastTCP(self_player,  otherPlayerDataResponse);
 
     YLOG_INFO("玩家<{}>进入场景", self_data->account_data().ShortDebugString())
 }
@@ -278,7 +307,7 @@ void Room::OnLeaveScene(const UserConnectionPtr& leave_conn, const Ptr<protocol:
     //! 给其他玩家客户端发送离线通告
     S2CLeaveScene playerLeave;
     playerLeave.set_uid(leave_conn->GetUID());
-    Broadcast(req->uid(), playerLeave);
+    BroadcastTCP(req->uid(), playerLeave);
     YLOG_INFO("玩家<{}>主动离开", playerLeave.uid())
 
     leave_conn->SetState(UserConnection::E_UserBaseState::eSavingData);
@@ -330,7 +359,7 @@ void Room::OnC2SMove(const UserConnectionPtr& self_conn, const Ptr<C2SMove> & se
     to_other_move.set_room_id(selfmove->room_id());
     to_other_move.mutable_movement()->CopyFrom(selfmove->movement());
 
-    Broadcast(player_self, to_other_move);
+    BroadcastUDP(player_self, to_other_move);
 }
 
 void Room::OnC2SJumpAndGravity(const UserConnectionPtr& self_conn, const Ptr<protocol::app::C2SJumpAndGravity> & selfJumpAndGravity) //NOLINT
@@ -352,7 +381,7 @@ void Room::OnC2SJumpAndGravity(const UserConnectionPtr& self_conn, const Ptr<pro
     otherJumpAndGravity.set_room_id(selfJumpAndGravity->room_id());
     otherJumpAndGravity.mutable_jump_and_gravity()->CopyFrom(selfJumpAndGravity->jump_and_gravity());
 
-    Broadcast(player_self, otherJumpAndGravity);
+    BroadcastTCP(player_self, otherJumpAndGravity);
 }
 
 

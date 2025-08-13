@@ -1,12 +1,12 @@
 set(LocalSrc
-        UserConnection.cpp
-        codec/ProtobufDispatcher.cpp
-        codec/MessageHeader_Name.cpp
-        codec/ProtobufTcpCodec_Name.cpp
-        codec/ProtobufUdpCodec_Name.cpp
-        codec/MessageHeader_Cmd.cpp
-        codec/ProtobufTcpCodec_Cmd.cpp
-        codec/ProtobufUdpCodec_Cmd.cpp
+        frontend/UserConnection.cpp
+        frontend/ProtobufDispatcher.cpp
+        frontend/MessageHeader_Name.cpp
+        frontend/ProtobufTcpCodec_Name.cpp
+        frontend/ProtobufUdpCodec_Name.cpp
+        frontend/MessageHeader_Cmd.cpp
+        frontend/ProtobufTcpCodec_Cmd.cpp
+        frontend/ProtobufUdpCodec_Cmd.cpp
         redis/RedisClient.cpp
         redis/RedisPool.cpp
         mysql/MySqlPool.cpp
@@ -17,9 +17,9 @@ set(LocalSrc
         rpc/RpcServer.cpp
         rpc/RpcControllerImpl.cpp
         rpc/RpcStubConnectionPool.hpp
-        zookeeper/ZkClient.cpp
-        zookeeper/ZkServiceClient.cpp
-        FrontendServer.cpp
+        zk/ZkClient.cpp
+        zk/ZkServiceClient.cpp
+        frontend/FrontendServer.cpp
 )
 
 #! 给本地相对路径添加前缀，变为绝对路径

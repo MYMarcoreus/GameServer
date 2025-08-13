@@ -50,9 +50,12 @@ private:
     void InitPlayerData(const PlayerBaseDataPtr& self_data, protocol::app::AccountBaseData account_data);
 
     //Region 房间广播
-    void Broadcast(const PlayerPtr& from, const google::protobuf::Message &data);
-    void Broadcast(const PlayerPtr& from, const MessagePtr &data);
-    void Broadcast(UID_t from_uid, const google::protobuf::Message &data);
+    void BroadcastUDP(const PlayerPtr& from, const google::protobuf::Message &data);
+    void BroadcastUDP(const PlayerPtr& from, const MessagePtr &data);
+    void BroadcastUDP(UID_t from_uid, const google::protobuf::Message &data);
+    void BroadcastTCP(const PlayerPtr& from, const google::protobuf::Message &data);
+    void BroadcastTCP(const PlayerPtr& from, const MessagePtr &data);
+    void BroadcastTCP(UID_t from_uid, const google::protobuf::Message &data);
     //End
 
     //Region 客户端消息注册
@@ -72,7 +75,7 @@ private:
     /// @brief 玩家发来场景进入请求，然后将储存的游戏数据发送回玩家
     void OnEnterScene(const UserConnectionPtr& self_conn, const Ptr<protocol::app::C2SEnterScene> & req);
 
-    /// @brief 玩家退出（如果是最后一个则销毁房间）
+    /// @brief 玩家退出
     void OnLeaveScene(const UserConnectionPtr& self_conn, const Ptr<protocol::app::C2SLeaveScene> & req);
 
     /// @brief 玩家移动

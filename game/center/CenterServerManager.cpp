@@ -1,7 +1,7 @@
 #include "CenterServerManager.h"
 
 #include "AppXmlConfig.h"
-#include "CenterRpcServiceImpl.h"
+#include "CenterServiceRpc_Impl.h"
 #include "log.h"
 #include "EventLoop.h"
 #include "RpcServer.h"
@@ -36,7 +36,7 @@ void CenterServerManager::RunApp()
     //! 初始化服务器对象
     m_accpetorLoop = std::make_unique<EventLoop>(500ms);
     m_rpcServer = std::make_unique<rpc::RpcServer>(m_accpetorLoop.get(), rpcAddr);
-    m_rpcServer->RegisterService<CenterRpcServiceImpl>(m_accpetorLoop.get());
+    m_rpcServer->RegisterService<CenterServiceRpc_Impl>(m_accpetorLoop.get());
     m_rpcServer->Start(2, 100ms);
     //! 启动监听线程(即主线程)并阻塞在此
     m_accpetorLoop->Loop();

@@ -21,31 +21,35 @@ void ZkServiceClient::Start(const std::string& service_root)
 
 bool ZkServiceClient::Register(const std::string& service_name, const std::string& ip, const std::string& port)
 {
-    auto service_base = std::format("{}/{}", service_root_, service_name);
+    // 构建服务节点路径，例如 /services/AccountServiceRpc
+    const std::string service_node_path = std::format("{}/{}", service_root_, service_name);
 
-    // /services/AccountServiceRpc
-    zk_client_->CreateNode(service_base);
+    // 创建服务节点（如果父节点 /services 不存在应提前创建）
+    zk_client_->CreateNode(service_node_path);
 
-    // /services/AccountServiceRpc/provider00000001 存储当前这个rpc服务节点主机的ip和port
-    const auto ip_port = std::format("{}:{}", ip, port);
-    const std::string service_path = std::format("{}/{}", service_base, ip_port);
-    zk_client_->CreateNode(service_path, ip_port,  ZOO_EPHEMERAL); // ZOO_EPHEMERAL：表示znode是一个临时性节点
+    // 构建当前服务实例的信息和路径，例如 /services/AccountServiceRpc/127.0.0.1:13333
+    const std::string host_info = std::format("{}:{}", ip, port);
+    const std::string instance_node_path = std::format("{}/{}", service_node_path, host_info);
 
-    // FetchRemote 创建后从远端获取，更新本地缓存
+    // 注册服务实例为临时节点（会话断开自动删除）
+    zk_client_->CreateNode(instance_node_path, host_info, ZOO_EPHEMERAL);
+
+    // 创建完后立即从远端拉取节点信息，更新本地缓存
     FetchRemote(service_name);
 
     return true;
 }
 
+
 auto ZkServiceClient::FetchLocalCache(const std::string& service_name) -> std::vector<net::IPAddressPtr>
 {
-    const auto service_base = std::format("{}/{}", service_root_, service_name);
+    const auto service_node_path = std::format("{}/{}", service_root_, service_name);
 
     // Fetch的是本地缓存
     std::vector<net::IPAddressPtr> endpoints;
     {
         util::ReadLockGuard lg(service_endpoint_mutex_);
-        if (const auto it = service_endpoint_map_.find(service_base); it != service_endpoint_map_.end()) {
+        if (const auto it = service_endpoint_map_.find(service_node_path); it != service_endpoint_map_.end()) {
             endpoints = it->second;
         }
     }
@@ -60,12 +64,12 @@ auto ZkServiceClient::FetchAllLocalCache() -> std::unordered_map<std::string, st
 
 auto ZkServiceClient::FetchRemote(const std::string& service_name) -> std::vector<net::IPAddressPtr>
 {
-    const auto service_base = std::format("{}/{}", service_root_, service_name);
-    const auto endpoints = StrEndpointsToIpAddr(service_base, zk_client_->GetNodeChildren(service_base));
+    const auto service_node_path = std::format("{}/{}", service_root_, service_name);
+    const auto endpoints = StrEndpointsToIpAddr(service_node_path, zk_client_->GetNodeChildren(service_node_path));
     {
         util::WriteLockGuard lg(service_endpoint_mutex_);
-        service_endpoint_map_[service_base] = std::move(endpoints);
-        return service_endpoint_map_[service_base];
+        service_endpoint_map_[service_node_path] = std::move(endpoints);
+        return service_endpoint_map_[service_node_path];
     }
 }
 
@@ -74,13 +78,13 @@ auto ZkServiceClient::FetchAllRemote() -> std::unordered_map<std::string, std::v
     std::unordered_map<std::string, std::vector<net::IPAddressPtr>> new_map;
 	const std::vector<std::string> service_names = zk_client_->GetNodeChildren(service_root_);
     for (const auto& service_name : service_names) {
-        const auto service_base = std::format("{}/{}", service_root_, service_name);
-        std::vector<std::string> providers = zk_client_->GetNodeChildren(service_base);
+        const auto service_node_path = std::format("{}/{}", service_root_, service_name);
+        std::vector<std::string> providers = zk_client_->GetNodeChildren(service_node_path);
         std::ranges::for_each(providers, [&](const auto& provider_str) {
-            YLOG_INFO("[ZkServiceClient] Fetch Remote Service {}: {}", service_base, provider_str);
+            YLOG_INFO("[ZkServiceClient] Fetch Remote Service {}: {}", service_node_path, provider_str);
         });
-        const std::vector<net::IPAddressPtr> endpoints = StrEndpointsToIpAddr(service_base, providers);
-        new_map[service_base] = endpoints;
+        const std::vector<net::IPAddressPtr> endpoints = StrEndpointsToIpAddr(service_node_path, providers);
+        new_map[service_node_path] = endpoints;
     }
 
     {
@@ -92,26 +96,26 @@ auto ZkServiceClient::FetchAllRemote() -> std::unordered_map<std::string, std::v
 
 size_t ZkServiceClient::EndpointSize(const std::string& service_name)
 {
-    const auto service_base = std::format("{}/{}", service_root_, service_name);
+    const auto service_node_path = std::format("{}/{}", service_root_, service_name);
 
     util::ReadLockGuard lg(service_endpoint_mutex_);
-    const auto it = service_endpoint_map_.find(service_base);
+    const auto it = service_endpoint_map_.find(service_node_path);
     return it != service_endpoint_map_.end() ? it->second.size() : 0;
 }
 
 
 void ZkServiceClient::Watch(const std::string& service_name, const bool trigger_now, WatcherCallback watcher_cb)
 {
-    auto service_base = std::format("{}/{}", service_root_, service_name);
+    auto service_node_path = std::format("{}/{}", service_root_, service_name);
 
     // 监听zookeeper服务的变化
-    zk_client_->AddChildrenWatcher(service_base, trigger_now,
-        [this, watcher_cb = std::move(watcher_cb), service_base]
+    zk_client_->AddChildrenWatcher(service_node_path, trigger_now,
+        [this, watcher_cb = std::move(watcher_cb), service_node_path]
         (const std::string& path, const std::vector<std::string> & providers)
         {
-            assert(service_base == path);
+            assert(service_node_path == path);
             // 获取服务的地址
-            const std::vector<net::IPAddressPtr> endpoints = StrEndpointsToIpAddr(service_base, providers);
+            const std::vector<net::IPAddressPtr> endpoints = StrEndpointsToIpAddr(service_node_path, providers);
             std::unordered_map<std::string, net::IPAddressPtr> M;
             for (int i = 0; i < providers.size() ;++i) {
                 M[providers[i]] = endpoints[i];
@@ -120,11 +124,11 @@ void ZkServiceClient::Watch(const std::string& service_name, const bool trigger_
             // 更新本地缓存
             {
                 util::WriteLockGuard lg(service_endpoint_mutex_);
-                service_endpoint_map_[service_base] = endpoints;
+                service_endpoint_map_[service_node_path] = endpoints;
             }
 
             // 调用上层回调
-            watcher_cb(service_base, std::move(M));
+            watcher_cb(service_node_path, std::move(M));
         });
 }
 
@@ -133,11 +137,11 @@ auto ZkServiceClient::StrEndpointsToIpAddr(const std::string& service_base, cons
     std::vector<net::IPAddressPtr> endpoints;
     for (const auto& provider : providers) {
         // 先做服务发现： 连接zookeeper服务器，获取服务提供方的ip和端口信息
-        auto service_path = std::format("{}/{}", service_base, provider);
+        auto service_node_path = std::format("{}/{}", service_base, provider);
 
-        const std::string host_str = zk_client_->GetNodeVal(service_path);
+        const std::string host_str = zk_client_->GetNodeData(service_node_path);
         if (host_str.empty()) {
-            throw std::invalid_argument(std::format("Failed to discover service {}", service_path));
+            throw std::invalid_argument(std::format("Failed to discover service {}", service_node_path));
         }
         // 解析服务提供方的ip和端口信息，得到服务提供方地址
         const size_t pos = host_str.find(':');

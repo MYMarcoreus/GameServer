@@ -1,4 +1,4 @@
-#include "CenterRpcServiceImpl.h"
+#include "CenterServiceRpc_Impl.h"
 
 #include <uuid.h>
 
@@ -18,8 +18,7 @@ using namespace google::protobuf;
 
 namespace yy::app::center
 {
-CenterRpcServiceImpl::CenterRpcServiceImpl(EventLoop * base_loop):
-    rpc_server_(CenterServerManager::Instance().GetRpcServer()),
+CenterServiceRpc_Impl::CenterServiceRpc_Impl(EventLoop * base_loop):
     mysql_pool_(mysql::MySqlClient::Instance()),
     redis_dao_(CenterRedisDAO::Instance()),
     logic_rpc_client_(rpc_client::LogicRpcClient::Instance()),
@@ -38,7 +37,7 @@ CenterRpcServiceImpl::CenterRpcServiceImpl(EventLoop * base_loop):
             YLOG_INFO("连接至GateRpc服务器！");
         });
 
-    logic_controller_ = std::make_unique<LogicServerController>(logic_rpc_client_.GetServiceName());
+    logic_controller_ = std::make_unique<LogicServerController>(logic_rpc_client_.GetServiceName(), base_loop);
     logic_controller_->Init();
 
     base_loop->RunEvery(100ms, [this]
@@ -49,28 +48,34 @@ CenterRpcServiceImpl::CenterRpcServiceImpl(EventLoop * base_loop):
     base_loop->RunEvery(1s, [this]
     {
         auto& room_controller = logic_controller_->get_room_info_controller();
-        YLOG_INFO("有 {} 个房间",  room_controller.RoomCount())
+        std::string server_str;
+        for (auto& [server_name, server_info]: logic_controller_->get_logic_info_controller().GetAllServerInfo()) {
+            server_str += std::format("{}-{}, ", server_info->get_name(), server_info->get_room_cnt());
+        }
+        YLOG_INFO("有 {} 个房间, 逻辑服有{}",  room_controller.RoomCount(), server_str);
         for (auto& [room_id, room]: room_controller.GetAllRoom()) {
             const auto room_data = room->get_room_data();
-            YLOG_INFO("\t房间<{}:{}> of {}: {}/{} in {}",
+            YLOG_INFO("\t房间<{}:{}> of {}: {}/{} in {}-{}",
                 room_id,
                 room_data->name(),
                 room_data->owner_uid(),
                 room_data->exist_player_datas_size(),
                 room_data->capacity(),
-                room->get_server_info()->get_name()
+                room->get_server_info()->get_name(),
+                room->get_server_info()->get_room_cnt()
             )
         }
     });
 }
 
-void CenterRpcServiceImpl::Update()
+void CenterServiceRpc_Impl::Update()
 {
     auto& room_controller = logic_controller_->get_room_info_controller();
     for (auto& [room_id, room]: room_controller.GetAllRoom()) {
         const auto is_del = room_controller.DelRoomIfEmpty(room_id);
         if (is_del) {
             YLOG_INFO("\t中心服删除房间<{}, {}>", room->get_room_id(), room->get_room_data()->name())
+
             // 通知逻辑服
             DeleteRoomReq del_req;
             del_req.set_room_id(room->get_room_id());
@@ -81,16 +86,15 @@ void CenterRpcServiceImpl::Update()
                     }
                 });
         }
-
     }
 }
 
-void CenterRpcServiceImpl::CreateRoom(RpcController* controller,
+void CenterServiceRpc_Impl::CreateRoom(RpcController* controller,
     const CreateRoomReq* request, CreateRoomRsp* response, Closure* done)
 {
-    YLOG_INFO("正在执行 CenterRpcServiceImpl::CreateRoom 服务")
+    YLOG_INFO("正在执行 CenterServiceRpc_Impl::CreateRoom 服务")
     //! 为房间分配服务器：按照房间的最小人数
-    const LogicServerInfoPtr server_info = logic_controller_->SelectLogicServer();
+    LogicServerInfoPtr server_info = logic_controller_->SelectLogicServer();
     if (server_info == nullptr) {
         response->set_result_code(CreateRoomRsp_Status_eNoServer);
         done->Run();
@@ -107,14 +111,14 @@ void CenterRpcServiceImpl::CreateRoom(RpcController* controller,
     response->set_uid(request->owner_data().uid());
 
     //! 通告逻辑服创建房间
-    YLOG_INFO("CenterRpcServiceImpl::CreateRoom 服务：通告逻辑服创建房间")
+    YLOG_INFO("CenterServiceRpc_Impl::CreateRoom 服务：通告逻辑服创建房间")
     NewRoomReq req_NewRoom;
     req_NewRoom.mutable_room_data()->CopyFrom(room_data);
     req_NewRoom.set_user_token(request->user_token());
     //
     logic_rpc_client_.CallRemoteAsync_From<NewRoomReq, NewRoomRsp>(server_name,
         req_NewRoom,
-        [this, response, done, room_data = std::move(room_data), server_info = std::move(server_info), owner_data = request->owner_data()]
+        [this, response, done, room_data = std::move(room_data), server_info, owner_data = request->owner_data()]
         (std::unique_ptr<NewRoomRsp> && rsp_NewRoom, std::unique_ptr<rpc::RpcControllerImpl> && controller)
         {
             if(rsp_NewRoom->success()) {
@@ -136,10 +140,10 @@ void CenterRpcServiceImpl::CreateRoom(RpcController* controller,
         });
 }
 
-void CenterRpcServiceImpl::SearchRoom(RpcController* controller,
+void CenterServiceRpc_Impl::SearchRoom(RpcController* controller,
     const SearchRoomReq* request, SearchRoomRsp* response, Closure* done)
 {
-    YLOG_INFO("正在执行 CenterRpcServiceImpl::SearchRoom 服务")
+    YLOG_INFO("正在执行 CenterServiceRpc_Impl::SearchRoom 服务")
 
     for (auto& room_data : get_room_info_controller().GetAllRoomData()) {
         response->add_room_datas()->CopyFrom(std::move(room_data));
@@ -149,10 +153,10 @@ void CenterRpcServiceImpl::SearchRoom(RpcController* controller,
     done->Run();
 }
 
-void CenterRpcServiceImpl::SelfJoinRoom(RpcController* controller,
+void CenterServiceRpc_Impl::SelfJoinRoom(RpcController* controller,
     const SelfJoinRoomReq* request, SelfJoinRoomRsp* response, Closure* done)
 {
-    YLOG_INFO("正在执行 CenterRpcServiceImpl::JoinRoom 服务：{}", request->ShortDebugString());
+    YLOG_INFO("正在执行 CenterServiceRpc_Impl::JoinRoom 服务：{}", request->ShortDebugString());
 
     response->set_uid(request->joinner_data().uid());
 
@@ -193,10 +197,10 @@ void CenterRpcServiceImpl::SelfJoinRoom(RpcController* controller,
     }
 }
 
-void CenterRpcServiceImpl::SelfQuitRoom(RpcController* controller,
+void CenterServiceRpc_Impl::SelfQuitRoom(RpcController* controller,
     const SelfQuitRoomReq* request, SelfQuitRoomRsp* response, Closure* done)
 {
-    YLOG_INFO("正在执行 CenterRpcServiceImpl::QuitRoom 服务")
+    YLOG_INFO("正在执行 CenterServiceRpc_Impl::QuitRoom 服务")
 
     // 响应请求方
     const auto [is_removed, room] = get_room_info_controller().DelPlayer(request->room_id(), request->uid());
@@ -219,10 +223,10 @@ void CenterRpcServiceImpl::SelfQuitRoom(RpcController* controller,
     BroadcastRoom(request->room_id(), request->uid(), MSG_OtherQuitRoomRsp, msg.SerializeAsString());
 }
 
-void CenterRpcServiceImpl::GetEnterSceneToken(RpcController* controller,
+void CenterServiceRpc_Impl::GetEnterSceneToken(RpcController* controller,
     const GetEnterSceneTokenReq* request, GetEnterSceneTokenRsp* response, Closure* done)
 {
-    YLOG_INFO("正在执行 CenterRpcServiceImpl::GetEnterSceneToken 服务")
+    YLOG_INFO("正在执行 CenterServiceRpc_Impl::GetEnterSceneToken 服务")
 
     auto scene_token = GenerateSceneToken();
     // 将SceneToken存入redis并设置较短的过期时间，逻辑服收到玩家进入场景的请求时获取并删除该token
@@ -236,10 +240,10 @@ void CenterRpcServiceImpl::GetEnterSceneToken(RpcController* controller,
     done->Run();
 }
 
-void CenterRpcServiceImpl::UserDisconnect(RpcController* controller, const UserDisconnectReq* request,
+void CenterServiceRpc_Impl::UserDisconnect(RpcController* controller, const UserDisconnectReq* request,
     UserDisconnectRsp* response, Closure* done)
 {
-    YLOG_INFO("正在执行 CenterRpcServiceImpl::UserDisconnect 服务")
+    YLOG_INFO("正在执行 CenterServiceRpc_Impl::UserDisconnect 服务")
     response->set_uid(request->uid());
 
     const auto [is_removed, room] = get_room_info_controller().DelPlayer(request->uid());
@@ -256,17 +260,17 @@ void CenterRpcServiceImpl::UserDisconnect(RpcController* controller, const UserD
     BroadcastRoom(room->get_room_id(), request->uid(), MSG_OtherQuitRoomRsp, msg.SerializeAsString());
 }
 
-void CenterRpcServiceImpl::BroadcastRoom(const ROOM_ID_t room_id, const UID_t from_uid, const MessageCommand msg_cmd, std::string && msg_str)
+void CenterServiceRpc_Impl::BroadcastRoom(const ROOM_ID_t room_id, const UID_t from_uid, const MessageCommand msg_cmd, std::string && msg_str)
 {
     const RoomInfoPtr room = get_room_info_controller().FindRoomByRoomID(room_id);
     if (!room) {
-        YLOG_WARN("[CenterRpcServiceImpl::BroadcastRoom] 找不到房间: {}", room_id);
+        YLOG_WARN("[CenterServiceRpc_Impl::BroadcastRoom] 找不到房间: {}", room_id);
         return;
     }
     BroadcastRoom(*room, from_uid, msg_cmd, std::move(msg_str));
 }
 
-void CenterRpcServiceImpl::BroadcastRoom(const RoomInfo & room, const UID_t from_uid, MessageCommand msg_cmd, std::string&& msg_str)
+void CenterServiceRpc_Impl::BroadcastRoom(const RoomInfo & room, const UID_t from_uid, MessageCommand msg_cmd, std::string&& msg_str)
 {
     BroadcastRoomReq broadcast_req;
     broadcast_req.set_msg_cmd(msg_cmd);
@@ -284,17 +288,17 @@ void CenterRpcServiceImpl::BroadcastRoom(const RoomInfo & room, const UID_t from
     // 发送给gate server
     gate_rpc_client_.CallRemoteAsync_Random<BroadcastRoomReq, BroadcastRoomRsp>(broadcast_req,
         [msg_cmd](std::unique_ptr<BroadcastRoomRsp> && response, std::unique_ptr<rpc::RpcControllerImpl> && controller) {
-            YLOG_INFO("[CenterRpcServiceImpl::BroadcastRoom] {}广播成功", g_cmd_to_name[msg_cmd])
+            YLOG_INFO("[CenterServiceRpc_Impl::BroadcastRoom] {}广播成功", g_cmd_to_name[msg_cmd])
         });
 }
 
 
-auto CenterRpcServiceImpl::GenerateSceneToken() -> std::string
+auto CenterServiceRpc_Impl::GenerateSceneToken() -> std::string
 {
     return util::GenerateToken();
 }
 
-auto CenterRpcServiceImpl::GenerateRoomId() -> uint64_t
+auto CenterServiceRpc_Impl::GenerateRoomId() -> uint64_t
 {
     thread_local std::mt19937 engine{std::random_device{}()};
     thread_local uuids::uuid_random_generator gen{&engine};

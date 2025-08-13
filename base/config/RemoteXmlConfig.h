@@ -62,7 +62,7 @@ public:
 public:
 
     /// @brief 读取root元素下名为remote的配置项
-    void load(const XMLElement *xml_remote);
+    void load(const tinyxml2::XMLElement *xml_remote);
 };
 
 

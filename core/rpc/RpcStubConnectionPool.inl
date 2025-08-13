@@ -31,7 +31,7 @@ auto RpcStubConnectionPool<ServiceType_Stub>::GetServerNames() -> std::unordered
 template <IsValidStub ServiceType_Stub>
 void RpcStubConnectionPool<ServiceType_Stub>::Start(typename StubConnType::F_RpcStubConnectionEstablishedCallback cb)
 {
-    assert(m_ServiceChangeCallback);
+    assert(serviceChangeCallback_);
 
     //! 阻塞：进行服务发现
     zkServiceManager_.Start(service_root_);
@@ -51,28 +51,7 @@ void RpcStubConnectionPool<ServiceType_Stub>::Start(typename StubConnType::F_Rpc
     // 连接任务：阻塞直到连接成功
     auto Connect_Task = [this, cb]() -> bool
     {
-        // 创建连接
-        std::unique_ptr<StubConnType> stub_conn = std::make_unique<StubConnType>(loop_);
-        stub_conn->SetConnectionEstablishedCallback(cb);
-
-        // 寻找并连接服务
-        auto addr = SelectAddrByRoundRobin();
-        if (addr == nullptr) {
-            YLOG_ERROR("RpcStubPool未找到服务{}", stub_conn->GetServiceName())
-            return false;
-        }
-        if (not stub_conn->Connect(addr)) {
-            YLOG_ERROR("RpcStubPool无法连接服务{}", stub_conn->GetServiceName())
-            return false;
-        }
-
-        // 服务器名称 = IP:Port
-        auto server_name = std::format("{}:{}", addr->GetIPStr(), addr->GetPort());
-
-        // 连接成功将连接加入连接池中
-        std::unique_lock lg(pool_mutex_);
-        pool_.emplace(server_name, std::move(stub_conn));
-        return true;
+        return InsertConn(SelectAddrByRoundRobin(), cb);
     };
     YLOG_INFO("{}RPC连接池大小 = {}", GetServiceName(), pool_size_)
 
@@ -92,12 +71,21 @@ void RpcStubConnectionPool<ServiceType_Stub>::Start(typename StubConnType::F_Rpc
 
     // 监听zookeeper在服务根目录下的变化
     zkServiceManager_.Watch(service_name_, false,
-                            [this](const std::string& service_base, std::unordered_map<std::string, net::IPAddressPtr> endpoints) {
-                                rr_idx_.store(0, std::memory_order_release);
+        [this, cb](const std::string& service_base, std::unordered_map<std::string, net::IPAddressPtr> endpoints)
+        {
+            rr_idx_.store(0, std::memory_order_release);
 
-                                if (m_ServiceChangeCallback)
-                                    m_ServiceChangeCallback(service_base, std::move(endpoints));
-                            });
+            for (auto& [name, addr] : endpoints)
+            {
+                // 是有新节点上线，连接之
+                this->InsertConn(addr, cb);
+                // 这里不检测旧节点下线，因为启动了TcpClient的自动重连
+                YLOG_INFO("endpoints: {}-{}", name, addr->ToString())
+            }
+
+            if (serviceChangeCallback_)
+                serviceChangeCallback_(service_base, std::move(endpoints));
+        });
 }
 
 template <IsValidStub ServiceType_Stub>
@@ -170,4 +158,34 @@ auto RpcStubConnectionPool<ServiceType_Stub>::SelectAddrByRoundRobin() -> net::I
     const size_t idx = rr_idx_.fetch_add(1, std::memory_order_acq_rel);
     net::IPAddressPtr addr = endpoints[idx % endpoints.size()];
     return addr;
+}
+
+
+template <IsValidStub ServiceType_Stub>
+bool RpcStubConnectionPool<ServiceType_Stub>::InsertConn(net::IPAddressPtr addr, typename StubConnType::F_RpcStubConnectionEstablishedCallback cb)
+{
+    // 服务器名称 = IP:Port
+    auto server_name = std::format("{}:{}", addr->GetIPStr(), addr->GetPort());
+    //todo 一个节点只对应一个连接，不重复插入，后续可以考虑一个节点对应多个连接
+    if (pool_.contains(server_name)){
+        return false;
+    }
+    // 非法的服务地址
+    if (addr == nullptr) {
+        YLOG_ERROR("RpcStubPool未找到服务{}", StubConnType::GetServiceName())
+        return false;
+    }
+
+    // 创建连接并连接至服务提供方
+    std::unique_ptr<StubConnType> stub_conn = std::make_unique<StubConnType>(loop_);
+    stub_conn->SetConnectionEstablishedCallback(std::move(cb));
+    if (not stub_conn->Connect(addr)) {
+        YLOG_ERROR("RpcStubPool无法连接服务{}", stub_conn->GetServiceName())
+        return false;
+    }
+
+    // 连接成功将连接加入连接池中
+    std::unique_lock lg(pool_mutex_);
+    pool_.emplace(server_name, std::move(stub_conn));
+    return true;
 }

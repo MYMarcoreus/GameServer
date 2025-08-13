@@ -16,11 +16,17 @@ auto LogicInfoController::FindServerInfo(const std::string& name) -> LogicServer
     return it == logic_server_infos_.end() ? nullptr : it->second;
 }
 
+auto LogicInfoController::GetAllServerInfo() -> std::unordered_map<std::string, LogicServerInfoPtr>
+{
+    util::ReadLockGuard lg(mutex_);
+    return logic_server_infos_;
+}
+
 void LogicInfoController::AddServerInfo(const std::string& server_name, net::IPAddressPtr addr)
 {
     const auto info = std::make_shared<LogicServerInfo>(server_name, addr);
     util::WriteLockGuard lg(mutex_);
-    logic_server_infos_[info->get_name()] = info;
+    logic_server_infos_.emplace(info->get_name(), info);
 }
 
 bool LogicInfoController::RemoveServerInfo(const std::string& name)
@@ -38,8 +44,8 @@ LogicServerInfoPtr LogicInfoController::GetMinPlayerServerInfo()
 
     const auto min_it = std::min_element(
         logic_server_infos_.begin(), logic_server_infos_.end(),
-        [](const auto& lhs, const auto& rhs) {
-            return lhs.second->get_player_cnt() < rhs.second->get_player_cnt();
+        [](const std::pair<std::string, LogicServerInfoPtr>& lhs, const std::pair<std::string, LogicServerInfoPtr>& rhs) {
+            return lhs.second->get_room_cnt() < rhs.second->get_room_cnt();
         });
 
     return min_it->second;

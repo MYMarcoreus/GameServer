@@ -14,9 +14,15 @@ namespace yy::app::center
 class RoomInfo {
     friend class RoomInfoController;
 public:
-    RoomInfo(const RoomDetailDataPtr& data, const LogicServerInfoPtr & server_name)
-        : data_(data), server_info_(server_name)
-    { }
+    RoomInfo(const RoomDetailDataPtr& data, const LogicServerInfoPtr & server_info)
+        : data_(data), server_info_(server_info)
+    {
+        server_info_->AddRoomCnt();
+    }
+    ~RoomInfo()
+    {
+        server_info_->SubRoomCnt();
+    }
 
     [[nodiscard]] auto get_room_id() const -> ROOM_ID_t;
     [[nodiscard]] auto get_room_data() const -> RoomDetailDataPtr;

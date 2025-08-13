@@ -3,7 +3,7 @@
 #include "IServer.h"
 #include "ProtobufDispatcher.h"
 #include "net_definations.h"
-#include "core_definations.h"
+#include "../core_definations.h"
 #include "ThreadPool.h"
 
 

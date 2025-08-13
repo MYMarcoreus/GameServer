@@ -18,12 +18,12 @@ namespace yy::app::account
 class AccountMysqlDAO;
 class AccountRedisDAO;
 
-class AccountRpcServiceImpl final : public protocol::app::AccountServiceRpc {
+class AccountServiceRpc_Impl final : public protocol::app::AccountServiceRpc {
     constexpr static std::string PWD_field = "password";
     constexpr static std::string UID_field = "uid";
 
 public:
-    explicit AccountRpcServiceImpl(net::EventLoop * loop);
+    explicit AccountServiceRpc_Impl(net::EventLoop * loop);
 
     void Login(google::protobuf::RpcController* controller,
                const protocol::app::LoginReq* request,
@@ -38,8 +38,6 @@ public:
 private:
     auto GenerateToken() -> std::string;
 
-    core::IServer & server_;
-    core::rpc::RpcServer & rpc_server_;
     AccountRedisDAO& redis_dao_;
     AccountMysqlDAO& mysql_dao_;
     rpc_client::CenterRpcClient& center_client_;

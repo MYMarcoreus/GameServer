@@ -16,21 +16,20 @@ public:
     template <typename Response>
     using FinishedCallback = std::function<void(std::unique_ptr<Response> && response, std::unique_ptr<RpcControllerImpl> && controller)>;
     using StubConnPoolType = RpcStubConnectionPool<ServiceStub>;
-    using StubConnType = typename StubConnPoolType::StubConnType;
+    using StubConnType = StubConnPoolType::StubConnType;
 
     static std::string GetServiceName();
 
-    void SetConnectionEstablishedCallback(typename StubConnType::F_RpcStubConnectionEstablishedCallback cb);
+    void SetConnectionEstablishedCallback(StubConnType::F_RpcStubConnectionEstablishedCallback cb);
 
-    void Start(const size_t pool_size);
+    void Start(size_t pool_size);
 
     void Start()
     {
         Start(0);
     }
 
-    auto GetServerNames() -> std::unordered_map<std::string, net::IPAddressPtr>
-    ;
+    auto GetServerNames() -> std::unordered_map<std::string, net::IPAddressPtr>;
 
     ///@brief 请求的发送的同步的，响应的等待是异步的
     /// Request消息的生命周期由调用者自己管理

@@ -2,24 +2,14 @@
 #include "log.h"
 #include "EventLoop.h"
 #include "AccountServer.h"
-#include "account.pb.h"
 #include "RpcServer.h"
-#include "AccountRpcServiceImpl.h"
-#include "UserConnection.h"
+#include "AccountServiceRpc_Impl.h"
 #include "ThreadPool.h"
-
-#include <future>
-#include <functional>
-
 
 using namespace std::chrono_literals;
 using namespace yy::net;
 using namespace yy::core;
 using namespace yy::util;
-
-using yy::protocol::app::LoginReq;
-using yy::protocol::app::RegisterReq;
-
 
 template<class T>
 using Ptr = std::shared_ptr<T>;
@@ -29,58 +19,14 @@ namespace yy::app::account {
 
 
 AccountServerManager::AccountServerManager():
-      m_server{nullptr},
-      m_dispatcher{[this](const UserConnectionPtr& userdata, const MessagePtr& message) { this->UnkonwnCommand(userdata, message); }},
-      m_accpetorLoop{nullptr},
-      m_wordThreads(std::make_unique<ThreadPool>("Login Work Thread"))
+      m_accpetorLoop{nullptr}
 { }
 
 AccountServerManager::~AccountServerManager() {
-    m_server->Stop();
     m_rpcServer->Stop();
 }
 
-
-void AccountServerManager::AppNotifier_Secutiry(const UserConnectionPtr& userdata) {
-    userdata->SetState(UserConnection::E_UserBaseState::eSecure);
-}
-
-void AccountServerManager::AppNotifier_Disconnect(const UserConnectionPtr& userdata) {
-    YLOG_INFO("↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ 用户<{}>断开连接", userdata->GetUID())
-}
-
-void AccountServerManager::AppNotifier_Command(const UserConnectionPtr & userdata, const MessagePtr & message, const MessageNetType type)
-{
-    m_wordThreads->PushTask([this, userdata, message]{
-        m_dispatcher.OnProtobufMessage(userdata, message);
-    });
-}
-
-void AccountServerManager::UnkonwnCommand(const UserConnectionPtr & userdata, const MessagePtr & message)
-{
-    YLOG_DEBUG("未知的消息类型：{}", message->GetDescriptor()->full_name())
-    userdata->Shutdown();
-}
-
-
-
-
-
 void AccountServerManager::RunApp()
-{
-    //! 初始化服务器
-    Init();
-
-    //! 启动服务器的工作线程
-    m_wordThreads->Start(m_accpetorLoop.get(), config::g_app_config->GetValue().work_thread_num());
-    // this->m_wordThreads.RunTaskEvery( 8333us, [this](){this->m_server->Update();});
-
-    //! 启动监听线程(即主线程)并阻塞在此
-    m_accpetorLoop->Loop();
-}
-
-
-void AccountServerManager::Init()
 {
     //! ①、读取配置文件
     config::ConfigManager::LoadXmlConfigs();
@@ -92,33 +38,15 @@ void AccountServerManager::Init()
     m_accpetorLoop = std::make_unique<EventLoop>(500ms);
 
     //! ④、初始化监听的端口和IP地址(IP地址未给出，则使用INADDR_ANY绑定所有IP地址)
-    const IPAddressPtr tcp_addr = std::make_shared<IPv4Address>(config::g_app_config->GetValue().app_tcp_port());
-    const IPAddressPtr udp_addr = std::make_shared<IPv4Address>(config::g_app_config->GetValue().app_udp_port());
+    const IPAddressPtr rpcAddr = std::make_shared<IPv4Address>(config::g_app_config->GetValue().rpc_port());
 
     //! ⑤、初始化服务器对象（③和④）
-    m_server = std::make_unique<AccountServer>(m_accpetorLoop.get(), tcp_addr, udp_addr);
-    m_server->SetNotifier_Security(
-        [this](const UserConnectionPtr& userdata) {
-            this->AppNotifier_Secutiry(userdata);
-        });
-
-    m_server->SetNotifier_DisConnect(
-        [this](const UserConnectionPtr & userdata) {
-            this->AppNotifier_Disconnect(userdata);
-        });
-
-    m_server->SetNotifier_Command(
-        [this](const UserConnectionPtr & userdata, const MessagePtr & message, const MessageNetType type) {
-            this->AppNotifier_Command(userdata, message, type);
-        });
-
-    //! 启动服务器的监听和IO线程
-    m_server->Start();
-
-    const IPAddressPtr rpcAddr = std::make_shared<IPv4Address>(config::g_app_config->GetValue().rpc_port());
     m_rpcServer = std::make_unique<core::rpc::RpcServer>(m_accpetorLoop.get(), rpcAddr);
-    m_rpcServer->RegisterService<AccountRpcServiceImpl>(m_accpetorLoop.get());
+    m_rpcServer->RegisterService<AccountServiceRpc_Impl>(m_accpetorLoop.get());
     m_rpcServer->Start(2, 500ms);
+
+    //! 启动监听线程(即主线程)并阻塞在此
+    m_accpetorLoop->Loop();
 }
 
 

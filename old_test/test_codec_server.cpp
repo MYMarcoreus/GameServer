@@ -6,8 +6,8 @@
 #include "log.h"
 #include "ThreadPool.h"
 #include "query.pb.h"
-#include "codec/ProtobufTcpCodec.h"
-#include "codec/ProtobufDispatcher.h"
+#include "frontend/ProtobufTcpCodec.h"
+#include "frontend/ProtobufDispatcher.h"
 
 #include <string>
 #include <stdio.h>

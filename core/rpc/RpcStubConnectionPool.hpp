@@ -2,14 +2,12 @@
 
 #include "ZkServiceClient.h"
 #include "TcpConnection.h"
-#include "log.h"
 #include "EventLoopThread.h"
 #include "RpcConnection.h"
 #include "RpcStubConnection.hpp"
-#include <queue>
+#include "ThreadPool.h"
 #include <functional>
 
-#include "ThreadPool.h"
 
 namespace yy::core::rpc
 {
@@ -30,11 +28,11 @@ public:
     static std::string GetServiceName();
 
     ///@brief 获取所有可选的服务提供方的名称和地址
-    auto GetServerNames() -> std::unordered_map<std::string, net::IPAddressPtr>
-    ;
+    auto GetServerNames() -> std::unordered_map<std::string, net::IPAddressPtr>;
+
 
     ///@brief 设置服务上线和下线回调
-    void SetServiceChangeCallback (const zk::ZkServiceClient::WatcherCallback & cb) { m_ServiceChangeCallback = cb; }
+    void SetServiceChangeCallback (const zk::ZkServiceClient::WatcherCallback & cb) { serviceChangeCallback_ = cb; }
 
     ///@brief 阻塞连接：
     /// 阻塞点(1) 一直服务发现直到服务上线；
@@ -47,8 +45,8 @@ public:
     std::shared_ptr<StubConnType> Acquire_From(std::string server_name, net::Microseconds delay);
 
 private:
-    auto SelectAddrByRoundRobin() -> net::IPAddressPtr
-    ;
+    auto SelectAddrByRoundRobin() -> net::IPAddressPtr;
+    bool InsertConn(net::IPAddressPtr addr, StubConnType::F_RpcStubConnectionEstablishedCallback cb);
 
     std::unique_ptr<net::EventLoopThread>   thread_;
     net::EventLoop *                        loop_;
@@ -62,7 +60,7 @@ private:
     std::atomic<size_t>                                             rr_idx_;
 
     zk::ZkServiceClient zkServiceManager_;
-    zk::ZkServiceClient::WatcherCallback m_ServiceChangeCallback;
+    zk::ZkServiceClient::WatcherCallback serviceChangeCallback_;
 };
 
 #include "RpcStubConnectionPool.inl"

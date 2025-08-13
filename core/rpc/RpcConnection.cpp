@@ -89,6 +89,12 @@ void RpcConnection::CallMethod(const google::protobuf::MethodDescriptor* method,
     //! 存储发起的请求对应的响应消息类型和响应回调
     {
         std::lock_guard lock(pending_call_mutex_);
+        //todo 支持不同类型的响应处理策略
+        //   enum class PendingCallPolicy {
+        //       Drop,       // 当前实现
+        //       RetryOnce,  // 自动重发一次
+        //       RetryUntilTimeout // 一直等到超时
+        //   };
         pending_calls_.emplace(id, PendingCallContext{response, done, controller, net::Timestamp::Now()});
     }
 

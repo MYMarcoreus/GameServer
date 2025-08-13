@@ -15,9 +15,11 @@ namespace yy::app::center
 
 class LogicServerController {
 public:
-    explicit LogicServerController(const std::string& logic_service_name);
+    explicit LogicServerController(const std::string& logic_service_name, net::EventLoop * loop);
 
     void Init();
+
+    void UpdateLogicInfo();
 
     auto SelectLogicServer() -> LogicServerInfoPtr;
 
@@ -31,7 +33,7 @@ private:
     LogicInfoController                             logic_info_controller_;
     RoomInfoController                              room_info_controller_;
     rpc_client::LogicRpcClient&                     logic_client_;
-    std::unique_ptr<core::zk::ZkServiceClient>      zk_client_{};
+    net::EventLoop *                                base_loop_;
 };
 
 }

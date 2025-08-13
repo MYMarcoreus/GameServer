@@ -8,7 +8,7 @@ namespace yy::config
 template<>
 class XmlElementTo<AppXmlConfig> {
 public:
-    AppXmlConfig operator()(const XMLElement * xml_app) {
+    AppXmlConfig operator()(const tinyxml2::XMLElement * xml_app) {
         AppXmlConfig appXmlConfig;
 
         appXmlConfig.appID = XmlAttributeTo<uint32_t>(xml_app->FindAttribute("appID"));

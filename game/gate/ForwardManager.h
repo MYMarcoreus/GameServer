@@ -109,12 +109,12 @@ void ForwardManager::RegisterRpcForward(core::rpc::RpcClient<ServiceStub> & rpcC
             //! 【转发RPC请求】
             YLOG_INFO("RPC转发：{}发送：{}", Request::descriptor()->name(), request->ShortDebugString());
             const bool success = rpcClient.template CallRemoteAsync_Random<Request, Response>(
-                request,
+                *request,
                 //! 【Rpc响应回调】
                 [userconn, onRspCb = std::move(onRspCb)](std::unique_ptr<Response>&& response, std::unique_ptr<core::rpc::RpcControllerImpl>&& controller)
                 {
                     // 收到异步响应时玩家可能
-                    if (!userconn or !response) {
+                    if (!userconn->IsConnected() or !response) {
                         YLOG_INFO("RPC响应时：连接失效 或 {}响应为空", Request::descriptor()->name());
                         return;
                     }

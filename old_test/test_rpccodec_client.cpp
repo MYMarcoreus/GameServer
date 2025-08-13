@@ -4,7 +4,7 @@
 #include "IPAddress.h"
 #include "log.h"
 #include "RpcCodec.h"
-#include "codec/ProtobufDispatcher.h"
+#include "frontend/ProtobufDispatcher.h"
 #include "rpc.pb.h"
 #include "RemoteXmlConfig.h"
 #include <stdio.h>

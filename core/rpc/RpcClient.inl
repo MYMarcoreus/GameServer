@@ -59,8 +59,7 @@ auto RpcClient<ServiceStub>::GetServerNames() -> std::unordered_map<std::string,
 
 template <IsValidStub ServiceStub>
 template <IsProtobufMessage Request, IsProtobufMessage Response>
-bool RpcClient<ServiceStub>::CallRemoteAsync_Random(const std::shared_ptr<Request>& request,
-    FinishedCallback<Response> cb)
+bool RpcClient<ServiceStub>::CallRemoteAsync_Random(const std::shared_ptr<Request>& request, FinishedCallback<Response> cb)
 {
     Start();
 
@@ -130,7 +129,8 @@ bool RpcClient<ServiceStub>::CallRemoteAsync_From(std::string server_name, const
     // 设置响应回调，并使用unique_ptr接管裸指针（响应消息和RpcController的生命周期在此自动管理）
     auto lambda_closure = rpc::NewLambdaClosureT(
         [this, response, controller, cb = std::move(cb)]() mutable  {
-            if (cb) cb(std::unique_ptr<Response>(response), std::unique_ptr<RpcControllerImpl>(controller));
+            if (cb)
+                cb(std::unique_ptr<Response>(response), std::unique_ptr<RpcControllerImpl>(controller));
         });
 
     // 通过特化模板函数DoCall调用客户端的`RpcConnection::CallMethod`来同步发送请求

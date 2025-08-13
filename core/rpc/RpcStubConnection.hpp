@@ -1,7 +1,5 @@
 #pragma once
 
-#include "RWLock.h"
-#include "TcpConnection.h"
 #include "RpcConnection.h"
 #include <functional>
 
@@ -19,7 +17,6 @@ template <IsValidStub ServiceType_Stub>
 class RpcStubConnection
 {
 public:
-    // using F_RpcStubConnectionEstablishedCallback = std::function<void(const std::shared_ptr<RpcStubConnection>& )>;
     using F_RpcStubConnectionEstablishedCallback = std::function<void(const net::TcpConnectionPtr & )>;
     explicit RpcStubConnection(net::EventLoop * loop);
 
@@ -40,7 +37,7 @@ public:
     static std::string GetServiceName();
 
 private:
-    RpcConnection *                     rpc_conn_;
+    RpcConnection *                     rpc_conn_; // 可以使用默认移动函数，因为其生命周期由stub_管理，stub_实现了移动
     std::unique_ptr<ServiceType_Stub>   stub_;
     net::IPAddressPtr server_addr_;
 };

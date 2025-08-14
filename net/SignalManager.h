@@ -2,10 +2,11 @@
 
 #ifdef ____LINUX
 
-#include "FullDuplexPipe.h"
 #include <functional>
 #include <memory>
-#include <csignal>
+#include <signal.h>
+#include "FullDuplexPipe.h"
+
 
 namespace yy::net
 {
@@ -20,6 +21,7 @@ namespace yy::net
 class SignalManager {
 public:
     SignalManager(EventLoop * loop, const std::function<void()>& handler);
+    ~SignalManager();
 
     static auto WritePipe(int sig) -> void;
     static auto ReadPipe() -> std::string;

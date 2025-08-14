@@ -10,7 +10,6 @@
 #include <set>
 #include <utility>
 #include <filesystem>
-#include <cassert>
 #include <string>
 #include <functional>
 

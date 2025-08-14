@@ -1,6 +1,8 @@
 #include "SignalManager.h"
 #include "IOChannel.h"
 #include "util_functions.h"
+#include <functional>
+#include <memory>
 
 namespace yy::net
 {
@@ -19,6 +21,10 @@ SignalManager::SignalManager(EventLoop* loop, const std::function<void()>& handl
     set_signal_handler(SIGALRM, WritePipe);
     set_signal_handler(SIGINT, WritePipe);/* Ctrl+c */
     set_signal_handler(SIGTERM, WritePipe);// kill <pid>
+}
+
+SignalManager::~SignalManager()
+{
 }
 
 void SignalManager::WritePipe(int sig)

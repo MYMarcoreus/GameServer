@@ -1,4 +1,7 @@
 #include "RoomInfoController.h"
+
+#include <ranges>
+
 #include "room_data.pb.h"
 #include "log.h"
 #include "account_data.pb.h"

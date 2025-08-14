@@ -1,10 +1,7 @@
 #pragma once
 
-#include <condition_variable>
-
 #include "ILogAppender.h"
 #include "LogFormatter.h"
-#include "cross_platform_defines.h"
 
 namespace yy::Ylog {
 /**
@@ -21,9 +18,10 @@ public:
 
     ~FileLogAppender() override;
 
-    /// @brief 将日志信息msg写到文件
+    /// @brief 同步写
     void WriteLog(const std::shared_ptr<LogMessage> & msg) override;
 
+    /// @brief 异步写
     void AppendBuffer(const std::shared_ptr<LogMessage> & msg) override;
 
     void FlushBuffer() override;

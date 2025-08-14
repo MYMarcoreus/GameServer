@@ -2,7 +2,6 @@
 
 #include "Singleton.h"
 #include "util_functions.h"
-#include "ConfigManager.h"
 #include "ILogAppender.h"
 
 #include <unordered_map>
@@ -12,11 +11,10 @@
 #include <string>
 #include <memory>
 #include <mutex>
-#include <fstream>  // std::ofstream
-#include <sstream>  // std::stringstream
 #include <thread>
 #include <atomic>
-#include <ranges>
+
+#include "RWLock.h"
 
 #define MAKE_LOG_MESSAGE(level, content) std::make_shared<yy::Ylog::LogMessage>(level, yy::util::get_current_time(), __FILE__, __LINE__, std::this_thread::get_id(), content)
 
@@ -46,10 +44,6 @@
 
 #define START_YLOG_AFTER_CONFIG() yy::Ylog::LoggerManager::Instance().ReadConfigs();
 #define CLOSE_YLOG() yy::Ylog::LoggerManager::Instance().StopAsyncThread();
-
-#define USE_CPP_STREAM false
-
-
 
 //! 日志系统需要在配置系统加载后才能开始：应先调用config::ConfigManager::LoadXmlConfigs()后才使用日志系统
 namespace yy::Ylog {
@@ -242,20 +236,6 @@ private:
     std::atomic<bool>       m_isConfigLoad;
     std::thread             m_async_thread;
 };
-
-
-
-// template <typename... Args>
-// void Test(std::string ____loggername, LogLevel ____level, std::string ____format, Args ... args)
-// {
-//     if (GET_LOGGER(____loggername)->getLevel() <= ____level)
-//     {
-//         std::string _logMessage = std::format(____format, args...);
-//         GET_LOGGER(____loggername)->Log(MAKE_LOG_MESSAGE(____level, _logMessage));
-//     }
-// }
-
-
 
 
 

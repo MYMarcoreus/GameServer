@@ -7,6 +7,8 @@
 #include <cstring>
 #include <iostream>
 
+#include "LinearBuffer.h"
+
 
 namespace yy::Ylog {
 
@@ -16,8 +18,8 @@ const int buffer_size, const std::chrono::milliseconds flush_interval) :
     ILogAppender(format_pattern, buffer_size, flush_interval),
     m_logfilepath{std::move(logfilepath)},
     m_filefd(-1),
-    m_newBuffer1(std::make_unique<util::SequentialBuffer>(m_BuffferSize)),
-    m_newBuffer2(std::make_unique<util::SequentialBuffer>(m_BuffferSize)),
+    m_newBuffer1(std::make_unique<util::LinearBuffer>(m_BuffferSize)),
+    m_newBuffer2(std::make_unique<util::LinearBuffer>(m_BuffferSize)),
     m_buffersToWrite{}
 {
     m_buffersToWrite.reserve(16);

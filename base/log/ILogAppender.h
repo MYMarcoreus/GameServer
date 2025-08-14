@@ -1,13 +1,12 @@
 #pragma once
-#include "LogFormatter.h"
 
 #include <mutex>
 #include <memory>
 #include <string>
-
+#include "LogFormatter.h"
 #include "LogBufferManager.h"
-using namespace std::chrono_literals;
 
+using namespace std::chrono_literals;
 
 namespace yy::Ylog {
 
@@ -58,7 +57,6 @@ protected:
     mutable std::mutex  m_mutex;     // 多个logger输出时进行互斥(测试表明：似乎不用上锁也行)
     LogFormatter        m_formatter;
 };
-
 
 }
 

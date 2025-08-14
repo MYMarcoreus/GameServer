@@ -29,7 +29,7 @@ class RpcMessage;
 }
 
 namespace yy::util {
-class SequentialBuffer;
+class LinearBuffer;
 }
 
 

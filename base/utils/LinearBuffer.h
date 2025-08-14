@@ -1,5 +1,4 @@
 #pragma once
-#include <cstring>
 #include <string>
 #include <string_view>
 #include <memory>
@@ -13,14 +12,14 @@ class Message;
 namespace yy::util {
 
 // 每一个TcpConnection对应一个recvbuf和sendbuf，而每一个TcpConnection仅仅会被一个ioloop线程操作io，因此Buffer在此场景下线程安全
-class SequentialBuffer: copyable {
+class LinearBuffer: copyable {
 public:
-    explicit SequentialBuffer(size_t _capacity);
-    SequentialBuffer(SequentialBuffer &&) = default;
-    SequentialBuffer &operator=(SequentialBuffer &&) = default;
-    SequentialBuffer(const SequentialBuffer &) = default;
-    SequentialBuffer &operator=(const SequentialBuffer &) = default;
-    ~SequentialBuffer() = default;
+    explicit LinearBuffer(size_t _capacity);
+    LinearBuffer(LinearBuffer &&) = default;
+    LinearBuffer &operator=(LinearBuffer &&) = default;
+    LinearBuffer(const LinearBuffer &) = default;
+    LinearBuffer &operator=(const LinearBuffer &) = default;
+    ~LinearBuffer() = default;
 
     size_t GetHead()   const { return m_Head; }
     size_t GetTail()   const { return m_Tail; }

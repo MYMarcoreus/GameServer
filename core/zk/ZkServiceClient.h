@@ -2,10 +2,10 @@
 
 #include "net_definations.h"
 #include "RWLock.h"
-#include "ZkClient.h"
 
 namespace yy::core::zk
 {
+class ZkClient;
 
 class ZkServiceClient  {
     mutable std::once_flag  zk_client_init_flag_;
@@ -13,6 +13,7 @@ public:
     using WatcherCallback = std::function<void(const std::string&, std::unordered_map<std::string, net::IPAddressPtr>)>;
 
     ZkServiceClient();
+    ~ZkServiceClient();
 
     void Start(const std::string & service_root);
 

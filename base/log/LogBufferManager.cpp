@@ -1,21 +1,27 @@
 #include "LogBufferManager.h"
 #include "ILogAppender.h"
 #include "log.h"
+#include "LinearBuffer.h"
 
 #include <cassert>
 
-using yy::util::SequentialBuffer;
+using yy::util::LinearBuffer;
 
 namespace yy::Ylog
 {
 class ILogAppender;
 
-LogBufferManager::LogBufferManager(int bufferSize)
-    : m_bufferSize(bufferSize),
-      m_current(std::make_unique<SequentialBuffer>(bufferSize)),
-      m_next(std::make_unique<SequentialBuffer>(bufferSize))
+LogBufferManager::LogBufferManager(int bufferSize, std::function<void()> cb) :
+    m_bufferSize(bufferSize),
+    m_current(std::make_unique<LinearBuffer>(bufferSize)),
+    m_next(std::make_unique<LinearBuffer>(bufferSize)),
+    m_writeCb(std::move(cb))
 {
     m_buffersToWrite.reserve(16);
+}
+
+LogBufferManager::~LogBufferManager()
+{
 }
 
 void LogBufferManager::Append(const std::string & logstr) {
@@ -33,9 +39,9 @@ void LogBufferManager::Append(const std::string & logstr) {
 
         // 使用 next 作为新的 current，如果 next 不存在则新建
         if (m_next) {
-            m_current = std::move(m_next);
+            m_current = std::move(m_next); //! 双缓冲区核心，直接切换到备用缓冲区，而不是阻塞等待后台线程将当前缓冲区写完
         } else {
-            m_current = std::make_unique<SequentialBuffer>(m_bufferSize);
+            m_current = std::make_unique<LinearBuffer>(m_bufferSize);
         }
 
         m_current->AppendDataFromArray(logstr);
@@ -58,7 +64,7 @@ void LogBufferManager::Swap(BufferPtr& outBuffer1, BufferPtr& outBuffer2, Buffer
         m_buffersToWrite.emplace_back(std::move(m_current));
     }
 
-    // 将代写到文件的数据安全地交换出去
+    // 将待写到文件的数据安全地交换出去
     //! 重点：只能用swap，不能用下面两行
     outBuffersToWrite.swap(m_buffersToWrite);
     // outBuffersToWrite = std::move(m_buffersToWrite);

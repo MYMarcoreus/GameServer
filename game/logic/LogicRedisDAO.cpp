@@ -1,5 +1,7 @@
 #include "LogicRedisDAO.h"
 
+#include <format>
+
 #include "RedisClient.h"
 
 using namespace std::chrono_literals;
@@ -9,6 +11,10 @@ namespace yy::app::logic
 
 LogicRedisDAO::LogicRedisDAO():
     redis_client_(core::redis::RedisClient::Instance())
+{
+}
+
+LogicRedisDAO::~LogicRedisDAO()
 {
 }
 

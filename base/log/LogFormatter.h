@@ -30,15 +30,8 @@ public:
     /// @brief 配置文件中的日志格式能够指定时间项的格式
     void SetTimeFormat(const std::string&  timeFmtPattern = "%Y-%m-%d %H:%M:%S.",  bool need_us = true);
 
-    std::string format(const std::shared_ptr<LogMessage> & msg) const
-    {
-        // 遍历每一项，将其转换为最终被输出的字符串
-        std::stringstream ss;
-        for(const auto & item: m_format_items) {
-            item->format(ss, msg);
-        }
-        return ss.str();
-    }
+    std::string format(const std::shared_ptr<LogMessage> & msg) const;
+
 private:
     void init();
 

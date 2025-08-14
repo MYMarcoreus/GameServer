@@ -18,6 +18,7 @@ class AccountRedisDAO final : public Singleton<AccountRedisDAO>{
     constexpr static std::string ACT_field = "account";
 public:
     explicit AccountRedisDAO();
+    ~AccountRedisDAO() override;
     void Start(net::EventLoop* loop);
 
     auto SetAccountData(uint64_t uid, const std::string& username) -> bool;

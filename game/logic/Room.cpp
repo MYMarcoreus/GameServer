@@ -1,4 +1,7 @@
 #include "Room.h"
+
+#include <ranges>
+
 #include "UserConnection.h"
 #include "log.h"
 #include "EventLoop.h"

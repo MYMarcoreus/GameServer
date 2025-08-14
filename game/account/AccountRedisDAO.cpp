@@ -1,7 +1,6 @@
 #include "AccountRedisDAO.h"
 
 #include <format>
-
 #include "RedisClient.h"
 
 using namespace std::chrono_literals;
@@ -10,6 +9,10 @@ namespace yy::app::account
 {
 AccountRedisDAO::AccountRedisDAO():
     redis_client_(core::redis::RedisClient::Instance())
+{
+}
+
+AccountRedisDAO::~AccountRedisDAO()
 {
 }
 

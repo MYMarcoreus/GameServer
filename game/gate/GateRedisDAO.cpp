@@ -1,4 +1,7 @@
 #include "GateRedisDAO.h"
+
+#include <format>
+
 #include "RedisClient.h"
 
 using namespace std::chrono_literals;
@@ -7,6 +10,10 @@ namespace yy::app::gate
 {
 GateRedisDAO::GateRedisDAO():
     redis_client_(core::redis::RedisClient::Instance())
+{
+}
+
+GateRedisDAO::~GateRedisDAO()
 {
 }
 

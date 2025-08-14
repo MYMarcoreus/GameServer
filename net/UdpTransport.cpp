@@ -7,13 +7,13 @@
 #include "status/Status.h"
 #include "ErrnoSaver.h"
 #include "IPAddress.h"
+#include "LinearBuffer.h"
 #include "ThreadPool.h"
 #include "NetBuffer.h"
 
 namespace yy::net {
 
 using namespace yy::util;
-using namespace yy::config;
 using SocketApiWrapper::SocketError;
 
 UdpTransport::UdpTransport(EventLoop * recvLoop, const IPAddressPtr & recv_addr, const int32_t recv_bytes_one, const int32_t m_send_thread_num):
@@ -81,7 +81,7 @@ void UdpTransport::SendUDP(const std::string_view & message, const IPAddressPtr 
     });
 }
 
-void UdpTransport::SendUDP(const std::shared_ptr<SequentialBuffer>& buf, const IPAddressPtr & peerAddr)
+void UdpTransport::SendUDP(const std::shared_ptr<LinearBuffer>& buf, const IPAddressPtr & peerAddr)
 {
     m_sendWorkThreadPool->PushTask([this, buf /* 引用计数+1 */, peerAddr]() {
         this->SendUDPWorker(buf, peerAddr);
@@ -121,7 +121,7 @@ void UdpTransport::SendUDPWorker(const std::string_view & buf, const IPAddressPt
     }
 }
 
-void UdpTransport::SendUDPWorker(const std::shared_ptr<SequentialBuffer> & buf, const IPAddressPtr & peerAddr) { //! const &延长临时对象生命周期
+void UdpTransport::SendUDPWorker(const std::shared_ptr<LinearBuffer> & buf, const IPAddressPtr & peerAddr) { //! const &延长临时对象生命周期
     //! 输出缓冲中目前没有任何的未发送数据，便直接向套接字发送数据（不借助输出缓冲）
     SocketApiWrapper::SocketResult rst = m_socket->Sendto(buf->Peek(), buf->GetDataSize(), 0, peerAddr);
 

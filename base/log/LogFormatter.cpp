@@ -170,6 +170,13 @@ void LogFormatter::SetTimeFormat(const std::string& timeFmtPattern, bool need_us
     init();
 }
 
-
-
+std::string LogFormatter::format(const std::shared_ptr<LogMessage>& msg) const
+{
+    // 遍历每一项，将其转换为最终被输出的字符串
+    std::stringstream ss;
+    for(const auto & item: m_format_items) {
+        item->format(ss, msg);
+    }
+    return ss.str();
+}
 }

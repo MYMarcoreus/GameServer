@@ -19,7 +19,6 @@ namespace yy::util {
 template<typename T>
 class ObjectPool {
 public:
-    using Ptr = std::shared_ptr<T>;
     using Creator = std::function<std::unique_ptr<T>()>;
     using Validator = std::function<bool(const T&)>;
 
@@ -46,7 +45,7 @@ public:
         });
     }
 
-    Ptr Acquire(const std::chrono::milliseconds wait_time) {
+    std::shared_ptr<T> Acquire(const std::chrono::milliseconds wait_time) {
         if (!is_initialized_) {
             throw std::runtime_error("ObjectPool is not initialized. Call Init() first.");
         }
@@ -78,7 +77,7 @@ public:
             }
         };
 
-        return Ptr(obj.release(), deleter);
+        return std::shared_ptr<T>{obj.release(), deleter};
     }
 
     void Shutdown() {

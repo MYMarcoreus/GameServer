@@ -82,7 +82,7 @@ void ProtobufTcpCodec_Cmd::SendTCP(const TcpConnectionPtr &conn, const google::p
 
     /* 不用关心buffer空间不足，因为我们已经分配好了足够的空间 */
     //! 填充消息头
-    const auto buffer = std::make_shared<util::SequentialBuffer>( header.kMinHeaderLen + header.GetBodyLength());
+    const auto buffer = std::make_shared<util::LinearBuffer>( header.kMinHeaderLen + header.GetBodyLength());
     header.AppendIntoBuffer(*buffer, conn->GetXorCode());
 
     //! 填充消息体

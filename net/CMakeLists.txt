@@ -26,8 +26,8 @@ set(LocalSrc
         TcpClient.cpp
         SocketApiWrapper.cpp
         SelectPoller.cpp
-        FullDuplexPipe.cpp
         NetBuffer.cpp
+        SignalManager.cpp
 )
 
 #! 给本地相对路径添加前缀，变为绝对路径

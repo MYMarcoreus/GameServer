@@ -1,13 +1,17 @@
 #include "ZkServiceClient.h"
+
 #include "IPAddress.h"
 #include "log.h"
 #include "ZkClient.h"
-#include <format>
+#include <algorithm>
 
 namespace yy::core::zk
 {
 ZkServiceClient::ZkServiceClient(): zk_client_(std::make_unique<ZkClient>())
-{}
+{ }
+
+ZkServiceClient::~ZkServiceClient()
+{ }
 
 void ZkServiceClient::Start(const std::string& service_root)
 {

@@ -19,7 +19,6 @@ class GateRedisDAO final : public Singleton<GateRedisDAO>{
     constexpr static std::string USR_TKN_field = "usr_token";
     constexpr static std::string ACT_field = "account";
 public:
-    explicit GateRedisDAO();
     void Start(net::EventLoop* loop);
 
     auto SetAccountData(uint64_t uid, const std::string& username) -> bool;
@@ -29,6 +28,8 @@ public:
     auto GetTokenAndRefreshEx(uint64_t uid) const -> std::optional<std::string>;
 
 private:
+    explicit GateRedisDAO();
+    ~GateRedisDAO() override;
     core::redis::RedisClient& redis_client_;
 };
 

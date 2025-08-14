@@ -4,17 +4,15 @@
 #include "Socket.h"
 #include "EventLoop.h"
 #include "log.h"
-#include "ErrnoSaver.h"
 #include "NetBuffer.h"
 
-#include <google/protobuf/message_lite.h>
 #include <google/protobuf/message.h>
+
+using namespace yy::util;
+using yy::SocketApiWrapper::SocketError;
 
 namespace yy::net {
 
-using namespace yy::util;
-using namespace yy::config;
-using yy::SocketApiWrapper::SocketError;
 
 
 TcpConnection::TcpConnection(uint64_t connid, EventLoop *loop, SocketApiWrapper::socket_t sockfd,
@@ -83,7 +81,7 @@ void TcpConnection::SendRawTCP(const std::string_view & buffer) {
     }
 }
 
-void TcpConnection::SendRawTCP(const std::shared_ptr<SequentialBuffer> & buf)
+void TcpConnection::SendRawTCP(const std::shared_ptr<LinearBuffer> & buf)
 {
     if (not CanIO()) {
         YLOG_TRACE("<{}>In TcpConnection::SendTCP, Connection Already Closed", m_socket->GetFD())
@@ -306,7 +304,7 @@ void TcpConnection::SendRawTCPInLoop(const std::string_view & buf) { //! const &
     }
 }
 
-void TcpConnection::SendRawTCPInLoop(const std::shared_ptr<SequentialBuffer> & buf)
+void TcpConnection::SendRawTCPInLoop(const std::shared_ptr<LinearBuffer> & buf)
 {
     m_ioLoop->AssertInLoopingThread();
 

@@ -8,7 +8,7 @@
 
 namespace yy::util
 {
-class SequentialBuffer;
+class LinearBuffer;
 }
 
 namespace google::protobuf {
@@ -34,7 +34,7 @@ public:
 
     ///Region 发送UDP数据：将待发送数据message添加至输出缓冲中（如果输出缓冲为空，则直接发送，无需等待事件触发）
     void SendUDP(const std::string_view & message, const IPAddressPtr & peerAddr);
-    void SendUDP(const std::shared_ptr<util::SequentialBuffer> & buf, const IPAddressPtr & peerAddr);
+    void SendUDP(const std::shared_ptr<util::LinearBuffer> & buf, const IPAddressPtr & peerAddr);
 
     ///End
 
@@ -61,7 +61,7 @@ private:
     void HandleError();    // 处理错误
 
     void SendUDPWorker(const std::string_view &buf, const IPAddressPtr & peerAddr);
-    void SendUDPWorker(const std::shared_ptr<util::SequentialBuffer> & buf, const IPAddressPtr & peerAddr);
+    void SendUDPWorker(const std::shared_ptr<util::LinearBuffer> & buf, const IPAddressPtr & peerAddr);
 
 private:
     EventLoop *                                     m_recvLoop;

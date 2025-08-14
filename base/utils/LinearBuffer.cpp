@@ -1,9 +1,9 @@
-#include "SequentialBuffer.h"
+#include "LinearBuffer.h"
 #include "util_functions.h"
 #include <google/protobuf/message.h>
 
 namespace yy::util {
-SequentialBuffer::SequentialBuffer(const size_t _capacity)
+LinearBuffer::LinearBuffer(const size_t _capacity)
     : m_Buf(_capacity, 0),
     m_Capacity{_capacity},
     m_Head{0},
@@ -11,7 +11,7 @@ SequentialBuffer::SequentialBuffer(const size_t _capacity)
 { }
 
 
-bool SequentialBuffer::AppendDataFromCBuffer(const void *src_buf, size_t data_len) {
+bool LinearBuffer::AppendDataFromCBuffer(const void *src_buf, size_t data_len) {
     bool isEnsured = TryMakeEnoughFreeSpace(data_len);
     std::memcpy(GetFreeBegin(), src_buf, data_len);
     MoveTail(data_len);
@@ -19,7 +19,7 @@ bool SequentialBuffer::AppendDataFromCBuffer(const void *src_buf, size_t data_le
 }
 
 
-bool SequentialBuffer::AppendDataFromArray(const std::string_view &message) {
+bool LinearBuffer::AppendDataFromArray(const std::string_view &message) {
     bool isEnsured = TryMakeEnoughFreeSpace(message.size());
     std::memcpy(GetFreeBegin(), message.data(), message.size());
     MoveTail(message.size());
@@ -28,7 +28,7 @@ bool SequentialBuffer::AppendDataFromArray(const std::string_view &message) {
 
 
 
-bool SequentialBuffer::AppendDataFromProtobuf(const google::protobuf::Message & src_msg) {
+bool LinearBuffer::AppendDataFromProtobuf(const google::protobuf::Message & src_msg) {
     bool isEnsured = TryMakeEnoughFreeSpace(src_msg.ByteSizeLong());
     if (!src_msg.SerializeToArray(GetFreeBegin(), static_cast<int>(src_msg.ByteSizeLong())))
         return false;
@@ -36,7 +36,7 @@ bool SequentialBuffer::AppendDataFromProtobuf(const google::protobuf::Message & 
     return isEnsured;
 }
 
-bool SequentialBuffer::TryMakeEnoughFreeSpace(size_t needLen) {
+bool LinearBuffer::TryMakeEnoughFreeSpace(size_t needLen) {
     // 空闲空间不足，尝试释放空间
     if(not Compact(needLen)) {
         // 若释放空间后仍无法放入数据，则需要扩容buf
@@ -48,7 +48,7 @@ bool SequentialBuffer::TryMakeEnoughFreeSpace(size_t needLen) {
     return true; //! 无上限扩容
 }
 
-bool SequentialBuffer::Compact(size_t needLen) {
+bool LinearBuffer::Compact(size_t needLen) {
     int dataSize = GetDataSize();
     // 将数据区移到缓冲区最前，回收DataBegin()前的空间（如果数据区已在最前，则不移动）
     if(dataSize > 0 and m_Head != 0) {
@@ -62,7 +62,7 @@ bool SequentialBuffer::Compact(size_t needLen) {
     return GetFreeSize() >= needLen;
 }
 
-bool SequentialBuffer::PopDataToCBuffer(void *dest_buf, size_t data_len) //NOLINT
+bool LinearBuffer::PopDataToCBuffer(void *dest_buf, size_t data_len) //NOLINT
 {
     if(!HaveEnoughDataSpace(data_len)) {
         return false;
@@ -74,7 +74,7 @@ bool SequentialBuffer::PopDataToCBuffer(void *dest_buf, size_t data_len) //NOLIN
     return true;
 }
 
-bool SequentialBuffer::PopDataToProtobuf(const std::shared_ptr<google::protobuf::Message> & outMsg, const size_t len) {
+bool LinearBuffer::PopDataToProtobuf(const std::shared_ptr<google::protobuf::Message> & outMsg, const size_t len) {
     if(!HaveEnoughDataSpace(len))
         return false;
 
@@ -89,7 +89,7 @@ bool SequentialBuffer::PopDataToProtobuf(const std::shared_ptr<google::protobuf:
 
 
 
-std::string SequentialBuffer::PopDataAsString(size_t len) {
+std::string LinearBuffer::PopDataAsString(size_t len) {
     if(!HaveEnoughDataSpace(len))
         return "";
 
@@ -99,13 +99,13 @@ std::string SequentialBuffer::PopDataAsString(size_t len) {
     return ret;
 }
 
-std::string SequentialBuffer::PopAllDataAsString() {
+std::string LinearBuffer::PopAllDataAsString() {
     return PopDataAsString(GetDataSize());
 }
 
 
 
-void SequentialBuffer::MoveHeadAndTryReset(size_t offset) {
+void LinearBuffer::MoveHeadAndTryReset(size_t offset) {
     m_Head += offset;
     if(GetDataSize() == 0) {
         Reset();
@@ -114,14 +114,14 @@ void SequentialBuffer::MoveHeadAndTryReset(size_t offset) {
 
 
 
-bool SequentialBuffer::PeekToCBuffer(const int start_index, void *dest, const size_t len) const {
+bool LinearBuffer::PeekToCBuffer(const int start_index, void *dest, const size_t len) const {
     if(GetDataSize() < len)
         return false;
     memcpy(dest, GetDataBegin()+start_index, len);
     return true;
 }
 
-bool SequentialBuffer::PeekToString(const int start_index, std::string & dest, size_t len) const {
+bool LinearBuffer::PeekToString(const int start_index, std::string & dest, size_t len) const {
      if(GetDataSize() < len)
         return false;
     dest.assign(GetDataBegin()+start_index, len);
@@ -129,7 +129,7 @@ bool SequentialBuffer::PeekToString(const int start_index, std::string & dest, s
 }
 
 
-void SequentialBuffer::Print() const {
+void LinearBuffer::Print() const {
     for(int i = 0; i < GetCapacity() ;++i)
     {
         if(Peek()[i] == '\0')

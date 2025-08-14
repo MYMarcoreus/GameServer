@@ -59,7 +59,7 @@ void RpcCodec::SendTCP(const TcpConnectionPtr& conn, const protocol::core::RpcMe
 
     /* 不用关心buffer空间不足，因为我们已经分配好了足够的空间 */
     //! 填充消息头
-    util::SequentialBuffer buffer{header.GetFullLength()+4};
+    util::LinearBuffer buffer{header.GetFullLength()+4};
     header.AppendIntoBuffer(buffer);
 
     YLOG_TRACE("发送消息头<{}>：[{}][{}]", header.kHeaderSize,

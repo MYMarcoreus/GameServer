@@ -21,7 +21,7 @@ void UdpSession::SendUDP(const std::string_view &message)
     m_udpTran.SendUDP(message, m_peerAddr);
 }
 
-void UdpSession::SendUDP(const std::shared_ptr<util::SequentialBuffer>& buf)
+void UdpSession::SendUDP(const std::shared_ptr<util::LinearBuffer>& buf)
 {
     m_udpTran.SendUDP(buf, m_peerAddr);
 }

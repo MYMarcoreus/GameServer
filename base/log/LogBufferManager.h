@@ -1,8 +1,13 @@
 #pragma once
 
 #include <condition_variable>
+#include <functional>
 
-#include "SequentialBuffer.h"
+
+namespace yy::util
+{
+class LinearBuffer;
+}
 
 namespace yy::Ylog
 {
@@ -11,10 +16,11 @@ class ILogAppender;
 
 class LogBufferManager {
 public:
-    using BufferPtr = std::unique_ptr<util::SequentialBuffer>;
+    using BufferPtr = std::unique_ptr<util::LinearBuffer>;
     using BufferVector = std::vector<BufferPtr>;
 
-    explicit LogBufferManager(int bufferSize = 40960);
+    explicit LogBufferManager(int bufferSize = 40960, std::function<void()> cb = nullptr);
+    ~LogBufferManager();
 
     /// 向当前缓冲区追加日志字符串
     void Append(const std::string & logstr);
@@ -25,13 +31,15 @@ public:
 private:
     size_t m_bufferSize;
 
-    BufferPtr m_current;
-    BufferPtr m_next;
+    BufferPtr m_current{}; //! 前端缓冲区
+    BufferPtr m_next{};    //! 备用缓冲区
 
     BufferVector m_buffersToWrite;
 
     std::mutex m_mutex;
     std::condition_variable m_isEmpty;
+
+    std::function<void()> m_writeCb;
 };
 
 }

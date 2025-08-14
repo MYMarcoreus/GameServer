@@ -1,4 +1,7 @@
 #include "md5.h"
+#include <cstdio>
+#include <cstring>
+
 
 namespace md5 {
 

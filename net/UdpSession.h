@@ -3,7 +3,7 @@
 
 namespace yy::util
 {
-class SequentialBuffer;
+class LinearBuffer;
 }
 
 namespace google::protobuf {
@@ -21,7 +21,7 @@ public:
 
     ///Region 发送UDP数据：将待发送数据message添加至输出缓冲中（如果输出缓冲为空，则直接发送，无需等待事件触发）
     void SendUDP(const std::string_view & message);
-    void SendUDP(const std::shared_ptr<util::SequentialBuffer> & buf);
+    void SendUDP(const std::shared_ptr<util::LinearBuffer> & buf);
     ///End
 
     void SetXorCode(const uint8_t xorCode) { m_xorCode = xorCode; }

@@ -1,9 +1,9 @@
 #pragma once
 
+#include <chrono>
 #include <memory>
 
 #include "Singleton.h"
-#include "RedisPool.h"
 #include <string>
 #include <unordered_map>
 #include <optional>
@@ -43,7 +43,10 @@ public:
     bool HDel(const std::string& key, const std::string& field);
 
 private:
-    std::unique_ptr<RedisPool> pool_{};
+    RedisClient();
+    ~RedisClient() override;
+
+    std::unique_ptr<RedisPool> pool_;
 };
 
 }

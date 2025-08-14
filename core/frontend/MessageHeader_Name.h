@@ -9,7 +9,7 @@ class Message;
 }
 
 namespace yy::util {
-class SequentialBuffer;
+class LinearBuffer;
 }
 
 namespace yy::net {
@@ -48,7 +48,7 @@ public:
     MessageParseErrorCode ParseFromBuffer(net::NetBuffer &buf, uint8_t xorCode);
 
     /// @brief 将*this中的数据加密并序列化后写入Buffer中
-    bool AppendIntoBuffer(util::SequentialBuffer& buf, uint8_t xorCode);
+    bool AppendIntoBuffer(util::LinearBuffer& buf, uint8_t xorCode);
 
     const auto & GetCheckCode() const { return m_CheckCode; }
 

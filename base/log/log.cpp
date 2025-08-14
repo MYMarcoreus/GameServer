@@ -5,18 +5,12 @@
 #include "ILogAppender.h"
 #include "LogXmlConfig.h"
 
-#ifdef ____WINDOWS
-#include <io.h>
-#else
-#include <unistd.h>
-#include <sys/fcntl.h>
-#endif
-
 #include <utility>
 #include <cassert>
 #include <algorithm>
 #include <chrono>
 #include <iostream>
+#include <ranges>
 using namespace std::chrono_literals;
 
 

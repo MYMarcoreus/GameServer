@@ -119,7 +119,7 @@ include_directories(
         base/public
         base/utils
         base/log
-        base/net
+        net
         core
         core/frontend
         core/redis
@@ -140,6 +140,7 @@ set(COMMON_SOURCES
 )
 # 调用子目录下的cmake
 add_subdirectory(base)
+add_subdirectory(net)
 add_subdirectory(core)
 add_subdirectory(protobuf)
 add_subdirectory(game)

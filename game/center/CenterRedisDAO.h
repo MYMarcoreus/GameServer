@@ -17,6 +17,7 @@ class CenterRedisDAO final : public Singleton<CenterRedisDAO>{
     constexpr static std::string SCN_TKN_field = "scn_token";
 public:
     explicit CenterRedisDAO();
+    ~CenterRedisDAO() override;
     void Start(net::EventLoop* loop);
 
     auto SetSceneTokenWithExpire(uint64_t uid, const std::string&, std::chrono::seconds) -> bool;

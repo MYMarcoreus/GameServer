@@ -2,10 +2,10 @@ set(LocalSrc
         util_functions.cpp
         ThreadPool.cpp
         status/Status.cpp
-        SequentialBuffer.cpp
-        SequentialBuffer.cpp
+        LinearBuffer.cpp
+        LinearBuffer.cpp
         RingBuffer.cpp
-        SignalManager.cpp
+        FullDuplexPipe.cpp
 )
 
 #! 给本地相对路径添加前缀，变为绝对路径

@@ -12,7 +12,7 @@ public:
 
     explicit StdoutLogApeender(const std::string &format_pattern, int buffer_size = 4 * 1024, std::chrono::milliseconds flush_interval = 100ms);
 
-    ~StdoutLogApeender() override = default;
+    ~StdoutLogApeender() override;
 
     /// @brief 将日志信息msg写到标准输出
     void WriteLog(const std::shared_ptr<LogMessage> &msg) override;

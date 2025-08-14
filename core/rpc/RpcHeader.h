@@ -16,7 +16,7 @@ public:
 
     MessageParseErrorCode ParseFromBuffer(net::NetBuffer &buf);
 
-    bool AppendIntoBuffer(util::SequentialBuffer& buf);
+    bool AppendIntoBuffer(util::LinearBuffer& buf);
 
     ///@brief 协议校验码
     const auto & GetCheckCode() const { return m_CheckCode; }

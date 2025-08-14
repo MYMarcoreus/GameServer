@@ -1,5 +1,7 @@
 #include "CenterRedisDAO.h"
 
+#include <format>
+
 #include "RedisClient.h"
 
 namespace yy::app::center
@@ -7,6 +9,10 @@ namespace yy::app::center
 
 CenterRedisDAO::CenterRedisDAO():
     redis_client_(core::redis::RedisClient::Instance())
+{
+}
+
+CenterRedisDAO::~CenterRedisDAO()
 {
 }
 

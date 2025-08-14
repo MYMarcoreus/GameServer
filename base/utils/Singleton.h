@@ -1,6 +1,6 @@
 #pragma once
 
-#include<mutex>
+#include <utility>
 
 /// @brief 在首次Instance时会调用子类T的构造函数和析构函数，因此Singleton必须能够调用子类的构造/析构函数,所以子类T必须声明Singleton为其友元
 #define SINGLETON_NECESSITY(classname) friend class Singleton<classname>;
@@ -17,7 +17,7 @@ class Singleton
 public:
     //! 使用C++11的变参模板，支持有参数的构造函数，但存在同一类型的参数列表参数值不同的Instance使用同一个对象的bug
     template<typename ... Args>
-    static inline T & Instance(Args &&... args)
+    static T & Instance(Args &&... args)
     {
         /*  local static对象的初始化发生在控制流第一次执行到该对象的初始化语句时，是懒汉式
                 在C++11之前，local static对象的初始化存在线程安全问题，可能会造成对象的重复构造，而这需要以双重检查+锁来防止

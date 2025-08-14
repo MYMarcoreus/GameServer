@@ -1,10 +1,12 @@
 #pragma once
-#include "Socket.h"
-#include "IOChannel.h"
+
 #include <functional>
+#include <memory>
+#include "net_definations.h"
+#include "Socket.h"
 
 namespace yy::net {
-
+class IOChannel;
 class EventLoop;
 
 ///@brief 和TcpConnetion平级的类，都归TcpServer管理
@@ -39,8 +41,8 @@ private:
 
 private:
     EventLoop *             m_AcceptorLoop;
-    Socket                  m_AcceptSocket;
-    IOChannel               m_AcceptChannel;
+    std::unique_ptr<Socket>                  m_AcceptSocket;
+    std::unique_ptr<IOChannel>               m_AcceptChannel;
     NewConnectionCallback   m_NewConnectionCallback;
     bool                    m_IsListening;
     IPAddressPtr            m_ListenAddr;

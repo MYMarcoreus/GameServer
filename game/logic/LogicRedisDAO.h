@@ -21,7 +21,6 @@ class LogicRedisDAO final : public Singleton<LogicRedisDAO>{
     constexpr static std::string USR_field = "username";
     constexpr static std::string ACT_field = "account";
 public:
-    explicit LogicRedisDAO();
     void Start(net::EventLoop* loop);
 
     auto GetAndDelSceneToken(uint64_t uid) -> std::optional<std::string>;
@@ -29,6 +28,9 @@ public:
     auto GetAccountData(uint64_t uid) -> std::optional<account::AccountData>;
 
 private:
+    explicit LogicRedisDAO();
+    ~LogicRedisDAO() override;
+
     core::redis::RedisClient& redis_client_;
 };
 

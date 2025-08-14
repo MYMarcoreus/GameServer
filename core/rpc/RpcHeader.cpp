@@ -4,6 +4,7 @@
 #include "NetBuffer.h"
 #include "rpc.pb.h"
 #include "Endian.h"
+#include "LinearBuffer.h"
 
 namespace yy::core::rpc
 {
@@ -46,7 +47,7 @@ MessageParseErrorCode RpcHeader::ParseFromBuffer(net::NetBuffer& buf)
     return MessageParseErrorCode::eNoError;
 }
 
-bool RpcHeader::AppendIntoBuffer(util::SequentialBuffer& buf)
+bool RpcHeader::AppendIntoBuffer(util::LinearBuffer& buf)
 {
     if(buf.GetFreeSize() < kHeaderSize) {
         return false;

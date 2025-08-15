@@ -138,16 +138,14 @@ class Logger
 {
 public:
     using ptr = std::shared_ptr<Logger>;
-    friend class LoggerManager;
 
 public:
     Logger(const std::string& name, LogLevel level, bool isAsync);
 
     ~Logger() = default;
 
-    std::string getName() const { return m_name; }
-
-    LogLevel getLevel() const { return m_level; }
+    auto getName() const -> std::string { return m_name; }
+    auto getLevel() const -> LogLevel { return m_level; }
 
     void Stop() { m_isStop = true; }
 
@@ -155,16 +153,16 @@ public:
     /// @param msg 一条日志信息，在该函数中可能被输出到不同的地方(file、stdout)
     void Log(const LogMessage::ptr& msg) const;
 
-    /// @brief 向日志器添加一个日志添加器
+    /// @brief 添加一个日志添加器
     void addAppender(const std::shared_ptr<ILogAppender>& appender);
 
-    /// @brief 从日志器删除一个日志添加器
-    void delAppender(const std::shared_ptr<ILogAppender>& appender);
+    /// @brief 删除一个日志添加器
+    [[maybe_unused]] void delAppender(const std::shared_ptr<ILogAppender>& appender);
 
-    void clearAppenders();
+    /// @brief 删除所有日志添加器
+    [[maybe_unused]] void clearAppenders();
 
-    /// @brief 支持运行时改变日志器的级别
-    void setLevel(const LogLevel level) { m_level = level; }
+    auto& getAllAppenders() { return m_appenders; }
 
 private:
     /// @brief 同步写日志，直接将日志写到文件/标准输出中
@@ -177,7 +175,7 @@ private:
     std::string                                 m_name;      // 日志器名称
     LogLevel                                    m_level;     // 日志器级别
     std::vector<std::shared_ptr<ILogAppender>>  m_appenders; // 日志添加器
-    mutable std::mutex                          m_appenderMutex;     // 管理appenders的互斥锁
+    mutable std::mutex                          m_appenderMutex; // 管理appenders的互斥锁
     std::atomic<bool>                           m_isStop;
 
     /* 异步 */
@@ -190,7 +188,6 @@ private:
 class LoggerManager final : public Singleton<LoggerManager>
 {
     SINGLETON_NECESSITY(LoggerManager)
-    friend void Logger::LogAsync(const LogMessage::ptr&) const;
 public:
     /// @brief 读取保存在LogXmlConfig单例对象中的配置信息
     void ReadConfigs();
@@ -222,15 +219,12 @@ private:
     /// @brief 开启异步写日志线程
     void StartAsyncThread();
 
-
     // static void addListener();
 
 private:
     std::unordered_map<std::string, Logger::ptr> m_loggers;
     util::RWMutex m_loggerMutex;
 
-    /* 所有日志器共用一个阻塞队列，并用m_isRun控制异步写日志线程的运行 */
-    // yy::util::UnboundedLockedQueue<std::pair<std::shared_ptr<ILogAppender>, LogMessage::ptr>> m_blockqueue;
     // 某线程因遇到错误结束程序，为使得detach的线程也能够关闭，故使用原子变量isRun进行同步
     std::atomic<bool>       m_isRunning;
     std::atomic<bool>       m_isConfigLoad;

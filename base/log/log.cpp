@@ -91,8 +91,6 @@ void Logger::clearAppenders() {
 void Logger::Log(const LogMessage::ptr& msg) const
 {
     assert(msg != nullptr);
-
-    // TICK_START()
     if (m_isStop)
         return;
 
@@ -106,8 +104,6 @@ void Logger::Log(const LogMessage::ptr& msg) const
     } else {
         LogSynch(msg);
     }
-
-    // TICK_END_CALC()
 }
 
 void Logger::LogAsync(const LogMessage::ptr& msg) const
@@ -119,7 +115,6 @@ void Logger::LogAsync(const LogMessage::ptr& msg) const
         LogSynch(msg);
         std::terminate();
     }
-
 
     for (const auto& appender: m_appenders) {
         // push到阻塞队列，进行异步写
@@ -158,7 +153,7 @@ Logger::ptr LoggerManager::getDefaultLogger() {
 Logger::ptr LoggerManager::getLogger(const std::string& name)
 {
     std::shared_lock r_lock{ m_loggerMutex };
-    auto it = m_loggers.find(name);
+    const auto it = m_loggers.find(name);
     if (it == m_loggers.end()) {
         return getDefaultLogger();
     }
@@ -168,7 +163,7 @@ Logger::ptr LoggerManager::getLogger(const std::string& name)
 bool LoggerManager::delLogger(const std::string& name)
 {
     std::unique_lock w_lock{ m_loggerMutex };
-    auto ret = m_loggers.erase(name);
+    const auto ret = m_loggers.erase(name);
     return ret != 0;
 }
 
@@ -270,15 +265,10 @@ void LoggerManager::AsyncLogFlushThread()
     m_isRunning.notify_all();
     while (m_isRunning)
     {
-        // 等待队列中有元素被push，然后将元素pop至msg中返回
-        // std::pair<std::shared_ptr<LogAppender>, LogMessage::ptr> p;
-        // decltype(m_blockqueue)::value_type p;
-        // m_blockqueue.wait_pop(p);
-
         //! logger和appender理论上需要加锁以防止增删，但实际增删几乎不会发生
         for (auto& logger : m_loggers | std::views::values) {
-            for (auto & appender : logger->m_appenders) {
-                appender->FlushBuffer();
+            for (auto & appender : logger->getAllAppenders()) {
+                appender->WriteAndFlush();
             }
         }
     }

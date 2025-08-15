@@ -14,17 +14,14 @@ public:
 
     ~StdoutLogApeender() override;
 
-    /// @brief 将日志信息msg写到标准输出
+    /// @brief 同步写一条日志
     void WriteLog(const std::shared_ptr<LogMessage> &msg) override;
 
-    void AppendBuffer(const std::shared_ptr<LogMessage> & msg) override;
-
-    void FlushBuffer() override;
-
 private:
-    LogBufferManager::BufferPtr m_newBuffer1;
-    LogBufferManager::BufferPtr m_newBuffer2;
-    LogBufferManager::BufferVector m_buffersToWrite;
+    /// @brief 异步写多条日志流
+    void Write(const BufferVector & outBuffersToWrite) override;
+
+    void Flush();
 };
 
 }

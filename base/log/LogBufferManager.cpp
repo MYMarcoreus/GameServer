@@ -3,21 +3,23 @@
 #include "log.h"
 #include "LinearBuffer.h"
 
-#include <cassert>
-
 using yy::util::LinearBuffer;
 
 namespace yy::Ylog
 {
 class ILogAppender;
 
-LogBufferManager::LogBufferManager(int bufferSize, std::function<void()> cb) :
+LogBufferManager::LogBufferManager(int bufferSize, WriteCallback write_cb, FlushCallback flush_cb) :
     m_bufferSize(bufferSize),
     m_current(std::make_unique<LinearBuffer>(bufferSize)),
     m_next(std::make_unique<LinearBuffer>(bufferSize)),
-    m_writeCb(std::move(cb))
+    tempBuffer1_(std::make_unique<LinearBuffer>(bufferSize)),
+    tempBuffer2_(std::make_unique<LinearBuffer>(bufferSize)),
+    writeCb_(std::move(write_cb)),
+    m_flushCb(std::move(flush_cb))
 {
     m_buffersToWrite.reserve(16);
+    tempBuffersToWrite_.reserve(16);
 }
 
 LogBufferManager::~LogBufferManager()
@@ -26,6 +28,7 @@ LogBufferManager::~LogBufferManager()
 
 void LogBufferManager::Append(const std::string & logstr) {
     std::unique_lock lock(m_mutex);
+
     // 若m_current未满，则写入该缓冲区
     if (m_current->HaveEnoughFreeSpace(static_cast<int>(logstr.size())))
     {
@@ -48,33 +51,55 @@ void LogBufferManager::Append(const std::string & logstr) {
     }
 }
 
-void LogBufferManager::Swap(BufferPtr& outBuffer1, BufferPtr& outBuffer2, BufferVector& outBuffersToWrite, std::chrono::milliseconds flush_interval) {
-    // outBuffer1和outBuffer2来自外部，且已初始化
-    assert(outBuffer1);
-    assert(outBuffer2);
 
-    std::unique_lock lock(m_mutex);
 
-    // m_isEmpty.wait_for(lock, flush_interval, [this]() {
-    //     return not this->m_buffersToWrite.empty();
-    // });
+void LogBufferManager::SwapAndWriteFlush(std::chrono::milliseconds flush_interval) {
+    //! 交换
+    {
+        std::unique_lock lock(m_mutex);
 
-    // m_current有数据，就将其加入文件待写区
-    if (m_current) {
-        m_buffersToWrite.emplace_back(std::move(m_current));
+        // m_current有数据，就将其加入文件待写区
+        if (m_current) {
+            m_buffersToWrite.emplace_back(std::move(m_current));
+        }
+
+        // 将待写到文件的数据安全地交换出去
+        //! 重点：只能用swap，不能用下面两行
+        tempBuffersToWrite_.swap(m_buffersToWrite);
+
+        // 重新分配 current 和 next
+        m_current = std::move(tempBuffer1_);
+        if (m_next == nullptr) {
+            m_next =  std::move(tempBuffer2_);
+        }
     }
 
-    // 将待写到文件的数据安全地交换出去
-    //! 重点：只能用swap，不能用下面两行
-    outBuffersToWrite.swap(m_buffersToWrite);
-    // outBuffersToWrite = std::move(m_buffersToWrite);
-    // m_buffersToWrite.clear();
+    //! Write
+    if (writeCb_)
+        writeCb_(tempBuffersToWrite_);
 
-    // 重新分配 current 和 next
-    m_current = std::move(outBuffer1);
-    if (m_next == nullptr) {
-        m_next =  std::move(outBuffer2);
+    // 修改缓冲区截断逻辑
+    if (tempBuffersToWrite_.size() > 2) {
+        tempBuffersToWrite_.resize(2);
     }
+    if (tempBuffer1_ == nullptr)
+    {
+        tempBuffer1_ = std::move(tempBuffersToWrite_.back());
+        tempBuffersToWrite_.pop_back();
+        tempBuffer1_->Reset();
+    }
+    if (tempBuffer2_ == nullptr)
+    {
+        tempBuffer2_ = std::move(tempBuffersToWrite_.back());
+        tempBuffersToWrite_.pop_back();
+        tempBuffer2_->Reset();
+    }
+    tempBuffersToWrite_.clear();
+
+    //! Flush
+    if (m_flushCb)
+        m_flushCb();
+
 }
 
 

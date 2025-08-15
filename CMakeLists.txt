@@ -137,6 +137,7 @@ include_directories(
 
 
 set(COMMON_SOURCES
+        base/log/ILogAppender.cpp
 )
 # 调用子目录下的cmake
 add_subdirectory(base)

@@ -1,0 +1,7 @@
+- `BoundedLockedQueue.hpp`：基于互斥锁的阻塞队列。
+- `UnboundedLockedQueue.hpp`：基于头尾双锁链表的阻塞队列。
+- `ObjectPool.h`：支持自定义构造和对象校验的对象池，使用自定义`std::shared_ptr`删除器来回收对象。
+- `RingBuffer.h`：可动态扩容的环形缓冲区，将容量设为2的幂以代替取模运算`%`。
+- `LinearBuffer.h`：可动态扩容的线性缓冲区。
+- `Singleton.h`：基于静态局部变量的懒汉式可继承单例模板类。
+- `ThreadPool.h`：支持阻塞任务队列和定时任务的多线程线程池。

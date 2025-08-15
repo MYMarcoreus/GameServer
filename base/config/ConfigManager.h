@@ -357,17 +357,8 @@ public:
     static ConfigVar<T>::ptr
     LookUpOrAdd(const std::string & name, const T & default_value, const std::string& description = "")
     {
-        util::WriteLockGuard lock{getMutex()};
-        const auto it = GetConfigVarMap().find(name);
-
         // lookup
-        if(it != GetConfigVarMap().end())
-        {
-            auto var = std::dynamic_pointer_cast<ConfigVar<T>>(it->second);
-            if(var == nullptr) {
-                std::cerr << "ConfigVar::LookUpOrAdd配置项转换失败，" << " m_TypeName=" << name << std::endl;
-                return nullptr;
-            }
+        if (auto var = LookUp<T>(name)) {
             return var;
         }
 
@@ -384,7 +375,10 @@ public:
         //! 因此LookUpOrAdd<T>只能在T定义的文件中使用，否则会在链接时报undefined reference错误
         //! 但是这样似乎也挺好，使得外部不能新增配置项，只能在对应的配置定义文件中新增配置项
         auto var = std::make_shared<ConfigVar<T>>(name, default_value, description);
-        GetConfigVarMap()[name] = var;
+        {
+            util::WriteLockGuard lock{getMutex()};
+            GetConfigVarMap()[name] = var;
+        }
         return var;
     }
 
@@ -393,9 +387,17 @@ public:
     static ConfigVar<T>::ptr
     LookUp(const std::string & name)
     {
-        util::ReadLockGuard lock(getMutex());
+        util::ReadLockGuard lock{getMutex()};
         const auto it = GetConfigVarMap().find(name);
-        return it == GetConfigVarMap().end() ? nullptr : std::dynamic_pointer_cast<ConfigVar<T>>(it->second);
+        if(it == GetConfigVarMap().end()) {
+            return nullptr;
+        }
+        auto var = std::dynamic_pointer_cast<ConfigVar<T>>(it->second);
+        if(var == nullptr) {
+            std::cerr << "ConfigVar::LookUpOrAdd配置项转换失败，" << " m_TypeName=" << name << std::endl;
+            return nullptr;
+        }
+        return var;
     }
 
     ///@brief 静态bool成员变量，用于判断配置文件是否读取完毕

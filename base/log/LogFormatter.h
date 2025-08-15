@@ -25,7 +25,7 @@ public:
     explicit LogFormatter(std::string format_pattern)
         : m_format_pattern(std::move(format_pattern)) { init(); }
 
-    [[nodiscard]] auto GetFormatPattern() const { return m_format_pattern; }
+    [[nodiscard]] const auto& GetFormatPattern() const { return m_format_pattern; }
 
     /// @brief 配置文件中的日志格式能够指定时间项的格式
     void SetTimeFormat(const std::string&  timeFmtPattern = "%Y-%m-%d %H:%M:%S.",  bool need_us = true);

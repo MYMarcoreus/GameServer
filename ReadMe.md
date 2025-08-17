@@ -14,7 +14,7 @@
     - 无锁队列（项目中尚未使用）：https://github.com/cameron314/concurrentqueue 
   - [`/config`](./doc/config.md)：实现了强类型XML配置反序列化框架，利用SFINAE与模板特化支持任意类型的序列化/反序列化。
   - [`/log`](./doc/log.md)：实现了基于C++20`std::format`的异步双缓冲日志库，支持多日志级别、自定义日志格式与输出目标。
-- [**`/net`（网络层）**](./doc/net.md)：**基于主从Reactor模型**构建高性能事件驱动网络框架，采用**One Loop per Thread**线程模型。支持TCP/UDP通信，提供连接管理与消息收发功能，并通过回调机制为上层应用提供业务扩展接口。底层Reactor基于**边缘触发的epoll**实现；定时器由**`timerfd`+红黑树（`std::set`）**管理；跨线程事件唤醒与任务投递基于**`eventfd`**实现；读写缓冲区采用**环形缓冲区**进行管理。
+- [**`/net`（网络层）**](./doc/net.md)：**基于主从Reactor模型**构建高性能事件驱动网络框架，采用**One Loop per Thread**线程模型。支持TCP/UDP通信，提供连接管理与消息收发功能，并通过回调机制为上层应用提供业务扩展接口。底层Reactor基于**边缘触发的epoll**实现；定时器由`timerfd`+红黑树（`std::set`）管理；跨线程事件唤醒与任务投递基于`eventfd`实现；读写缓冲区采用**环形缓冲区**进行管理。
 
 - **`/core`（核心基础设施层）**：实现了不依赖具体业务的通用组件。
   - [`/zk`](./doc/zk.md)：基于ZooKeeper C API，封装了服务注册与发现客户端，支持服务的注册、发现、监听和本地缓存。

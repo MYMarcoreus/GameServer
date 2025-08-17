@@ -14,7 +14,7 @@ using Microseconds = std::chrono::microseconds ; // ms
 using Seconds = std::chrono::seconds;            // s
 
 class TcpConnection;
-class UdpTransport;
+class UdpTransporter;
 class UdpSession;
 class Timer;
 class Socket;
@@ -36,7 +36,7 @@ using IPAddressPtr      = std::shared_ptr<IPAddress>;
 using ConnectorPtr      = std::shared_ptr<Connector>;
 
 
-using UdpTransportPtr   = std::shared_ptr<UdpTransport>;
+using UdpTransportPtr   = std::shared_ptr<UdpTransporter>;
 
 using F_ConnectionEstablishedCallback    = std::function<void(const TcpConnectionPtr &)>;
 using F_ConnectionDestroyedCallback      = std::function<void(const TcpConnectionPtr &)>;

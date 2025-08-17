@@ -2,7 +2,7 @@ set(LocalSrc
         PriorityQueueTimerManager.cpp
         NewDefaultTimerManager.cpp
         socket_definations.cpp
-        UdpTransport.cpp
+        UdpTransporter.cpp
         UdpServer.cpp
         UdpSession.cpp
         NetBuffer.cpp

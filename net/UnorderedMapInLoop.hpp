@@ -56,7 +56,7 @@ public:
         });
     }
 
-    // 同步清空
+    // 清空
     void Clear()
     {
         loop_->RunCallbackInLoop([this] {

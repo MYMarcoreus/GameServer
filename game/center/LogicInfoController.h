@@ -7,11 +7,6 @@
 #include "net_definations.h"
 #include "RWLock.h"
 
-namespace yy::core::zk
-{
-class ZkServiceClient;
-}
-
 namespace yy::app::center
 {
 

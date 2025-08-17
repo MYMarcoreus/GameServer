@@ -38,9 +38,8 @@ IPv4Address::IPv4Address(uint32_t ipv4, uint16_t port): m_address{}
 }
 
 
-
-
-
+std::string IPv4Address::ToString() const
+{ return std::format("{}:{}", GetIPStr(), GetPortStr()); }
 
 IPv6Address::IPv6Address(const std::string &ipv6_str, uint16_t port) : m_address{} {
     //todo

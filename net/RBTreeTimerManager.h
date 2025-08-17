@@ -37,15 +37,14 @@ public:
     TimerPtr CreateTimer(Timestamp expiredTime, Microseconds interval) override;
 
     ///@brief 按照定时器id来取消定时器
-    virtual void CancelTimer(TimerID timerid) override;
+    void CancelTimer(TimerID timerid) override;
 
     ///@brief Linux系统timerfd的计时器到时的回调函数
-    virtual int HandleExpiredTimersInLoop() override;
+    int HandleExpiredTimersInLoop() override;
 
-    virtual Timestamp GetEarliestExpiredTimeInLoop() override;
+    Timestamp GetEarliestExpiredTimeInLoop() override;
+
 private:
-    void HandleExpiredTimersCallback() ;
-
     // 不使用Timer的裸对象，所以需要额外定义智能指针对象的比较函数，不能直接使用Timer::operator<
     struct TimerComparator
     {
@@ -53,19 +52,19 @@ private:
         bool operator()(const TimerPtr & a, const TimerPtr & b) const;
     };
 
-    //Region 核心函数
+    //Region 插入Timer相关函数
     ///@brief 在AddTimer()中传递给m_OwnerLoop->RunCallbackInLoop()的回调函数，为EventLoop中的pending函数
     void AddTimerInLoop(const TimerPtr& timer);
 
-    ///@brief 在CancelTimer()中传递给m_OwnerLoop->RunCallbackInLoop()的回调函数，为EventLoop中的pending函数
-    void CancelTimerInLoop(TimerID);
-    ///End 核心函数
+    ///@return 如果timer在插入定时器列表后成为最早到期的定时器，那么返回true，否则返回false。
+    bool InsertTimer(const TimerPtr& timer);
 
     ///@brief 获取下一个到期的timer
     TimerPtr GetEarliestExpriredTimer();
+    ///End
 
-    ///@return 如果timer在插入定时器列表后成为最早到期的定时器，那么返回true，否则返回false。
-    bool InsertTimer(TimerPtr timer);
+    ///@brief 在CancelTimer()中传递给m_OwnerLoop->RunCallbackInLoop()的回调函数，为EventLoop中的pending函数
+    void CancelTimerInLoop(TimerID);
 
     ///@brief 返回到期的timer列表（expired列表），同时将timer从定时器列表中删除
     std::vector<TimerPtr> GetExpiredTimers();

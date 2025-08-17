@@ -18,11 +18,18 @@ namespace yy::app::logic {
 GameService::GameService(EventLoop * baseLoop, IServer& frontend):
     m_baseLoop{baseLoop},
     m_frontend{frontend},
-    m_room_dispatcher{[this](const UserConnectionPtr& conn, const MessagePtr& msg) {
+    m_room_dispatcher{[this](const UserConnectionPtr& conn, const MessagePtr& msg)
+    {
+        if (!conn) {
+            YLOG_ERROR("GameService Dispatcher：连接为空，消息{}", msg->DebugString())
+            return;
+        }
+        // YLOG_INFO("User {} Dispatching msg: {}", conn->GetUID(), msg->ShortDebugString())
+
         m_roomManager->FindRoomByUID(conn->GetUID(),
             [conn, msg](const RoomPtr & room) {
-                // YLOG_INFO("收到消息{}: {}", msg->GetDescriptor()->name(), msg->ShortDebugString())
                 if (room) {
+                    // YLOG_INFO("User {} PostMessage To {}: {}", conn->GetUID(), room->get_room_data().ShortDebugString(), msg->ShortDebugString())
                     //! 即时处理（非Update）：对于游戏消息，并不在IO线程处理，而是在专门处理游戏数据的工作线程中处理（让分发器找到该游戏消息所注册的对应的处理函数。）
                     room->PostMessage(conn, msg);
                 }

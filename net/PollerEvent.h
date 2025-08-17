@@ -30,15 +30,6 @@ public:
     PollerEvent(): m_Events{} {}
     ~PollerEvent() = default;
 
-
-    //! epoll的事件是uint32_t，poll的事件是short
-    // explicit PollerEvent(const int val): m_Events(val) {}
-    // explicit PollerEvent(const uint32_t val): m_Events(val) {}
-    // explicit PollerEvent(const short val): m_Events(val) {}
-    // operator int()      const { return m_Events; }
-    // operator uint32_t() const { return m_Events; }
-    // operator short()    const { return m_Events; }
-
     enum EventType {
         eNoneEvent  = 0,
         eReadEvent  = 1 << 0,
@@ -48,20 +39,20 @@ public:
     };
 
     /*! 添加感兴趣/发生的事件 !*/
-    void AddEvent(const EventType event) { m_Events |= event; };
-    void AddReadEvent () { m_Events |= eReadEvent; };
-    void AddWriteEvent() { m_Events |= eWriteEvent; };
-    void AddErrorEvent() { m_Events |= eWriteEvent; };
-    void AddCloseEvent() { m_Events |= eCloseEvent; };
+    void AddEvent(const EventType event) { m_Events |= event; }
+    void AddReadEvent () { m_Events |= eReadEvent; }
+    void AddWriteEvent() { m_Events |= eWriteEvent; }
+    void AddErrorEvent() { m_Events |= eWriteEvent; }
+    void AddCloseEvent() { m_Events |= eCloseEvent; }
 
-    void DelEvent(const EventType event) { m_Events &= ~event; };
-    void ClrEvent() { m_Events = eNoneEvent; };
-    void SetEvent(const EventType event)  { m_Events = event; };
-    int  GetEvent() const { return m_Events; };
+    void DelEvent(const EventType event) { m_Events &= ~event; }
+    void ClrEvent() { m_Events = eNoneEvent; }
+    void SetEvent(const EventType event)  { m_Events = event; }
+    int  GetEvent() const { return m_Events; }
 
     /*! HandleEvent中用来判断事件的类型 !*/
     bool HasNoneEvent() const { return m_Events == eNoneEvent; }
-    bool HasEvent(const EventType event) const { return m_Events & event; };
+    bool HasEvent(const EventType event) const { return m_Events & event; }
     bool HasCloseEvent() const { return HasEvent(eCloseEvent); }
     bool HasErrorEvent() const { return HasEvent(eErrorEvent) ; }
     bool HasReadEvent()  const { return HasEvent(eReadEvent); }

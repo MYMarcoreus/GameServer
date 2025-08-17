@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- 由 Microsoft Visio, SVG Export 生成 frontend-message.svg Page-1 -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ev="http://www.w3.org/2001/xml-events"
+		xmlns:v="http://schemas.microsoft.com/visio/2003/SVGExtensions/" width="8.1557in" height="1.33895in"
+		viewBox="0 0 587.211 96.4041" xml:space="preserve" color-interpolation-filters="sRGB" class="st12">
+	<v:documentProperties v:langID="2052" v:metric="true" v:viewMarkup="false">
+		<v:userDefs>
+			<v:ud v:nameU="msvNoAutoConnect" v:val="VT0(1):26"/>
+		</v:userDefs>
+	</v:documentProperties>
+
+	<style type="text/css">
+	<![CDATA[
+		.st1 {fill:#ffffff;stroke:#923931;stroke-width:1}
+		.st2 {fill:#923931;font-family:Noto Sans SC Medium;font-size:1.00001em}
+		.st3 {fill:#923931;font-family:Noto Sans SC Medium;font-size:0.833336em}
+		.st4 {font-size:1em}
+		.st5 {fill:none;stroke:none;stroke-linecap:round;stroke-linejoin:round;stroke-width:0.75}
+		.st6 {fill:#000000;font-family:Noto Serif SC Black;font-size:1.16666em}
+		.st7 {fill:#ffffff;stroke:#31859b;stroke-width:1}
+		.st8 {fill:#31859b;font-family:Noto Sans SC Medium;font-size:1.00001em}
+		.st9 {fill:none;stroke:#923931;stroke-width:2.5}
+		.st10 {fill:none;stroke:#31859b;stroke-width:2.5}
+		.st11 {fill:#ffffff;stroke:none;stroke-linecap:round;stroke-linejoin:round;stroke-width:0.24}
+		.st12 {fill:none;fill-rule:evenodd;font-size:12px;overflow:visible;stroke-linecap:square;stroke-miterlimit:3}
+	]]>
+	</style>
+
+	<g v:mID="0" v:index="1" v:groupContext="foregroundPage">
+		<title>页-1</title>
+		<v:pageProperties v:drawingScale="0.0393701" v:pageScale="0.0393701" v:drawingUnits="24" v:shadowOffsetX="8.50394"
+				v:shadowOffsetY="-8.50394"/>
+		<v:layer v:name="连接线" v:index="0"/>
+		<g id="shape108-1" v:mID="108" v:groupContext="shape" transform="translate(112.14,-20.5)">
+			<title>矩形.108</title>
+			<desc>包体长度</desc>
+			<v:userDefs>
+				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
+			</v:userDefs>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+			<v:textRect cx="45.9646" cy="79.6868" width="91.93" height="33.4346"/>
+			<rect x="0" y="62.9695" width="91.9291" height="33.4346" class="st1"/>
+			<text x="21.96" y="83.29" class="st2" v:langID="2052"><v:paragraph v:horizAlign="1"/><v:tabList/>包体长度</text>		</g>
+		<g id="shape106-4" v:mID="106" v:groupContext="shape" transform="translate(20.5,-20.5)">
+			<title>矩形.106</title>
+			<desc>校验码 (&#34;DE&#34;)</desc>
+			<v:userDefs>
+				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
+			</v:userDefs>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+			<v:textRect cx="22.881" cy="79.6868" width="45.77" height="33.4346"/>
+			<rect x="0" y="62.9695" width="45.7619" height="33.4346" class="st1"/>
+			<text x="7.88" y="76.69" class="st3" v:langID="2052"><v:paragraph v:horizAlign="1"/><v:tabList/>校验码<v:lf/><tspan
+						x="7.65" dy="1.2em" class="st4" v:langID="1033">(&#34;DE&#34;)</tspan></text>		</g>
+		<g id="shape112-8" v:mID="112" v:groupContext="shape" transform="translate(63.1649,-58.1079)">
+			<title>工作表.112</title>
+			<desc>Header</desc>
+			<v:textBlock v:margins="rect(1,1,1,1)" v:tabSpace="42.5197"/>
+			<v:textRect cx="49" cy="86.4435" width="98" height="19.9213"/>
+			<rect x="0" y="76.4829" width="98" height="19.9213" class="st5"/>
+			<text x="22.16" y="90.64" class="st6" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Header</text>		</g>
+		<g id="shape114-11" v:mID="114" v:groupContext="shape" transform="translate(204.451,-20.5)">
+			<title>矩形.114</title>
+			<desc>Protobuf Message</desc>
+			<v:userDefs>
+				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
+			</v:userDefs>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+			<v:textRect cx="181.13" cy="79.6868" width="362.26" height="33.4346"/>
+			<rect x="0" y="62.9695" width="362.26" height="33.4346" class="st7"/>
+			<text x="129.66" y="83.29" class="st8" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Protobuf Message</text>		</g>
+		<g id="shape116-14" v:mID="116" v:groupContext="shape" transform="translate(337.101,-58.1079)">
+			<title>工作表.116</title>
+			<desc>Body</desc>
+			<v:textBlock v:margins="rect(1,1,1,1)" v:tabSpace="42.5197"/>
+			<v:textRect cx="49" cy="86.4435" width="98" height="19.9213"/>
+			<rect x="0" y="76.4829" width="98" height="19.9213" class="st5"/>
+			<text x="30.56" y="90.64" class="st6" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Body</text>		</g>
+		<g id="shape121-17" v:mID="121" v:groupContext="shape" transform="translate(66.3365,-20.5)">
+			<title>矩形.121</title>
+			<desc>消息ID</desc>
+			<v:userDefs>
+				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
+			</v:userDefs>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+			<v:textRect cx="22.881" cy="79.6868" width="45.77" height="33.4346"/>
+			<rect x="0" y="62.9695" width="45.7619" height="33.4346" class="st1"/>
+			<text x="7.84" y="82.69" class="st3" v:langID="2052"><v:paragraph v:horizAlign="1"/><v:tabList/>消息ID</text>		</g>
+		<g id="shape122-20" v:mID="122" v:groupContext="shape" transform="translate(20.5,-20.5)">
+			<title>矩形.111</title>
+			<v:userDefs>
+				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
+			</v:userDefs>
+			<rect x="0" y="62.9695" width="182.817" height="33.4346" class="st9"/>
+		</g>
+		<g id="shape115-22" v:mID="115" v:groupContext="shape" transform="translate(204.451,-20.5)">
+			<title>矩形.115</title>
+			<v:userDefs>
+				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
+			</v:userDefs>
+			<rect x="0" y="62.9695" width="362.26" height="33.4346" class="st10"/>
+		</g>
+		<g id="shape119-24" v:mID="119" v:groupContext="shape" transform="translate(204.333,-21.726)">
+			<title>矩形.119</title>
+			<v:userDefs>
+				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
+			</v:userDefs>
+			<rect x="0" y="65.4214" width="25.8386" height="30.9827" class="st11"/>
+		</g>
+	</g>
+</svg>

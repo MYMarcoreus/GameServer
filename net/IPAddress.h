@@ -87,7 +87,8 @@ public:
     /// @brief 转换为字符串
     std::string GetIPStr() const override { return std::string{inet_ntoa(m_address.sin_addr)}; }
 
-    std::string ToString() const override { return GetIPStr() + ':' + GetPortStr(); }
+    std::string ToString() const override;
+
 private:
     sockaddr_in m_address;
 };

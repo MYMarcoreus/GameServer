@@ -16,6 +16,15 @@ RoomManager::RoomManager(EventLoop * base_loop): base_loop_(base_loop)
 {
     work_threads = std::make_unique<EventLoopThreadPool>(base_loop_);
     work_threads->Start(config::g_app_config->GetValue().work_thread_num(), 500ms); //! 启动服务器的工作线程：即时处理
+
+    base_loop_->RunEvery(1s, [this]() {
+        for (auto [room_id, room]: this->rooms_) {
+            YLOG_INFO("房间{}: {}", room_id, room->get_room_data().ShortDebugString())
+        }
+        for (auto [uid, room_id]: this->uid_to_roomid_) {
+            YLOG_INFO("uid:{} - rooid:{}", uid, room_id)
+        }
+    });
 }
 
 void RoomManager::AddRoom(RoomDetailData room_data, std::function<void(RoomPtr)> done)
@@ -27,6 +36,11 @@ void RoomManager::AddRoom(RoomDetailData room_data, std::function<void(RoomPtr)>
         // 初始化房间对象，分配房间对应的线程，开启Update
         auto room = std::make_shared<Room>(work_threads->GetNextLoop(), room_data);
         room->Init(ROOM_TICK);
+        room->SetPlayerRemoveCallback([this](UID_t uid) {
+            base_loop_->RunCallbackInLoop([this, uid] {
+                uid_to_roomid_.erase(uid);
+            });
+        });
 
         // 加入房间列表
         rooms_.emplace(room->get_id(), room);

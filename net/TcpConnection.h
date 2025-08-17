@@ -73,7 +73,6 @@ public:
     const IPAddress::ptr &      GetPeerAddr()      const { return m_peerAddr; }
     Timestamp                   GetConnectedTime() const { return m_connectedTime; }
     Timestamp                   GetShudownTime()   const { return m_shudownTime; }
-    Timestamp                   GetHeartTime()     const { return m_heartTime; }
     uint8_t                     GetXorCode()       const { return m_xorCode; }
     SocketApiWrapper::socket_t  GetSocketFD()      const ;
     bool  IsConnected() const { return m_connectionState == eConnected; }
@@ -147,7 +146,6 @@ private:
 
     Timestamp m_connectedTime;
     Timestamp m_shudownTime;
-    Timestamp m_heartTime;
 
     // TcpServer上层对TcpConnection的封装
     std::any m_context;

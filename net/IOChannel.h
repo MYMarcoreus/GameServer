@@ -62,13 +62,12 @@ public:
 
     /// @brief 清空感兴趣的事件，通知EventLoop让Poller将channel从底层数据结构删除
     void ResetAndRemoveFromPoller();
-private:
 
+private:
     void HandleEventWithTie();
 
     ///@brief 在Channel的事件改变后，通知EventLoop让Poller更新Poller实际对应的底层数据结构
     void UpdateFromPoller();
-
 
 private:
     EventLoop *                     m_OwnerLoop; // Channel的间接所有者（Channel的直接所有者是Poller）

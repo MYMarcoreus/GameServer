@@ -24,14 +24,11 @@ Timestamp::Timestamp(const timespec spec)
 
 std::string Timestamp::ToString() const
 {
-    char buf[64]{0};
-    snprintf(buf, 63, "%lld.%lld", (long long)GetSecondPart().count(), (long long)GetMicroSecondPart().count());
-    return buf;
+    return std::format("{}. {:06}", GetSecondPart().count(), GetMicroSecondPart().count());
 }
 
-std::string Timestamp::ToFormattedString(const std::string &fmt, bool is_UTC) const
+std::string Timestamp::ToFormattedString(const std::string &fmt, const bool is_UTC) const
 {
-
     // 将始于epoch的秒数转换为年月日时分
     struct tm now_tm{};
     time_t sec = GetSecondPart().count();

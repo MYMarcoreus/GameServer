@@ -85,7 +85,7 @@ void EpollPoller::PollWait(ChannelList &activeChannel, const std::chrono::millis
     int numEvents = epoll_wait(m_EpollFD, &*m_EpollEventList.begin(),
                                static_cast<int>(m_EpollEventList.size()),
                                timeout == std::chrono::milliseconds::max() ? -1 : timeout.count());
-    ::yy::util::ErrnoSaver savedErrno{};
+    util::ErrnoSaver savedErrno{};
     if(numEvents > 0) {
         YLOG_TRACE("epoll_wait() return {} events, m_EpollEventList.size = {}", numEvents, m_EpollEventList.size())
 
@@ -149,21 +149,20 @@ void EpollPoller::RemoveChannel(IOChannel * channel) {
     YLOG_TRACE("已完全删除Channel<{}>", channel->GetFD())
 }
 
-void EpollPoller::FillActiveChannels(ChannelList & activeChannel, int numEvents) {
+void EpollPoller::FillActiveChannels(ChannelList & activeChannel, const int numEvents) {
     for (int i = 0; i < numEvents; ++i) {
         EpollPollerEvent happend_events{m_EpollEventList[i]};
 
         /*! 找到发生了事件的event，找到跟它对应的channel，设置channel发生的事件并将该channel加入activeChannel
          慢一点的方法：使用m_ChannelMap::find()按照happend_event.GetFD()查找m_EpollList， */
-        IOChannel * channel = static_cast<IOChannel*>(happend_events.GetHanppededPtr()); //
+        auto channel = static_cast<IOChannel*>(happend_events.GetHanppededPtr()); //
 
-        // 设置发生了的事件
+        // 设置发生了的事件并加入到事件列表中
         PollerEvent events{};
         if (happend_events.IsOccuredRead ()) events.AddReadEvent();
         if (happend_events.IsOccuredWrite()) events.AddWriteEvent();
         if (happend_events.IsOccuredError()) events.AddErrorEvent();
         if (happend_events.IsOccuredClose()) events.AddCloseEvent();
-
         channel->SetHappendedEvent(events);
         activeChannel.push_back(channel);
     }
@@ -173,7 +172,7 @@ void EpollPoller::UpdateEpollOperation(IOChannel * channel, const int EPOLL_CTL_
     EpollPollerEvent interested_events;
 
     //! 设置要监听的事件
-    PollerEvent events = channel->GetInterestedEvent();
+    const PollerEvent events = channel->GetInterestedEvent();
     if (events.HasReadEvent ()) { interested_events.AddReadEvent(); interested_events.SetET(); }
     if (events.HasWriteEvent()) { interested_events.AddWriteEvent(); }
 

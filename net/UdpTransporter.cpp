@@ -1,4 +1,4 @@
-#include "UdpTransport.h"
+#include "UdpTransporter.h"
 #include "Timestamp.h"
 #include "IOChannel.h"
 #include "Socket.h"
@@ -16,12 +16,12 @@ namespace yy::net {
 using namespace yy::util;
 using SocketApiWrapper::SocketError;
 
-UdpTransport::UdpTransport(EventLoop * recvLoop, const IPAddressPtr & recv_addr, const int32_t recv_bytes_one, const int32_t m_send_thread_num):
+UdpTransporter::UdpTransporter(EventLoop * recvLoop, const IPAddressPtr & recv_addr, const int32_t recv_bytes_one, const int32_t m_send_thread_num):
     m_recv_bytes_one(recv_bytes_one),
     m_send_thread_num(m_send_thread_num),
     m_recvLoop(recvLoop),
     m_socket (std::make_unique<Socket>(Socket::Type::UDP, Socket::Family::IPv4, true)),
-    m_sendWorkThreadPool(std::make_unique<ThreadPool>("UdpTransport Send")),
+    m_sendWorkThreadPool(std::make_unique<ThreadPool>("UdpTransporter Send")),
     m_recvBuf(std::make_unique<NetBuffer>(recv_bytes_one))
 {
     assert(recvLoop);
@@ -41,19 +41,19 @@ UdpTransport::UdpTransport(EventLoop * recvLoop, const IPAddressPtr & recv_addr,
 
 
 
-UdpTransport::~UdpTransport() {
+UdpTransporter::~UdpTransporter() {
     //! FIXED 注意： ~UdpSession() 并不确定执行的线程，因此不能在析构时执行可能带有AssertInLoopingThread()的函数
     m_sendWorkThreadPool->Stop();
-    YLOG_DEBUG("UdpTransport<{}>已被析构！", this->GetSocketFD())
+    YLOG_DEBUG("UdpTransporter<{}>已被析构！", this->GetSocketFD())
 }
 
-void UdpTransport::StartRecv()
+void UdpTransporter::StartRecv()
 {
     m_recvLoop->RunCallbackInLoop([this] { this->StartRecvInLoop(); });
 }
 
 
-void UdpTransport::StartRecvInLoop()
+void UdpTransporter::StartRecvInLoop()
 {
     m_recvLoop->AssertInLoopingThread();
 
@@ -65,30 +65,30 @@ void UdpTransport::StartRecvInLoop()
           recv_addr->GetIPStr().c_str(), recv_addr->GetPort(), m_socket->GetFD())
 }
 
-SocketApiWrapper::socket_t UdpTransport::GetSocketFD() const {
+SocketApiWrapper::socket_t UdpTransporter::GetSocketFD() const {
     return m_socket->GetFD();
 }
 
-auto UdpTransport::GetRecvAddr() const -> IPAddressPtr
+auto UdpTransporter::GetRecvAddr() const -> IPAddressPtr
 {
     return m_socket->GetLocalAddr();
 }
 
-void UdpTransport::SendUDP(const std::string_view & message, const IPAddressPtr & peerAddr) {
+void UdpTransporter::SendUDP(const std::string_view & message, const IPAddressPtr & peerAddr) {
     //! 需要将数据从业务线程拷贝到IO线程中（否则线程不安全），这里SendInLoop使用const &延长临时对象生命周期
     m_sendWorkThreadPool->PushTask([this, buf = std::string(message), peerAddr]() {
         this->SendUDPWorker(std::string_view{buf}, peerAddr);
     });
 }
 
-void UdpTransport::SendUDP(const std::shared_ptr<LinearBuffer>& buf, const IPAddressPtr & peerAddr)
+void UdpTransporter::SendUDP(const std::shared_ptr<LinearBuffer>& buf, const IPAddressPtr & peerAddr)
 {
     m_sendWorkThreadPool->PushTask([this, buf /* 引用计数+1 */, peerAddr]() {
         this->SendUDPWorker(buf, peerAddr);
     });
 }
 
-void UdpTransport::SendUDPWorker(const std::string_view & buf, const IPAddressPtr & peerAddr) { //! const &延长临时对象生命周期
+void UdpTransporter::SendUDPWorker(const std::string_view & buf, const IPAddressPtr & peerAddr) { //! const &延长临时对象生命周期
     //! 输出缓冲中目前没有任何的未发送数据，便直接向套接字发送数据（不借助输出缓冲）
     SocketApiWrapper::SocketResult rst = m_socket->Sendto(buf.data(), buf.size(), 0, peerAddr);
 
@@ -121,7 +121,7 @@ void UdpTransport::SendUDPWorker(const std::string_view & buf, const IPAddressPt
     }
 }
 
-void UdpTransport::SendUDPWorker(const std::shared_ptr<LinearBuffer> & buf, const IPAddressPtr & peerAddr) { //! const &延长临时对象生命周期
+void UdpTransporter::SendUDPWorker(const std::shared_ptr<LinearBuffer> & buf, const IPAddressPtr & peerAddr) { //! const &延长临时对象生命周期
     //! 输出缓冲中目前没有任何的未发送数据，便直接向套接字发送数据（不借助输出缓冲）
     SocketApiWrapper::SocketResult rst = m_socket->Sendto(buf->Peek(), buf->GetDataSize(), 0, peerAddr);
 
@@ -154,13 +154,13 @@ void UdpTransport::SendUDPWorker(const std::shared_ptr<LinearBuffer> & buf, cons
     }
 }
 
-void UdpTransport::HandleError() {
+void UdpTransporter::HandleError() {
     m_recvLoop->AssertInLoopingThread();
 }
 
 
 
-void UdpTransport::HandleRead() {
+void UdpTransporter::HandleRead() {
     m_recvLoop->AssertInLoopingThread();
 
     YLOG_TRACE("正在读取来自连接<{}>的数据！", m_socket->GetFD())
@@ -190,7 +190,7 @@ void UdpTransport::HandleRead() {
 
 
 
-SocketApiWrapper::SocketResult UdpTransport::HandleRead_ET(IPAddressPtr & peerAddr) {
+SocketApiWrapper::SocketResult UdpTransporter::HandleRead_ET(const IPAddressPtr & peerAddr) {
     m_recvLoop->AssertInLoopingThread();
 
     SocketApiWrapper::SocketResult rst;
@@ -229,7 +229,7 @@ SocketApiWrapper::SocketResult UdpTransport::HandleRead_ET(IPAddressPtr & peerAd
     return rst;
 }
 
-SocketApiWrapper::SocketResult UdpTransport::HandleRead_LT(IPAddressPtr & peerAddr) {
+SocketApiWrapper::SocketResult UdpTransporter::HandleRead_LT(const IPAddressPtr & peerAddr) {
     SocketApiWrapper::SocketResult rst;
     m_recvBuf->RecvAllFromSocket(m_socket, rst, peerAddr);
 

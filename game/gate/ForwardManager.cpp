@@ -66,16 +66,12 @@ void ForwardManager::Start()
 {
     m_accountRpcClient.SetConnectionEstablishedCallback(
     [this](const TcpConnectionPtr & conn) {
-        YLOG_INFO("连接至AccountRpc服务器<{}:{}>，我方地址为<{}:{}>", conn->GetPeerAddr()->GetIPStr().c_str(), conn->GetPeerAddr()->GetPort(),
-            conn->GetLocalAddr()->GetIPStr().c_str(), conn->GetLocalAddr()->GetPort());
-    }
-);
+        YLOG_INFO("连接至AccountRpc服务器<{}>，我方地址为<{}>", conn->GetPeerAddr()->ToString(), conn->GetLocalAddr()->ToString());
+    });
     m_centerRpcClient.SetConnectionEstablishedCallback(
-        [this](const TcpConnectionPtr & conn) {
-            YLOG_INFO("连接至CenterRpc服务器<{}:{}>，我方地址为<{}:{}>", conn->GetPeerAddr()->GetIPStr().c_str(), conn->GetPeerAddr()->GetPort(),
-                conn->GetLocalAddr()->GetIPStr().c_str(), conn->GetLocalAddr()->GetPort());
-        }
-    );
+    [this](const TcpConnectionPtr & conn) {
+        YLOG_INFO("连接至CenterRpc服务器<{}>，我方地址为<{}>", conn->GetPeerAddr()->ToString(), conn->GetLocalAddr()->ToString());
+    });
 }
 
 bool ForwardManager::OnBackend_LoginRsp(const UserConnectionPtr& userconn, const LoginRsp& response)

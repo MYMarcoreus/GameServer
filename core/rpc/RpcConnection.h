@@ -65,7 +65,7 @@ private:
 
     // 用于记录已调用但尚未完成的调用：用于实现异步RPC调用
     std::mutex                              pending_call_mutex_;
-    std::map<int64_t, PendingCallContext>   pending_calls_ ;
+    std::unordered_map<int64_t, PendingCallContext>   pending_calls_ ;
 
     net::F_ConnectionEstablishedCallback connectionEstablishedCallback_;
     std::unique_ptr<net::TcpClient> tcp_client_;

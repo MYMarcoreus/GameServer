@@ -47,7 +47,6 @@ TcpConnection::TcpConnection(uint64_t connid, EventLoop *loop, SocketApiWrapper:
     SetState(eConnecting); //! 该结构在Accept接受连接成功后创建，此时TCP连接虽然已建立，但是回调函数未设置完毕，因此需要等待一下
     m_connectedTime.SetNow();
     m_shudownTime.SetNow();
-    m_heartTime.SetNow();
 }
 
 
@@ -444,8 +443,6 @@ void TcpConnection::HandleRead() {
     if(rst.HasNoError()) {
         YLOG_TRACE("<{}>TcpConnection::HandleRead(): 数据接收完毕 head-tail=={}-{}",
                    m_socket->GetFD(), m_recvBuf->GetHead(), m_recvBuf->GetTail());
-
-        m_heartTime.SetNow();
 
         //! 无需拷贝数据，这里是顺序执行，后续将消息传递给工作线程处理时，需要做拷贝
         m_MessageCallback(shared_from_this(), *m_recvBuf);

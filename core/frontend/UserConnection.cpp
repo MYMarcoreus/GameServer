@@ -19,7 +19,7 @@ UserConnection::UserConnection(const TcpConnectionPtr& conn, ProtobufTcpCodec & 
           m_tcpCodec(tcpCodec),
           m_udpCodec(udpCodec)
 {
-
+    UpdateHeartTime();
 }
 
 void UserConnection::Shutdown()

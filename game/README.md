@@ -7,7 +7,7 @@ sequenceDiagram
     autonumber
     participant Client as 客户端
     participant GateServer as GateServer
-    participant RpcClient as Rpc客户端
+    participant RpcClient as RpcClient
     participant BackendService as 后端服务
 
     Client->>GateServer: 发起请求
@@ -61,11 +61,47 @@ sequenceDiagram
     GateServer-->>CenterServer: RPC调用返回
 ```
 
-
-
-
-
 ## 账号服（AccountServer）的时序图
+
+### 登录时序图
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant Client
+    participant GateServer
+    participant AccountServer
+    participant MySQL
+    participant Redis
+
+    rect rgb(200, 223, 255, 0.20)
+    Note over Client, Redis: 登录流程
+    Client ->> GateServer: LoginReq(用户名, 密码)
+    GateServer ->> AccountServer: RPC LoginReq
+    AccountServer ->> MySQL: 查找用户名
+    alt 账户存在
+        MySQL -->> AccountServer: (uid, 密码)
+        AccountServer ->> AccountServer: 验证密码
+        alt 密码正确
+            AccountServer ->> Redis: 查找uid的user_token
+            alt 无现存user_token
+                AccountServer ->> AccountServer: 生成128位的user_token
+                AccountServer ->> Redis: 存储uid的user_token
+                AccountServer -->> GateServer: RPC LoginRsp(success, uid, user_token)
+            else 有现存user_token
+                AccountServer -->> GateServer: RPC LoginRsp(already_logged_in)
+            end
+        else 密码错误
+            AccountServer -->> GateServer: RPC LoginRsp(password_error)
+        end
+    else 账户不存在
+        AccountServer -->> GateServer: RPC LoginRsp(account_not_exist)
+    end
+    GateServer -->> Client: LoginRsp
+    end
+```
+
+### 注册时序图
 
 ```mermaid
 sequenceDiagram
@@ -118,13 +154,15 @@ sequenceDiagram
     end
 ```
 
-## 中心服（CenterServer）房间管理、逻辑服（LogicServer）信息管理、与逻辑服登录的时序图
+
+
+## 中心服（CenterServer）房间管理的时序图
+
+### 逻辑服信息管理时序图
 
 ```mermaid
 sequenceDiagram
     autonumber
-    participant Client
-    participant GateServer
     participant CenterServer
     participant Redis
     participant LogicServer
@@ -138,6 +176,17 @@ sequenceDiagram
             CenterServer->>CenterServer: 更新逻辑服务器信息
         end
     end
+```
+
+### 中心服房间管理时序图
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant Client
+    participant GateServer
+    participant CenterServer
+    participant LogicServer
 
     %% ====== 创建房间流程 ======
     rect rgba(200, 200, 215, 0.2)
@@ -211,10 +260,24 @@ sequenceDiagram
             end
         end
     end
+```
+
+### 逻辑服登录时序图
+
+Redis在这个架构中作为“令牌中心”保存中心服生成的逻辑服登录令牌，供由逻辑服验证客户端。
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant Client
+    participant GateServer
+    participant CenterServer
+    participant Redis
+    participant LogicServer
     
     %% ====== 获取场景令牌流程 ======
     rect rgba(240, 180, 180, 0.2)
-        Note over Client,CenterServer: 获取场景令牌流程
+        Note over Client,CenterServer: 获取场景令牌（逻辑服登录令牌）流程
         Client->>GateServer: GetEnterSceneTokenReq
         GateServer->>CenterServer: GetEnterSceneTokenReq
         CenterServer->>CenterServer: 生成唯一SceneToken
@@ -225,17 +288,16 @@ sequenceDiagram
     
     %% ====== 令牌验证流程 ======
     rect rgba(180, 180, 240, 0.2)
-    	participant ClientX as Client
-        Note over Redis,ClientX: 逻辑服登录（Token验证）
-        ClientX->>LogicServer: EnterSceneReq(SceneToken, UserToken)
+        Note over Redis,Client: 逻辑服登录（Token验证）
+        Client->>LogicServer: EnterSceneReq(SceneToken, UserToken)
         LogicServer->>Redis: 根据UID获取SceneToken和UserToken
         alt Token有效
             Redis-->>LogicServer: Token(有效)
             LogicServer->>Redis: 删除SceneToken并续期UserToken
-            LogicServer-->>ClientX: EnterSceneRsp(成功)
+            LogicServer-->>Client: EnterSceneRsp(成功)
         else Token无效
             Redis-->>LogicServer: Token无效/过期
-            LogicServer-->>ClientX: EnterSceneRsp(失败)
+            LogicServer-->>Client: EnterSceneRsp(失败)
         end
     end
 
@@ -243,14 +305,14 @@ sequenceDiagram
 
 ## 逻辑服消息时序图
 
+### 逻辑服房间管理时序图
+
 ```mermaid
 sequenceDiagram
     autonumber
-    participant Client
     participant LogicServer
     participant Zookeeper
     participant CenterServer
-    participant Redis
     participant RoomManager as RoomManager<br>(单线程处理)
     participant Thread as Room<br>(房间所属线程)
 
@@ -277,6 +339,22 @@ sequenceDiagram
         LogicServer->>RoomManager: 删除房间对象
         LogicServer-->>CenterServer: DeleteRoomReq(逻辑服IP/端口)
     end
+```
+
+
+
+### 逻辑服连接管理与玩家同步时序图
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant Client
+    participant LogicServer
+    participant Zookeeper
+    participant CenterServer
+    participant Redis
+    participant RoomManager as RoomManager<br>(单线程处理)
+    participant Thread as Room<br>(房间所属线程)
 
     %% 逻辑服登录流程
     rect rgba(240, 180, 180, 0.2)

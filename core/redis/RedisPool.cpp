@@ -91,11 +91,11 @@ void RedisPool::check_connection()
         target_cnt = pool_.size();
     }
 
-    size_t valid_cnt = 0;
+    size_t processed = 0;
     const auto now = std::chrono::system_clock::now().time_since_epoch();
     const long long timestamp = std::chrono::duration_cast<std::chrono::seconds>(now).count();
 
-    while (valid_cnt < target_cnt) {
+    while (processed < target_cnt) {
         //! 每次线程安全地取出一个连接
         std::unique_ptr<RedisConnection> con;
         {
@@ -131,7 +131,7 @@ void RedisPool::check_connection()
             cond_.notify_one();
         }
 
-        ++valid_cnt;
+        ++processed;
     }
 
     // 重连那些失效的连接

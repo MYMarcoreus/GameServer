@@ -1,3 +1,5 @@
+## 网络框架类图
+
 ```mermaid
 classDiagram
     direction TB
@@ -187,165 +189,7 @@ classDiagram
     因此Channel则通过它所属的EventLoop来修改Poller所管理的底层数据结构"
 ```
 
-
-
-
-
-
-
-#### 主线程（即Acceptor线程）初始化（`LogicServerManager::Init()`）：EventLoop的构造较复杂，不在此列出
-
-```mermaid
-sequenceDiagram
-    autonumber
-    
-
-	actor main
-	participant LogicServerManager
-    participant ConfigManager
-	participant GameServer
-    participant ProtobufDispatcher
-    participant ProtobufTcpCodec
-	participant TcpServer
-	participant EventLoopThreadPool
-
-    participant Acceptor
-    participant Socket
-    participant EventLoop
-    participant Poller
-    participant IOChannel
-    participant TcpConnection
-    
-    main ->> +LogicServerManager: LogicServerManager::Init()
-    rect rgb(242, 242, 255) 
-        LogicServerManager ->> +ConfigManager: LoadXmlConfigs()
-        ConfigManager -->> -LogicServerManager: 
-        LogicServerManager ->> +ProtobufDispatcher: ProtobufDispatcher(UnkonwnCommand)
-        ProtobufDispatcher -->> -LogicServerManager: 
-
-        LogicServerManager ->> EventLoop: acceptorLoop = new EventLoop()
-        EventLoop -->> LogicServerManager: ......
-        rect rgb(242, 242, 255) 
-            note over LogicServerManager, GameServer: Init GameServer
-
-            LogicServerManager ->> +GameServer: m_tcpServer = new GameServer<br>(m_accpetorLoop, listenAddr);
-            rect rgb(242, 242, 255) 
-                note over GameServer, TcpServer: Constructor of GameServer 
-                GameServer ->> +TcpServer: TcpServer<br>(acceptorLoop, listenAddr)
-                rect rgb(242, 242, 255) 
-                    note over TcpServer, Acceptor: Constructor of TcpServer 
-                        TcpServer ->> +EventLoopThreadPool: new EventLoopThreadPool(acceptorLoop)
-                        EventLoopThreadPool -->> -TcpServer: ......
-                        TcpServer ->> +Acceptor: new Acceptor(acceptorLoop)
-                        rect rgb(242, 242, 255) 
-                            note over Acceptor, Socket: Constructor of Acceptor 
-                            Acceptor ->>+ Socket: SetOpt_ReuseAddr(true)
-                            Socket -->> Acceptor: 
-                            Acceptor ->> Socket: SetOpt_ReusePort(reusePort)
-                            Socket -->> Acceptor: 
-                            Acceptor ->> Socket: SetOpt_Linger(true)
-                            Socket -->> Acceptor: 
-                            Acceptor ->> Socket: Bind(listenAddr)
-                            Socket -->>- Acceptor: 
-                        end
-                        Acceptor -->> -TcpServer:  
-                end
-                GameServer ->> +TcpServer: SetUdpRecievedCallback(ProtobufTcpCodec::OnData)
-                TcpServer -->> -GameServer: 
-                GameServer ->> +TcpServer: SetConnectionEstablishedCallback
-                TcpServer -->> -GameServer: 
-                GameServer ->> +TcpServer: SetConnectionShutdownCallback(AfterShutdownConnection)
-                TcpServer -->> -GameServer: 
-                TcpServer -->> -GameServer: 
-
-                GameServer ->> +ProtobufDispatcher: ProtobufDispatcher(OnUnknownTcpMessage)
-                ProtobufDispatcher -->> -GameServer: 
-                GameServer ->> +ProtobufDispatcher: RegisterMessageCallback(OnTcpHeart)
-                ProtobufDispatcher -->> -GameServer:           
-                GameServer ->> +ProtobufDispatcher: RegisterMessageCallback(OnSecurity)
-                ProtobufDispatcher -->> -GameServer:             
-
-                GameServer ->> +ProtobufTcpCodec: ProtobufTcpCodec(ProtobufDispatcher::OnProtobufMessage)
-                ProtobufTcpCodec -->> -GameServer: 
-            end
-
-            GameServer -->> -LogicServerManager: 
-
-            LogicServerManager ->> GameServer: SetNotifier_Security<br>(cb=AppNotifier_Secutiry)
-            %% GameServer ->> GameServer: m_NotifierSecurity = cb
-            GameServer -->> LogicServerManager: 
-            LogicServerManager ->> GameServer: SetNotifier_DisConnect<br>(cb=AppNotifier_Disconnect)
-            %% GameServer ->> GameServer: m_NotifierDisconnect = cb
-            GameServer -->> LogicServerManager: 
-            LogicServerManager ->> GameServer: SetNotifier_Command<br>(cb=AppNotifier_Command)
-            %% GameServer ->> GameServer:  m_NotifierCommand = cb
-            GameServer -->> LogicServerManager: 
-        end
-
-        note right of LogicServerManager: "c": 初始化具体业务的对象
-    end
-
-
-    LogicServerManager ->> -main: 
-    
-    
-    %%TcpConnection ->> IOChannel: m_channel->SetReadCallback(cb: this->HandleRead)
-    %%IOChannel ->> IOChannel: m_ReadCallback = cb
-    
-
-
-
-```
-
-
-
-### 主线程（即Acceptor线程）启动（`LogicServerManager::StartListenAndIOLoop()`）：
-
-```mermaid
-sequenceDiagram
-    autonumber
-	
-	actor main
-	participant LogicServerManager
-	participant GameServer
-	participant TcpServer
-	participant EventLoopThreadPool
-
-    participant Acceptor
-    participant EventLoop
-    participant Poller
-    participant IOChannel
-    participant Socket
-    participant TcpConnection
-    
-    main ->> +LogicServerManager: StartListenAndIOLoop()
-        LogicServerManager ->> +GameServer: Start()
-            GameServer ->> +TcpServer: Start(nIOthread=<br>appconfig::tcp_io_thread_num())
-                
-                TcpServer ->> +EventLoopThreadPool: Start(nIOthread)
-                EventLoopThreadPool -->> -TcpServer:  
-                
-                TcpServer ->> +Acceptor: SetNewConnectionCallback(HandleNewConnection)
-                Acceptor -->> -TcpServer: 
-                
-                TcpServer ->> +Acceptor: StartListen()
-                    Acceptor ->> +IOChannel: SetReadCallback(HandleAcceptAll)
-                    IOChannel -->> -Acceptor: 
-                    Acceptor ->> +IOChannel: EnableReading()
-                    IOChannel -->> -Acceptor: 
-                    Acceptor ->> +Socket: Listen()
-                    Socket -->> -Acceptor: 
-                    
-                Acceptor -->> -TcpServer: 
-
-            TcpServer -->> -GameServer: 
-        GameServer -->> -LogicServerManager: 
-    LogicServerManager -->> -main: 
-```
-
-
-
-### 接受用户连接的过程（`Acceptor::HandleAcceptAll`的channel读回调与`TcpServer::HandleNewConnection`回调）
+## 接受用户连接的过程（`Acceptor::HandleAcceptAll`的channel读回调与`TcpServer::HandleNewConnection`回调） 
 
 ```mermaid
 sequenceDiagram
@@ -436,18 +280,6 @@ sequenceDiagram
     end
     
 ```
-
-
-
-
-
-
-
-
-
-
-
-
 
 ## 读事件：接受客户端数据的调用流程图
 
@@ -630,14 +462,6 @@ sequenceDiagram
     
 ```
 
-
-
-
-
-
-
-
-
 ## 代办函数的执行逻辑:
 
 ```mermaid
@@ -705,4 +529,14 @@ sequenceDiagram
 
 
 ```
+
+## 杂项
+
+### one-loop per-thread模型无需`EPOLLONESHOT`
+
+> - `EPOLLONESHOT`的含义：`EPOLLONESHOT` 是 `epoll` 的一个事件选项，表示**某个文件描述符上的事件只会触发一次**。事件被触发后，`epoll` 会自动将其从监听队列中禁用，**必须手动通过 `epoll_ctl(..., EPOLL_CTL_MOD, ...)` 重新激活**，才能再次监听该 fd 的事件。
+>
+> - `EPOLLONESHOT`的作用：**对于`one-loop multi-thread`模型，防止多个线程同时处理同一个socket所带来的数据竞争**。
+
+本框架采用的是 **“one-loop per-thread”** 模型，每个TCP连接的套接字只在所属的 `EventLoop`（即一个IO线程）中处理事件，即一个连接只会被一个IO线程处理，处理完之后传递给上层的工作线程 ———— 然后继续处理该连接的IO事件。**天然避免了多个线程同时操作同一个连接的问题**，因此无需设置`EPOLLONESHOT`选项。
 

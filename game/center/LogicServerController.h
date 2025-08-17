@@ -5,10 +5,7 @@
 #include "LogicRpcClient.h"
 #include "RoomInfoController.h"
 
-namespace yy::core::zk
-{
-class ZkServiceClient;
-}
+
 
 namespace yy::app::center
 {

@@ -12,10 +12,10 @@ class Message;
 
 namespace yy::net {
 
-class UdpSession final
+class UdpSession final: public std::enable_shared_from_this<UdpSession>
 {
 public:
-    UdpSession(uint64_t name, UdpTransport &udpTran, const IPAddressPtr& peerAddr, uint8_t xor_code);
+    UdpSession(uint64_t conn_id, UdpTransporter &udpTran, const IPAddressPtr& peerAddr, uint8_t xor_code);
 
     ~UdpSession();
 
@@ -28,12 +28,13 @@ public:
 
     uint8_t          GetXorCode()   const { return m_xorCode; }
     uint64_t         GetConnID()      const { return m_tcpConnID; }
+    IPAddressPtr GetPeerAddr() const { return m_peerAddr; }
 
 
 private:
     uint64_t                m_tcpConnID;
     uint8_t                 m_xorCode;
-    UdpTransport &          m_udpTran;
+    UdpTransporter &        m_udpTran;
     IPAddressPtr            m_peerAddr;
 };
 

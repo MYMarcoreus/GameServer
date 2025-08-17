@@ -33,11 +33,11 @@ public:
     auto GetNodeChildren(const std::string& node_path) -> std::vector<std::string>;
 
     ///@brief 服务调用者：注册并监听 node_path 子节点变化
-    void AddChildrenWatcher(const std::string& node_path, bool trigger_now, WatcherCallback callback);
+    void AddChildrenWatcher(const std::string& node_path, bool trigger_cb_now, WatcherCallback callback);
 
 private:
     // 全局的watcher观察器   zkserver给zkclient的通知
-    static void global_watcher(zhandle_t *zh, int type, int state, const char * node_path, void *watcherCtx);
+    static void global_watcher(zhandle_t *zh, int type, int state, const char * _path, void *watcherCtx);
 
     ///@brief 客户端意外断线时，所创建的临时节点会被Zookeeper删除，因此需要恢复这些临时节点
     void RecoverEphemeralNodes();
@@ -49,12 +49,12 @@ private:
     ///                 ② "/servers/server1" 下添加了新的子节点 "/servers/server1/worker"
     static void child_watcher(zhandle_t* zh, int type, int state, const char* node_path, void* watcherCtx);
     ///@brief 子节点变更时的处理函数（获取所有子节点 & 触发回调）
-    void OnChildrenChanged(const std::string& path);
+    void OnChildrenChanged(const std::string& path, bool trigger_cb_now);
 
 
-    // zk的客户端句柄
+private:
     std::string         host_;
-    zhandle_t *         zhandle_;
+    zhandle_t *         zhandle_; // zk的客户端句柄
     std::atomic_bool    connected_;
 
     struct EphemeralNodeInfo {

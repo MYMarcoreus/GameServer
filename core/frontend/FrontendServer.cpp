@@ -13,6 +13,8 @@
 #include "UdpServer.h"
 #include <google/protobuf/message.h>
 
+#include "game.pb.h"
+
 using namespace yy::net;
 using yy::core::UserConnection;
 using yy::core::MessageHeader_Cmd;
@@ -101,16 +103,22 @@ auto FrontendServer::GetTcpListenAddr() const -> net::IPAddressPtr
 
 void FrontendServer::OnUnknownTcpMessage(const TcpConnectionPtr & conn, const MessagePtr &message) {
     YLOG_TRACE("Tcp消息：{}，交由业务层", message->GetDescriptor()->full_name());
-
+    const auto userconn = FindUser(conn->GetConnID());
     // 执行业务层回调，分发消息
-    m_NotifierCommand(FindUser(conn->GetConnID()), message, MessageNetType::TCP);
+    m_NotifierCommand(userconn, message, MessageNetType::TCP);
 }
 
 void FrontendServer::OnUnknownUdpMessage(const UdpSessionPtr & sess, const MessagePtr &message) {
     YLOG_TRACE("Udp消息：{}，交由业务层", message->GetDescriptor()->full_name());
-
+    const auto userconn = FindUser(sess->GetConnID());
+    if (message->GetDescriptor()->name() == "C2SMove") {
+        const auto move = dynamic_cast<protocol::app::C2SMove*>(message.get());
+        if (move and move->uid() != userconn->GetUID()) {
+            printf("错误！");
+        }
+    }
     // 执行业务层回调，分发消息
-    m_NotifierCommand(FindUser(sess->GetConnID()), message, MessageNetType::UDP);
+    m_NotifierCommand(userconn, message, MessageNetType::UDP);
 }
 
 void FrontendServer::OnConnectionShutdown(const TcpConnectionPtr & conn) {
@@ -120,53 +128,55 @@ void FrontendServer::OnConnectionShutdown(const TcpConnectionPtr & conn) {
 
     //! 核心层处理
     DelUser(conn->GetConnID());
+
+    // 网络层处理
+    m_udpServer->UnregisterSession(conn->GetConnID());
 }
 
 void FrontendServer::OnConnectionEstablished(const TcpConnectionPtr  & conn) {
     YLOG_INFO("███████████████████连接成功<{}:{}, {}>！",
               conn->GetPeerAddr()->GetIPStr().c_str(), conn->GetPeerAddr()->GetPort(), conn->GetSocketFD());
 
-    const auto userdata = std::make_shared<UserConnection>(conn, *m_tcpCodec, *m_udpCodec);
-    AddUser(conn->GetConnID(), userdata);
-    AddCheckTimer(conn, userdata);
+    const auto userconn = std::make_shared<UserConnection>(conn, *m_tcpCodec, *m_udpCodec);
+    AddUser(conn->GetConnID(), userconn);
+    AddCheckTimer(conn, userconn);
     SendXorCode(conn);
 }
 
-void FrontendServer::AddCheckTimer(const TcpConnectionPtr & conn, const UserConnectionPtr & userdata) {
+void FrontendServer::AddCheckTimer(const TcpConnectionPtr & conn, const UserConnectionPtr & userconn) {
     /* ***** 需要是弱引用，不能因为这个回调函数延长TcpConnection的生命周期 ***** */
     //! ①检查是否在指定时间内完成安全连接的认证，若未认证，则关闭连接
     conn->GetIOLoop()->RunAfter(Seconds{GetAppConfig().time_security_max()},
-        [weak_userdata = std::weak_ptr{userdata}]
+        [weak_userconn = std::weak_ptr{userconn}]
         {
-            if(auto userdata = weak_userdata.lock()) {
-                if (userdata->IsConnected() and !userdata->IsSecure()) {
-                    YLOG_WARN("<{}>主线程Update_CheckDisconnetion: 用户安全验证超时，关闭用户连接！", userdata->GetConnID());
-                    userdata->Shutdown();
+            if(const auto userconn_sp = weak_userconn.lock()) {
+                if (userconn_sp->IsConnected() and !userconn_sp->IsSecure()) {
+                    YLOG_WARN("<{}>主线程Update_CheckDisconnetion: 用户安全验证超时，关闭用户连接！", userconn_sp->GetConnID());
+                    userconn_sp->Shutdown();
                 }
             }
         });
 
     //! ②检查是否收到心跳包，如未收到，则shutdown连接
     conn->GetIOLoop()->RunAfter(Seconds{GetAppConfig().time_heart_max()},
-        [this, weak_userdata = std::weak_ptr{userdata}] {
-            if(const auto user_connection = weak_userdata.lock()) {
-                this->CheckHeart(user_connection);
+        [this, weak_userconn = std::weak_ptr{userconn}] {
+            if(const auto userconn_sp = weak_userconn.lock()) {
+                this->CheckHeart(userconn_sp);
             }
         });
 }
 
-void FrontendServer::CheckHeart(const UserConnectionPtr & userdata) {
-    const auto & conn = userdata->GetConnection();
-    if(!conn->IsConnected() or Timestamp::Now() - conn->GetHeartTime() > Seconds{GetAppConfig().time_heart_max()}) {
-        YLOG_WARN("<{}>主线程Update_CheckDisconnetion: 用户心跳包超时，关闭用户连接！", conn->GetSocketFD());
-        conn->Shutdown();
+void FrontendServer::CheckHeart(const UserConnectionPtr & userconn) {
+    if(!userconn->IsConnected() or Timestamp::Now() - userconn->GetHeartTime() > Seconds{GetAppConfig().time_heart_max()}) {
+        YLOG_WARN("<{}>主线程Update_CheckDisconnetion: 用户心跳包超时，关闭用户连接！", userconn->GetConnID());
+        userconn->Shutdown();
     } else {
         //! 使用RunAfter进行定时器的链式调用，若连接失效则不会续期定时器
-        conn->GetIOLoop()->RunAfter(Seconds{GetAppConfig().time_heart_max()},
-            [this, weak_userdata = std::weak_ptr{userdata}] //! 需要是弱引用，不能因为这个回调函数延长TcpConnection的生命周期
+        userconn->RunAfter(Seconds{GetAppConfig().time_heart_max()},
+            [this, weak_userconn = std::weak_ptr{userconn}] //! 需要是弱引用，不能因为这个回调函数延长TcpConnection的生命周期
             {
-                if(const auto user_connection = weak_userdata.lock()) {
-                    this->CheckHeart(user_connection);
+                if(const auto userconn_sp = weak_userconn.lock()) {
+                    this->CheckHeart(userconn_sp);
                 }
             });
     }
@@ -192,16 +202,14 @@ void FrontendServer::SendXorCode(const TcpConnectionPtr &conn) {
 
 void FrontendServer::OnTcpHeart(const TcpConnectionPtr & conn, const HeartPtr & message) {
     assert(conn != nullptr);
-    // YLOG_DEBUG("收到TCP心跳包");
-    // 只需发一个只有消息头的包
+    FindUser(conn->GetConnID())->UpdateHeartTime();
     protocol::core::HeartBody heartBody;
     m_tcpCodec->SendTCP(conn, heartBody);
 }
 
 void FrontendServer::OnUdpHeart(const UdpSessionPtr & conn, const HeartPtr & message) {
     assert(conn != nullptr);
-    // YLOG_DEBUG("收到UDP心跳包");
-    // 只需发一个只有消息头的包
+    FindUser(conn->GetConnID())->UpdateHeartTime();
     protocol::core::HeartBody heartBody;
     m_udpCodec->SendUDP(conn, heartBody);
 }
@@ -263,11 +271,24 @@ void FrontendServer::OnUdpPortRegisterRequest(const TcpConnectionPtr & conn, con
 
     std::string client_ip = message->client_udp_ip();
     uint32_t client_port = message->client_udp_port();
-    IPAddressPtr udpAddr = std::make_shared<IPv4Address>(client_ip, client_port);
+    const IPAddressPtr udpAddr = std::make_shared<IPv4Address>(client_ip, client_port);
     YLOG_INFO("<{}>客户端Udp地址[{}:{}]", conn->GetConnID(), client_ip, client_port);
 
-    const UdpSessionPtr udpSession = std::make_unique<UdpSession>(conn->GetConnID(), m_udpServer->GetUdpTran(), udpAddr, m_appConfigvar->GetValue().app_xor_code());
-    FindUser(conn->GetConnID())->BindUdp(udpSession);
+    const UdpSessionPtr udpSession = m_udpServer->RegisterSession(conn->GetConnID(), udpAddr);
+    const auto userconn = FindUser(conn->GetConnID());
+    userconn->BindUdp(udpSession);
+
+    const protocol::core::HeartBody heartBody;
+    m_udpCodec->SendUDP(udpSession, heartBody);
+
+    userconn->RunEvery(1s,
+        [this, weak_udpSession = std::weak_ptr{udpSession}] //! 需要是弱引用，不能因为这个回调函数延长TcpConnection的生命周期
+        {
+            if(const auto session = weak_udpSession.lock()) {
+                const protocol::core::HeartBody heartBody;
+                m_udpCodec->SendUDP(session, heartBody);
+            }
+        });
 
     protocol::core::UdpPortRegisterRsp response;
     response.set_session_id(conn->GetConnID());
@@ -318,10 +339,10 @@ void FrontendServer::DelUser(const uint64_t conn_id) {
     }
 }
 
-void FrontendServer::AddUser(const uint64_t conn_id, const UserConnectionPtr & userdata) {
+void FrontendServer::AddUser(const uint64_t conn_id, const UserConnectionPtr & userconn) {
     util::WriteLockGuard lg{m_usersMutex};
 
-    m_users[conn_id] = userdata;
+    m_users[conn_id] = userconn;
 }
 
 

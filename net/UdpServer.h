@@ -3,10 +3,12 @@
 
 #include <atomic>
 
+#include "RWLock.h"
+
 namespace yy::net {
 class EventLoopThread;
 
-class UdpTransport;
+class UdpTransporter;
 class EventLoopThreadPool;
 
 class UdpServer {
@@ -14,8 +16,6 @@ public:
     ///@param
     ///@param
     ///@param
-    ///@note 注意其实不要将线程数量作为构造函数的参数，不要在构造函数里构造Loop线程池，因为我们需要再Start中才一个一个创建线程，
-    /// 而非在构造函数中（即使在构造函数中没有创建线程，但为了语义上歧义少点，请不要这么做）
     UdpServer(EventLoop * mainLoop, const IPAddressPtr& udp_addr, bool reusePort, int32_t recv_bytes_one, int32_t send_thread_num, uint8_t init_xor_code) noexcept;
     ~UdpServer();
 
@@ -30,21 +30,28 @@ public:
        ! 否则可能在成recvBuf的线程不安全 */
     void SetMessageCallback(F_UdpMessageCallback cb) { m_MessageCallback = std::move(cb); };
 
+
     auto GetMainLoop() const -> EventLoop* { return m_mainLoop; }
-    auto GetUdpTran() const -> UdpTransport& { return *m_udpTran; }
+    auto GetUdpTran() const -> UdpTransporter& { return *m_udpTran; }
     auto GetRecvAddr() const -> IPAddressPtr;
 
+    UdpSessionPtr RegisterSession(uint64_t connid, IPAddressPtr udpAddr);
+    void UnregisterSession(uint64_t connid);
+
 private:
-    void HandleNewMessage(NetBuffer & recvBuf, IPAddressPtr peerAddr);
+    void HandleNewMessage(NetBuffer & recvBuf, const IPAddressPtr& peerAddr);
 private:
     int32_t  m_recv_bytes_one;
     int32_t  m_send_thread_num;
     uint8_t  m_init_xor_code;
 
-    EventLoop *                             m_mainLoop;
-    F_UdpMessageCallback                    m_MessageCallback;
-    std::unique_ptr<EventLoopThread>        m_recvLoopThread;
-    std::unique_ptr<UdpTransport>           m_udpTran;
+    EventLoop *                              m_mainLoop;
+    F_UdpMessageCallback                     m_MessageCallback;
+    std::unique_ptr<EventLoopThread>         m_recvLoopThread;
+    std::unique_ptr<UdpTransporter>          m_udpTran;
+    std::unordered_map<uint64_t, std::string> m_connid_to_host;
+    std::unordered_map<std::string, UdpSessionPtr> m_host_to_session;
+    util::RWMutex m_mutex;
 
     std::atomic<bool>   m_IsStarted{false};
 

@@ -1,10 +1,10 @@
 #include "UdpSession.h"
-#include "UdpTransport.h"
+#include "UdpTransporter.h"
 
 namespace yy::net {
 
-UdpSession::UdpSession(uint64_t name, UdpTransport &udpTran, const IPAddressPtr& peerAddr, const uint8_t xor_code)
-        : m_tcpConnID(name),
+UdpSession::UdpSession(const uint64_t conn_id, UdpTransporter &udpTran, const IPAddressPtr& peerAddr, const uint8_t xor_code)
+        : m_tcpConnID(conn_id),
         m_xorCode{xor_code},
         m_udpTran(udpTran),
         m_peerAddr(peerAddr)

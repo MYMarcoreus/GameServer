@@ -6,7 +6,7 @@
 #include "log.h"
 #include "IOChannel.h"
 #include "Socket.h"
-#include "UdpTransport.h"
+#include "UdpTransporter.h"
 #include "UdpSession.h"
 
 
@@ -28,7 +28,7 @@ UdpServer::UdpServer(EventLoop *mainLoop, const IPAddressPtr& udp_addr, bool reu
     m_mainLoop(mainLoop),
     m_recvLoopThread(std::make_unique<EventLoopThread>(nullptr, 500ms))
 {
-    m_udpTran = std::make_unique<UdpTransport>(m_recvLoopThread->CreateLoop(), udp_addr, m_recv_bytes_one, m_send_thread_num);
+    m_udpTran = std::make_unique<UdpTransporter>(m_recvLoopThread->CreateLoop(), udp_addr, m_recv_bytes_one, m_send_thread_num);
 }
 
 UdpServer::~UdpServer() {
@@ -39,7 +39,9 @@ UdpServer::~UdpServer() {
 void UdpServer::Start(int ioThreadNum, const Milliseconds ioWaitTimeout) {
     if(!m_IsStarted.exchange(true)) {
         m_udpTran->StartRecv();
-        m_udpTran->SetUdpRecievedCallback([this](NetBuffer & recvBuf, const IPAddressPtr& peerAddr){ this->HandleNewMessage(recvBuf, peerAddr); });
+        m_udpTran->SetUdpRecievedCallback([this](NetBuffer & recvBuf, const IPAddressPtr& peerAddr) {
+            this->HandleNewMessage(recvBuf, peerAddr);
+        });
     }
 }
 
@@ -52,10 +54,35 @@ IPAddressPtr UdpServer::GetRecvAddr() const
     return m_udpTran->GetRecvAddr();
 }
 
-void UdpServer::HandleNewMessage(NetBuffer & recvBuf, IPAddressPtr peerAddr) {
+UdpSessionPtr UdpServer::RegisterSession(uint64_t connid, IPAddressPtr udpAddr)
+{
+    const UdpSessionPtr session = std::make_unique<UdpSession>(connid, GetUdpTran(), udpAddr, m_init_xor_code);
+    const auto host = session->GetPeerAddr()->ToString();
+
+    util::WriteLockGuard lg{m_mutex};
+    m_connid_to_host[session->GetConnID()] = host;
+    m_host_to_session[host] = session;
+
+    return session;
+}
+
+void UdpServer::UnregisterSession(const uint64_t connid)
+{
+    const auto host = m_connid_to_host[connid];
+    util::WriteLockGuard lg{m_mutex};
+    m_host_to_session.erase(host);
+    m_connid_to_host.erase(connid);
+}
+
+void UdpServer::HandleNewMessage(NetBuffer & recvBuf, const IPAddressPtr& peerAddr) {
     assert(m_udpTran);
-    auto name = std::format("{}:{}", peerAddr->GetIPStr(), peerAddr->GetPortStr());
-    const UdpSessionPtr udpSession = std::make_shared<UdpSession>(0, *m_udpTran, peerAddr, m_init_xor_code);
+
+    auto host = peerAddr->ToString();
+    const UdpSessionPtr udpSession = m_host_to_session[host];
+    if (udpSession == nullptr) {
+        YLOG_ERROR("UdpServer::HandleNewMessage: 未注册的Udp地址 ", host)
+        return;
+    }
 
     //! ProtobufUdpCodec::OnData
     m_MessageCallback(udpSession, recvBuf);

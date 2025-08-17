@@ -72,7 +72,7 @@ int __TimerfdManager::CreateTimerfd()
      *                      这个标志告诉操作系统，在执行一个新的程序（通常是通过 exec 函数族执行）时是否自动关闭文件描述符。
      *      TFD_NONBLOCK    为底层的文件描述符启用 O_NONBLOCK 标志，使得定时器到期时用户的::read是非阻塞的
      * */
-    int timerfd = ::timerfd_create(CLOCK_MONOTONIC, TFD_NONBLOCK | TFD_CLOEXEC);
+    const int timerfd = ::timerfd_create(CLOCK_MONOTONIC, TFD_NONBLOCK | TFD_CLOEXEC);
     if (timerfd < 0) {
         YLOG_FATAL("::timerfd_create error")
     }
@@ -149,7 +149,7 @@ using namespace yy::net::detail;
 RBTreeTimerManager::RBTreeTimerManager(EventLoop *owner_loop): TimerManager(owner_loop)
         ,m_IsCallingExpiredTimers{false}
 #ifdef ____LINUX
-        ,m_TimerfdManager( std::make_unique<__TimerfdManager>(owner_loop, [this](){ this->HandleExpiredTimersCallback(); }) )
+        ,m_TimerfdManager( std::make_unique<__TimerfdManager>(owner_loop, [this](){ this->HandleExpiredTimersInLoop(); }) )
 #endif
 
 {
@@ -180,16 +180,10 @@ TimerID RBTreeTimerManager::AddTimer(const TimerPtr& timer)
     m_loop->RunCallbackInLoop([this, timer](){AddTimerInLoop(timer);});
     return timer->GetID();
 }
-
-TimerPtr RBTreeTimerManager::CreateTimer(Timestamp expiredTime, Microseconds interval)
-{
-    return std::make_shared<Timer>(m_TimerCounter++, nullptr, expiredTime, interval);
-}
-
 void RBTreeTimerManager::AddTimerInLoop(const TimerPtr& timer) {
     m_loop->AssertInLoopingThread();
 
-    const auto isEarliestExpiredTimerChanged = InsertTimer(timer);
+    const bool isEarliestExpiredTimerChanged = InsertTimer(timer);
 
 #ifdef ____LINUX
     if(isEarliestExpiredTimerChanged) {
@@ -198,7 +192,7 @@ void RBTreeTimerManager::AddTimerInLoop(const TimerPtr& timer) {
 #endif
 }
 
-bool RBTreeTimerManager::InsertTimer(TimerPtr timer) {
+bool RBTreeTimerManager::InsertTimer(const TimerPtr& timer) {
     const auto earliestExpiredTimer = GetEarliestExpriredTimer();
 
     bool isEarliestExpiredTimerChanged = false;
@@ -217,11 +211,18 @@ bool RBTreeTimerManager::InsertTimer(TimerPtr timer) {
 }
 
 TimerPtr RBTreeTimerManager::GetEarliestExpriredTimer() {
+    // 从set（红黑树）中取出最早到期的定时器
     const auto it = m_TimerList.begin();
-    return  it!=m_TimerList.end() ? (*it) : nullptr;
+    return  it!=m_TimerList.end() ? *it : nullptr;
 }
 
 
+
+
+TimerPtr RBTreeTimerManager::CreateTimer(Timestamp expiredTime, Microseconds interval)
+{
+    return std::make_shared<Timer>(m_TimerCounter++, nullptr, expiredTime, interval);
+}
 
 void RBTreeTimerManager::CancelTimer(TimerID timerid) {
     m_loop->RunCallbackInLoop([this, timerid]{ CancelTimerInLoop(timerid); });
@@ -248,12 +249,18 @@ void RBTreeTimerManager::CancelTimerInLoop(TimerID timerid) {
 }
 
 
+
 //! Linux系统timerfd的计时器到时的回调函数
 /*! CancelTimerInLoop是pending函数，晚于HandleExpiredTimers这个读回调函数执行，所以在执行HandleExpiredTimers时
   ! 不会有未处理的已cancel timer
   ! */
 int RBTreeTimerManager::HandleExpiredTimersInLoop() {
     m_loop->AssertInLoopingThread();
+
+#ifdef ____LINUX
+    m_TimerfdManager->ReadTimerfd();
+#endif
+
     YLOG_TRACE("定时器到期，处理定时器！")
 
     //! 获取到期的timer，将这些timer从定时器列表中删除
@@ -264,7 +271,7 @@ int RBTreeTimerManager::HandleExpiredTimersInLoop() {
 
     //! 执行到期的timer的回调函数，使用m_IsCallingExpiredTimers和m_CancelingTimerList来防止在回调函数中cancel定时器自身。
     m_IsCallingExpiredTimers = true;
-    for(TimerPtr & expiredTimer: expiredTimers) {
+    for(const TimerPtr & expiredTimer: expiredTimers) {
         /* timer的引用计数：expired列表有一个，如果在下面函数有调用cancel，那么cancel列表则会有一个引用计数 */
         expiredTimer->ExecuteCallback();
         //! cancel列表是expired列表的子集，因为cancel列表是expired timer在执行回调函数时调用了cancel才变成了cancel timer
@@ -276,15 +283,6 @@ int RBTreeTimerManager::HandleExpiredTimersInLoop() {
     ResetAndFreeExpiredTimers(expiredTimers);
 
     return expiredCount;
-}
-
-void RBTreeTimerManager::HandleExpiredTimersCallback()
-{
-#ifdef ____LINUX
-    m_TimerfdManager->ReadTimerfd();
-#endif
-
-    HandleExpiredTimersInLoop();
 }
 
 std::vector<TimerPtr> RBTreeTimerManager::GetExpiredTimers() {

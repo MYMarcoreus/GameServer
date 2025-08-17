@@ -66,7 +66,7 @@ private:
 
 
     std::atomic<bool>   m_IsStarted{false};
-    uint64_t            m_NextConnID{0};
+    uint64_t            m_NextConnID{1000};
     std::atomic<size_t> m_NumConnect{0};  //当前连接数
 
 

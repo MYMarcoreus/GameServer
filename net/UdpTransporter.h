@@ -23,12 +23,12 @@ namespace yy::net {
 class EventLoop;
 
 ///@brief 对标Tcp的Acceptor
-class UdpTransport  {
+class UdpTransporter  {
     using F_UdpRecievedCallback = std::function<void(NetBuffer &, IPAddressPtr)>;
 public:
-    explicit UdpTransport(EventLoop * recvLoop, const IPAddressPtr & recv_addr, int32_t recv_bytes_one, int32_t m_send_thread_num);
+    explicit UdpTransporter(EventLoop * recvLoop, const IPAddressPtr & recv_addr, int32_t recv_bytes_one, int32_t m_send_thread_num);
 
-    ~UdpTransport();
+    ~UdpTransporter();
 
     void StartRecv();
 
@@ -56,8 +56,8 @@ private:
     int32_t  m_send_thread_num;
 
     void HandleRead();     // 将套接字的数据接收到RecvBuf中
-    SocketApiWrapper::SocketResult HandleRead_ET(IPAddressPtr & peerAddr);  // 将套接字的数据接收到RecvBuf中
-    SocketApiWrapper::SocketResult HandleRead_LT(IPAddressPtr & peerAddr);  // 将套接字的数据接收到RecvBuf中
+    SocketApiWrapper::SocketResult HandleRead_ET(const IPAddressPtr & peerAddr);  // 将套接字的数据接收到RecvBuf中
+    SocketApiWrapper::SocketResult HandleRead_LT(const IPAddressPtr & peerAddr);  // 将套接字的数据接收到RecvBuf中
     void HandleError();    // 处理错误
 
     void SendUDPWorker(const std::string_view &buf, const IPAddressPtr & peerAddr);

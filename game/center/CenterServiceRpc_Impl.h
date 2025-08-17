@@ -10,7 +10,6 @@ namespace yy::net { class EventLoop; }
 namespace yy::core::rpc   { class RpcServer; }
 namespace yy::core::redis { class RedisClient; }
 namespace yy::core::mysql { class MySqlClient; }
-namespace yy::core::zk    { class ZkServiceClient; }
 
 namespace yy::app::center
 {

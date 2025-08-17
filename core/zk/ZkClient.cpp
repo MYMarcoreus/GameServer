@@ -4,12 +4,13 @@
 #include "RemoteXmlConfig.h"
 #include <semaphore.h>
 #include <iostream>
+#include <ranges>
 
 namespace yy::core::zk
 {
 
 
-void ZkClient::global_watcher(zhandle_t* zh, int type, int state, const char* node_path, void* watcherCtx)
+void ZkClient::global_watcher(zhandle_t* zh, int type, int state, const char* _path, void* watcherCtx)
 {
     const auto zk_client = static_cast<ZkClient*>(watcherCtx);
 
@@ -23,6 +24,9 @@ void ZkClient::global_watcher(zhandle_t* zh, int type, int state, const char* no
             zk_client->Stop();
             zk_client->Start();
             zk_client->RecoverEphemeralNodes();
+            for (const std::string& node_path : zk_client->child_watch_callbacks_ | std::views::keys) {
+                zk_client->OnChildrenChanged(node_path, true);
+            }
         } else if (state == ZOO_CONNECTING_STATE) {
             YLOG_INFO("[ZkWatcher] Connecting to ZooKeeper.");
         } else if (state == ZOO_AUTH_FAILED_STATE) {
@@ -176,7 +180,7 @@ std::string ZkClient::GetNodeData(const std::string& node_path)
 
 
 
-void ZkClient::AddChildrenWatcher(const std::string& node_path, const bool trigger_now, WatcherCallback callback)
+void ZkClient::AddChildrenWatcher(const std::string& node_path, const bool trigger_cb_now, WatcherCallback callback)
 {
     {
         std::unique_lock lock(watcher_cb_mutex_);
@@ -184,11 +188,10 @@ void ZkClient::AddChildrenWatcher(const std::string& node_path, const bool trigg
     }
 
     // 拉取当前子节点并设置 watcher
-    if (trigger_now)
-        OnChildrenChanged(node_path);
+    OnChildrenChanged(node_path, trigger_cb_now);
 }
 
-void ZkClient::OnChildrenChanged(const std::string& path)
+void ZkClient::OnChildrenChanged(const std::string& path, const bool trigger_cb_now)
 {
     // 获取节点path的所有子节点
     std::vector<std::string> children_vec = GetNodeChildren(path);
@@ -197,7 +200,9 @@ void ZkClient::OnChildrenChanged(const std::string& path)
     {
         std::shared_lock lock(watcher_cb_mutex_);
         if (const auto it = child_watch_callbacks_.find(path); it != child_watch_callbacks_.end()) {
-            it->second(path, std::move(children_vec)); // 触发上层业务逻辑
+            if (trigger_cb_now) {
+                it->second(path, std::move(children_vec)); // 触发上层业务逻辑
+            }
         }
     }
 }
@@ -226,7 +231,7 @@ void ZkClient::child_watcher(zhandle_t* zh, int type, int state, const char* nod
     if (type == ZOO_CHILD_EVENT && state == ZOO_CONNECTED_STATE) {
         auto* zk_client = static_cast<ZkClient*>(watcherCtx);
         if (zk_client && node_path) {
-            zk_client->OnChildrenChanged(node_path); // 再次获取最新子节点并触发业务回调
+            zk_client->OnChildrenChanged(node_path, true); // 再次获取最新子节点并触发业务回调
         }
     }
 }

@@ -30,7 +30,7 @@ using namespace yy::protocol::app;
 namespace yy::app::gate {
 
 
-GateServerManager::GateServerManager(): m_redisDAO(GateRedisDAO::Instance())
+GateServerManager::GateServerManager()
 {
 }
 
@@ -65,7 +65,7 @@ void GateServerManager::RunApp()
 
     m_accpetorLoop = std::make_unique<EventLoop>(500ms);
 
-    m_redisDAO.Start(m_accpetorLoop.get());
+    GateRedisDAO::Instance().Start(m_accpetorLoop.get());
 
     /*********** 启动转发器 ***********/
     m_forwarder = std::make_unique<ForwardManager>(m_accpetorLoop.get());

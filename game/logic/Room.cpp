@@ -42,9 +42,8 @@ void Room::Init(const Milliseconds deltaTime)
     const auto print_timer = loop_->CreateTimerEvery(1s);
     print_timer->SetCallback([weak_this = std::weak_ptr(shared_from_this()), timerid = print_timer->GetID(), loop = this->loop_] {
         if (const auto self = weak_this.lock()) {
-            YLOG_INFO("房间 {}:{} 内有 ({})/{} 人, ",
-                self->room_data_.name(),
-                self->room_data_.room_id(),
+            YLOG_INFO("房间 <{}> 内有 ({})/{} 人, ",
+                self->room_data_.ShortDebugString(),
                 // or
                 self->players_.size(),
                 self->room_data_.capacity());
@@ -83,24 +82,24 @@ void Room::OnPlayerDisconnect(const UserConnectionPtr& userconn)
 {
     loop_->RunCallbackInLoop([this, userconn] {
         //! 给其他玩家客户端发送离线通告
-         S2CLeaveScene playerLeave;
-         playerLeave.set_uid(userconn->GetUID());
-         BroadcastUDP(userconn->GetUID(), playerLeave);
-         YLOG_INFO("玩家<{}>被动离开", playerLeave.uid())
+        S2CLeaveScene playerLeave;
+        playerLeave.set_uid(userconn->GetUID());
+        BroadcastUDP(userconn->GetUID(), playerLeave);
+        YLOG_INFO("玩家<{}>被动离开", playerLeave.uid())
 
-         userconn->SetState(UserConnection::E_UserBaseState::eSavingData);
+        userconn->SetState(UserConnection::E_UserBaseState::eSavingData);
 
-         //! 清除数据 and 保存数据
-         {
+        //! 清除数据 and 保存数据
+        {
              // 删除玩家并将玩家数据归还对象池
              const auto removed_player = RemovePlayer(userconn->GetUID());
              removed_player->get_base_data()->Clear();
-         }
+        }
 
-         userconn->SetState(UserConnection::E_UserBaseState::eFree);
+        userconn->SetState(UserConnection::E_UserBaseState::eFree);
 
-         //! 离开场景时，断开玩家与逻辑服的连接
-         YLOG_INFO("玩家<{}>被动离开并保存数据！", userconn->GetUID());
+        //! 离开场景时，断开玩家与逻辑服的连接
+        YLOG_INFO("玩家<{}>被动离开并保存数据！", userconn->GetUID());
     });
 }
 
@@ -159,11 +158,13 @@ void Room::AddPlayer(const UserConnectionPtr& self_conn, AccountBaseData account
         //! players_
         players_.emplace(self_data->account_data().uid(), std::make_shared<Player>(self_conn, self_data));
     });
-
 }
 
 PlayerPtr Room::RemovePlayer(const UID_t uid)
 {
+    if (m_PlayerRemoveCb)
+        m_PlayerRemoveCb(uid);
+
     YLOG_INFO("Room::RemovePlayer {}", uid)
     //! room_data_
     auto* repeated = room_data_.mutable_exist_player_datas();
@@ -268,7 +269,7 @@ void Room::OnEnterScene(const UserConnectionPtr& self_conn, const Ptr<protocol::
     // 登录成功后会把玩家加入房间中，若找不到说明登录失败
     const PlayerPtr self_player = FindPlayer(self_conn->GetUID());
     if (self_player == nullptr or self_player->get_base_data() == nullptr) {
-        YLOG_ERROR("{} 进入场景失败:！", req->uid());
+        YLOG_ERROR("{} 进入场景{}失败:！", req->uid(), this->get_id());
         S2CEnterScene resp;
         resp.set_result(false);
         self_conn->SendTCP(resp);
@@ -300,7 +301,7 @@ void Room::OnEnterScene(const UserConnectionPtr& self_conn, const Ptr<protocol::
     otherPlayerDataResponse.mutable_other_data()->CopyFrom(*self_data);
     BroadcastTCP(self_player,  otherPlayerDataResponse);
 
-    YLOG_INFO("玩家<{}>进入场景", self_data->account_data().ShortDebugString())
+    YLOG_INFO("玩家<{}>进入场景{}", self_data->account_data().ShortDebugString(), this->get_id())
 }
 
 void Room::OnLeaveScene(const UserConnectionPtr& leave_conn, const Ptr<protocol::app::C2SLeaveScene> & req) //NOLINT
@@ -334,7 +335,7 @@ void Room::OnC2SOtherPlayerData(const UserConnectionPtr& self_conn, const Ptr<C2
 
     const auto player_other = FindPlayer(req->requested_uid());
     if(player_other == nullptr) {
-        YLOG_WARN("Get playerdata<{}> not found", req->requested_uid())
+        YLOG_WARN("OnC2SOtherPlayerData: Get playerdata<{}> not found", req->requested_uid())
         return;
     }
     S2COtherPlayerData response;
@@ -350,12 +351,12 @@ void Room::OnC2SMove(const UserConnectionPtr& self_conn, const Ptr<C2SMove> & se
 
     const auto player_self = FindPlayer(selfmove->uid());
     if(player_self == nullptr) {
-        YLOG_WARN("Get playerdata<{}> not found", selfmove->uid())
+        YLOG_WARN("OnC2SMove: Get playerdata<{}> not found", selfmove->uid())
         return;
     }
 
     player_self->get_base_data()->mutable_movement()->CopyFrom(selfmove->movement());
-    self_conn->SendTCP(selfmove);
+    self_conn->SendUDP(selfmove);
 
     S2CMove to_other_move;
     to_other_move.set_uid(selfmove->uid());
@@ -371,7 +372,7 @@ void Room::OnC2SJumpAndGravity(const UserConnectionPtr& self_conn, const Ptr<pro
 
     const auto player_self = FindPlayer(selfJumpAndGravity->uid());
     if(player_self == nullptr) {
-        YLOG_WARN("Jump playerdata<{}> not found", selfJumpAndGravity->uid())
+        YLOG_WARN("OnC2SJumpAndGravity: Get playerdata<{}> not found", selfJumpAndGravity->uid())
         return;
     }
 

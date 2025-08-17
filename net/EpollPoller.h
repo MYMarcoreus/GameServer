@@ -15,13 +15,13 @@ public:
     ~EpollPoller() override;
 
     ///@brief 执行epoll_wait，并将发生的事件channel填入`activeChannel`
-    virtual void PollWait(ChannelList &activeChannel, std::chrono::milliseconds timeout) override;
+    void PollWait(ChannelList &activeChannel, std::chrono::milliseconds timeout) override;
 
     ///@brief 其实是一个状态机，让Channel的状态转移到下一个状态：对channel映射表和epoll监视列表进行增删覆盖操作
-    virtual void UpdateChannel(IOChannel *) override;
+    void UpdateChannel(IOChannel *) override;
 
     ///@brief 其实是一个状态机，让Channel的状态转移到下一个状态：彻底删除channel
-    virtual void RemoveChannel(IOChannel *) override;
+    void RemoveChannel(IOChannel *) override;
 
 private:
     ///@brief PollWait返回后调用

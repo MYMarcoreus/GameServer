@@ -120,8 +120,6 @@ inline MessagePtr CreateMessage(const std::string &typeName) {
 
 ///@brief 根据枚举命令生成为消息对象
 inline MessagePtr CreateMessage(const MessageCommand msg_cmd) {
-    // const std::string & msg_name = g_cmd_to_name[msg_cmd];
-    // return CreateMessage(msg_name);
     MessagePtr message = nullptr;
     const google::protobuf::Message* const prototype = g_cmd_to_prototype[msg_cmd];
     if (prototype) {

@@ -3,8 +3,7 @@
 #include "IServer.h"
 #include "ProtobufDispatcher.h"
 #include "net_definations.h"
-#include "../core_definations.h"
-#include "ThreadPool.h"
+#include "core_definations.h"
 
 
 namespace yy::protocol::core {
@@ -16,7 +15,7 @@ class UdpPortRegisterReq;
 
 namespace yy::core {
 
-class FrontendServer final: public IServer{
+class FrontendServer final: public IServer {
     using HeartPtr    = std::shared_ptr<protocol::core::HeartBody> ;
     using C2SSecurityPtr = std::shared_ptr<protocol::core::SecurityCheckReq> ;
     using UdpPortRegisterReqPtr = std::shared_ptr<protocol::core::UdpPortRegisterReq> ;
@@ -52,7 +51,7 @@ private:
     //Region 用户连接管理函数
     UserConnectionPtr   FindUser(uint64_t conn_id);
     void                DelUser (uint64_t conn_id);
-    void                AddUser (uint64_t conn_id, const UserConnectionPtr & userdata);
+    void                AddUser (uint64_t conn_id, const UserConnectionPtr & userconn);
     //End
 
     ///Region 调用m_NotifierCommand，将消息传递至业务层
@@ -62,8 +61,8 @@ private:
 
     //Region 连接建立后的协议验证部分
     void OnConnectionEstablished(const net::TcpConnectionPtr & conn);
-    void AddCheckTimer(const net::TcpConnectionPtr & conn, const UserConnectionPtr & userdata);
-    void CheckHeart(const UserConnectionPtr & userdata);
+    void AddCheckTimer(const net::TcpConnectionPtr & conn, const UserConnectionPtr & userconn);
+    void CheckHeart(const UserConnectionPtr & userconn);
     void SendXorCode(const net::TcpConnectionPtr &conn);
     void OnTcpHeart(const net::TcpConnectionPtr &conn, const HeartPtr & message);
     void OnUdpHeart(const net::UdpSessionPtr &conn, const HeartPtr & message);

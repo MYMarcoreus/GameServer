@@ -5,6 +5,7 @@
 #include "core_definations.h"
 #include "net_definations.h"
 #include "noncopyable.h"
+#include "Timestamp.h"
 
 namespace yy::core {
 
@@ -59,6 +60,9 @@ public:
     /// @brief 是否需要保存
     bool IsNeedSave() const { return m_state.load(std::memory_order::acquire) == E_UserBaseState::eSavingData; }
 
+    void UpdateHeartTime() { return m_heartTime.SetNow(); }
+    auto GetHeartTime() const -> net::Timestamp { return  m_heartTime; }
+
     uint64_t    GetUID() const { return m_uid; }
 
     uint64_t    GetConnID() const;
@@ -77,10 +81,11 @@ private:
     std::atomic<E_UserBaseState>                m_state;
     uint64_t                                    m_uid;
     std::string                                 m_token;
-    net::TcpConnectionPtr                            m_tcpChannel;
-    net::UdpSessionPtr                               m_udpChannel;
+    net::TcpConnectionPtr                       m_tcpChannel;
+    net::UdpSessionPtr                          m_udpChannel;
     ProtobufTcpCodec &                          m_tcpCodec;
     ProtobufUdpCodec &                          m_udpCodec;
+    net::Timestamp                              m_heartTime;
 };
 
 // #pragma pack(pop, packing) // 恢复字节对齐状态

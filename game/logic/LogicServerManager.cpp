@@ -16,7 +16,7 @@ using namespace yy::core;
 namespace yy::app::logic {
 
 
-LogicServerManager::LogicServerManager() : m_zk{std::make_unique<zk::ZkServiceClient>()}
+LogicServerManager::LogicServerManager()
 {
 }
 
@@ -25,16 +25,6 @@ LogicServerManager::~LogicServerManager() {
 }
 
 void LogicServerManager::RunApp()
-{
-    //! 初始化服务器
-    Init();
-
-    //! 启动监听线程(即主线程)的
-    m_accpetorLoop->Loop();
-}
-
-
-void LogicServerManager::Init()
 {
     //! ①、读取配置文件
     config::ConfigManager::LoadXmlConfigs();
@@ -64,6 +54,9 @@ void LogicServerManager::Init()
     //! 启动服务器的监听和IO线程
     m_backend->Start(2, 500ms);
     m_frontend->Start();
+
+    //! 启动监听线程(即主线程)
+    m_accpetorLoop->Loop();
 }
 
 

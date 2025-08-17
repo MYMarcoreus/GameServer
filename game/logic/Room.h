@@ -27,6 +27,8 @@ public:
 
     void OnPlayerDisconnect(const UserConnectionPtr& userconn);
 
+    void SetPlayerRemoveCallback(std::function<void(UID_t)> cb) { m_PlayerRemoveCb = std::move(cb); }
+
     //Region Getter
     [[nodiscard]] auto get_room_data() const -> protocol::app::RoomDetailData ;
     [[nodiscard]] auto get_owner_uid() const -> UID_t ;
@@ -95,6 +97,7 @@ private:
     std::unordered_map<UID_t, PlayerPtr>                players_;
     core::ProtobufDispatcher<UserConnectionPtr>         msg_handler_;
     util::ObjectPool<protocol::app::PlayerBaseData> &   players_pool_;
+    std::function<void(UID_t)> m_PlayerRemoveCb;
 };
 
 using RoomPtr = std::shared_ptr<Room>;

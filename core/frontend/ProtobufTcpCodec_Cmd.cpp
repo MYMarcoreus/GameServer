@@ -63,7 +63,7 @@ void ProtobufTcpCodec_Cmd::OnTcpData(const TcpConnectionPtr &conn, NetBuffer &bu
             //! 分发消息，交给其对应的处理函数处理
             case MessageParseErrorCode::eNoError:
                 if(message)
-                    m_ProtobufMessageDispatchCallback(conn, message);
+                    m_ProtobufMessageDispatchCallback(conn, message); // OnProtobufMessage
                 break;
             default:
                 m_ProtobufErrorMessageCallback(conn, buf, errCode);

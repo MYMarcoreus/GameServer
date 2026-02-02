@@ -92,10 +92,10 @@ void TcpServer::HandleNewConnection(SocketApiWrapper::socket_t sockfd, IPAddress
 
     // YLOG_INFO("连接[{}], {}", name, name.size());
 
-    //! 传递上层的回调
+    //! 传递上层（业务层）的回调
     conn->SetConnectionEstablishedCallback(m_ConnectionEstablishedCallback);
     conn->SetConnectionDestroyedCallback(m_ConnectionDestroyedCallback);
-    conn->SetMessageCallback(m_MessageCallback);
+    conn->SetMessageCallback(m_MessageCallback); // OnTcpData
     conn->SetConnectionWriteCompleteCallback(m_ConnectionWriteCompleteCallback);
     conn->SetConnectionCloseCallback([this](const TcpConnectionPtr & conn_cb){ return this->RemoveConnection(conn_cb); });
     conn->SetConnectionShutdownCallback(m_ConnectionShutdownCallback);

@@ -32,8 +32,10 @@ public:
     ///@brief 获取节点的「子节点」
     auto GetNodeChildren(const std::string& node_path) -> std::vector<std::string>;
 
+    auto WatchNodeChildren(const std::string& node_path) -> std::vector<std::string>;
+
     ///@brief 服务调用者：注册并监听 node_path 子节点变化
-    void AddChildrenWatcher(const std::string& node_path, bool trigger_cb_now, WatcherCallback callback);
+    void AddChildrenWatcher(const std::string& node_path, WatcherCallback callback);
 
 private:
     // 全局的watcher观察器   zkserver给zkclient的通知
@@ -48,8 +50,8 @@ private:
     /// 2、不会触发的情况：① "/servers/server1" 节点所存储的数据发生变化
     ///                 ② "/servers/server1" 下添加了新的子节点 "/servers/server1/worker"
     static void child_watcher(zhandle_t* zh, int type, int state, const char* node_path, void* watcherCtx);
-    ///@brief 子节点变更时的处理函数（获取所有子节点 & 触发回调）
-    void OnChildrenChanged(const std::string& path, bool trigger_cb_now);
+    ///@brief 子节点变更的watcher触发时的处理函数：再次注册子节点的watcher + 触发回调
+    void OnChildrenChanged(const std::string& path);
 
 
 private:

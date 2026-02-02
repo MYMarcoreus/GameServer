@@ -108,12 +108,12 @@ size_t ZkServiceClient::EndpointSize(const std::string& service_name)
 }
 
 
-void ZkServiceClient::Watch(const std::string& service_name, const bool trigger_now, WatcherCallback watcher_cb)
+void ZkServiceClient::Watch(const std::string& service_name, WatcherCallback watcher_cb)
 {
     auto service_node_path = std::format("{}/{}", service_root_, service_name);
 
     // 监听zookeeper服务的变化
-    zk_client_->AddChildrenWatcher(service_node_path, trigger_now,
+    zk_client_->AddChildrenWatcher(service_node_path,
         [this, watcher_cb = std::move(watcher_cb), service_node_path]
         (const std::string& path, const std::vector<std::string> & providers)
         {

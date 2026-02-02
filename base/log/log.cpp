@@ -117,10 +117,6 @@ void Logger::LogAsync(const LogMessage::ptr& msg) const
     }
 
     for (const auto& appender: m_appenders) {
-        // push到阻塞队列，进行异步写
-        //! 注意异步操作时，智能指针一定得拷贝，不能是智能指针的const &，否则调用者可能已释放智能指针！
-        // LoggerManager::Instance().m_blockqueue.push(std::pair{appender, msg});
-
         //! 多生产者：格式化消息并将其放入缓冲区
         appender->AppendBuffer(msg);
     }
@@ -132,7 +128,7 @@ void Logger::LogSynch(const LogMessage::ptr& msg) const
 
     // 对m_appenders只是读，故无需上锁
     for (const auto &appender: m_appenders) {
-        // 直接写
+        //! 直接同步写
         appender->WriteLog(msg);
     }
 

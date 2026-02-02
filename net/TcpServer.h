@@ -38,7 +38,7 @@ public:
     /* ! 注意：当使用线程池时，不要把recvBuf的引用或指针作为参数传递给另一线程（如线程池中的线程），
        ! MessageCallback需在的调用者线程中（即TcpConnection对象所在线程，即在onMessage中）完成对recvBuf数据的拷贝，
        ! 否则可能在成recvBuf的线程不安全 */
-    void SetMessageCallback(const F_TcpMessageCallback& cb) { m_MessageCallback = cb; }
+    void SetMessageCallback(const F_TcpMessageCallback& cb) { m_MessageCallback = cb; } // OnTcpData
 
     auto GetConnectionsCount() -> size_t { return m_NumConnect; }
     auto GetAcceptorLoop() const -> EventLoop* { return m_AcceptorLoop; }
@@ -73,7 +73,7 @@ private:
     F_ConnectionEstablishedCallback      m_ConnectionEstablishedCallback;
     F_ConnectionDestroyedCallback        m_ConnectionDestroyedCallback;
     F_ConnectionWriteCompleteCallback    m_ConnectionWriteCompleteCallback;
-    F_TcpMessageCallback                 m_MessageCallback;
+    F_TcpMessageCallback                 m_MessageCallback; // OnTcpData
  // F_ConnectionCloseCallback            m_ConnectionCloseCallback;  // 不允许让用户指定close回调
     F_ConnectionShutdownCallback         m_ConnectionShutdownCallback;
 

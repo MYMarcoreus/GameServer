@@ -85,11 +85,11 @@ sequenceDiagram
         alt 密码正确
             AccountServer ->> Redis: 查找uid的user_token
             alt 无现存user_token
-                AccountServer ->> AccountServer: 生成128位的user_token
-                AccountServer ->> Redis: 存储uid的user_token
-                AccountServer -->> GateServer: RPC LoginRsp(success, uid, user_token)
+                AccountServer ->> AccountServer: 使用stduuid库生成128位的user_token
+                AccountServer ->> Redis: 用 SETEX 命令存储 {uid, user_token} 到 Redis 中
+                AccountServer -->> GateServer: RPC：LoginRsp(success, uid, user_token)
             else 有现存user_token
-                AccountServer -->> GateServer: RPC LoginRsp(already_logged_in)
+                AccountServer -->> GateServer: RPC：LoginRsp(already_logged_in)
             end
         else 密码错误
             AccountServer -->> GateServer: RPC LoginRsp(password_error)
@@ -110,42 +110,20 @@ sequenceDiagram
     participant GateServer
     participant AccountServer
     participant MySQL
-    participant Redis
-
-    rect rgb(200, 223, 255, 0.20)
-    Note over Client, Redis: 登录流程
-    Client ->> GateServer: LoginReq(用户名, 密码)
-    GateServer ->> AccountServer: RPC LoginReq
-    AccountServer ->> MySQL: 查找用户名
-    alt 账户存在
-        MySQL -->> AccountServer: (uid, 密码)
-        AccountServer ->> AccountServer: 验证密码
-        alt 密码正确
-            AccountServer ->> Redis: 查找uid的user_token
-            alt 无现存user_token
-                AccountServer ->> AccountServer: 生成128位的user_token
-                AccountServer ->> Redis: 存储uid的user_token
-                AccountServer -->> GateServer: RPC LoginRsp(success, uid, user_token)
-            else 有现存user_token
-                AccountServer -->> GateServer: RPC LoginRsp(already_logged_in)
-            end
-        else 密码错误
-            AccountServer -->> GateServer: RPC LoginRsp(password_error)
-        end
-    else 账户不存在
-        AccountServer -->> GateServer: RPC LoginRsp(account_not_exist)
-    end
-    GateServer -->> Client: LoginRsp
-    end
 
     rect rgb(200, 255, 230, 0.20)
-    Note over Client, Redis: 注册流程
+    Note over Client, MySQL: 注册流程
     Client ->> GateServer: RegisterReq(username, password)
     GateServer ->> AccountServer: RPC RegisterReq
     AccountServer ->> MySQL: 查找用户名
     alt 用户名不存在
-        AccountServer ->> MySQL: 插入(用户名, 密码)
-        MySQL -->> AccountServer: 新uid(基于MySQL的自增键，不严谨)
+        rect rgb(200, 255, 230, 0.20)
+        AccountServer ->> MySQL: 开启事务
+        AccountServer ->> MySQL: INSERT INTO account(username, password)
+        MySQL -->> AccountServer: 返回自增生成的用户uid(基于MySQL的自增键，不严谨)
+        AccountServer ->> MySQL: 提交事务
+        end
+
         AccountServer -->> GateServer: RPC RegisterRsp(success, uid)
     else 用户名已存在
         AccountServer -->> GateServer: RPC RegisterRsp(account_exist)
@@ -153,8 +131,6 @@ sequenceDiagram
     GateServer -->> Client: RegisterRsp
     end
 ```
-
-
 
 ## 中心服（CenterServer）房间管理的时序图
 
@@ -169,10 +145,10 @@ sequenceDiagram
 
   %% ====== 逻辑服务器初始化流程 ======
     rect rgba(200, 220, 255, 0.2)
-        Note over CenterServer,LogicServer: 获取逻辑服务器信息(1s一次的心跳)
-        loop 遍历每个逻辑服务器的内部RPC地址（从Zookeeper中获取）
+        Note over CenterServer,LogicServer: 获取逻辑服务器信息(1s一次的心跳)：根据逻辑服的内部地址获取其外部地址
+        loop 遍历每个逻辑服务器的内部RPC地址（内部地址从Zookeeper中获取）
             CenterServer->>LogicServer: GetLogicAddrReq
-            LogicServer-->>CenterServer: GetLogicAddrRsp (对外IP/端口)
+            LogicServer-->>CenterServer: GetLogicAddrRsp (逻辑服的外部地址：对外IP/端口)
             CenterServer->>CenterServer: 更新逻辑服务器信息
         end
     end
@@ -262,9 +238,16 @@ sequenceDiagram
     end
 ```
 
+## 逻辑服消息时序图
+
 ### 逻辑服登录时序图
 
-Redis在这个架构中作为“令牌中心”保存中心服生成的逻辑服登录令牌，供由逻辑服验证客户端。
+> Redis在这个架构中作为“令牌中心”保存中心服生成的逻辑服登录令牌，供由逻辑服验证客户端是否已登录。
+
+1. 首先客户端必须先登录网关服，获取网关服登录令牌 user_token
+2. 当客户端要从房间进入到游戏场景时，需要：
+   - ① 先向**中心服**获取逻辑服登录令牌 scene_token
+   - ② 携带 user_token 和 scene_token 登录到逻辑服
 
 ```mermaid
 sequenceDiagram
@@ -273,37 +256,55 @@ sequenceDiagram
     participant GateServer
     participant CenterServer
     participant Redis
-    participant LogicServer
     
     %% ====== 获取场景令牌流程 ======
     rect rgba(240, 180, 180, 0.2)
         Note over Client,CenterServer: 获取场景令牌（逻辑服登录令牌）流程
         Client->>GateServer: GetEnterSceneTokenReq
         GateServer->>CenterServer: GetEnterSceneTokenReq
-        CenterServer->>CenterServer: 生成唯一SceneToken
-        CenterServer->>Redis: SetSceneToken(UID,Token,60s)
+        rect rgba(240, 180, 180, 0.2)
+            CenterServer->>CenterServer: 生成唯一scene_token
+            CenterServer->>Redis: 用 SETEX 存储 {uid, scene_token} 到 Redis 中
+        end
         CenterServer-->>GateServer: GetEnterSceneTokenRsp
         GateServer-->>Client: GetEnterSceneTokenRsp
-    end
-    
-    %% ====== 令牌验证流程 ======
-    rect rgba(180, 180, 240, 0.2)
-        Note over Redis,Client: 逻辑服登录（Token验证）
-        Client->>LogicServer: EnterSceneReq(SceneToken, UserToken)
-        LogicServer->>Redis: 根据UID获取SceneToken和UserToken
-        alt Token有效
-            Redis-->>LogicServer: Token(有效)
-            LogicServer->>Redis: 删除SceneToken并续期UserToken
-            LogicServer-->>Client: EnterSceneRsp(成功)
-        else Token无效
-            Redis-->>LogicServer: Token无效/过期
-            LogicServer-->>Client: EnterSceneRsp(失败)
-        end
     end
 
 ```
 
-## 逻辑服消息时序图
+```mermaid
+sequenceDiagram
+    autonumber
+    participant Client
+    participant LogicServer
+    participant Redis
+    participant RoomManager as LogicServer：<br>RoomManager(单线程处理)
+    participant Thread as Room<br>(房间所属线程)
+
+    %% ====== 令牌验证流程 ======
+    rect rgba(180, 180, 240, 0.2)
+        Note over Redis,Client: 逻辑服登录（Token验证）
+        Client->>LogicServer: SceneLoginReq(SceneToken_Redis, UserToken_Redis)
+        LogicServer->>Redis: 根据UID获取SceneToken_Redis和UserToken_Redis
+        Redis-->>LogicServer: 
+        
+        alt Token验证成功
+            LogicServer->>Redis: 删除SceneToken并续期UserToken
+            LogicServer-->>Client: 发送SceneLoginRsp(逻辑服登录成功)
+            
+            rect rgba(180, 180, 240, 0.2)
+            Note over LogicServer, Thread: 将玩家信息加入房间中
+            LogicServer->>Redis: 在Redis中获取玩家数据
+            Redis-->>LogicServer: 
+            LogicServer->>RoomManager: 将玩家信息加入指定房间
+            RoomManager->>Thread: 房间添加玩家信息
+            end
+        else Token验证失败
+            LogicServer-->>Client: 发送SceneLoginRsp(逻辑服登录失败)
+        end
+    end
+
+```
 
 ### 逻辑服房间管理时序图
 
@@ -313,37 +314,53 @@ sequenceDiagram
     participant LogicServer
     participant Zookeeper
     participant CenterServer
-    participant RoomManager as RoomManager<br>(单线程处理)
-    participant Thread as Room<br>(房间所属线程)
 
     %% 初始化阶段
     rect rgba(200, 220, 255, 0.2)
         Note over LogicServer, CenterServer: 逻辑服启动
         LogicServer->>Zookeeper: RPC服务注册
-        Zookeeper-->>CenterServer: 逻辑服RPC服务上线通告
+        Zookeeper-->>CenterServer: 子节点变化：逻辑服RPC服务上线通告
     end
+```
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant CenterServer
+    participant RoomManager as LogicServer：<br>RoomManager(单线程处理)
+    participant Thread as Room<br>(房间所属线程)
+
 
     %% 创建房间流程
     rect rgba(200, 200, 215, 0.2)
-        Note over LogicServer, Thread: 创建房间流程
-        CenterServer->>LogicServer: NewRoomReq(房间id, 房间名)
-        LogicServer->>RoomManager: 创建房间对象
-        RoomManager->>Thread: 为房间分配专属事件循环线程
-        LogicServer-->>CenterServer: NewRoomRsp(逻辑服IP/端口)
+        Note over CenterServer, Thread: 创建房间流程
+        CenterServer->>RoomManager: NewRoomReq(房间id, 房间名)
+        
+        rect rgba(200, 200, 215, 0.2)
+            RoomManager->>Thread: 创建房间对象并为房间分配专属事件循环线程
+            Thread-->>Thread: 初始化
+        end
+        RoomManager-->>CenterServer: NewRoomRsp(逻辑服IP/端口)
     end
+```
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant CenterServer
+    participant LogicServer
+    participant RoomManager as RoomManager<br>(单线程处理)
 
     %% 删除房间流程
     rect rgba(200, 200, 215, 0.2)
-        Note over LogicServer, Thread: 删除房间流程
+        Note over CenterServer, RoomManager: 删除房间流程
         CenterServer->>LogicServer: DeleteRoomReq(房间id)
-        LogicServer->>RoomManager: 删除房间对象
+        LogicServer->>RoomManager: 删除Room对象
         LogicServer-->>CenterServer: DeleteRoomReq(逻辑服IP/端口)
     end
 ```
 
-
-
-### 逻辑服连接管理与玩家同步时序图
+### 逻辑服连接断开与玩家同步时序图
 
 ```mermaid
 sequenceDiagram
@@ -352,26 +369,9 @@ sequenceDiagram
     participant LogicServer
     participant Zookeeper
     participant CenterServer
-    participant Redis
     participant RoomManager as RoomManager<br>(单线程处理)
     participant Thread as Room<br>(房间所属线程)
-
-    %% 逻辑服登录流程
-    rect rgba(240, 180, 180, 0.2)
-        Note over Client, Thread: 逻辑服登录流程
-        Client->>LogicServer: TCP连接 (携带SceneToken和UserToken)
-        LogicServer->>Redis: 验证SceneToken和UserToken
-        Redis-->>LogicServer: 返回Token验证结果
-        alt Token验证成功
-            LogicServer->>Redis: 获取账户数据
-            Redis-->>LogicServer: 返回账户信息
-            LogicServer->>RoomManager: 将玩家加入指定房间
-            RoomManager->>Thread: 房间添加玩家
-            LogicServer-->>Client: 发送SceneLoginRsp(成功)
-        else Token验证失败
-            LogicServer-->>Client: 发送SceneLoginRsp(失败)
-        end
-    end
+    participant Redis as 数据库
 
     %% 游戏消息处理
     rect rgba(180, 180, 240, 0.2)
@@ -379,18 +379,20 @@ sequenceDiagram
         LogicServer->>RoomManager: 根据UID查找房间
         RoomManager->>Thread: 投递消息到房间的消息队列
         Thread->>Thread: 调用消息对应的处理函数
-        Thread-->>Client: UDP或TCP广播给房间内的其他玩家
+        Thread->>LogicServer: 将消息发送至房间内的其他玩家
+        LogicServer-->>Client: UDP或TCP广播给房间内的其他玩家
     end
 
     %% 离线处理
     rect rgba(255, 220, 200, 0.2)
-        Note over Client,LogicServer: 客户端断开连接
+        Note over Client,Redis: 客户端断开连接
         Client->>LogicServer: 客户端断开连接
         LogicServer->>RoomManager: 根据UID查找房间
-        RoomManager->>Thread: 投递离线事件
-        Thread->>Thread: 清理玩家数据
-        Thread-->>Client: TCP广播给房间内的其他玩家
-        Thread->>Redis: 保存玩家数据(可选)
+        RoomManager->>Thread: 投递离线事件到房间的消息队列
+        Thread->>Thread: 清理房间内的玩家数据
+        Thread->>Redis: 持久化玩家数据(可选)
+        Thread->>LogicServer: 将离线消息发送给房间内其他玩家
+        LogicServer-->>Client: TCP广播给房间内的其他玩家
     end
 ```
 

@@ -3,7 +3,7 @@
 ## MySQL客户端简介
 
 1. **数据库连接池实现**：基于MySQL Connector/C++ X DevAPI管理会话连接，支持高并发连接复用。
-2. **RAII 连接管理**：使用带自定义deleter的 `std::shared_ptr`自动回收并归还连接。
+2. **RAII 连接管理**：使用带自定义deleter的 `std::shared_ptr` 自动回收并归还连接。
 3. **定时健康检查与自动重连**：周期性执行 `SELECT 1` 检测连接状态，异常时自动重建连接。
 
 ## 连接健康检查流程

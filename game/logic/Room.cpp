@@ -66,7 +66,7 @@ void Room::StopUpdate()
 
 void Room::PostMessage(const UserConnectionPtr& conn, const MessagePtr& msg) const
 {
-    //! 即时处理（非Update）：对于游戏消息，并不在IO线程处理，而是在专门处理游戏数据的工作线程中处理（让分发器找到该游戏消息所注册的对应的处理函数。）
+    //! 对于游戏消息，并不在IO线程处理，而是在专门处理游戏数据的工作线程中处理（让分发器找到该游戏消息所注册的对应的处理函数。）
     loop_->RunCallbackInLoop([this, conn, msg] { // 注意这里跨线程传输需要拷贝智能指针
         // 调用消息对应的处理函数
         msg_handler_.OnProtobufMessage(conn, msg);

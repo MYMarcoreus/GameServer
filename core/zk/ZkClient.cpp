@@ -25,7 +25,7 @@ void ZkClient::global_watcher(zhandle_t* zh, int type, int state, const char* _p
             zk_client->Start();
             zk_client->RecoverEphemeralNodes();
             for (const std::string& node_path : zk_client->child_watch_callbacks_ | std::views::keys) {
-                zk_client->OnChildrenChanged(node_path, true);
+                zk_client->OnChildrenChanged(node_path);
             }
         } else if (state == ZOO_CONNECTING_STATE) {
             YLOG_INFO("[ZkWatcher] Connecting to ZooKeeper.");
@@ -180,38 +180,54 @@ std::string ZkClient::GetNodeData(const std::string& node_path)
 
 
 
-void ZkClient::AddChildrenWatcher(const std::string& node_path, const bool trigger_cb_now, WatcherCallback callback)
+void ZkClient::AddChildrenWatcher(const std::string& node_path, WatcherCallback callback)
 {
     {
         std::unique_lock lock(watcher_cb_mutex_);
         child_watch_callbacks_[node_path] = std::move(callback);
     }
 
-    // 拉取当前子节点并设置 watcher
-    OnChildrenChanged(node_path, trigger_cb_now);
+    // 设置 watcher
+    WatchNodeChildren(node_path);
 }
 
-void ZkClient::OnChildrenChanged(const std::string& path, const bool trigger_cb_now)
+void ZkClient::OnChildrenChanged(const std::string& path)
 {
-    // 获取节点path的所有子节点
-    std::vector<std::string> children_vec = GetNodeChildren(path);
+    // 获取节点path的所有子节点，并再次监听其变化
+    std::vector<std::string> children_vec = WatchNodeChildren(path);
 
     // 调用节点path的变动回调函数，将所有子节点作为参数传入
     {
         std::shared_lock lock(watcher_cb_mutex_);
         if (const auto it = child_watch_callbacks_.find(path); it != child_watch_callbacks_.end()) {
-            if (trigger_cb_now) {
-                it->second(path, std::move(children_vec)); // 触发上层业务逻辑
-            }
+            it->second(path, std::move(children_vec)); // 触发上层业务逻辑
         }
     }
+}
+
+std::vector<std::string> ZkClient::WatchNodeChildren(const std::string& node_path)
+{
+    struct ::String_vector children;
+    // ZooKeeper 的 watcher 是一次性触发的，触发后必须重新注册。
+    const int ret = zoo_wget_children(zhandle_, node_path.c_str(), child_watcher, this, &children);
+    if (ret != ZOK) {
+        YLOG_WARN("[ZkClient] Failed to get children for node_path: {}, error: {}", node_path, ret);
+        return {};
+    }
+
+    std::vector<std::string> children_vec;
+    for (int i = 0; i < children.count; ++i) {
+        children_vec.emplace_back(children.data[i]);
+    }
+    deallocate_String_vector(&children); // 释放由 ZooKeeper 分配的字符串数组
+    return children_vec;
 }
 
 std::vector<std::string> ZkClient::GetNodeChildren(const std::string& node_path)
 {
     struct ::String_vector children;
     // ZooKeeper 的 watcher 是一次性触发的，触发后必须重新注册。
-    const int ret = zoo_wget_children(zhandle_, node_path.c_str(), child_watcher, this, &children);
+    const int ret = zoo_wget_children(zhandle_, node_path.c_str(), nullptr, this, &children);
     if (ret != ZOK) {
         YLOG_WARN("[ZkClient] Failed to get children for node_path: {}, error: {}", node_path, ret);
         return {};
@@ -231,7 +247,7 @@ void ZkClient::child_watcher(zhandle_t* zh, int type, int state, const char* nod
     if (type == ZOO_CHILD_EVENT && state == ZOO_CONNECTED_STATE) {
         auto* zk_client = static_cast<ZkClient*>(watcherCtx);
         if (zk_client && node_path) {
-            zk_client->OnChildrenChanged(node_path, true); // 再次获取最新子节点并触发业务回调
+            zk_client->OnChildrenChanged(node_path); // 再次获取最新子节点并触发业务回调
         }
     }
 }

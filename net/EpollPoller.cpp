@@ -176,8 +176,10 @@ void EpollPoller::UpdateEpollOperation(IOChannel * channel, const int EPOLL_CTL_
     if (events.HasReadEvent ()) { interested_events.AddReadEvent(); interested_events.SetET(); }
     if (events.HasWriteEvent()) { interested_events.AddWriteEvent(); }
 
-    interested_events.SetInterestedPtr(channel); // 将和fd相关联的channel保存至data.ptr中
+    // 将和fd相关联的channel保存至data.ptr中
+    interested_events.SetInterestedPtr(channel);
 
+    //! 调用 epoll_ctl，将 IOChannel 中变更后的关注事件同步到内核 epoll（添加、修改或移除监听项）。
     ::epoll_ctl(m_EpollFD, EPOLL_CTL_XXX, channel->GetFD(), interested_events.GetRawEvent());
 }
 

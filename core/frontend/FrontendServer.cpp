@@ -110,6 +110,7 @@ void FrontendServer::OnUnknownTcpMessage(const TcpConnectionPtr & conn, const Me
 
 void FrontendServer::OnUnknownUdpMessage(const UdpSessionPtr & sess, const MessagePtr &message) {
     YLOG_TRACE("Udp消息：{}，交由业务层", message->GetDescriptor()->full_name());
+#ifdef ____DEBUG
     const auto userconn = FindUser(sess->GetConnID());
     if (message->GetDescriptor()->name() == "C2SMove") {
         const auto move = dynamic_cast<protocol::app::C2SMove*>(message.get());
@@ -117,6 +118,7 @@ void FrontendServer::OnUnknownUdpMessage(const UdpSessionPtr & sess, const Messa
             printf("错误！");
         }
     }
+#endif
     // 执行业务层回调，分发消息
     m_NotifierCommand(userconn, message, MessageNetType::UDP);
 }
@@ -278,11 +280,9 @@ void FrontendServer::OnUdpPortRegisterRequest(const TcpConnectionPtr & conn, con
     const auto userconn = FindUser(conn->GetConnID());
     userconn->BindUdp(udpSession);
 
-    const protocol::core::HeartBody heartBody;
-    m_udpCodec->SendUDP(udpSession, heartBody);
-
+    // 注册1s一次的udp心跳包
     userconn->RunEvery(1s,
-        [this, weak_udpSession = std::weak_ptr{udpSession}] //! 需要是弱引用，不能因为这个回调函数延长TcpConnection的生命周期
+        [this, weak_udpSession = std::weak_ptr{udpSession}] //! 需要是弱引用，不能因为这个回调函数延长udpSession的生命周期
         {
             if(const auto session = weak_udpSession.lock()) {
                 const protocol::core::HeartBody heartBody;

@@ -75,7 +75,7 @@ public:
         const auto it = m_CallbacksMap.find(message->GetDescriptor());
         if (it != m_CallbacksMap.end()) {
             //! ConnectionType已知已注册该消息，直接处理之。
-            it->second->OnMessage(conn, message);
+            it->second->OnMessage(conn, message); // OnTcpHeart
         } else {
             //! ConnectionType未知的消息，需要向上层传递
             m_UnknownCallback(conn, message);

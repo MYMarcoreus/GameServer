@@ -9,13 +9,15 @@
 ```mermaid
 sequenceDiagram
     participant Client
+    participant EventLoop
     participant TcpConnection
     participant ProtobufTcpCodec
     participant ProtobufDispatcher
     participant FrontendServer
     participant BusinessLayer as 业务层
 
-    Client->>TcpConnection: 发送TCP数据
+    Client->>EventLoop: 发送TCP数据
+    EventLoop->>TcpConnection: 处理套接字连接的读事件：HandleRead()
     TcpConnection->>ProtobufTcpCodec: （解码）处理缓冲区，解析首部并提取protobuf消息：<br>OnTcpData(conn, buf)
     ProtobufTcpCodec->>ProtobufDispatcher: （分发）根据protobuf消息类型调用对应的回调处理函数：<br>OnProtobufMessage(conn, msg)
     alt 已注册的消息类型（以心跳消息HeartBody为例）
@@ -27,6 +29,8 @@ sequenceDiagram
         FrontendServer->>BusinessLayer: 向上层传递消息，交由上层处理：<br>m_NotifierCommand(user, msg, TCP)
     end
 ```
+
+
 
 ## 连接协议时序图
 
@@ -79,15 +83,18 @@ sequenceDiagram
  
     rect rgba(255, 220, 180, 0.3)
         Note over Client, FrontendServer: UDP端口注册消息
-        Client->>TcpConnection: UdpPortRegisterReq
-        TcpServer->>FrontendServer: OnUdpPortRegisterRequest
+        Client->>TcpConnection: UdpPortRegisterReq（UDP端口注册请求）
+        TcpConnection->>FrontendServer: OnUdpPortRegisterRequest
         FrontendServer->>UserConnection: BindUdp(udpSession)
+        UserConnection-->>FrontendServer: 
         FrontendServer->>TcpConnection: 发送UdpPortRegisterRsp
         TcpConnection->>Client: 发送UDP端口注册响应
     end
 ```
 
-## 心跳消息时序图
+## 心跳时序图
+
+#### 心跳消息时序图
 
 ```mermaid
 sequenceDiagram
@@ -105,6 +112,8 @@ sequenceDiagram
         end
     end
 ```
+
+#### 心跳检查时序图
 
 ```mermaid
 sequenceDiagram
@@ -135,7 +144,6 @@ sequenceDiagram
     participant TcpConnection
     participant UserConnection
     participant FrontendServer
-    participant TimerSystem
     participant BusinessLayer as 业务层
   
     rect rgba(180, 230, 255, 0.3)

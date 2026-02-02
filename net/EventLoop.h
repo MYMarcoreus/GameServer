@@ -38,9 +38,9 @@ public:
 
     //Region 代办函数相关
     /*! 在loop执行过程中可执行外部传入的函数（可能是本IO线程，也可能是其他线程），然后在EventLoop所在的线程执行，从而保证线程安全 !*/
-    ///@brief 如果在本线程，则直接执行functor；如果在其他线程，则将functor加入代办函数列表
+    ///@brief 投递任务：本线程的任务直接执行，跨线程的任务投递到代办任务队列中
     void RunCallbackInLoop(F_PendingCallback cb);
-    ///@brief 将functor加入代办函数列表
+    ///@brief 直接将任务投递到代办任务队列中
     void EnqueueCallbackInLoop(F_PendingCallback cb);
     //End 代办函数相关
 
@@ -105,7 +105,7 @@ private:
     bool                           m_EnableWakeup;
     std::unique_ptr<Poller>        m_Poller;          //! 其实EventLoop有一些函数都是直接调用Poller的函数，所以Poller需要先初始化
     std::unique_ptr<TimerManager>  m_TimerManager;
-    std::unique_ptr<WakeupManager> m_WakeupManager;   // 用于QuitLoop，唤醒正在Loop()阻塞的PollWait()函数
+    std::unique_ptr<WakeupManager> m_WakeupManager;   // 用于唤醒正在Loop()阻塞的PollWait()函数：可用于唤醒执行任务或退出Loop
     ChanneList                     m_ActiveChannels;
     Milliseconds                   m_DefaultPollwaitTimeout;
 

@@ -164,7 +164,7 @@ void TcpConnection::ConnectionEstablished() {
     m_channel->Tie(shared_from_this()); //! 连接建立后，确保该连接的智能指针至少有一个引用
     SetState(eConnected);
 
-    //! 执行的是TcpServer的回调，但是TcpServer的回调被上层GameServers设置为GameServer::OnConnectionEstablished
+    //! 执行的是TcpServer的回调，但是TcpServer的回调被上层GameServers设置为 GameServer::OnConnectionEstablished
     if(m_ConnectionEstablishedCallback) {
         m_ConnectionEstablishedCallback(shared_from_this());
     }
@@ -445,7 +445,7 @@ void TcpConnection::HandleRead() {
                    m_socket->GetFD(), m_recvBuf->GetHead(), m_recvBuf->GetTail());
 
         //! 无需拷贝数据，这里是顺序执行，后续将消息传递给工作线程处理时，需要做拷贝
-        m_MessageCallback(shared_from_this(), *m_recvBuf);
+        m_MessageCallback(shared_from_this(), *m_recvBuf); // OnTcpData
     }
 }
 

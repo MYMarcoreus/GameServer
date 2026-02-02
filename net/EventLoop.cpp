@@ -36,14 +36,14 @@ struct WakeupFD {
         this->wait_fd = evtfd;
         this->notify_fd = evtfd;
     #elif defined(____WINDOWS)
-        InitWakeUpWithUCP();
+        InitWakeUpWithUDP();
     #else
         #error Platform not supported
     #endif
     }
 
-    void InitWakeUpWithUCP() {
-        this->wait_fd =  SocketApiWrapper::create_tcp_or_die(false);
+    void InitWakeUpWithUDP() {
+        this->wait_fd =  SocketApiWrapper::create_udp_or_die(false);
         const auto loopback_addr = std::make_shared<IPv4Address>("127.0.0.1");
         SocketApiWrapper::bind_or_die(this->wait_fd, loopback_addr);
         this->wait_addr = SocketApiWrapper::GetLocalAddr(this->wait_fd);
@@ -319,6 +319,7 @@ EventLoop *EventLoop::GetEventLoopOfThisThread() {
     return ____EventLoopInThisThread;
 }
 
+// 投递任务：本线程的任务直接执行，跨线程的任务投递到代办任务队列中
 void EventLoop::RunCallbackInLoop(F_PendingCallback cb) {
     //! 如果是EventLoop所在线程调用，则直接执行；如果在其他线程，则将函数放入代办函数列表中。
     if(IsInLoopingThread()) {
@@ -329,6 +330,7 @@ void EventLoop::RunCallbackInLoop(F_PendingCallback cb) {
     }
 }
 
+// 跨线程投递任务
 void EventLoop::EnqueueCallbackInLoop(F_PendingCallback cb) {
     {
         std::lock_guard lg{m_PenddingFunctorsMutex};
@@ -339,7 +341,7 @@ void EventLoop::EnqueueCallbackInLoop(F_PendingCallback cb) {
        * ②：如果是本线程调用的：
        *        ②①：如果未在执行CallPenddingFunctors()，那说明此时线程是在`active_event->HandleHappenedEvent()`
        *        中的各类回调函数中调用的EnqueueFunctorInLoop()，那么无需Wakeup，等待调用者执行完毕即可接着执行CallPenddingFunctors()
-       *        ②②：如果正在执行CallPenddingFunctors()：那么在CallPenddingFunctors()执行完后，线程会阻塞在PollWait()而造成死锁，
+       *        ②②：如果正在执行CallPenddingFunctors()：那么在CallPenddingFunctors()执行完后，线程会阻塞在PollWait()而造成任务无法执行，
        *        因此需要Wakeup来唤醒线程来执行下一次的CallPenddingFunctors()
      * */
     YLOG_TRACE("已将函数<{}>加入代办函数列表", GetDemangleName(cb.target_type().name()).c_str())

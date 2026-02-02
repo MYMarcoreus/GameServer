@@ -70,7 +70,7 @@ void RpcStubConnectionPool<ServiceType_Stub>::Start(typename StubConnType::F_Rpc
     while (temp_thread_pool.TaskQueueSize() > 0) { /* spin */ }
 
     // 监听zookeeper在服务根目录下的变化
-    zkServiceManager_.Watch(service_name_, false,
+    zkServiceManager_.Watch(service_name_,
         [this, cb](const std::string& service_base, std::unordered_map<std::string, net::IPAddressPtr> endpoints)
         {
             rr_idx_.store(0, std::memory_order_release);

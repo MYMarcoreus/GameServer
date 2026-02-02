@@ -38,7 +38,6 @@ private:
     ///@brief 玩家离线，保存数据
     void OnPlayerDisconnect(const UserConnectionPtr& userconn);
 
-
     //Region 消息回调：玩家
     /// @brief 逻辑服登录请求
     void OnSceneLoginReq(const UserConnectionPtr& conn, const Ptr<protocol::app::SceneLoginReq> & req);

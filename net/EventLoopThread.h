@@ -10,6 +10,7 @@ namespace yy::net {
 
 class EventLoop;
 
+// 从Reactor
 class EventLoopThread {
 public:
 

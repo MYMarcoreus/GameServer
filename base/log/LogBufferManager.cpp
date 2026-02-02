@@ -29,56 +29,46 @@ LogBufferManager::~LogBufferManager()
 void LogBufferManager::Append(const std::string & logstr) {
     std::unique_lock lock(m_mutex);
 
-    // 若m_current未满，则写入该缓冲区
-    if (m_current->HaveEnoughFreeSpace(static_cast<int>(logstr.size())))
+    // 若主缓冲区没有足够的空间
+    if (not m_current->HaveEnoughFreeSpace(static_cast<int>(logstr.size())))
     {
-        m_current->AppendDataFromArray(logstr);
-    }
-    // 若m_current已满，说明要纳入文件待写区
-    else
-    {
-        // 纳入文件待写区
+        // ① 将已满的主缓冲区纳入文件待写区
         m_buffersToWrite.emplace_back(std::move(m_current));
-
-        // 使用 next 作为新的 current，如果 next 不存在则新建
-        if (m_next) {
-            m_current = std::move(m_next); //! 双缓冲区核心，直接切换到备用缓冲区，而不是阻塞等待后台线程将当前缓冲区写完
-        } else {
-            m_current = std::make_unique<LinearBuffer>(m_bufferSize);
-        }
-
-        m_current->AppendDataFromArray(logstr);
+        //* ② 将「备用缓冲区」作为新的「主缓冲区」：双缓冲区核心，直接切换到备用缓冲区，而不是阻塞等待后台线程将当前缓冲区写完
+        m_current = m_next ? std::move(m_next) : std::make_unique<LinearBuffer>(m_bufferSize);
     }
+
+    // ③ 将日志写入主缓冲区
+    m_current->AppendDataFromArray(logstr);
 }
 
 
 
 void LogBufferManager::SwapAndWriteFlush(std::chrono::milliseconds flush_interval) {
-    //! 交换
+    //! Step1：交换
     {
         std::unique_lock lock(m_mutex);
 
-        // m_current有数据，就将其加入文件待写区
+        // 将主缓冲区加入文件待写区
         if (m_current) {
             m_buffersToWrite.emplace_back(std::move(m_current));
         }
 
-        // 将待写到文件的数据安全地交换出去
-        //! 重点：只能用swap，不能用下面两行
+        // 将「文件待写区的缓冲区」安全地交换到临时变量中：减少临界区的持续时间，使得 Write 部分是无锁的
         tempBuffersToWrite_.swap(m_buffersToWrite);
 
-        // 重新分配 current 和 next
+        // 重新分配 主/备用 缓冲区
         m_current = std::move(tempBuffer1_);
         if (m_next == nullptr) {
             m_next =  std::move(tempBuffer2_);
         }
     }
 
-    //! Write
+    //! Step2：无锁写文件
     if (writeCb_)
         writeCb_(tempBuffersToWrite_);
 
-    // 修改缓冲区截断逻辑
+    //! Step3：回收Buffer
     if (tempBuffersToWrite_.size() > 2) {
         tempBuffersToWrite_.resize(2);
     }
@@ -96,10 +86,9 @@ void LogBufferManager::SwapAndWriteFlush(std::chrono::milliseconds flush_interva
     }
     tempBuffersToWrite_.clear();
 
-    //! Flush
+    //! Step4：Flush
     if (m_flushCb)
         m_flushCb();
-
 }
 
 

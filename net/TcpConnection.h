@@ -84,7 +84,7 @@ public:
     ///Region SETTER
     void SetConnectionEstablishedCallback  (const F_ConnectionEstablishedCallback& cb)   { m_ConnectionEstablishedCallback = cb; }
     void SetConnectionDestroyedCallback    (const F_ConnectionDestroyedCallback& cb)     { m_ConnectionDestroyedCallback = cb; }
-    void SetMessageCallback                (const F_TcpMessageCallback& cb)              { m_MessageCallback = cb; }
+    void SetMessageCallback                (const F_TcpMessageCallback& cb)              { m_MessageCallback = cb; } // OnTcpData
     void SetConnectionWriteCompleteCallback(const F_ConnectionWriteCompleteCallback& cb) { m_ConnectionWriteCompleteCallback = cb; }
     void SetConnectionCloseCallback        (const F_ConnectionCloseCallback& cb)         { m_ConnectionCloseCallback = cb; }
     void SetConnectionShutdownCallback     (const F_ConnectionShutdownCallback& cb)      { m_ConnectionShutdownCallback = cb; }

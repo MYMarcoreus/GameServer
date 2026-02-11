@@ -28,7 +28,7 @@
 		.st14 {fill:#d6242d;stroke:none;stroke-linecap:butt;stroke-width:0.75}
 		.st15 {fill:#ffffff;stroke:none;stroke-linecap:butt;stroke-width:0.75}
 		.st16 {fill:#693cc5;stroke:none;stroke-linecap:butt;stroke-width:0.75}
-		.st17 {fill:url(#grad0-154);stroke:none;stroke-linecap:butt;stroke-width:0.75}
+		.st17 {fill:url(#grad0-155);stroke:none;stroke-linecap:butt;stroke-width:0.75}
 		.st18 {fill:#e8e8e8;stroke:none;stroke-linecap:butt;stroke-width:0.75}
 		.st19 {fill:#50e6ff;stroke:none;stroke-linecap:butt;stroke-width:0.75}
 		.st20 {fill:#198ab3;stroke:none;stroke-linecap:butt;stroke-width:0.75}
@@ -50,7 +50,7 @@
 			<stop offset="0" stop-color="#d8e2ed" stop-opacity="1"/>
 			<stop offset="1" stop-color="#eef2f7" stop-opacity="1"/>
 		</linearGradient>
-		<linearGradient id="grad0-154" x1="0" y1="0" x2="1" y2="0" gradientTransform="rotate(0 0.5 0.5)">
+		<linearGradient id="grad0-155" x1="0" y1="0" x2="1" y2="0" gradientTransform="rotate(0 0.5 0.5)">
 			<stop offset="0" stop-color="#005ba1" stop-opacity="1"/>
 			<stop offset="0.07" stop-color="#0060a9" stop-opacity="1"/>
 			<stop offset="0.36" stop-color="#0071c8" stop-opacity="1"/>
@@ -546,13 +546,14 @@
 		</g>
 		<g id="shape160-79" v:mID="160" v:groupContext="shape" v:layerMember="1" transform="translate(231.598,-331.51)">
 			<title>动态连接线.160</title>
-			<desc>负载均衡</desc>
+			<desc>负载均衡 RPC</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
-			<v:textRect cx="22.6772" cy="529.693" width="41.81" height="17.6036"/>
+			<v:textRect cx="22.6772" cy="529.693" width="41.81" height="27.2035"/>
 			<path d="M0 529.8 L44.92 529.8" class="st7"/>
-			<rect v:rectContext="textBkgnd" x="6.6772" y="524.893" width="31.9999" height="9.59985" class="st9"/>
-			<text x="6.68" y="532.09" class="st10" v:langID="2052"><v:paragraph v:horizAlign="1"/><v:tabList/>负载均衡</text>		</g>
-		<g id="shape77-86" v:mID="77" v:groupContext="shape" transform="translate(178.659,-419.666)">
+			<rect v:rectContext="textBkgnd" x="6.6772" y="520.093" width="31.9999" height="19.1997" class="st9"/>
+			<text x="6.68" y="527.29" class="st10" v:langID="2052"><v:paragraph v:horizAlign="1"/><v:tabList/>负载均衡<v:lf/><tspan
+						x="14.88" dy="1.2em" class="st11" v:langID="1033">RPC</tspan></text>		</g>
+		<g id="shape77-87" v:mID="77" v:groupContext="shape" transform="translate(178.659,-419.666)">
 			<title>工作表.77</title>
 			<desc>Zookeeper</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197" v:verticalAlign="0"/>
@@ -1010,20 +1011,20 @@
 						ghBQEARBMApCQEEQBMEoCAEFQRAEoyAEFARBEIyCEFAQBEEwCkJAQRAEwSj4/wC5bOzbO43SEQAAAABJRU5ErkJggg=="/>
 			<rect v:rectContext="foreign" x="0" y="481.243" width="55.6444" height="55.6444" class="st12"/>
 			<text x="4.65" y="548.99" class="st13" v:langID="1033"><v:paragraph v:spLine="-0.9" v:horizAlign="1"/><v:tabList/>Zookeeper</text>		</g>
-		<g id="group98-91" transform="translate(38.8425,-312.126)" v:mID="98" v:groupContext="group">
+		<g id="group98-92" transform="translate(38.8425,-312.126)" v:mID="98" v:groupContext="group">
 			<v:userDefs>
 				<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT4(True)"/>
 			</v:userDefs>
 			<title>AWS 单点登录</title>
 			<desc>Account Server</desc>
-			<g id="shape99-92" v:mID="99" v:groupContext="shape">
+			<g id="shape99-93" v:mID="99" v:groupContext="shape">
 				<title>工作表.99</title>
 				<v:userDefs>
 					<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
 				</v:userDefs>
 				<path d="M52.94 483.95 L0 483.95 L0 536.89 L52.94 536.89 L52.94 483.95 Z" class="st14"/>
 			</g>
-			<g id="shape100-94" v:mID="100" v:groupContext="shape" transform="translate(8.78674,-21.0277)">
+			<g id="shape100-95" v:mID="100" v:groupContext="shape" transform="translate(8.78674,-21.0277)">
 				<title>工作表.100</title>
 				<v:userDefs>
 					<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
@@ -1044,7 +1045,7 @@
 							 C3.95 525.71 1.43 526.88 1.43 530.3 C1.43 530.43 1.43 530.56 1.43 530.68 C1.59 533.35 4.02 535.46 6.96
 							 535.47 L12.04 535.47 L12.04 536.89 Z" class="st15"/>
 			</g>
-			<g id="shape101-96" v:mID="101" v:groupContext="shape" transform="translate(22.0849,-9.73006)">
+			<g id="shape101-97" v:mID="101" v:groupContext="shape" transform="translate(22.0849,-9.73006)">
 				<title>工作表.101</title>
 				<v:userDefs>
 					<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
@@ -1080,60 +1081,60 @@
 							 7.34 520.95 C7.34 520.8 7.3 520.64 7.24 520.5 C7.18 520.35 7.09 520.22 6.98 520.11 C6.74 519.9 6.43
 							 519.78 6.11 519.79 L6.13 519.76 Z" class="st15"/>
 			</g>
-			<g id="shape98-98" v:mID="98" v:groupContext="groupContent">
+			<g id="shape98-99" v:mID="98" v:groupContext="groupContent">
 				<v:textBlock v:margins="rect(0,0,0,0)" v:tabSpace="42.5197"/>
 				<v:textRect cx="26.4699" cy="542.4" width="72" height="11.0251"/>
 				<text x="-6.11" y="545.16" class="st13" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Account Server</text>			</g>
 		</g>
-		<g id="group103-100" transform="translate(178.659,-312.126)" v:mID="103" v:groupContext="group">
+		<g id="group103-101" transform="translate(178.659,-312.126)" v:mID="103" v:groupContext="group">
 			<v:userDefs>
 				<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT4(True)"/>
 			</v:userDefs>
 			<title>AWS 证书管理器</title>
 			<desc>Center Server</desc>
-			<g id="shape104-101" v:mID="104" v:groupContext="shape">
+			<g id="shape104-102" v:mID="104" v:groupContext="shape">
 				<title>工作表.104</title>
 				<v:userDefs>
 					<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
 				</v:userDefs>
 				<path d="M52.94 483.95 L0 483.95 L0 536.89 L52.94 536.89 L52.94 483.95 Z" class="st14"/>
 			</g>
-			<g id="shape105-103" v:mID="105" v:groupContext="shape" transform="translate(22.9406,-17.2937)">
+			<g id="shape105-104" v:mID="105" v:groupContext="shape" transform="translate(22.9406,-17.2937)">
 				<title>工作表.105</title>
 				<v:userDefs>
 					<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
 				</v:userDefs>
 				<path d="M13.41 535.48 L0 535.48 L0 536.89 L13.41 536.89 L13.41 535.48 Z" class="st15"/>
 			</g>
-			<g id="shape106-105" v:mID="106" v:groupContext="shape" transform="translate(16.5878,-17.2937)">
+			<g id="shape106-106" v:mID="106" v:groupContext="shape" transform="translate(16.5878,-17.2937)">
 				<title>工作表.106</title>
 				<v:userDefs>
 					<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
 				</v:userDefs>
 				<path d="M3.53 535.48 L0 535.48 L0 536.89 L3.53 536.89 L3.53 535.48 Z" class="st15"/>
 			</g>
-			<g id="shape107-107" v:mID="107" v:groupContext="shape" transform="translate(22.9406,-14.4702)">
+			<g id="shape107-108" v:mID="107" v:groupContext="shape" transform="translate(22.9406,-14.4702)">
 				<title>工作表.107</title>
 				<v:userDefs>
 					<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
 				</v:userDefs>
 				<path d="M8.47 535.48 L0 535.48 L0 536.89 L8.47 536.89 L8.47 535.48 Z" class="st15"/>
 			</g>
-			<g id="shape108-109" v:mID="108" v:groupContext="shape" transform="translate(16.5878,-14.4702)">
+			<g id="shape108-110" v:mID="108" v:groupContext="shape" transform="translate(16.5878,-14.4702)">
 				<title>工作表.108</title>
 				<v:userDefs>
 					<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
 				</v:userDefs>
 				<path d="M3.53 535.48 L0 535.48 L0 536.89 L3.53 536.89 L3.53 535.48 Z" class="st15"/>
 			</g>
-			<g id="shape109-111" v:mID="109" v:groupContext="shape" transform="translate(9.52917,-37.0579)">
+			<g id="shape109-112" v:mID="109" v:groupContext="shape" transform="translate(9.52917,-37.0579)">
 				<title>工作表.109</title>
 				<v:userDefs>
 					<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
 				</v:userDefs>
 				<path d="M33.88 535.48 L0 535.48 L0 536.89 L33.88 536.89 L33.88 535.48 Z" class="st15"/>
 			</g>
-			<g id="shape110-113" v:mID="110" v:groupContext="shape" transform="translate(8.82331,-10.2344)">
+			<g id="shape110-114" v:mID="110" v:groupContext="shape" transform="translate(8.82331,-10.2344)">
 				<title>工作表.110</title>
 				<v:userDefs>
 					<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
@@ -1146,7 +1147,7 @@
 							 35.15 536.62 35.09 536.68 C35.02 536.75 34.94 536.8 34.86 536.83 C34.77 536.87 34.68 536.89 34.59 536.89
 							 Z" class="st15"/>
 			</g>
-			<g id="shape111-115" v:mID="111" v:groupContext="shape" transform="translate(19.1547,-21.4536)">
+			<g id="shape111-116" v:mID="111" v:groupContext="shape" transform="translate(19.1547,-21.4536)">
 				<title>工作表.111</title>
 				<v:userDefs>
 					<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
@@ -1166,25 +1167,25 @@
 							 528.42 9.05 528.37 8.95 528.31 C8.86 528.24 8.78 528.15 8.73 528.05 L7.32 525.22 L5.91 528.08 C5.86
 							 528.18 5.78 528.27 5.69 528.34 C5.6 528.4 5.49 528.45 5.38 528.46 L2.23 528.89 Z" class="st15"/>
 			</g>
-			<g id="shape103-117" v:mID="103" v:groupContext="groupContent">
+			<g id="shape103-118" v:mID="103" v:groupContext="groupContent">
 				<v:textBlock v:margins="rect(0,0,0,0)" v:tabSpace="42.5197"/>
 				<v:textRect cx="26.4699" cy="542.4" width="72" height="11.0251"/>
 				<text x="-2.94" y="545.16" class="st13" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Center Server</text>			</g>
 		</g>
-		<g id="group123-119" transform="translate(302.924,-289.948)" v:mID="123" v:groupContext="group">
+		<g id="group123-120" transform="translate(302.924,-289.948)" v:mID="123" v:groupContext="group">
 			<v:userDefs>
 				<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT4(True)"/>
 			</v:userDefs>
 			<title>Amazon GameLift</title>
 			<desc>Logic Server X</desc>
-			<g id="shape124-120" v:mID="124" v:groupContext="shape">
+			<g id="shape124-121" v:mID="124" v:groupContext="shape">
 				<title>工作表.124</title>
 				<v:userDefs>
 					<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
 				</v:userDefs>
 				<path d="M52.94 483.95 L0 483.95 L0 536.89 L52.94 536.89 L52.94 483.95 Z" class="st16"/>
 			</g>
-			<g id="shape125-122" v:mID="125" v:groupContext="shape" transform="translate(8.49233,-15.0984)">
+			<g id="shape125-123" v:mID="125" v:groupContext="shape" transform="translate(8.49233,-15.0984)">
 				<title>工作表.125</title>
 				<v:userDefs>
 					<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
@@ -1209,7 +1210,7 @@
 							 514.14 ZM4.76 531.13 C2.97 528.93 1.93 526.21 1.78 523.37 L7.48 523.37 C7.51 525.49 7.8 527.61 8.33
 							 529.67 C7.05 529.89 5.83 530.4 4.76 531.14 L4.76 531.13 Z" class="st15"/>
 			</g>
-			<g id="shape126-124" v:mID="126" v:groupContext="shape" transform="translate(20.7809,-8.80672)">
+			<g id="shape126-125" v:mID="126" v:groupContext="shape" transform="translate(20.7809,-8.80672)">
 				<title>工作表.126</title>
 				<v:userDefs>
 					<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
@@ -1241,7 +1242,7 @@
 							 530.55 18.36 530.55 C19.02 530.54 19.67 530.41 20.28 530.15 C20.88 529.9 21.43 529.52 21.89 529.05 L21.89
 							 533.6 C21.9 534.15 21.73 534.68 21.39 535.11 L21.38 535.08 Z" class="st15"/>
 			</g>
-			<g id="shape127-126" v:mID="127" v:groupContext="shape" transform="translate(23.6254,-17.9995)">
+			<g id="shape127-127" v:mID="127" v:groupContext="shape" transform="translate(23.6254,-17.9995)">
 				<title>工作表.127</title>
 				<v:userDefs>
 					<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
@@ -1249,7 +1250,7 @@
 				<path d="M1.41 536.89 L2.82 536.89 L2.82 535.48 L4.24 535.48 L4.24 534.07 L2.82 534.07 L2.82 532.66 L1.41 532.66
 							 L1.41 534.07 L0 534.07 L0 535.48 L1.41 535.48 L1.41 536.89 Z" class="st15"/>
 			</g>
-			<g id="shape128-128" v:mID="128" v:groupContext="shape" transform="translate(38.004,-18.9595)">
+			<g id="shape128-129" v:mID="128" v:groupContext="shape" transform="translate(38.004,-18.9595)">
 				<title>工作表.128</title>
 				<v:userDefs>
 					<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
@@ -1259,25 +1260,25 @@
 							 534.59 0.71 534.67 C0.5 534.76 0.32 534.91 0.19 535.1 C0.07 535.29 0 535.51 0 535.74 C0 536.04 0.12
 							 536.33 0.34 536.55 C0.55 536.77 0.85 536.89 1.15 536.89 Z" class="st15"/>
 			</g>
-			<g id="shape123-130" v:mID="123" v:groupContext="groupContent">
+			<g id="shape123-131" v:mID="123" v:groupContext="groupContent">
 				<v:textBlock v:margins="rect(0,0,0,0)" v:tabSpace="42.5197"/>
 				<v:textRect cx="26.4699" cy="542.4" width="72" height="11.0251"/>
 				<text x="-3.71" y="545.16" class="st13" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Logic Server X</text>			</g>
 		</g>
-		<g id="group130-132" transform="translate(302.924,-211.497)" v:mID="130" v:groupContext="group">
+		<g id="group130-133" transform="translate(302.924,-211.497)" v:mID="130" v:groupContext="group">
 			<v:userDefs>
 				<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT4(True)"/>
 			</v:userDefs>
 			<title>Amazon GameLift.130</title>
 			<desc>Logic Server Y</desc>
-			<g id="shape131-133" v:mID="131" v:groupContext="shape">
+			<g id="shape131-134" v:mID="131" v:groupContext="shape">
 				<title>工作表.131</title>
 				<v:userDefs>
 					<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
 				</v:userDefs>
 				<path d="M52.94 483.95 L0 483.95 L0 536.89 L52.94 536.89 L52.94 483.95 Z" class="st16"/>
 			</g>
-			<g id="shape132-135" v:mID="132" v:groupContext="shape" transform="translate(8.49233,-15.0984)">
+			<g id="shape132-136" v:mID="132" v:groupContext="shape" transform="translate(8.49233,-15.0984)">
 				<title>工作表.132</title>
 				<v:userDefs>
 					<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
@@ -1302,7 +1303,7 @@
 							 514.14 ZM4.76 531.13 C2.97 528.93 1.93 526.21 1.78 523.37 L7.48 523.37 C7.51 525.49 7.8 527.61 8.33
 							 529.67 C7.05 529.89 5.83 530.4 4.76 531.14 L4.76 531.13 Z" class="st15"/>
 			</g>
-			<g id="shape133-137" v:mID="133" v:groupContext="shape" transform="translate(20.7809,-8.80672)">
+			<g id="shape133-138" v:mID="133" v:groupContext="shape" transform="translate(20.7809,-8.80672)">
 				<title>工作表.133</title>
 				<v:userDefs>
 					<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
@@ -1334,7 +1335,7 @@
 							 530.55 18.36 530.55 C19.02 530.54 19.67 530.41 20.28 530.15 C20.88 529.9 21.43 529.52 21.89 529.05 L21.89
 							 533.6 C21.9 534.15 21.73 534.68 21.39 535.11 L21.38 535.08 Z" class="st15"/>
 			</g>
-			<g id="shape134-139" v:mID="134" v:groupContext="shape" transform="translate(23.6254,-17.9995)">
+			<g id="shape134-140" v:mID="134" v:groupContext="shape" transform="translate(23.6254,-17.9995)">
 				<title>工作表.134</title>
 				<v:userDefs>
 					<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
@@ -1342,7 +1343,7 @@
 				<path d="M1.41 536.89 L2.82 536.89 L2.82 535.48 L4.24 535.48 L4.24 534.07 L2.82 534.07 L2.82 532.66 L1.41 532.66
 							 L1.41 534.07 L0 534.07 L0 535.48 L1.41 535.48 L1.41 536.89 Z" class="st15"/>
 			</g>
-			<g id="shape135-141" v:mID="135" v:groupContext="shape" transform="translate(38.004,-18.9595)">
+			<g id="shape135-142" v:mID="135" v:groupContext="shape" transform="translate(38.004,-18.9595)">
 				<title>工作表.135</title>
 				<v:userDefs>
 					<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
@@ -1352,22 +1353,22 @@
 							 534.59 0.71 534.67 C0.5 534.76 0.32 534.91 0.19 535.1 C0.07 535.29 0 535.51 0 535.74 C0 536.04 0.12
 							 536.33 0.34 536.55 C0.55 536.77 0.85 536.89 1.15 536.89 Z" class="st15"/>
 			</g>
-			<g id="shape130-143" v:mID="130" v:groupContext="groupContent">
+			<g id="shape130-144" v:mID="130" v:groupContext="groupContent">
 				<v:textBlock v:margins="rect(0,0,0,0)" v:tabSpace="42.5197"/>
 				<v:textRect cx="26.4699" cy="542.4" width="72" height="11.0251"/>
 				<text x="-3.51" y="545.16" class="st13" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Logic Server Y</text>			</g>
 		</g>
-		<g id="shape149-145" v:mID="149" v:groupContext="shape" transform="translate(58.1211,-422.375)">
+		<g id="shape149-146" v:mID="149" v:groupContext="shape" transform="translate(58.1211,-422.375)">
 			<title>工作表.149</title>
 			<desc>Redis</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197" v:verticalAlign="0"/>
 			<v:textRect cx="30.3277" cy="536.887" width="60.66" height="0"/>
 			<rect v:rectContext="foreign" x="0" y="483.952" width="60.6554" height="52.9357" class="st12"/>
-			<clipPath id="clip-path147" clipPathUnits="userSpaceOnUse">
+			<clipPath id="clip-path148" clipPathUnits="userSpaceOnUse">
 				<rect x="0" y="483.952" width="60.6554" height="52.9357"/>
 			</clipPath>
 			<image x="-39.7551" y="462.087" width="140.848" height="97.2239" preserveAspectRatio="none"
-					clip-path="url(#clip-path147)" overflow="hidden" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA
+					clip-path="url(#clip-path148)" overflow="hidden" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA
 						tAAAAHxCAYAAABET4uSAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAAEnQAABJ0Ad5mH3gAAJOTSURBVHhe7Z0Fm
 						BzHtba1DNrdmWUaWEbZ4TgOMzjxH3CSG2a8iW9yc+PQdcAQvmEmgxwzMzMzSSvbMrNjx4ySdut/TlVXT3VNryTL2pnZ2fd9fJ6dGa92u
 						qt7pr7++tQ5y5YBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
@@ -1856,10 +1857,10 @@
 						AAAAAAAAAAAAAAAAAAWD/8f+Q440ohLIsoAAAAASUVORK5CYII="/>
 			<rect v:rectContext="foreign" x="0" y="483.952" width="60.6554" height="52.9357" class="st12"/>
 			<text x="19.55" y="551.69" class="st13" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Redis</text>		</g>
-		<g id="group151-150" transform="translate(294.185,-419.666)" v:mID="151" v:groupContext="group">
+		<g id="group151-151" transform="translate(294.185,-419.666)" v:mID="151" v:groupContext="group">
 			<title>Azure 数据库 MySQL 服务器</title>
 			<desc>MySQL</desc>
-			<g id="shape152-151" v:mID="152" v:groupContext="shape">
+			<g id="shape152-152" v:mID="152" v:groupContext="shape">
 				<title>工作表.152</title>
 				<v:userDefs>
 					<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
@@ -1868,7 +1869,7 @@
 							 C38.21 536.89 49.24 533.6 49.24 529.25 L49.24 488.57 C49.24 492.82 38.21 496.21 24.62 496.21 Z"
 						class="st17"/>
 			</g>
-			<g id="shape153-155" v:mID="153" v:groupContext="shape" transform="translate(0,-40.6802)">
+			<g id="shape153-156" v:mID="153" v:groupContext="shape" transform="translate(0,-40.6802)">
 				<title>工作表.153</title>
 				<v:userDefs>
 					<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
@@ -1876,7 +1877,7 @@
 				<path d="M49.24 529.25 C49.24 533.5 38.21 536.89 24.62 536.89 C11.02 536.89 0 533.6 0 529.25 C0 524.91 11.02 521.62
 							 24.62 521.62 C38.21 521.62 49.24 524.91 49.24 529.25 Z" class="st18"/>
 			</g>
-			<g id="shape154-157" v:mID="154" v:groupContext="shape" transform="translate(5.72261,-44.0702)">
+			<g id="shape154-158" v:mID="154" v:groupContext="shape" transform="translate(5.72261,-44.0702)">
 				<title>工作表.154</title>
 				<v:userDefs>
 					<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
@@ -1884,7 +1885,7 @@
 				<path d="M37.79 532.02 C37.79 534.71 29.3 536.89 18.9 536.89 C8.49 536.89 0 534.71 0 532.02 C0 529.32 8.49 527.18
 							 18.9 527.18 C29.3 527.18 37.79 529.35 37.79 532.02 Z" class="st19"/>
 			</g>
-			<g id="shape155-159" v:mID="155" v:groupContext="shape" transform="translate(9.67851,-44.0702)">
+			<g id="shape155-160" v:mID="155" v:groupContext="shape" transform="translate(9.67851,-44.0702)">
 				<title>工作表.155</title>
 				<v:userDefs>
 					<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
@@ -1892,7 +1893,7 @@
 				<path d="M14.94 533.23 A44.3598 38.0142 -180 0 0 0 535.11 A43.8605 37.5864 -180 0 0 14.94 536.89 A42.8235 36.6977
 							 -180 0 0 29.88 534.98 A45.4736 38.9687 -180 0 0 14.94 533.23 Z" class="st20"/>
 			</g>
-			<g id="shape156-161" v:mID="156" v:groupContext="shape" transform="translate(5.64579,-14.9095)">
+			<g id="shape156-162" v:mID="156" v:groupContext="shape" transform="translate(5.64579,-14.9095)">
 				<title>工作表.156</title>
 				<v:userDefs>
 					<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
@@ -1906,39 +1907,41 @@
 							 L4.49 525.66 L6.91 530.83 A4.14793 3.55458 -180 0 0 10.75 533 C12.44 533 13.14 532.15 13.83 530.83 L16.4
 							 525.86 L16.4 532.94 L20.93 532.94 L20.93 523.82 L21.01 523.82 Z" class="st21"/>
 			</g>
-			<g id="shape151-163" v:mID="151" v:groupContext="groupContent">
+			<g id="shape151-164" v:mID="151" v:groupContext="groupContent">
 				<v:textBlock v:margins="rect(0,0,0,0)" v:tabSpace="42.5197"/>
 				<v:textRect cx="24.6187" cy="542.289" width="72" height="10.8036"/>
 				<text x="10.81" y="544.99" class="st13" v:langID="2052"><v:paragraph v:horizAlign="1"/><v:tabList/>MySQL</text>			</g>
 		</g>
-		<g id="shape158-165" v:mID="158" v:groupContext="shape" v:layerMember="1" transform="translate(134.186,-255.118)">
+		<g id="shape158-166" v:mID="158" v:groupContext="shape" v:layerMember="1" transform="translate(134.186,-255.118)">
 			<title>动态连接线</title>
-			<desc>账号服务</desc>
+			<desc>账号服务 RPC</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
-			<v:textRect cx="-35.3545" cy="514.813" width="41.81" height="17.6036"/>
+			<v:textRect cx="-35.3545" cy="514.813" width="41.81" height="27.2035"/>
 			<path d="M0 536.89 L0 514.81 L-68.87 514.81 L-68.87 499.25" class="st7"/>
-			<rect v:rectContext="textBkgnd" x="-51.3545" y="510.013" width="31.9999" height="9.59985" class="st9"/>
-			<text x="-51.35" y="517.21" class="st10" v:langID="2052"><v:paragraph v:horizAlign="1"/><v:tabList/>账号服务</text>		</g>
-		<g id="shape159-172" v:mID="159" v:groupContext="shape" v:layerMember="1" transform="translate(134.186,-255.118)">
+			<rect v:rectContext="textBkgnd" x="-51.3545" y="505.213" width="31.9999" height="19.1997" class="st9"/>
+			<text x="-51.35" y="512.41" class="st10" v:langID="2052"><v:paragraph v:horizAlign="1"/><v:tabList/>账号服务<v:lf/><tspan
+						x="-43.15" dy="1.2em" class="st11" v:langID="1033">RPC</tspan></text>		</g>
+		<g id="shape159-174" v:mID="159" v:groupContext="shape" v:layerMember="1" transform="translate(134.186,-255.118)">
 			<title>动态连接线.159</title>
-			<desc>房间管理服务</desc>
+			<desc>房间管理服务 RPC</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
-			<v:textRect cx="36.3885" cy="514.813" width="57.81" height="17.6036"/>
+			<v:textRect cx="36.3885" cy="514.813" width="57.81" height="27.2035"/>
 			<path d="M0 536.89 L0 514.81 L70.94 514.81 L70.94 499.25" class="st7"/>
-			<rect v:rectContext="textBkgnd" x="12.3886" y="510.013" width="47.9998" height="9.59985" class="st9"/>
-			<text x="12.39" y="517.21" class="st10" v:langID="2052"><v:paragraph v:horizAlign="1"/><v:tabList/>房间管理服务</text>		</g>
-		<g id="group20-179" transform="translate(107.717,-202.178)" v:mID="20" v:groupContext="group">
+			<rect v:rectContext="textBkgnd" x="12.3886" y="505.213" width="47.9998" height="19.1997" class="st9"/>
+			<text x="12.39" y="512.41" class="st10" v:langID="2052"><v:paragraph v:horizAlign="1"/><v:tabList/>房间管理服务<v:lf/><tspan
+						x="28.59" dy="1.2em" class="st11" v:langID="1033">RPC</tspan></text>		</g>
+		<g id="group20-182" transform="translate(107.717,-202.178)" v:mID="20" v:groupContext="group">
 			<v:userDefs>
 				<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT4(True)"/>
 			</v:userDefs>
 			<title>Internet 网关</title>
 			<desc>Gate Server</desc>
-			<g id="group21-180" v:mID="21" v:groupContext="group">
+			<g id="group21-183" v:mID="21" v:groupContext="group">
 				<v:userDefs>
 					<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
 				</v:userDefs>
 				<title>工作表.21</title>
-				<g id="shape22-181" v:mID="22" v:groupContext="shape">
+				<g id="shape22-184" v:mID="22" v:groupContext="shape">
 					<title>工作表.22</title>
 					<v:userDefs>
 						<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
@@ -1953,7 +1956,7 @@
 								 515.41 50.71 510.67 C50.7 504.31 48.18 498.22 43.68 493.72 C39.18 489.22 33.08 486.69 26.72 486.69
 								 Z" class="st16"/>
 				</g>
-				<g id="shape23-183" v:mID="23" v:groupContext="shape" transform="translate(13.0567,-10.4639)">
+				<g id="shape23-186" v:mID="23" v:groupContext="shape" transform="translate(13.0567,-10.4639)">
 					<title>工作表.23</title>
 					<v:userDefs>
 						<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
@@ -1972,29 +1975,29 @@
 								 513.38 L23.14 534.66 Z" class="st16"/>
 				</g>
 			</g>
-			<g id="shape20-185" v:mID="20" v:groupContext="groupContent">
+			<g id="shape20-188" v:mID="20" v:groupContext="groupContent">
 				<v:textBlock v:margins="rect(0,0,0,0)" v:tabSpace="42.5197"/>
 				<v:textRect cx="26.4699" cy="542.4" width="72" height="11.0251"/>
 				<text x="1.42" y="545.16" class="st13" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Gate Server</text>			</g>
 		</g>
-		<g id="shape170-187" v:mID="170" v:groupContext="shape" v:layerMember="1" transform="translate(322.766,-376.904)">
+		<g id="shape170-190" v:mID="170" v:groupContext="shape" v:layerMember="1" transform="translate(322.766,-376.904)">
 			<title>动态连接线.170</title>
 			<path d="M7.09 536.89 L7.09 527.6" class="st7"/>
 		</g>
-		<g id="group174-192" transform="translate(54.8923,-43.0746)" v:mID="174" v:groupContext="group">
+		<g id="group174-195" transform="translate(54.8923,-43.0746)" v:mID="174" v:groupContext="group">
 			<v:userDefs>
 				<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT4(True)"/>
 			</v:userDefs>
 			<title>最终用户计算</title>
 			<desc>Game Client X</desc>
-			<g id="shape175-193" v:mID="175" v:groupContext="shape" transform="translate(0.934233,-0.934233)">
+			<g id="shape175-196" v:mID="175" v:groupContext="shape" transform="translate(0.934233,-0.934233)">
 				<title>工作表.175</title>
 				<v:userDefs>
 					<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
 				</v:userDefs>
 				<path d="M51.07 485.82 L0 485.82 L0 536.89 L51.07 536.89 L51.07 485.82 Z" class="st22"/>
 			</g>
-			<g id="shape176-195" v:mID="176" v:groupContext="shape">
+			<g id="shape176-198" v:mID="176" v:groupContext="shape">
 				<title>工作表.176</title>
 				<v:userDefs>
 					<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
@@ -2002,7 +2005,7 @@
 				<path d="M51.07 485.82 L51.07 535.02 L1.87 535.02 L1.87 485.82 L51.07 485.82 ZM52.94 483.95 L0 483.95 L0 536.89 L52.94
 							 536.89 L52.94 483.95 Z" class="st15"/>
 			</g>
-			<g id="shape177-197" v:mID="177" v:groupContext="shape" transform="translate(11.1998,-12.145)">
+			<g id="shape177-200" v:mID="177" v:groupContext="shape" transform="translate(11.1998,-12.145)">
 				<title>工作表.177</title>
 				<v:userDefs>
 					<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
@@ -2045,25 +2048,25 @@
 							 530.66 L29.91 530.66 L29.91 535.48 C29.91 535.52 29.89 535.56 29.86 535.59 C29.83 535.62 29.79 535.64
 							 29.74 535.64 Z" class="st15"/>
 			</g>
-			<g id="shape174-199" v:mID="174" v:groupContext="groupContent">
+			<g id="shape174-202" v:mID="174" v:groupContext="groupContent">
 				<v:textBlock v:margins="rect(0,0,0,0)" v:tabSpace="42.5197"/>
 				<v:textRect cx="26.4699" cy="542.4" width="72" height="11.0251"/>
 				<text x="-3.45" y="545.16" class="st13" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Game Client X</text>			</g>
 		</g>
-		<g id="group179-201" transform="translate(300.548,-43.0746)" v:mID="179" v:groupContext="group">
+		<g id="group179-204" transform="translate(300.548,-43.0746)" v:mID="179" v:groupContext="group">
 			<v:userDefs>
 				<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT4(True)"/>
 			</v:userDefs>
 			<title>最终用户计算.179</title>
 			<desc>Game Client Z</desc>
-			<g id="shape180-202" v:mID="180" v:groupContext="shape" transform="translate(0.934233,-0.934233)">
+			<g id="shape180-205" v:mID="180" v:groupContext="shape" transform="translate(0.934233,-0.934233)">
 				<title>工作表.180</title>
 				<v:userDefs>
 					<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
 				</v:userDefs>
 				<path d="M51.07 485.82 L0 485.82 L0 536.89 L51.07 536.89 L51.07 485.82 Z" class="st22"/>
 			</g>
-			<g id="shape181-204" v:mID="181" v:groupContext="shape">
+			<g id="shape181-207" v:mID="181" v:groupContext="shape">
 				<title>工作表.181</title>
 				<v:userDefs>
 					<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
@@ -2071,7 +2074,7 @@
 				<path d="M51.07 485.82 L51.07 535.02 L1.87 535.02 L1.87 485.82 L51.07 485.82 ZM52.94 483.95 L0 483.95 L0 536.89 L52.94
 							 536.89 L52.94 483.95 Z" class="st15"/>
 			</g>
-			<g id="shape182-206" v:mID="182" v:groupContext="shape" transform="translate(11.1998,-12.145)">
+			<g id="shape182-209" v:mID="182" v:groupContext="shape" transform="translate(11.1998,-12.145)">
 				<title>工作表.182</title>
 				<v:userDefs>
 					<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
@@ -2114,25 +2117,25 @@
 							 530.66 L29.91 530.66 L29.91 535.48 C29.91 535.52 29.89 535.56 29.86 535.59 C29.83 535.62 29.79 535.64
 							 29.74 535.64 Z" class="st15"/>
 			</g>
-			<g id="shape179-208" v:mID="179" v:groupContext="groupContent">
+			<g id="shape179-211" v:mID="179" v:groupContext="groupContent">
 				<v:textBlock v:margins="rect(0,0,0,0)" v:tabSpace="42.5197"/>
 				<v:textRect cx="26.4699" cy="542.4" width="72" height="11.0251"/>
 				<text x="-3.5" y="545.16" class="st13" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Game Client Z</text>			</g>
 		</g>
-		<g id="group188-210" transform="translate(176.782,-43.0746)" v:mID="188" v:groupContext="group">
+		<g id="group188-213" transform="translate(176.782,-43.0746)" v:mID="188" v:groupContext="group">
 			<v:userDefs>
 				<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT4(True)"/>
 			</v:userDefs>
 			<title>最终用户计算.188</title>
 			<desc>Game Client Y</desc>
-			<g id="shape189-211" v:mID="189" v:groupContext="shape" transform="translate(0.934233,-0.934233)">
+			<g id="shape189-214" v:mID="189" v:groupContext="shape" transform="translate(0.934233,-0.934233)">
 				<title>工作表.189</title>
 				<v:userDefs>
 					<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
 				</v:userDefs>
 				<path d="M51.07 485.82 L0 485.82 L0 536.89 L51.07 536.89 L51.07 485.82 Z" class="st22"/>
 			</g>
-			<g id="shape190-213" v:mID="190" v:groupContext="shape">
+			<g id="shape190-216" v:mID="190" v:groupContext="shape">
 				<title>工作表.190</title>
 				<v:userDefs>
 					<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
@@ -2140,7 +2143,7 @@
 				<path d="M51.07 485.82 L51.07 535.02 L1.87 535.02 L1.87 485.82 L51.07 485.82 ZM52.94 483.95 L0 483.95 L0 536.89 L52.94
 							 536.89 L52.94 483.95 Z" class="st15"/>
 			</g>
-			<g id="shape191-215" v:mID="191" v:groupContext="shape" transform="translate(11.1998,-12.145)">
+			<g id="shape191-218" v:mID="191" v:groupContext="shape" transform="translate(11.1998,-12.145)">
 				<title>工作表.191</title>
 				<v:userDefs>
 					<v:ud v:nameU="msvDisableCustomConnectionPoints" v:prompt="" v:val="VT0(1):5"/>
@@ -2183,12 +2186,12 @@
 							 530.66 L29.91 530.66 L29.91 535.48 C29.91 535.52 29.89 535.56 29.86 535.59 C29.83 535.62 29.79 535.64
 							 29.74 535.64 Z" class="st15"/>
 			</g>
-			<g id="shape188-217" v:mID="188" v:groupContext="groupContent">
+			<g id="shape188-220" v:mID="188" v:groupContext="groupContent">
 				<v:textBlock v:margins="rect(0,0,0,0)" v:tabSpace="42.5197"/>
 				<v:textRect cx="26.4699" cy="542.4" width="72" height="11.0251"/>
 				<text x="-3.26" y="545.16" class="st13" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Game Client Y</text>			</g>
 		</g>
-		<g id="shape204-219" v:mID="204" v:groupContext="shape" transform="translate(318.764,-261.143)">
+		<g id="shape204-222" v:mID="204" v:groupContext="shape" transform="translate(318.764,-261.143)">
 			<title>工作表.204</title>
 			<desc>. . .</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
@@ -2196,14 +2199,14 @@
 			<rect x="0" y="515.627" width="24.0945" height="21.2598" class="st12"/>
 			<text x="10.26" y="523.56" class="st23" v:langID="1033"><v:paragraph v:spLine="-0.3" v:horizAlign="1"/><v:tabList/>.<v:newlineChar/><tspan
 						x="10.26" dy="0.3em" class="st11">.<v:newlineChar/></tspan><tspan x="10.26" dy="0.3em" class="st11">.</tspan></text>		</g>
-		<g id="shape206-224" v:mID="206" v:groupContext="shape" transform="translate(125.299,-60.9357)">
+		<g id="shape206-227" v:mID="206" v:groupContext="shape" transform="translate(125.299,-60.9357)">
 			<title>工作表.206</title>
 			<desc>...</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="17.0079" cy="528.95" width="34.02" height="15.874"/>
 			<rect x="0" y="521.013" width="34.0157" height="15.874" class="st12"/>
 			<text x="11.64" y="529.85" class="st24" v:langID="1033"><v:paragraph v:spLine="-0.3" v:horizAlign="1"/><v:tabList/>...</text>		</g>
-		<g id="shape207-227" v:mID="207" v:groupContext="shape" transform="translate(247.189,-61.6076)">
+		<g id="shape207-230" v:mID="207" v:groupContext="shape" transform="translate(247.189,-61.6076)">
 			<title>工作表.207</title>
 			<desc>...</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>

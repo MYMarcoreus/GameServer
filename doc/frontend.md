@@ -30,8 +30,6 @@ sequenceDiagram
     end
 ```
 
-
-
 ## 连接协议时序图
 
 ```mermaid

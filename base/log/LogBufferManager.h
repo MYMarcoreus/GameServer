@@ -27,18 +27,20 @@ public:
     /// 向当前缓冲区追加日志字符串
     void Append(const std::string & logstr);
 
-    /// 交出当前缓冲区中的数据，并替换为 tempBuffer1_, tempBuffer2_，然后写入目的地
+    /// 交出当前缓冲区中的数据，并替换为 freeBuffer1_, freeBuffer2_，然后写入目的地
     void SwapAndWriteFlush(std::chrono::milliseconds flush_interval);
 
 private:
+    void WaitAndSwap(std::chrono::milliseconds flush_interval);
+
     size_t m_bufferSize;
 
     BufferPtr m_current; //! 前端缓冲区
     BufferPtr m_next;    //! 备用缓冲区
     BufferVector m_buffersToWrite; //! 待写缓冲区
 
-    BufferPtr tempBuffer1_;
-    BufferPtr tempBuffer2_;
+    BufferPtr freeBuffer1_;
+    BufferPtr freeBuffer2_;
     BufferVector tempBuffersToWrite_;
 
     WriteCallback writeCb_;

@@ -145,11 +145,13 @@ flowchart TD
 	subgraph Step1["将日志字符串写入缓冲区"]
         Q{主缓冲区是否有空间?}
         Lock --> Q
-        Q -- 是 --> R[将日志字符串写入文件待写区]
+        Q -- 是 --> R[将日志写入主缓冲区]
         Q -- 否 --> S[将已满的主缓冲区移动到文件待写区]
         S --> T[将备用缓冲区作为新的主缓冲区]
-        T --> R[将日志写入主缓冲区]
+        T --> U[将日志写入主缓冲区]
+        U --> D[notify条件变量]
         R --> Unlock
+        D --> Unlock
     end
 ```
 
@@ -161,7 +163,7 @@ flowchart TD
 
     %% Step1：交换缓冲区
     subgraph Step1["Step1：加锁交换缓冲区"]
-        B1[Lock]
+        B1[Lock 且 等待条件变量直到文件待写队列不为空]
         B2[将主缓冲区加入文件待写队列]
         B3[将文件待写队列的缓冲区swap到临时变量tempQueue中]
         B4[分配新的主/备用缓冲区：复用tempBuffer1/2]

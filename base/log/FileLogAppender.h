@@ -9,7 +9,7 @@ class FileLogAppender final : public ILogAppender
 {
 public:
     explicit FileLogAppender(std::string logfilepath, const std::string& format_pattern,
-        int buffer_size = 40 * 1024, std::chrono::milliseconds flush_interval = 5s);
+        int buffer_size = 40 * 1024, std::chrono::milliseconds flush_interval = 3s);
 
     ~FileLogAppender() override;
 

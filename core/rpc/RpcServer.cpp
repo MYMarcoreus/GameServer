@@ -85,6 +85,7 @@ void RpcServer::OnRpcRequest(const net::TcpConnectionPtr& conn, const RpcMessage
 
     RpcMessage::Status errcode = RpcMessage::NO_ERROR;
 
+    //! ① 获取服务
     const auto & service_opt = this->GetService(service_name);
     if (not service_opt.has_value()) {
         errcode = RpcMessage::NO_SERVICE;
@@ -96,9 +97,10 @@ void RpcServer::OnRpcRequest(const net::TcpConnectionPtr& conn, const RpcMessage
         YLOG_WARN("RPC Server：收到Rpc的服务请求，但是Server未注册该服务<{}>", service_name)
         return;
     }
-
     auto & service = service_opt.value().get();
     const google::protobuf::ServiceDescriptor* desc = service.GetDescriptor();
+
+    //! ② 获取方法
     const google::protobuf::MethodDescriptor * method = desc->FindMethodByName(method_name);
     if (method == nullptr) {
         errcode = RpcMessage::NO_METHOD;
@@ -111,7 +113,7 @@ void RpcServer::OnRpcRequest(const net::TcpConnectionPtr& conn, const RpcMessage
         return;
     }
 
-    //! 读取请求消息
+    //! ③ 读取请求消息
     const std::unique_ptr<google::protobuf::Message> request{service.GetRequestPrototype(method).New()}; //! 函数结束后自动析构（如果实现的Rpc方法是异步的且需要用到请求消息，则需要拷贝请求消息）
     if (req->has_request()) {
         if (request->ParseFromString(req->request()) == false) {
@@ -124,15 +126,15 @@ void RpcServer::OnRpcRequest(const net::TcpConnectionPtr& conn, const RpcMessage
 
     switch (errcode) {
         case protocol::core::RpcMessage_Status_NO_ERROR: {
-            //! 生成响应消息
+            //! ④ 生成响应消息
             auto response = service.GetResponsePrototype(method).New(); //! 异步接收响应，不负责生命周期。response仅在done->Run() —— 即SendRpcResponse() —— 调用后自动析构
 
-            // 给下面的method方法的调用，绑定一个Closure的回调函数
+            //! ⑤ 给下面的method方法的调用，绑定一个Closure的回调函数
             google::protobuf::Closure* done = google::protobuf::NewCallback
                 <RpcServer, net::TcpConnectionPtr, std::pair<google::protobuf::Message*, int64_t>> //!FIXED_BUG：这是异步回调函数,TcpConnectionPtr需要增加一个引用计数，
                 (this, &RpcServer::SendRpcResponse, conn, {response, rsp_id});
 
-            // 在框架上根据远端rpc请求，调用当前rpc节点上发布的方法
+            //! ⑥ 在框架上根据远端rpc请求，调用当前rpc节点上发布的方法
             service.CallMethod(method, nullptr, request.get(), response, done);
             break;
         }

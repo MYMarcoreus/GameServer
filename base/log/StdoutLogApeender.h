@@ -10,7 +10,7 @@ class StdoutLogApeender final : public ILogAppender {
 public:
     StdoutLogApeender() = delete;
 
-    explicit StdoutLogApeender(const std::string &format_pattern, int buffer_size = 4 * 1024, std::chrono::milliseconds flush_interval = 100ms);
+    explicit StdoutLogApeender(const std::string &format_pattern, int buffer_size = 4 * 1024, std::chrono::milliseconds flush_interval = 1000ms);
 
     ~StdoutLogApeender() override;
 

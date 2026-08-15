@@ -21,13 +21,24 @@ C++20，Socket，TCP/UDP，主从Reactor，ZooKeeper，RPC，Protobuf，MySQL，
 
 ![分布式架构图](./doc/images/system.svg)
 
+## 环境搭建与构建
+
+- [**Linux（WSL2）原生构建与运行指南**](./doc/linux-native-build.md)：不使用 Docker，直接在 WSL2 的 Linux 中完成**环境搭建、编译构建与运行**的完整流程。
+- [**项目配置文件详解**](./doc/config-files.md)：逐一讲解 `.vscode/`、`CMakePresets.json`、`.clangd`、`.clang-tidy`、`vcpkg.json`、`CMakeLists.txt`、`build.sh` 等配置文件的含义与用法。
+- 使用 Docker 的方式请参考 [`docker/README.md`](./docker/README.md)。
+
+## 协议与业务流程
+
+- [**通信协议与客户端对接说明**](./doc/protocol.md)：消息帧格式、加密握手流程、消息命令全集、核心 protobuf 消息定义，以及 Unity 客户端对接要点。
+- [**核心业务流程与时序**](./doc/workflow.md)：用时序图展示登录/注册、建房、进房/退房、场景登录与同步、掉线处理的完整调用链。
+
 ## 项目组织结构
 
 - **`/base`（基础组件层）**：实现了常用的数据结构，并实现了强类型配置反序列框架和异步日志库。
   - [`/utils`](./doc/utils.md)：实现了阻塞队列、线性缓冲区、环形缓冲区、基于阻塞队列的线程池、对象池、可继承的单例类等常用数据结构。
   - `/public`：包含了其它开源库的头文件与源文件。
-    - md5加解密：https://github.com/xtaci/algorithms/blob/master/include/md5.h 
-    - XML解析：https://github.com/leethomason/tinyxml2 
+    - md5加解密：https://github.com/xtaci/algorithms/blob/master/include/md5.h
+    - XML解析：https://github.com/leethomason/tinyxml2
   - [`/config`](./doc/config.md)：实现了强类型XML配置反序列化框架，利用SFINAE与模板特化支持任意类型的序列化/反序列化。
   - [`/log`](./doc/log.md)：实现了**基于C++20`std::format`的异步双缓冲日志库**，支持多日志级别、自定义日志格式与自定义输出目标。
 - [**`/net`（网络层）**](./doc/net.md)：实现了基于**主从Reactor模型**的跨平台网络框架。框架支持TCP/UDP通信，提供连接管理与消息收发功能，并通过回调机制为上层应用提供业务扩展接口。
@@ -35,7 +46,7 @@ C++20，Socket，TCP/UDP，主从Reactor，ZooKeeper，RPC，Protobuf，MySQL，
   - I/O多路复用：Linux下使用`epoll`，Windows下使用`select`
   - 定时器：由红黑树（`std::set`）管理；Linux下使用`timerfd`进行事件驱动，而Windows下使用`select`超时参数；
   - 跨线程事件唤醒与任务投递：Linux下基于`eventfd`实现，Windows下基于UDP Socket Pair实现；
-  - 读写缓冲区：采用**环形缓冲区**进行管理。 
+  - 读写缓冲区：采用**环形缓冲区**进行管理。
 - **`/core`（核心基础设施层）**：实现了不依赖具体业务的通用组件。
   - [`/zk`](./doc/zk.md)：基于ZooKeeper C API，封装了服务治理客户端组件，支持**服务注册、服务发现、服务节点变更监听以及本地缓存机制**。
   - [`/redis`](./doc/redis.md)：基于redis++实现带连接池的单例Redis客户端，采用RAII自动管理连接，支持自动心跳、重连与常用Redis操作封装。
@@ -67,7 +78,7 @@ graph BT
         subgraph ZK[基于Zookeeper的服务发现与注册客户端 /zk]
             direction BT
             ZkServiceClient[服务治理客户端]
-            ZkClient[Zookeeper客户端]    
+            ZkClient[Zookeeper客户端]
             ZkClient --> ZkServiceClient
         end
         subgraph Redis[Redis客户端 /redis]
@@ -98,7 +109,7 @@ graph BT
         	UserConnection --> FrontendServer
         	Protocol --> FrontendServer
         end
-    end 
+    end
 
     subgraph 网络层[网络层 /net]
         TcpServer

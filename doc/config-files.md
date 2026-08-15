@@ -24,54 +24,79 @@
 
 ### 配置文件依赖关系图
 
-**图 1：构建期数据流** —— 从依赖清单到最终产物与代码补全
+**图 1：构建期数据流** —— 编号标注在数据流的边上，从输入到产物与补全
 
 ```mermaid
 flowchart LR
-    MANIFEST["vcpkg.json<br/>(依赖清单)"]
-    REPO["vcpkg 仓库"]
-    ROOT["VCPKG_ROOT<br/>(环境变量)"]
-    TOOLCHAIN["vcpkg.cmake<br/>(工具链)"]
+    subgraph S1["输入"]
+        ROOT["VCPKG_ROOT<br/>(环境变量)"]
+        MANIFEST["vcpkg.json<br/>(依赖清单)"]
+    end
 
-    PRESET["CMakePresets.json"]
-    SCRIPT["build.sh"]
+    subgraph S2["vcpkg 工具链"]
+        REPO["vcpkg 仓库<br/>(vcpkg.cmake)"]
+    end
 
-    CMAKELISTS["CMakeLists.txt"]
-    PROTO["cmake/ProtocGenCpp.cmake"]
+    subgraph S3["构建配置"]
+        PRESET["CMakePresets.json"]
+        SCRIPT["build.sh"]
+    end
 
-    EXE["build-debug/<br/>四个服务可执行文件"]
-    DB["build-debug/<br/>compile_commands.json"]
-    CLANGD[".clangd"]
+    subgraph S4["编译"]
+        CMAKELISTS["CMakeLists.txt"]
+        PROTO["cmake/ProtocGenCpp.cmake"]
+    end
 
-    MANIFEST --> REPO
-    ROOT -->|"指向"| REPO
-    REPO -->|"提供"| TOOLCHAIN
-    TOOLCHAIN --> PRESET
-    TOOLCHAIN --> SCRIPT
-    PRESET -->|"configure"| CMAKELISTS
-    SCRIPT -->|"内部调用 cmake"| CMAKELISTS
-    CMAKELISTS -->|"include"| PROTO
-    CMAKELISTS -->|"生成"| EXE
-    PRESET -->|"CMAKE_EXPORT_COMPILE_COMMANDS"| DB
-    DB -->|"CompilationDatabase 读取"| CLANGD
+    subgraph S5["产物"]
+        EXE["四个服务可执行文件<br/>(build-debug/)"]
+        DB["compile_commands.json<br/>(build-debug/)"]
+    end
+
+    subgraph S6["消费"]
+        CLANGD[".clangd<br/>(代码补全)"]
+    end
+
+    ROOT -->|"① 定位目录"| REPO
+    MANIFEST -->|"② manifest 被读取"| REPO
+    REPO -->|"③ 提供工具链"| PRESET
+    REPO -->|"③ 提供工具链"| SCRIPT
+    PRESET -->|"④ configure"| CMAKELISTS
+    SCRIPT -->|"④ 内部调用 cmake"| CMAKELISTS
+    CMAKELISTS -->|"⑤ include 生成 protobuf 代码"| PROTO
+    CMAKELISTS -->|"⑥ 编译链接"| EXE
+    PRESET -->|"⑦ 导出编译数据库"| DB
+    DB -->|"⑧ 读取补全"| CLANGD
 ```
 
-**图 2：整体依赖关系全景** —— IDE / 构建 / 运行 / 容器化分层
+> 说明：`CMakePresets.json` 与 `build.sh` 是**两条等价路径**——前者是 CMake 原生
+> 声明式配置，后者是封装了同样 cmake 命令的脚本；二者都依赖 vcpkg 工具链并驱动
+> `CMakeLists.txt`，实际构建时二选一即可。
+
+**数据流 ↔ 命令对照表**（编号与图中边上的编号一一对应）：
+
+| 编号 | 依赖关系 | 实际命令 / 配置 |
+|------|---------|----------------|
+| ① | 环境变量定位 vcpkg 目录 | `export VCPKG_ROOT=$HOME/projects/vcpkg` |
+| ② | `vcpkg.json` 被工具链读取 | CMake 配置时自动执行（等价手动 `vcpkg install`） |
+| ③ | 提供 vcpkg 工具链 | `-DCMAKE_TOOLCHAIN_FILE=$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake` |
+| ④ | preset / 脚本驱动 CMakeLists | `cmake --preset linux-debug` 或 `./build.sh`（二选一） |
+| ⑤ | 生成 protobuf 代码 | 构建时自动执行 `protoc --cpp_out=protobuf protobuf/*.proto` |
+| ⑥ | 编译链接 | `cmake --build --preset debug`（或 `cmake --build build-debug -- -j$(nproc)`） |
+| ⑦ | 导出编译数据库 | `CMAKE_EXPORT_COMPILE_COMMANDS: ON`（preset 已设置） |
+| ⑧ | clangd 读取补全 | `clangd`（VS Code 扩展自动启动，读取 `build-debug/compile_commands.json`） |
+
+**图 2：整体依赖关系全景** —— IDE / 构建 / 运行 / 容器化的横切关系（构建内部链路见上图）
 
 ```mermaid
 graph TB
     subgraph IDE["IDE / 编辑器层"]
         SETTINGS[".vscode/settings.json"]
         TASKS[".vscode/tasks.json"]
-        CLANGD[".clangd"]
         DEVCONTAINER[".devcontainer/devcontainer.json"]
     end
 
-    subgraph BUILD["构建层"]
-        PRESET["CMakePresets.json"]
-        SCRIPT["build.sh"]
-        CMAKELISTS["CMakeLists.txt"]
-        MANIFEST["vcpkg.json"]
+    subgraph BUILD["构建层（内部链路详见上图）"]
+        BUILD_CFG["构建配置<br/>preset / build.sh / CMakeLists / vcpkg.json"]
     end
 
     subgraph PRODUCT["产物层"]
@@ -79,11 +104,12 @@ graph TB
         EXE["四个服务可执行文件"]
     end
 
-    subgraph RUN["运行层"]
+    subgraph RUN["运行 / 服务层"]
         XML["config/configs_*.xml"]
         MYSQL[("MySQL")]
         REDIS[("Redis")]
         ZK[("ZooKeeper")]
+        CLANGD["clangd 后端语言服务"]
     end
 
     subgraph DOCKER["容器化"]
@@ -91,38 +117,23 @@ graph TB
         DOCKERFILE["docker/Dockerfile"]
     end
 
-    %% settings 注入
-    SETTINGS -->|"cmake.environment → $env{VCPKG_ROOT}"| PRESET
     SETTINGS -->|"terminal.integrated.env"| TASKS
-
-    %% tasks 调用
-    TASKS -->|"Build 任务"| SCRIPT
     TASKS -->|"Run 任务"| EXE
-
-    %% 构建链路
-    MANIFEST -->|"工具链读取"| PRESET
-    SCRIPT -->|"内部 cmake"| CMAKELISTS
-    PRESET -->|"configure"| CMAKELISTS
-    CMAKELISTS -->|"生成"| EXE
-    PRESET -->|"导出编译数据库"| DB
-
-    %% clangd
-    CLANGD -->|"读取"| DB
-
-    %% 运行时
     EXE -->|"启动读取"| XML
+    DB -->|"被读取"| CLANGD
     EXE -->|"连接"| MYSQL
     EXE -->|"连接"| REDIS
     EXE -->|"注册/发现"| ZK
-
-    %% 容器化
     DEVCONTAINER -->|"引用"| COMPOSE
+    DEVCONTAINER -->|"postCreateCommand"| BUILD_CFG
+    SETTINGS -->|"cmake.environment → $env{VCPKG_ROOT}"| BUILD_CFG
+    TASKS -->|"Build 任务"| BUILD_CFG
     COMPOSE --> DOCKERFILE
-    DEVCONTAINER -->|"postCreateCommand"| PRESET
 ```
 
-> 图 2 中 MySQL / Redis / ZooKeeper 并非配置文件，但它们在 `config/configs_*.xml`
-> 中被声明为运行期依赖，故一并画出以体现完整依赖链。
+> 图 2 中 MySQL / Redis / ZooKeeper / clangd 并非配置文件，但它们在
+> `config/configs_*.xml`（运行时依赖）与 `.clangd`（开发期消费编译数据库）中
+> 被声明或使用，故一并画出以体现完整依赖链。
 
 ---
 

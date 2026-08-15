@@ -134,7 +134,7 @@ void RpcServer::OnRpcRequest(const net::TcpConnectionPtr& conn, const RpcMessage
                 <RpcServer, net::TcpConnectionPtr, std::pair<google::protobuf::Message*, int64_t>> //!FIXED_BUG：这是异步回调函数,TcpConnectionPtr需要增加一个引用计数，
                 (this, &RpcServer::SendRpcResponse, conn, {response, rsp_id});
 
-            //! ⑥ 在框架上根据远端rpc请求，调用当前rpc节点上发布的方法
+            //! ⑥ 在框架上根据远端rpc请求，「同步」调用当前rpc节点上发布的方法
             service.CallMethod(method, nullptr, request.get(), response, done);
             break;
         }

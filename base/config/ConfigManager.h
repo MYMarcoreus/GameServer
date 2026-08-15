@@ -6,7 +6,6 @@
 #include <iostream>
 #include <memory>
 #include <sstream>
-#include <mutex>
 #include <set>
 #include <utility>
 #include <filesystem>
@@ -463,6 +462,9 @@ public:
     ///@brief 读取配置文件，若已读取，则再次读取
     static void LoadXmlConfigs();
 
+    ///@brief 推导项目根目录（基于可执行文件位置向上查找，不受工作目录影响）
+    static std::filesystem::path GetProjectRoot();
+
 private:
     ///@brief 读取配置文件，返回配置文件的root结点
     static auto read_root(tinyxml2::XMLDocument&) -> tinyxml2::XMLElement*;
@@ -479,4 +481,3 @@ private:
 
 
 }
-

@@ -2,14 +2,8 @@
 #include "log.h"
 #include "EventLoop.h"
 #include "GateServer.h"
-#include "future"
 #include "IPAddress.h"
-#include "AccountRpcClient.h"
-#include "RpcControllerImpl.h"
 #include "GateRedisDAO.h"
-
-#include <functional>
-
 #include "ForwardManager.h"
 #include "GateServiceRpc_Impl.h"
 #include "RpcServer.h"
@@ -74,11 +68,11 @@ void GateServerManager::RunApp()
     /*********** 初始化前端 ***********/
     //! 初始化监听的端口和IP地址
     IPAddressPtr frontend_tcp_addr = std::make_shared<IPv4Address>(
-        "192.168.147.128", // 对外开放的地址
+        "0.0.0.0", // 对外开放的地址（绑定所有接口）
         config::g_app_config->GetValue().app_tcp_port()
     );
     IPAddressPtr frontend_udp_addr = std::make_shared<IPv4Address>(
-        "192.168.147.128", // 对外开放的地址
+        "0.0.0.0", // 对外开放的地址（绑定所有接口）
         config::g_app_config->GetValue().app_udp_port()
     );
     //! 初始化服务器对象

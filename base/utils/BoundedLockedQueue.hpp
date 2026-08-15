@@ -9,7 +9,11 @@
 
 namespace yy::util {
 
-// muduo实现
+//! 问题①：会有惊群效应吗？多个消费者（如线程池中的线程）在wait阻塞休眠时，被同时唤醒争抢一个资源，只有一个消费者（线程）能够真正处理资源，其余线程被迫再次休眠：
+//!     不会！因为使用条件变量的 notify_one 只唤醒一个消费者（线程）
+//! 问题②：线程会空转吗？
+//!     不会！wait_pop 是：m_notEmpty.wait(lock, [this]() { return !m_queue.empty(); });
+//!     条件变量的 wait 会进入使得线程睡眠：不占CPU、不会自旋 、不会busy loop
 template<typename T>
 class BoundedLockedQueue
 {

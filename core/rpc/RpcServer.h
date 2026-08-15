@@ -1,6 +1,7 @@
 #pragma once
 
 #include "core_definations.h"
+#include "net_definations.h"
 #include "log.h"
 
 

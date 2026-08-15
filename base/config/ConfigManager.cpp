@@ -4,6 +4,32 @@ using namespace tinyxml2;
 
 namespace yy::config {
 
+std::filesystem::path ConfigManager::GetProjectRoot()
+{
+    // 优先使用可执行文件自身路径（Linux 下 /proc/self/exe），避免依赖工作目录
+    std::filesystem::path exe_path;
+#if defined(__linux__)
+    try {
+        exe_path = std::filesystem::canonical("/proc/self/exe");
+    } catch (...) {
+        exe_path = std::filesystem::current_path();
+    }
+#else
+    exe_path = std::filesystem::current_path();
+#endif
+
+    // 从可执行文件所在目录向上查找项目根（包含 vcpkg.json 或 CMakeLists.txt 的目录）
+    for (auto dir = exe_path.parent_path(); !dir.empty() && dir != dir.root_path(); dir = dir.parent_path()) {
+        if (std::filesystem::exists(dir / "vcpkg.json") ||
+            std::filesystem::exists(dir / "CMakeLists.txt")) {
+            return dir;
+        }
+    }
+
+    // 回退：可执行文件所在目录的上一级
+    return exe_path.parent_path().parent_path();
+}
+
 void ConfigManager::LoadXmlConfigs()
 {
     XMLDocument  xml_doc;
@@ -33,7 +59,7 @@ XMLElement* ConfigManager::read_root(XMLDocument& xml_doc)
 
     // 读取路径为GetConfigFilePath()的配置文件，若读取失败，则查找默认路径的xml文件
     std::filesystem::path xml_file_path{};
-    for (auto file_path : GetAllFilePath())
+    for (const auto& file_path : GetAllFilePath())
     {
         const XMLError ret = xml_doc.LoadFile(file_path.string().c_str());
         if (ret == XML_SUCCESS) {

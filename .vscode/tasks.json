@@ -1,0 +1,97 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build Debug",
+      "type": "shell",
+      "command": "./build.sh debug",
+      "options": { "cwd": "${workspaceFolder}" },
+      "group": { "kind": "build", "isDefault": true },
+      "problemMatcher": ["$gcc"]
+    },
+    {
+      "label": "Build Release",
+      "type": "shell",
+      "command": "./build.sh release",
+      "options": { "cwd": "${workspaceFolder}" },
+      "group": "build",
+      "problemMatcher": ["$gcc"]
+    },
+    {
+      "label": "Run CenterServer",
+      "type": "shell",
+      "command": "${workspaceFolder}/build-debug/CenterServer",
+      "options": { "cwd": "${workspaceFolder}" },
+      "isBackground": true,
+      "presentation": {
+        "panel": "dedicated",
+        "group": "servers",
+        "reveal": "always",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Run LogicServer",
+      "type": "shell",
+      "command": "${workspaceFolder}/build-debug/LogicServer",
+      "options": { "cwd": "${workspaceFolder}" },
+      "isBackground": true,
+      "presentation": {
+        "panel": "dedicated",
+        "group": "servers",
+        "reveal": "always",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Run AccountServer",
+      "type": "shell",
+      "command": "${workspaceFolder}/build-debug/AccountServer",
+      "options": { "cwd": "${workspaceFolder}" },
+      "isBackground": true,
+      "presentation": {
+        "panel": "dedicated",
+        "group": "servers",
+        "reveal": "always",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Run GateServer",
+      "type": "shell",
+      "command": "${workspaceFolder}/build-debug/GateServer",
+      "options": { "cwd": "${workspaceFolder}" },
+      "isBackground": true,
+      "presentation": {
+        "panel": "dedicated",
+        "group": "servers",
+        "reveal": "always",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Run All Servers",
+      "dependsOn": [
+        "Run CenterServer",
+        "Run LogicServer",
+        "Run AccountServer",
+        "Run GateServer"
+      ],
+      "dependsOrder": "parallel",
+      "problemMatcher": []
+    },
+    {
+      "label": "Build & Run All",
+      "dependsOn": [
+        "Build Debug",
+        "Run All Servers"
+      ],
+      "dependsOrder": "sequence",
+      "problemMatcher": []
+    }
+  ]
+}

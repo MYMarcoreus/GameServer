@@ -10,3 +10,7 @@
 .clang-tidy
 /.VSCodeCounter
 /out-of-date
+/build-debug
+/build-release
+/vcpkg_installed
+/logs

@@ -1,6 +1,5 @@
 #pragma once
 
-#include <cstring>
 #include <atomic>
 #include "core_definations.h"
 #include "net_definations.h"

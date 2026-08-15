@@ -1,0 +1,20 @@
+# 构建产物
+build/
+build-debug/
+build-release/
+cmake-build-*/
+
+# 运行时日志与 pid
+logs/
+*.log
+*.pid
+
+# 版本控制
+# .git/
+# .gitignore
+
+# IDE
+.idea/
+# .vscode/
+# .clangd
+# .clang-tidy

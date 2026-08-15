@@ -38,22 +38,35 @@ Message的传递路线(Call Callback)：
                   ==> AAAServer、BBBServer、CCCServer(注册回调)
 */
 class ProtobufTcpCodec_Name: public util::noncopyable {
-    using F_ProtobufMessageDispatchCallback = std::function<void(const net::TcpConnectionPtr &, const MessagePtr &)>;
-    using F_ProtobufErrorMessageCallback = std::function<void(const net::TcpConnectionPtr &, net::NetBuffer &, MessageParseErrorCode)>;
+    using F_ProtobufMessageDispatchCallback = std::function<void(
+        const net::TcpConnectionPtr &,
+        const MessagePtr &
+    )>;
+    using F_ProtobufErrorMessageCallback = std::function<void(
+        const net::TcpConnectionPtr &,
+        net::NetBuffer &,
+        MessageParseErrorCode
+    )>;
 
 public:
-    explicit ProtobufTcpCodec_Name(const F_ProtobufMessageDispatchCallback& msgCb, const F_ProtobufErrorMessageCallback& errCb = DefaultErrorCallback);
+    explicit ProtobufTcpCodec_Name(const F_ProtobufMessageDispatchCallback& msgCb,
+                                   const F_ProtobufErrorMessageCallback& errCb = DefaultErrorCallback);
 
     ///@brief 发送message（加Header后Send）
     void SendTCP(const net::TcpConnectionPtr &conn, const google::protobuf::Message & message);
 
-    ///@brief TcpConnection接收字节流到输入缓冲以后调用的回调函数，该函数用于处理字节流，解析并创建出消息，然后传递消息给ProtobufDispatcher
+    ///@brief TcpConnection接收字节流到输入缓冲以后调用的回调函数，
+    // 该函数用于处理字节流，解析并创建出消息，然后传递消息给ProtobufDispatcher
     void OnTcpData(const net::TcpConnectionPtr &conn, net::NetBuffer &buf);
 private:
     ///@brief 解析Buffer中的二进制数据，将其解析为protobuf的Message
-    std::pair<MessageHeader_Name, MessagePtr> Parse(const net::TcpConnectionPtr& conn, net::NetBuffer& buf, MessageParseErrorCode& outErrCode);
+    std::pair<MessageHeader_Name, MessagePtr> Parse(const net::TcpConnectionPtr& conn,
+                                                    net::NetBuffer& buf,
+                                                    MessageParseErrorCode& outErrCode);
 
-    static void DefaultErrorCallback(const net::TcpConnectionPtr & conn, net::NetBuffer & buf, MessageParseErrorCode);
+    static void DefaultErrorCallback(const net::TcpConnectionPtr & conn,
+                                     net::NetBuffer & buf,
+                                     MessageParseErrorCode);
 
 private:
     //! 通过由上层IServer子类设置为`ProtobufDispatcher<TcpConnectionPtr>::OnProtobufMessage`

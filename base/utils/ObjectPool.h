@@ -8,8 +8,6 @@
 #include <chrono>
 #include <stdexcept>
 
-#include "log.h"
-
 namespace yy::util {
 
 

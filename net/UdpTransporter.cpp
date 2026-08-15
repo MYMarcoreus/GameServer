@@ -75,7 +75,7 @@ auto UdpTransporter::GetRecvAddr() const -> IPAddressPtr
 }
 
 void UdpTransporter::SendUDP(const std::string_view & message, const IPAddressPtr & peerAddr) {
-    //! 需要将数据从业务线程拷贝到IO线程中（否则线程不安全），这里SendInLoop使用const &延长临时对象生命周期
+    //! 需要将数据从业务线程拷贝到IO线程中（否则线程不安全）
     m_sendWorkThreadPool->PushTask([this, buf = std::string(message), peerAddr]() {
         this->SendUDPWorker(std::string_view{buf}, peerAddr);
     });

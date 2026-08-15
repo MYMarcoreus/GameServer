@@ -1,0 +1,127 @@
+读取到xml文件："/home/yangyue/projects/GameServer/config/configs_center.xml"
+root
+	root.app
+		root.app[appID]: 2000
+		root.app[appTcpPort]: 14441
+		root.app[appUdpPort]: 14442
+		root.app[appMaxPlayer]: 30
+		root.app[appMaxConnection]: 2000
+		root.app[appXorCode]: 130
+		root.app[appVersion]: 20230123
+		root.app[recvBytesOne]: 4
+		root.app[recvBytesMax]: 32
+		root.app[sendBytesOne]: 4
+		root.app[sendBytesMax]: 32
+		root.app[maxHeartTime]: 30
+		root.app[maxSecurityTime]: 10
+		root.app[securityCode]: 114514
+		root.app[checkCode]: DE
+		root.app[closeDelay]: 1
+		root.app[tcpIOThreadNum]: 2
+		root.app[udpIOThreadNum]: 2
+		root.app[workThreadNum]: 2
+		root.app[rpcPort]: 14443
+	root.remote
+		root.remote[appXorCode]: 130
+		root.remote[appVersion]: 20230123
+		root.remote[recvBytesOne]: 8
+		root.remote[recvBytesMax]: 32
+		root.remote[sendBytesOne]: 8
+		root.remote[sendBytesMax]: 32
+		root.remote[maxHeartTime]: 10
+		root.remote[autoConnectTime]: 3
+		root.remote[securityCode]: 114514
+		root.remote[checkCode]: DE
+		root.remote.remote_node
+			root.remote.remote_node[type]: mysql
+			root.remote.remote_node[username]: yy
+			root.remote.remote_node[password]: 0
+			root.remote.remote_node[poolsize]: 10
+			root.remote.remote_node[ip]: 127.0.0.1
+			root.remote.remote_node[port]: 33060
+		root.remote.remote_node
+			root.remote.remote_node[type]: zookeeper
+			root.remote.remote_node[username]: yy
+			root.remote.remote_node[password]: 0
+			root.remote.remote_node[poolsize]: 10
+			root.remote.remote_node[ip]: 127.0.0.1
+			root.remote.remote_node[port]: 2181
+	root.log
+		root.log.logger
+			root.log.logger[m_TypeName]: default
+			root.log.logger[level]: debug
+			root.log.logger[is_async]: true
+			root.log.logger.appender
+				root.log.logger.appender[type]: stdout
+				root.log.logger.appender[format]: [%t][%l] %c%n
+				root.log.logger.appender[time_format]: %Y-%m-%d %H:%M:%S.
+				root.log.logger.appender[time_use_us]: true
+			root.log.logger.appender
+				root.log.logger.appender[type]: file
+				root.log.logger.appender[format]: [%t][%l][%i][%f:%L] %c%n
+				root.log.logger.appender[time_format]: %Y-%m-%d %H:%M:%S.
+				root.log.logger.appender[time_use_us]: true
+		root.log.logger
+			root.log.logger[m_TypeName]: b
+			root.log.logger[level]: debug
+			root.log.logger[is_async]: true
+			root.log.logger.appender
+				root.log.logger.appender[type]: stdout
+				root.log.logger.appender[format]: [%t](%l) %c%n
+				root.log.logger.appender[time_format]: %Y-%m-%d %H:%M:%S.
+				root.log.logger.appender[time_use_us]: true
+	root.error
+结点已读取完毕：root.app，类型为：yy::config::AppXmlConfig
+结点已读取完毕：root.remote，类型为：yy::config::RemoteXmlConfig
+xml_attr为空，该属性可能不存在！，使用默认日志文件路径./2026-08-15_serverlog_default.log
+结点已读取完毕：root.log，类型为：yy::config::LogXmlConfig
+2026-08-15 01:12:52,647:243111(0x761dbe503640):ZOO_INFO@log_env@1250: Client environment:zookeeper.version=zookeeper C client 3.9.1
+2026-08-15 01:12:52,647:243111(0x761dbe503640):ZOO_INFO@log_env@1254: Client environment:host.name=YY
+2026-08-15 01:12:52,647:243111(0x761dbe503640):ZOO_INFO@log_env@1261: Client environment:os.name=Linux
+2026-08-15 01:12:52,647:243111(0x761dbe503640):ZOO_INFO@log_env@1262: Client environment:os.arch=6.18.35.2-microsoft-standard-WSL2
+2026-08-15 01:12:52,647:243111(0x761dbe503640):ZOO_INFO@log_env@1263: Client environment:os.version=#1 SMP PREEMPT_DYNAMIC Wed Jun 17 23:14:00 UTC 2026
+2026-08-15 01:12:52,647:243111(0x761dbe503640):ZOO_INFO@log_env@1271: Client environment:user.name=(null)
+2026-08-15 01:12:52,647:243111(0x761dbe503640):ZOO_INFO@log_env@1279: Client environment:user.home=/home/yangyue
+2026-08-15 01:12:52,647:243111(0x761dbe503640):ZOO_INFO@log_env@1291: Client environment:user.dir=/home/yangyue/projects/GameServer
+2026-08-15 01:12:52,647:243111(0x761dbe503640):ZOO_INFO@zookeeper_init_internal@1335: Initiating client connection, host=127.0.0.1:2181 sessionTimeout=30000 watcher=0x5bd8905d5960 sessionId=0 sessionPasswd=<null> context=0x5bd8a04748b0 flags=0
+2026-08-15 01:12:52,648:243111(0x761dbd5fe6c0):ZOO_INFO@check_events@2987: initiated connection to server 127.0.0.1:2181
+2026-08-15 01:12:52,651:243111(0x761dbd5fe6c0):ZOO_INFO@finalize_session_establishment@2861: session establishment complete on server 127.0.0.1:2181, sessionId=0x10000dae08e0020, negotiated timeout=30000 
+2026-08-15 01:12:53,692:243111(0x761dbe503640):ZOO_INFO@log_env@1250: Client environment:zookeeper.version=zookeeper C client 3.9.1
+2026-08-15 01:12:53,692:243111(0x761dbe503640):ZOO_INFO@log_env@1254: Client environment:host.name=YY
+2026-08-15 01:12:53,692:243111(0x761dbe503640):ZOO_INFO@log_env@1261: Client environment:os.name=Linux
+2026-08-15 01:12:53,692:243111(0x761dbe503640):ZOO_INFO@log_env@1262: Client environment:os.arch=6.18.35.2-microsoft-standard-WSL2
+2026-08-15 01:12:53,692:243111(0x761dbe503640):ZOO_INFO@log_env@1263: Client environment:os.version=#1 SMP PREEMPT_DYNAMIC Wed Jun 17 23:14:00 UTC 2026
+2026-08-15 01:12:53,692:243111(0x761dbe503640):ZOO_INFO@log_env@1271: Client environment:user.name=(null)
+2026-08-15 01:12:53,692:243111(0x761dbe503640):ZOO_INFO@log_env@1279: Client environment:user.home=/home/yangyue
+2026-08-15 01:12:53,692:243111(0x761dbe503640):ZOO_INFO@log_env@1291: Client environment:user.dir=/home/yangyue/projects/GameServer
+2026-08-15 01:12:53,692:243111(0x761dbe503640):ZOO_INFO@zookeeper_init_internal@1335: Initiating client connection, host=127.0.0.1:2181 sessionTimeout=30000 watcher=0x5bd8905d5960 sessionId=0 sessionPasswd=<null> context=0x5bd8a067ee70 flags=0
+2026-08-15 01:12:53,692:243111(0x761dae7fc6c0):ZOO_INFO@check_events@2987: initiated connection to server 127.0.0.1:2181
+2026-08-15 01:12:53,693:243111(0x761dae7fc6c0):ZOO_INFO@finalize_session_establishment@2861: session establishment complete on server 127.0.0.1:2181, sessionId=0x10000dae08e0023, negotiated timeout=30000 
+所有配置读取完毕！
+异步写线程开启！
+[2026-08-15 01:12:52.651329][info] [ZkWatcher] Connect Success to ZooKeeper!
+[2026-08-15 01:12:52.651341][info] [ZkClient] zookeeper_init success!
+[2026-08-15 01:12:52.692047][info] [RPC Server] Registered service CenterRoomServiceRpc in Local
+[2026-08-15 01:12:52.692286][info] [EventLoopThreadPool] 启动io线程<129869878916800>！
+[2026-08-15 01:12:52.692409][info] [EventLoopThreadPool] 启动io线程<129869870524096>！
+[2026-08-15 01:12:52.692432][info] 线程<129870119056960>开始监听Tcp，监听地址为：<0.0.0.0:14443>，监听套接字为9
+[2026-08-15 01:12:52.694028][info] [ZkClient] znode create success... <node_path: /rpc_services/CenterRoomServiceRpc/0.0.0.0:14443, node_data: 0.0.0.0:14443>
+[2026-08-15 01:12:53.693867][info] [ZkWatcher] Connect Success to ZooKeeper!
+[2026-08-15 01:12:53.693873][info] [ZkClient] zookeeper_init success!
+[2026-08-15 01:12:53.694530][info] [ZkServiceClient] Fetch Remote Service /rpc_services/LogicRoomServiceRpc: 0.0.0.0:39939
+[2026-08-15 01:12:53.694995][info] [ZkServiceClient] Fetch Remote Service /rpc_services/CenterRoomServiceRpc: 0.0.0.0:14443
+[2026-08-15 01:12:53.695494][info] [ZkServiceClient] Fetch Remote Service /rpc_services/GateRoomServiceRpc: 0.0.0.0:11113
+[2026-08-15 01:12:53.695990][info] [ZkServiceClient] Fetch Remote Service /rpc_services/AccountServiceRpc: 0.0.0.0:12223
+[2026-08-15 01:12:53.896796][info] 启动线程池[temp connect_thread_pool]线程<129869836953280>
+[2026-08-15 01:12:53.896821][info] LogicRoomServiceRpcRPC连接池大小 = 1
+[2026-08-15 01:12:53.898050][debug] In Connector::StartInLoop(), 开始连接服务器<0.0.0.0:39939>
+[2026-08-15 01:12:53.898103][info] 连接至LogicRpc服务器！
+[2026-08-15 01:12:53.898139][info] 结束线程池[temp connect_thread_pool]线程<129869836953280>
+[2026-08-15 01:12:53.898288][info] 有 0 个房间, 逻辑服有
+[2026-08-15 01:12:54.898401][info] 有 0 个房间, 逻辑服有0.0.0.0:39939-0, 
+[2026-08-15 01:12:55.898516][info] 有 0 个房间, 逻辑服有0.0.0.0:39939-0, 
+[2026-08-15 01:12:56.898630][info] 有 0 个房间, 逻辑服有0.0.0.0:39939-0, 
+[2026-08-15 01:12:57.898749][info] 有 0 个房间, 逻辑服有0.0.0.0:39939-0, 
+[2026-08-15 01:12:58.898879][info] 有 0 个房间, 逻辑服有0.0.0.0:39939-0, 
+收到Terminated信号，结束服务器进程！
+---------main end---------

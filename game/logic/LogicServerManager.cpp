@@ -3,11 +3,8 @@
 #include "log.h"
 #include "EventLoop.h"
 #include "LogicServer.h"
-#include "ZkServiceClient.h"
 #include "RpcServer.h"
 #include "UserConnection.h"
-#include <future>
-#include <functional>
 
 using namespace std::chrono_literals;
 using namespace yy::net;
@@ -36,8 +33,8 @@ void LogicServerManager::RunApp()
     m_accpetorLoop = make_unique<EventLoop>(500ms);
 
     //! ④、初始化前端监听的IP地址（使用随机端口）
-    const IPAddressPtr frontend_tcp_addr = std::make_shared<IPv4Address>("192.168.147.128");
-    const IPAddressPtr frontend_udp_addr = std::make_shared<IPv4Address>("192.168.147.128");
+    const IPAddressPtr frontend_tcp_addr = std::make_shared<IPv4Address>("0.0.0.0");
+    const IPAddressPtr frontend_udp_addr = std::make_shared<IPv4Address>("0.0.0.0");
     //! ⑤、初始化前端服务器
     m_frontend = make_unique<LogicServer>(m_accpetorLoop.get(), frontend_tcp_addr, frontend_udp_addr);
     m_frontend->SetNotifier_Security(

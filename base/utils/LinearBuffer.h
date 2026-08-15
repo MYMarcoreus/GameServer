@@ -11,7 +11,7 @@ class Message;
 
 namespace yy::util {
 
-// 每一个TcpConnection对应一个recvbuf和sendbuf，而每一个TcpConnection仅仅会被一个ioloop线程操作io，因此Buffer在此场景下线程安全
+// 每一个 TcpConnection 对应一个recvbuf和sendbuf，而每一个TcpConnection仅仅会被一个ioloop线程操作io，因此Buffer在此场景下线程安全
 class LinearBuffer: copyable {
 public:
     explicit LinearBuffer(size_t _capacity);
@@ -99,10 +99,7 @@ public:
     bool PopDataToCBuffer(void* dest_buf, size_t data_len);
     ///@brief 将大小为类型T的数据写入类型`T`的结构  ———— 从recvBuf读取数据到消息头结构体中
     template<class T>
-    requires requires {
-        requires std::is_standard_layout_v<T>;
-        requires std::is_trivial_v<T>;
-    }
+    requires std::is_standard_layout_v<T> and std::is_trivial_v<T>
     bool PopDataToPODStruct(T& dest)
     {
         return PopDataToCBuffer(&dest, sizeof(dest));

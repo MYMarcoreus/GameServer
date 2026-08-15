@@ -1,8 +1,5 @@
 #include "util_functions.h"
-#include "SocketApiWrapper.h"
-
 #include <fcntl.h>
-
 #include <thread>
 #include <chrono>
 #include <cassert>
@@ -18,6 +15,10 @@
 #ifdef ____LINUX
     #include <sys/socket.h>
     #include <sys/eventfd.h>
+    #include <net/if.h>
+    #include <ifaddrs.h>
+    #include <arpa/inet.h>
+    #include <netinet/in.h>
 #endif
 #ifdef ____WINDOWS
     #include <winsock2.h>
@@ -48,6 +49,46 @@ std::string GetCWD()
 
     const std::string base_name_str(base_name);
     return base_name_str.substr(0, base_name_str.find_last_of('/'));
+}
+
+
+std::string GetLocalIP()
+{
+#ifdef ____LINUX
+    struct ifaddrs* ifaddr = nullptr;
+    if (::getifaddrs(&ifaddr) != 0) {
+        return "127.0.0.1";
+    }
+    std::string result = "127.0.0.1";
+    for (auto* ifa = ifaddr; ifa != nullptr; ifa = ifa->ifa_next) {
+        if (ifa->ifa_addr == nullptr || ifa->ifa_addr->sa_family != AF_INET) {
+            continue;
+        }
+        if ((ifa->ifa_flags & IFF_LOOPBACK) != 0) {
+            continue;
+        }
+        char buf[INET_ADDRSTRLEN]{};
+        if (::inet_ntop(AF_INET, &(reinterpret_cast<sockaddr_in*>(ifa->ifa_addr)->sin_addr), buf, sizeof(buf)) != nullptr) {
+            result = buf;
+            break;
+        }
+    }
+    ::freeifaddrs(ifaddr);
+    return result;
+#endif
+#ifdef ____WINDOWS
+    char hostname[256]{};
+    if (::gethostname(hostname, sizeof(hostname)) != 0) {
+        return "127.0.0.1";
+    }
+    auto* host = ::gethostbyname(hostname);
+    if (host == nullptr || host->h_addr_list == nullptr || host->h_addr_list[0] == nullptr) {
+        return "127.0.0.1";
+    }
+    char buf[INET_ADDRSTRLEN]{};
+    ::inet_ntop(AF_INET, host->h_addr_list[0], buf, sizeof(buf));
+    return buf;
+#endif
 }
 
 
@@ -270,7 +311,7 @@ std::string GetErrorInfo(int64_t err) {
 #endif
 
 #ifdef ____LINUX
-    const auto p = strerrorname_np(err);
+    const auto p = strerrorname_np(static_cast<int>(err));
     return std::string( p ? p : "" ) + "(" + StrError((int)err) + ")";
 #endif
 }

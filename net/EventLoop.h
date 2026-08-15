@@ -103,7 +103,8 @@ private:
     bool                           m_IsLooping;
     bool                           m_IsQuit;
     bool                           m_EnableWakeup;
-    std::unique_ptr<Poller>        m_Poller;          //! 其实EventLoop有一些函数都是直接调用Poller的函数，所以Poller需要先初始化
+    //! Poller：（管理EventLoop中所有连接fd的）事件监听器（基于IO复用）：其实EventLoop有一些函数都是直接调用Poller的函数，所以Poller需要先初始化
+    std::unique_ptr<Poller>        m_Poller;
     std::unique_ptr<TimerManager>  m_TimerManager;
     std::unique_ptr<WakeupManager> m_WakeupManager;   // 用于唤醒正在Loop()阻塞的PollWait()函数：可用于唤醒执行任务或退出Loop
     ChanneList                     m_ActiveChannels;

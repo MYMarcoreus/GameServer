@@ -1,16 +1,15 @@
 #include "FrontendServer.h"
 #include "TcpConnection.h"
-#include "UdpSession.h"
 #include "log.h"
 #include "connection.pb.h"
 #include "md5/md5.h"
 #include "UserConnection.h"
 #include "EventLoop.h"
-#include "Socket.h"
 #include "ProtobufTcpCodec_Cmd.h"
 #include "ProtobufUdpCodec_Cmd.h"
 #include "TcpServer.h"
 #include "UdpServer.h"
+#include "UdpSession.h"
 #include <google/protobuf/message.h>
 
 #include "game.pb.h"
@@ -83,7 +82,7 @@ FrontendServer::~FrontendServer()
 
 
 void FrontendServer::Start(const F_ThreadInitCallback& cb) {
-    m_tcpServer->Start(config::g_app_config->GetValue().tcp_io_thread_num(), 500ms, cb);
+    m_tcpServer->Start(static_cast<int>(config::g_app_config->GetValue().tcp_io_thread_num()), 500ms, cb);
     m_udpServer->Start(1, 500ms);
 }
 
@@ -110,8 +109,8 @@ void FrontendServer::OnUnknownTcpMessage(const TcpConnectionPtr & conn, const Me
 
 void FrontendServer::OnUnknownUdpMessage(const UdpSessionPtr & sess, const MessagePtr &message) {
     YLOG_TRACE("Udp消息：{}，交由业务层", message->GetDescriptor()->full_name());
-#ifdef ____DEBUG
     const auto userconn = FindUser(sess->GetConnID());
+#ifdef ____DEBUG
     if (message->GetDescriptor()->name() == "C2SMove") {
         const auto move = dynamic_cast<protocol::app::C2SMove*>(message.get());
         if (move and move->uid() != userconn->GetUID()) {
@@ -137,7 +136,7 @@ void FrontendServer::OnConnectionShutdown(const TcpConnectionPtr & conn) {
 
 void FrontendServer::OnConnectionEstablished(const TcpConnectionPtr  & conn) {
     YLOG_INFO("███████████████████连接成功<{}:{}, {}>！",
-              conn->GetPeerAddr()->GetIPStr().c_str(), conn->GetPeerAddr()->GetPort(), conn->GetSocketFD());
+              conn->GetPeerAddr()->GetIPStr(), conn->GetPeerAddr()->GetPort(), conn->GetSocketFD());
 
     const auto userconn = std::make_shared<UserConnection>(conn, *m_tcpCodec, *m_udpCodec);
     AddUser(conn->GetConnID(), userconn);
@@ -226,7 +225,7 @@ void FrontendServer::OnSecurity(const TcpConnectionPtr & conn, const C2SSecurity
     md5::EncryptMD5str(md5Arr, reinterpret_cast<unsigned char*>(Arr), static_cast<int>(strlen(Arr)));
 
     YLOG_TRACE("服务器: {}, {}, {}", GetAppConfig().app_id(), GetAppConfig().app_version(), md5Arr)
-    YLOG_TRACE("客户端: {}, {}, {}", message->app_id(),message->app_version(), message->app_md5().c_str())
+    YLOG_TRACE("客户端: {}, {}, {}", message->app_id(),message->app_version(), message->app_md5())
 
     //! 进行安全验证
     protocol::core::SecurityCheckRsp::ResultCode resultCode;

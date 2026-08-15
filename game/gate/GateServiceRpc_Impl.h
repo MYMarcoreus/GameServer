@@ -1,6 +1,6 @@
 #pragma once
 
-#include "IServer.h"
+
 #include "room.pb.h"
 
 namespace yy::net

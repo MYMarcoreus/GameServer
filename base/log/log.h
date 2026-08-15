@@ -1,11 +1,9 @@
 #pragma once
 
 #include "Singleton.h"
-#include "util_functions.h"
 #include "ILogAppender.h"
 
 #include <unordered_map>
-#include <format>
 #include <utility>
 #include <vector>
 #include <string>
@@ -13,8 +11,10 @@
 #include <mutex>
 #include <thread>
 #include <atomic>
+#include <format>
 
 #include "RWLock.h"
+#include "util_functions.h"
 
 #define MAKE_LOG_MESSAGE(level, content) std::make_shared<yy::Ylog::LogMessage>(level, yy::util::get_current_time(), __FILE__, __LINE__, std::this_thread::get_id(), content)
 
@@ -107,7 +107,7 @@ public:
 public:
     LogMessage(const LogLevel level, std::chrono::system_clock::time_point time,std::string filepath,
                const uint32_t line, const std::thread::id theradID, std::string content):
-        m_level(level), m_time(std::move(time)),
+        m_level(level), m_time(time),
         m_filepath(std::move(filepath)), m_fileline(line),
         m_threadID(theradID), m_content(std::move(content)) {}
 

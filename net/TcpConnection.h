@@ -125,6 +125,9 @@ private:
     uint64_t                         m_connid;
     EventLoop *                      m_ioLoop;
     std::unique_ptr<Socket>          m_socket;
+    //! IOChannel是单个sockfd上的事件分发器：
+    //!     ① 提供 HandleHappenedEvent 核心函数给EventLoop调用：将TcpConnection的sockfd上的不同IO事件分发至不同的回调函数
+    //!     ② 封装 sockfd 上的 IO事件+IO回调
     std::unique_ptr<IOChannel>       m_channel;
     uint8_t                          m_xorCode;
     std::atomic<E_ConnectionState>   m_connectionState;

@@ -50,7 +50,7 @@ GameService::GameService(EventLoop * baseLoop, IServer& frontend):
 
     RegisterHandler(this, this->m_room_dispatcher, &GameService::OnSceneLoginReq);
 
-    m_players_pool.Init("玩家对象池", m_frontend.GetAppConfig().app_player_max(), nullptr, nullptr);
+    ObjectPool<PlayerBaseData>::Init("玩家对象池", m_frontend.GetAppConfig().app_player_max(), nullptr, nullptr);
     m_roomManager = std::make_unique<RoomManager>(m_baseLoop);
     m_redisDAO.Start(m_baseLoop);
 }
@@ -85,7 +85,7 @@ void GameService::NewRoom(google::protobuf::RpcController* controller,
             response->set_room_id(new_room->get_id());
             // 给出逻辑服对外开放的ip和端口
             const auto fronend_addr = m_frontend.GetTcpListenAddr();
-            response->set_ip(fronend_addr->GetIPStr());
+            response->set_ip(GetLocalIP());
             response->set_port(fronend_addr->GetPort());
             YLOG_INFO("执行完毕 GameService::NewRoom 服务: {}", response->ShortDebugString())
 
@@ -117,7 +117,7 @@ void GameService::GetLogicAddr(google::protobuf::RpcController* controller,
 {
     // 获取逻辑服对游戏客户端开放的地址
     const auto frontend_addr = m_frontend.GetTcpListenAddr();
-    response->set_ip(frontend_addr->GetIPStr());
+    response->set_ip(GetLocalIP());
     response->set_port(frontend_addr->GetPort());
 
     // 发送响应
@@ -186,4 +186,3 @@ void GameService::OnSceneLoginReq(const UserConnectionPtr& conn, const Ptr<Scene
 
 
 } //namespace yy::app
-

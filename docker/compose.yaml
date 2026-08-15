@@ -1,0 +1,76 @@
+# =====================================================================
+#  GameServer 编排配置
+#  使用 host 网络模式，让游戏服务器进程能通过 127.0.0.1 访问
+#  同机部署的 MySQL / Redis / ZooKeeper（与 configs_*.xml 配置一致）
+#
+#  说明: host 网络模式仅在 Linux 原生 Docker 下可用；
+#        Docker Desktop (macOS/Windows) 不支持 host 网络。
+# =====================================================================
+services:
+  mysql:
+    image: mysql:8.0
+    network_mode: host
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      TZ: Asia/Shanghai
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./mysql-init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  redis:
+    image: redis:7
+    network_mode: host
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  zookeeper:
+    image: zookeeper:3.9
+    network_mode: host
+    healthcheck:
+      test: ["CMD", "zkServer.sh", "status"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  gameserver:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      target: runtime
+    network_mode: host
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      zookeeper:
+        condition: service_healthy
+    command: /usr/local/bin/start.sh
+
+  # 开发容器专用：使用 builder 阶段（含完整编译工具链）
+  dev:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      target: builder
+    network_mode: host
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      zookeeper:
+        condition: service_healthy
+    command: /bin/sh -c "sleep infinity"
+    init: true
+
+volumes:
+  mysql_data:

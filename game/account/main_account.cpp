@@ -7,7 +7,8 @@ using namespace std::chrono_literals;
 int main()
 {
     try {
-        yy::config::ConfigManager::AddFilePath("../config/configs_account.xml");
+        yy::config::ConfigManager::AddFilePath(
+            yy::config::ConfigManager::GetProjectRoot() / "config" / "configs_account.xml");
         yy::app::account::AccountServerManager::Instance().RunApp();
     } catch (const std::exception &e) {
         std::cerr << "Uncaught exception: " << e.what() << std::endl;

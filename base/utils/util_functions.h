@@ -1,11 +1,8 @@
 #pragma once
 #include <string>
 #include <chrono>
-#include <csignal>
 #include <atomic>
 #include <thread>
-
-#include "net_definations.h"
 #include "socket_definations.h"
 
 #ifdef ____GNUC
@@ -28,6 +25,9 @@ using namespace std::chrono_literals;
 
 // 获当前应用程序所在的工作目录(不带最后的/)
 extern std::string GetCWD();
+
+/// @brief 获取本机第一个非回环的 IPv4 地址，找不到则返回 127.0.0.1
+extern std::string GetLocalIP();
 
 /// @brief 获取当前的格式化时间，默认格式为 2023-02-04 20:29:44.961172
 extern std::string get_current_fmt_time(
@@ -137,7 +137,7 @@ static double ____cnt_time = 0;
 {                                           \
     static auto t1 = time(nullptr);          \
     auto t2 = time(nullptr);                  \
-    if( t2-t1 >= interval )                    \
+    if( (t2-t1) >= (interval) )                    \
     {                                           \
         t1 = t2;                                 \
         something ;                               \
@@ -149,5 +149,3 @@ static double ____cnt_time = 0;
 #define TICK_END_CALCAVG()
 #define INTERVAL_DO(interval , something ) { something }
 #endif
-
-

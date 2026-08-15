@@ -10,7 +10,7 @@ template <typename T>
 concept IsValidStub =
     std::derived_from<T, google::protobuf::Service> &&
     requires(T t) {
-    { t.channel() } -> std::convertible_to<google::protobuf::RpcChannel*>;
+        { t.channel() } -> std::convertible_to<google::protobuf::RpcChannel*>;
     };
 
 template <IsValidStub ServiceType_Stub>

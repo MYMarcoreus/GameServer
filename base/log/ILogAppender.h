@@ -29,7 +29,7 @@ public:
     using FlushCallback = std::function<void()>;
 
     explicit ILogAppender(std::string format_pattern, int buffer_size = 2 * 1024,
-        std::chrono::milliseconds flush_interval = 500ms);
+        std::chrono::milliseconds flush_interval = 5000ms);
 
     virtual ~ILogAppender();
 

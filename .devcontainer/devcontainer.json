@@ -1,0 +1,20 @@
+{
+  "name": "GameServer Dev Container",
+  "dockerComposeFile": "../docker/compose.yaml",
+  "service": "dev",
+  "workspaceFolder": "/workspace",
+  "shutdownAction": "stopCompose",
+  "postCreateCommand": "cmake --preset linux-debug && cmake --build --preset debug -j$(nproc)",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "llvm-vs-code-extensions.vscode-clangd",
+        "ms-vscode.cmake-tools"
+      ],
+      "settings": {
+        "cmake.useCMakePresets": "always",
+        "cmake.configureOnOpen": true
+      }
+    }
+  }
+}

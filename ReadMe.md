@@ -49,7 +49,7 @@ C++20，Socket，TCP/UDP，主从Reactor，ZooKeeper，RPC，Protobuf，MySQL，
   - `/logic`：逻辑服务器，集成接入服务器与异步RPC框架，采用基于Actor模型的房间架构，实现玩家在场景内的移动、跳跃、进出等状态同步。
   - `/rpc_clients`：统一封装发起跨服务RPC请求的客户端组件。
 
-### 分层架构图
+### 分层架构图N
 
 ```mermaid
 graph BT

@@ -1,4 +1,5 @@
 #include "RoomManager.h"
+#include "log.h"
 #include "AppXmlConfig.h"
 #include "EventLoop.h"
 #include "EventLoopThread.h"
@@ -15,13 +16,13 @@ namespace yy::app::logic
 RoomManager::RoomManager(EventLoop * base_loop): base_loop_(base_loop)
 {
     work_threads = std::make_unique<EventLoopThreadPool>(base_loop_);
-    work_threads->Start(config::g_app_config->GetValue().work_thread_num(), 500ms); //! 启动服务器的工作线程：即时处理
+    work_threads->Start(static_cast<int>(config::g_app_config->GetValue().work_thread_num()), 500ms); //! 启动服务器的工作线程：即时处理
 
     base_loop_->RunEvery(1s, [this]() {
-        for (auto [room_id, room]: this->rooms_) {
+        for (const auto& [room_id, room] : this->rooms_) {
             YLOG_INFO("房间{}: {}", room_id, room->get_room_data().ShortDebugString())
         }
-        for (auto [uid, room_id]: this->uid_to_roomid_) {
+        for (const auto& [uid, room_id] : this->uid_to_roomid_) {
             YLOG_INFO("uid:{} - rooid:{}", uid, room_id)
         }
     });

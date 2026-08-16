@@ -101,6 +101,14 @@ void GateServerManager::RunApp()
 
     //! 启动监听线程(即主线程)的
     m_accpetorLoop->Loop();
+
+    //! 事件循环退出（收到 SIGINT/SIGTERM 等信号），显式停止后端并注销 ZooKeeper 服务节点
+    if (m_backend) {
+        m_backend->Stop();
+    }
+    if (m_frontend) {
+        m_frontend->Stop();
+    }
 }
 
 

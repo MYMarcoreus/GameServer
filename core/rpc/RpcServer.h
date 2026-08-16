@@ -1,5 +1,8 @@
 #pragma once
 
+#include <string>
+#include <vector>
+
 #include "core_definations.h"
 #include "net_definations.h"
 #include "log.h"
@@ -67,6 +70,14 @@ private:
     std::unique_ptr<RpcCodec>            codec_;
     std::unordered_map<std::string, std::unique_ptr<google::protobuf::Service>> services_;
     std::unique_ptr<zk::ZkServiceClient> zkServiceManager_;
+
+    struct RegisteredService {
+        std::string name;
+        std::string ip;
+        std::string port;
+    };
+    // 已注册到 ZooKeeper 的服务实例（用于 Stop 时显式注销）
+    std::vector<RegisteredService> registered_services_;
 };
 
 template <typename ServiceImpl, typename... Args>

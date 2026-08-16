@@ -29,6 +29,12 @@ public:
         appXmlConfig.udpIOThreadNum = XmlAttributeTo<uint32_t>(xml_app->FindAttribute("udpIOThreadNum"));
         appXmlConfig.workThreadNum  = XmlAttributeTo<uint32_t>(xml_app->FindAttribute("workThreadNum"));
         appXmlConfig.rpcPort  = XmlAttributeTo<uint16_t>(xml_app->FindAttribute("rpcPort"));
+        // advertiseIp is optional; only parse if attribute exists
+        if (xml_app->FindAttribute("advertiseIp") != nullptr) {
+            appXmlConfig.advertiseIp = XmlAttributeTo<std::string>(xml_app->FindAttribute("advertiseIp"));
+        } else {
+            appXmlConfig.advertiseIp.clear();
+        }
 
         auto securityCode = XmlAttributeTo<std::string>(xml_app->FindAttribute("securityCode"));
         auto checkCode    = XmlAttributeTo<std::string>(xml_app->FindAttribute("checkCode"));
@@ -45,15 +51,3 @@ ConfigVar<AppXmlConfig>::ptr g_app_config = ConfigManager::LookUpOrAdd<AppXmlCon
 
 
 }
-
-
-
-
-
-
-
-
-
-
-
-

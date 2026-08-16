@@ -20,6 +20,9 @@ public:
     ///@brief 服务注册（服务名 + 实例地址ip:port）
     bool Register(const std::string& service_name, const std::string& ip, const std::string& port);
 
+    ///@brief 服务注销（服务名 + 实例地址ip:port），删除对应的临时实例节点
+    void Unregister(const std::string& service_name, const std::string& ip, const std::string& port);
+
     ///@brief 服务发现
     auto FetchLocalCache(const std::string& service_name) -> std::vector<net::IPAddressPtr>;
     auto FetchAllLocalCache() -> std::unordered_map<std::string, std::vector<net::IPAddressPtr>>;

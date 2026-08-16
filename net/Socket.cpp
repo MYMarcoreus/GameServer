@@ -6,7 +6,6 @@
 
 
 
-
 namespace yy::net {
 
 template<typename T>
@@ -169,14 +168,3 @@ SocketApiWrapper::SocketResult Socket::Sendmsg(IOV_TYPE* iov, int iovcnt, IPAddr
     return SocketApiWrapper::sendmsg(m_socketfd, iov, iovcnt, peerAddr);
 }
 } // yy::net
-
-
-
-
-
-
-
-
-
-
-

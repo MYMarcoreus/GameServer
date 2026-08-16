@@ -8,6 +8,8 @@
 #include "SignalManager.h"
 #include "SocketApiWrapper.h"
 
+#include <chrono>
+#include <thread>
 
 namespace yy::net {
 
@@ -93,9 +95,15 @@ bool TcpClient::ConnectSync(const IPAddressPtr& server_addr) {
 
     m_Connector->Start();
 
-    // 阻塞直到连接成功
+    //! 阻塞直到连接成功；加超时防止连接不可达节点（例如已下线的残留地址）时永久阻塞
+    constexpr auto kConnectTimeout = 10s;
+    const auto deadline = std::chrono::steady_clock::now() + kConnectTimeout;
     while (m_IsConnected.load(std::memory_order::acquire) == false) {
-        m_IsConnected.wait(false);
+        if (std::chrono::steady_clock::now() >= deadline) {
+            StopConnecting();
+            return false;
+        }
+        std::this_thread::sleep_for(20ms);
     }
 
     return true;

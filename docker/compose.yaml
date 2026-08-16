@@ -1,18 +1,24 @@
 # =====================================================================
 #  GameServer 编排配置
-#  使用 host 网络模式，让游戏服务器进程能通过 127.0.0.1 访问
-#  同机部署的 MySQL / Redis / ZooKeeper（与 configs_*.xml 配置一致）
+#  使用桥接网络（bridge），跨平台通用（Linux 原生 Docker / Docker Desktop / WSL2）
 #
-#  说明: host 网络模式仅在 Linux 原生 Docker 下可用；
-#        Docker Desktop (macOS/Windows) 不支持 host 网络。
+#  游戏服务器容器通过服务名访问 MySQL / Redis / ZooKeeper：
+#    - MySQL      -> mysql:33060   （配置见 docker/config/*.xml）
+#    - ZooKeeper  -> zookeeper:2181（配置见 docker/config/*.xml）
+#    - Redis      -> redis:6379    （通过环境变量 REDIS_URI 指定）
+#
+#  宿主机原生运行仍使用仓库根目录 config/ 下的 127.0.0.1 配置，不受影响。
 # =====================================================================
 services:
   mysql:
     image: mysql:8.0
-    network_mode: host
+    networks: [gsnet]
     environment:
       MYSQL_ROOT_PASSWORD: root
       TZ: Asia/Shanghai
+    ports:
+      - "3307:3306"     # MySQL 经典协议（宿主机 3306 被占用，映射到 3307）
+      - "33061:33060"   # MySQL X Protocol（宿主机 33060 被占用，映射到 33061）
     volumes:
       - mysql_data:/var/lib/mysql
       - ./mysql-init.sql:/docker-entrypoint-initdb.d/init.sql:ro
@@ -24,7 +30,9 @@ services:
 
   redis:
     image: redis:7
-    network_mode: host
+    networks: [gsnet]
+    ports:
+      - "6379:6379"
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
@@ -33,7 +41,9 @@ services:
 
   zookeeper:
     image: zookeeper:3.9
-    network_mode: host
+    networks: [gsnet]
+    ports:
+      - "2181:2181"
     healthcheck:
       test: ["CMD", "zkServer.sh", "status"]
       interval: 5s
@@ -45,7 +55,13 @@ services:
       context: ..
       dockerfile: docker/Dockerfile
       target: runtime
-    network_mode: host
+    networks: [gsnet]
+    environment:
+      # Redis 地址（bridge 网络下通过服务名访问）
+      REDIS_URI: tcp://redis:6379
+    volumes:
+      # 使用 bridge 网络专用配置（MySQL/ZooKeeper 地址已改为服务名）
+      - ./config:/workspace/config:ro
     depends_on:
       mysql:
         condition: service_healthy
@@ -53,6 +69,19 @@ services:
         condition: service_healthy
       zookeeper:
         condition: service_healthy
+    ports:
+      - "11111:11111"      # GateServer TCP
+      - "11112:11112/udp"  # GateServer UDP
+      - "11113:11113"      # GateServer RPC
+      - "12221:12221"      # AccountServer TCP
+      - "12222:12222/udp"  # AccountServer UDP
+      - "12223:12223"      # AccountServer RPC
+      - "13333:13333"      # LogicServer TCP
+      - "13334:13334"      # LogicServer RPC
+      - "14444:14444/udp"  # LogicServer UDP
+      - "14441:14441"      # CenterServer TCP
+      - "14442:14442/udp"  # CenterServer UDP
+      - "14443:14443"      # CenterServer RPC
     command: /usr/local/bin/start.sh
 
   # 开发容器专用：使用 builder 阶段（含完整编译工具链）
@@ -61,7 +90,14 @@ services:
       context: ..
       dockerfile: docker/Dockerfile
       target: builder
-    network_mode: host
+    networks: [gsnet]
+    environment:
+      REDIS_URI: tcp://redis:6379
+    volumes:
+      # 双向绑定挂载宿主机源码目录（容器内修改实时同步回本地）
+      - ..:/workspace
+      # bridge 网络专用配置（可写，容器内修改同步到宿主机 docker/config）
+      - ./config:/workspace/config
     depends_on:
       mysql:
         condition: service_healthy
@@ -71,6 +107,10 @@ services:
         condition: service_healthy
     command: /bin/sh -c "sleep infinity"
     init: true
+
+networks:
+  gsnet:
+    driver: bridge
 
 volumes:
   mysql_data:

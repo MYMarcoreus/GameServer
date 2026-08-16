@@ -483,3 +483,7 @@ VS Code 远程容器开发配置：
 | `<log>` | 日志级别、格式、输出目标（stdout / file） |
 
 > 各服务端口速查见 [`linux-native-build.md`](./linux-native-build.md) 第八节。
+>
+> **容器运行时**（Docker bridge 网络）使用 `docker/config/` 下的同名配置，
+> 其中 MySQL/ZooKeeper 地址为服务名（`mysql` / `zookeeper`）；宿主机原生运行
+> 仍使用本目录（`config/`）下的 `127.0.0.1` 配置。详见 [`docker/README.md`](../docker/README.md)。

@@ -3,10 +3,8 @@
 #include "ZkServiceClient.h"
 #include "TcpConnection.h"
 #include "EventLoopThread.h"
-#include "RpcConnection.h"
 #include "RpcStubConnection.hpp"
 #include "ThreadPool.h"
-#include <functional>
 
 
 namespace yy::core::rpc

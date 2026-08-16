@@ -25,23 +25,30 @@ void ZkServiceClient::Start(const std::string& service_root)
 
 bool ZkServiceClient::Register(const std::string& service_name, const std::string& ip, const std::string& port)
 {
-    // 构建服务节点路径，例如 /services/AccountServiceRpc
+    // 声明：构建服务节点路径与实例路径
     const std::string service_node_path = std::format("{}/{}", service_root_, service_name);
-
-    // 创建服务节点（如果父节点 /services 不存在应提前创建）
-    zk_client_->CreateNode(service_node_path);
-
-    // 构建当前服务实例的信息和路径，例如 /services/AccountServiceRpc/127.0.0.1:13333
     const std::string host_info = std::format("{}:{}", ip, port);
     const std::string instance_node_path = std::format("{}/{}", service_node_path, host_info);
 
-    // 注册服务实例为临时节点（会话断开自动删除）
-    zk_client_->CreateNode(instance_node_path, host_info, ZOO_EPHEMERAL);
+    do {
+        //! ① 创建服务节点（父目录，如 /services/AccountServiceRpc，若不存在）
+        zk_client_->CreateNode(service_node_path);
 
-    // 创建完后立即从远端拉取节点信息，更新本地缓存
+        //! ② 注册服务实例为临时节点（会话断开自动删除）
+        zk_client_->CreateNode(instance_node_path, host_info, ZOO_EPHEMERAL);
+    } while (false);
+
+    //! 统一出口：创建完成后立即拉取远端信息，更新本地缓存
     FetchRemote(service_name);
-
     return true;
+}
+
+void ZkServiceClient::Unregister(const std::string& service_name, const std::string& ip, const std::string& port)
+{
+    const std::string service_node_path = std::format("{}/{}", service_root_, service_name);
+    const std::string host_info = std::format("{}:{}", ip, port);
+    const std::string instance_node_path = std::format("{}/{}", service_node_path, host_info);
+    zk_client_->DeleteNode(instance_node_path);
 }
 
 
@@ -69,7 +76,7 @@ auto ZkServiceClient::FetchAllLocalCache() -> std::unordered_map<std::string, st
 auto ZkServiceClient::FetchRemote(const std::string& service_name) -> std::vector<net::IPAddressPtr>
 {
     const auto service_node_path = std::format("{}/{}", service_root_, service_name);
-    const auto endpoints = StrEndpointsToIpAddr(service_node_path, zk_client_->GetNodeChildren(service_node_path));
+    auto endpoints = StrEndpointsToIpAddr(service_node_path, zk_client_->GetNodeChildren(service_node_path));
     {
         util::WriteLockGuard lg(service_endpoint_mutex_);
         service_endpoint_map_[service_node_path] = std::move(endpoints);
@@ -139,25 +146,39 @@ void ZkServiceClient::Watch(const std::string& service_name, WatcherCallback wat
 auto ZkServiceClient::StrEndpointsToIpAddr(const std::string& service_base, const std::vector<std::string> & providers) -> std::vector<net::IPAddressPtr>
 {
     std::vector<net::IPAddressPtr> endpoints;
+
     for (const auto& provider : providers) {
-        // 先做服务发现： 连接zookeeper服务器，获取服务提供方的ip和端口信息
-        auto service_node_path = std::format("{}/{}", service_base, provider);
+        // 声明
+        const std::string service_node_path = std::format("{}/{}", service_base, provider);
+        std::string host_str;
+        std::string error_msg;
 
-        const std::string host_str = zk_client_->GetNodeData(service_node_path);
-        if (host_str.empty()) {
-            throw std::invalid_argument(std::format("Failed to discover service {}", service_node_path));
-        }
-        // 解析服务提供方的ip和端口信息，得到服务提供方地址
-        const size_t pos = host_str.find(':');
-        if (pos == std::string::npos) {
-            throw std::invalid_argument("Invalid host data: " + host_str);
-        }
-        const std::string ip = host_str.substr(0, pos);
-        const std::string port_str = host_str.substr(pos + 1);
-        uint16_t port = static_cast<uint16_t>(std::stoi(port_str));
-        const auto service_addr = std::make_shared<net::IPv4Address>(ip, port);
+        do {
+            //! ① 服务发现：获取服务提供方的 ip 和端口信息
+            host_str = zk_client_->GetNodeData(service_node_path);
+            if (host_str.empty()) {
+                error_msg = std::format("Failed to discover service {}", service_node_path);
+                break;
+            }
 
-        endpoints.emplace_back(service_addr);
+            //! ② 解析 ip:port
+            const size_t pos = host_str.find(':');
+            if (pos == std::string::npos) {
+                error_msg = std::format("Invalid host data: {}", host_str);
+                break;
+            }
+            const std::string ip = host_str.substr(0, pos);
+            const std::string port_str = host_str.substr(pos + 1);
+            const uint16_t port = static_cast<uint16_t>(std::stoi(port_str));
+
+            //! ③ 构造服务提供方地址
+            endpoints.emplace_back(std::make_shared<net::IPv4Address>(ip, port));
+        } while (false);
+
+        //! 统一出口：解析失败时抛出异常
+        if (!error_msg.empty()) {
+            throw std::invalid_argument(error_msg);
+        }
     }
     return endpoints;
 }

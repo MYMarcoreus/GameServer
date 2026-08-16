@@ -39,4 +39,3 @@ std::string RpcStubConnection<ServiceType_Stub>::GetServiceName()
 {
     return ServiceType_Stub::descriptor()->name();
 }
-

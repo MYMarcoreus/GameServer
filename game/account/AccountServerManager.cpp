@@ -47,6 +47,11 @@ void AccountServerManager::RunApp()
 
     //! 启动监听线程(即主线程)并阻塞在此
     m_accpetorLoop->Loop();
+
+    //! 事件循环退出（收到 SIGINT/SIGTERM 等信号），显式停止服务并注销 ZooKeeper 服务节点
+    if (m_rpcServer) {
+        m_rpcServer->Stop();
+    }
 }
 
 

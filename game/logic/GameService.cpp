@@ -7,6 +7,7 @@
 #include "RoomManager.h"
 #include "EventLoop.h"
 #include "LogicRedisDAO.h"
+#include "AppXmlConfig.h"
 
 
 using namespace yy::net;
@@ -85,7 +86,10 @@ void GameService::NewRoom(google::protobuf::RpcController* controller,
             response->set_room_id(new_room->get_id());
             // 给出逻辑服对外开放的ip和端口
             const auto fronend_addr = m_frontend.GetTcpListenAddr();
-            response->set_ip(GetLocalIP());
+            // 优先返回配置中的 advertiseIp，若为空则回落到本机IP
+            const auto & advertise = yy::config::g_app_config->GetValue().advertise_ip();
+            if (!advertise.empty()) response->set_ip(advertise);
+            else response->set_ip(GetLocalIP());
             response->set_port(fronend_addr->GetPort());
             YLOG_INFO("执行完毕 GameService::NewRoom 服务: {}", response->ShortDebugString())
 
@@ -117,7 +121,14 @@ void GameService::GetLogicAddr(google::protobuf::RpcController* controller,
 {
     // 获取逻辑服对游戏客户端开放的地址
     const auto frontend_addr = m_frontend.GetTcpListenAddr();
-    response->set_ip(GetLocalIP());
+    const auto & advertise = yy::config::g_app_config->GetValue().advertise_ip();
+
+    if (!advertise.empty()) {
+        response->set_ip(advertise);
+    }
+    else {
+        response->set_ip(GetLocalIP());
+    }
     response->set_port(frontend_addr->GetPort());
 
     // 发送响应

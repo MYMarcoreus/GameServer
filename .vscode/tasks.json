@@ -7,7 +7,7 @@
       "command": "./build.sh debug",
       "options": { "cwd": "${workspaceFolder}" },
       "group": { "kind": "build", "isDefault": true },
-      "problemMatcher": ["$gcc"]
+      "problemMatcher": []
     },
     {
       "label": "Build Release",
@@ -15,7 +15,7 @@
       "command": "./build.sh release",
       "options": { "cwd": "${workspaceFolder}" },
       "group": "build",
-      "problemMatcher": ["$gcc"]
+      "problemMatcher": []
     },
     {
       "label": "Run CenterServer",

@@ -21,6 +21,7 @@
         udpIOThreadNum   = "2"
         workThreadNum    = "2"
         rpcPort          = "13334"
+        advertiseIp      = "127.0.0.1"
     />
 
     <remote
@@ -40,7 +41,7 @@
             username  = "yy"
             password  = "0"
             poolsize  = "10"
-            ip      = "127.0.0.1"
+            ip      = "mysql"
             port    = "33060"
         />
 
@@ -49,7 +50,7 @@
             username  = "yy"
             password  = "0"
             poolsize  = "10"
-            ip      = "127.0.0.1"
+            ip      = "zookeeper"
             port    = "2181"
         />
     </remote>

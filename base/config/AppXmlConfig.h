@@ -18,6 +18,8 @@ public:
 
     [[nodiscard]] uint16_t rpc_port() const { return rpcPort; }
 
+    [[nodiscard]] const std::string & advertise_ip() const { return advertiseIp; }
+
     /// @brief 服务器ID：可用于判断服务器类型
     [[nodiscard]] uint32_t app_id() const { return appID; }
 
@@ -94,6 +96,7 @@ private:
     uint32_t workThreadNum{};
 
     uint16_t rpcPort{}; // 登录网关与登录服务器采用RPC通信
+    std::string advertiseIp{}; // 对外公布的IP（可选）
 };
 
 extern ConfigVar<AppXmlConfig>::ptr g_app_config;

@@ -3,13 +3,22 @@
 #include "log.h"
 #include "RedisPool.h"
 
+#include <cstdlib>
+
 namespace yy::core::redis {
 
 using namespace sw;
 
 void RedisClient::Start(net::EventLoop * loop, size_t pool_size, const std::string& uri) {
+    // 优先使用环境变量 REDIS_URI（例如 Docker bridge 网络下为 tcp://redis:6379），
+    // 未设置时使用调用方传入的 uri（默认 tcp://127.0.0.1:6379）
+    std::string effective_uri = uri;
+    if (const char* env_uri = std::getenv("REDIS_URI"); env_uri && *env_uri) {
+        effective_uri = env_uri;
+    }
+
     if (!pool_) {
-        pool_ = std::make_unique<RedisPool>(loop, uri, pool_size);
+        pool_ = std::make_unique<RedisPool>(loop, effective_uri, pool_size);
     }
 }
 

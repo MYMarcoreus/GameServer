@@ -32,6 +32,7 @@ RUN sed -i \
         gcc-14 g++-14 \
         cmake ninja-build \
         git curl zip unzip tar pkg-config \
+        clangd \
         libzookeeper-mt-dev && \
     rm -rf /var/lib/apt/lists/*
 

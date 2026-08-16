@@ -13,7 +13,7 @@
 
 namespace yy::SocketApiWrapper {
 
-int64_t get_last_socket_error() {
+int get_last_socket_error() {
 #ifdef ____WINDOWS
     // return GetLastError();
     return WSAGetLastError();
@@ -215,13 +215,13 @@ SocketApiWrapper::SocketResult send(socket_t sockfd, const void *ptr, size_t nby
     return {ret, get_last_socket_error()};
 }
 
-SocketApiWrapper::SocketResult sendto(socket_t sockfd, const void *ptr, size_t nbytes, int flags, const std::shared_ptr<IPAddress> peerAddr) {
+SocketApiWrapper::SocketResult sendto(socket_t sockfd, const void *ptr, size_t nbytes, int flags, const std::shared_ptr<IPAddress>& peerAddr) {
     assert(peerAddr);
     auto ret = ::sendto(sockfd, (char *) ptr, nbytes, flags, peerAddr->GetRawAddr(), peerAddr->GetRawAddrLen());
     return {ret, get_last_socket_error()};
 }
 
-SocketApiWrapper::SocketResult recvfrom(socket_t sockfd, void *ptr, size_t nbytes, int flags, const std::shared_ptr<IPAddress> peerAddr) {
+SocketApiWrapper::SocketResult recvfrom(socket_t sockfd, void *ptr, size_t nbytes, int flags, const std::shared_ptr<IPAddress>& peerAddr) {
     assert(peerAddr);
     auto addrLen = peerAddr->GetRawAddrLen();
     auto ret = ::recvfrom(sockfd, (char *) ptr, nbytes, flags, peerAddr->GetRawAddr(), &addrLen);
@@ -266,7 +266,7 @@ SocketApiWrapper::SocketResult writev(socket_t sockfd, IOV_TYPE *iov, int iovcnt
 
 
 
-SocketApiWrapper::SocketResult recvmsg(socket_t sockfd, IOV_TYPE *iov, int iovcnt, std::shared_ptr<IPAddress> peerAddr) {
+SocketApiWrapper::SocketResult recvmsg(socket_t sockfd, IOV_TYPE *iov, int iovcnt, const std::shared_ptr<IPAddress>& peerAddr) {
     assert(peerAddr);
 
 #ifdef ____WINDOWS
@@ -295,7 +295,7 @@ SocketApiWrapper::SocketResult recvmsg(socket_t sockfd, IOV_TYPE *iov, int iovcn
 
 
 
-SocketApiWrapper::SocketResult sendmsg(socket_t sockfd, IOV_TYPE* iov, int iovcnt, std::shared_ptr<IPAddress> peerAddr)
+SocketApiWrapper::SocketResult sendmsg(socket_t sockfd, IOV_TYPE* iov, int iovcnt, const std::shared_ptr<IPAddress>& peerAddr)
 {
     assert(peerAddr);
 

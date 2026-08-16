@@ -2,6 +2,7 @@
 #include "IPAddress.h"
 #include "net_definations.h"
 #include <chrono>
+#include <memory>
 
 namespace yy::net {
 
@@ -10,7 +11,7 @@ class IOChannel;
 
 
 ///@brief 对标Acceptor，实现了非阻塞connect
-class Connector {
+class Connector : public std::enable_shared_from_this<Connector> {
     enum E_ConnectionState {
         eDisconnected,
         eConnecting,

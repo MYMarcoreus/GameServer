@@ -1,6 +1,5 @@
 #include "Acceptor.h"
 #include "EventLoop.h"
-#include "IPAddress.h"
 #include "log.h"
 #include "status/Status.h"
 #include "SocketApiWrapper.h"
@@ -70,4 +69,3 @@ void Acceptor::StopListen() {
 
 
 } // yy::net
-

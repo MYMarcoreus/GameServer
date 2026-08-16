@@ -2,6 +2,7 @@
 
 #include <atomic>
 #include <shared_mutex>
+#include <mutex>
 #include <string>
 #include <functional>
 #include <vector>
@@ -26,6 +27,10 @@ public:
     ///@brief 在zkserver上根据指定的 node_path 创建znode节点
     ///@details 例如：node_path = "/root/child" 表示在 "/root" 下创建名为 "child" 的子节点。值为node_data；若父路径 "/root" 不存在，则会创建失败
     void CreateNode(const std::string& node_path, const std::string& node_data = {}, int flags=0);
+
+    ///@brief 删除指定 node_path 的znode节点（用于服务注销）
+    ///@details 若节点不存在则忽略；若当前连接已断开（zhandle_ 为空），临时节点会由 ZooKeeper 会话超时自动清理，无需处理
+    void DeleteNode(const std::string& node_path);
 
     ///@brief 获取节点的「数据」
     auto GetNodeData(const std::string& node_path) -> std::string;
@@ -64,7 +69,9 @@ private:
         std::string data;
         int         flags; // ZooKeeper 的节点类型，如 ZOO_EPHEMERAL, ZOO_EPHEMERAL | ZOO_SEQUENCE 等
     };
+    //! ephemeral_nodes_ 会被业务线程（CreateNode/DeleteNode）与 ZK watcher 线程（RecoverEphemeralNodes）并发访问，需加锁保护
     std::vector<EphemeralNodeInfo> ephemeral_nodes_;
+    mutable std::mutex ephemeral_nodes_mutex_;
 
     // 子节点变更事件的业务回调注册表
     std::unordered_map<std::string, WatcherCallback> child_watch_callbacks_;

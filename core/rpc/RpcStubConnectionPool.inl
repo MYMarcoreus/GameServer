@@ -57,9 +57,10 @@ void RpcStubConnectionPool<ServiceType_Stub>::Start(typename StubConnType::F_Rpc
 
     // 启动并发连接任务，n个连接启动n个线程，每个线程负责一个连接定时任务
     for (int i = 0; i <  pool_size_ ;++i) {
-        // 循环任务控制，若任务完成则取消循环任务，否则继续执行该任务
-        auto fun = [Connect_Task] {
-            while (Connect_Task() == false) {
+        //! 每个任务最多尝试 pool_size_ 次（覆盖全部候选节点），
+        //! 防止已下线的服务节点让任务无限重试，从而卡住线程池析构
+        auto fun = [Connect_Task, this] {
+            for (size_t attempt = 0; attempt < pool_size_ && Connect_Task() == false; ++attempt) {
                 YLOG_ERROR("RpcStubPool连接失败，再次尝试连接{}", GetServiceName())
             }
         };
@@ -75,11 +76,28 @@ void RpcStubConnectionPool<ServiceType_Stub>::Start(typename StubConnType::F_Rpc
         {
             rr_idx_.store(0, std::memory_order_release);
 
+            //! 检测已下线的服务节点：断开并移除对应连接，避免其无限重连刷错误日志
+            std::vector<std::unique_ptr<StubConnType>> offline_conns;
+            {
+                std::unique_lock lg(pool_mutex_);
+                for (auto it = pool_.begin(); it != pool_.end(); ) {
+                    if (!endpoints.contains(it->first)) {
+                        YLOG_INFO("[RpcStubPool] 服务节点已下线，移除连接: {}", it->first);
+                        offline_conns.emplace_back(std::move(it->second));
+                        it = pool_.erase(it);
+                    } else {
+                        ++it;
+                    }
+                }
+            }
+            for (auto& conn : offline_conns) {
+                conn->Disconnect();
+            }
+
             for (auto& [name, addr] : endpoints)
             {
                 // 是有新节点上线，连接之
                 this->InsertConn(addr, cb);
-                // 这里不检测旧节点下线，因为启动了TcpClient的自动重连
                 YLOG_INFO("endpoints: {}-{}", name, addr->ToString())
             }
 
@@ -164,19 +182,23 @@ auto RpcStubConnectionPool<ServiceType_Stub>::SelectAddrByRoundRobin() -> net::I
 template <IsValidStub ServiceType_Stub>
 bool RpcStubConnectionPool<ServiceType_Stub>::InsertConn(net::IPAddressPtr addr, typename StubConnType::F_RpcStubConnectionEstablishedCallback cb)
 {
-    // 服务器名称 = IP:Port
-    auto server_name = std::format("{}:{}", addr->GetIPStr(), addr->GetPort());
-    //todo 一个节点只对应一个连接，不重复插入，后续可以考虑一个节点对应多个连接
-    if (pool_.contains(server_name)){
-        return false;
-    }
     // 非法的服务地址
     if (addr == nullptr) {
         YLOG_ERROR("RpcStubPool未找到服务{}", StubConnType::GetServiceName())
         return false;
     }
 
-    // 创建连接并连接至服务提供方
+    // 服务器名称 = IP:Port
+    auto server_name = std::format("{}:{}", addr->GetIPStr(), addr->GetPort());
+    //todo 一个节点只对应一个连接，不重复插入，后续可以考虑一个节点对应多个连接
+    {
+        std::unique_lock lg(pool_mutex_);
+        if (pool_.contains(server_name)) {
+            return false;
+        }
+    }
+
+    // 创建连接并连接至服务提供方（ConnectSync 会阻塞，不能在锁内执行）
     std::unique_ptr<StubConnType> stub_conn = std::make_unique<StubConnType>(loop_);
     stub_conn->SetConnectionEstablishedCallback(std::move(cb));
     if (not stub_conn->Connect(addr)) {
@@ -185,7 +207,13 @@ bool RpcStubConnectionPool<ServiceType_Stub>::InsertConn(net::IPAddressPtr addr,
     }
 
     // 连接成功将连接加入连接池中
-    std::unique_lock lg(pool_mutex_);
-    pool_.emplace(server_name, std::move(stub_conn));
+    {
+        std::unique_lock lg(pool_mutex_);
+        //! 双检：连接期间可能有并发任务插入了相同节点
+        if (pool_.contains(server_name)) {
+            return false;
+        }
+        pool_.emplace(server_name, std::move(stub_conn));
+    }
     return true;
 }

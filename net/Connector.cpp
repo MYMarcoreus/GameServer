@@ -99,10 +99,14 @@ void Connector::RestartInLoop() {
 
 void Connector::StopInLoop() {
     YLOG_TRACE("In Connector::StopInLoop(), 中止连接服务器<{}:{}>", m_ServerAddr->GetIPStr().c_str(), m_ServerAddr->GetPort())
+    //! 无论处于何种状态，先取消可能存在的重试定时器
+    if(m_NextRetryTimerID != -1) {
+        m_Loop->CancelTimer(m_NextRetryTimerID);
+        m_NextRetryTimerID = -1;
+    }
+
     //! 中止未连接完成的连接
     if(m_State == eConnecting) {
-        if(m_NextRetryTimerID != -1)
-            m_Loop->CancelTimer(m_NextRetryTimerID);
         SetState(eDisconnected);
         SocketApiWrapper::socket_t sockfd = RemoveAndResetChannel();
         SocketApiWrapper::close(sockfd);
@@ -170,7 +174,13 @@ void Connector::Retry(SocketApiWrapper::socket_t sockfd) {
         YLOG_TRACE("In Connector::Retry, <sockfd:{}>服务器连接失败，将在 {} 秒后重连<{}:{}>",
                    sockfd, m_RetryDelay.count() / 1000.0, m_ServerAddr->GetIPStr().c_str(), m_ServerAddr->GetPort())
 
-        m_NextRetryTimerID = m_Loop->RunAfter(m_RetryDelay, [this](){ this->StartInLoop(); });
+        //! 用 weak_ptr 捕获自身：若 Connector 在重试定时器触发前已被销毁，回调直接空转，避免悬空指针
+        const std::weak_ptr<Connector> weak_self = shared_from_this();
+        m_NextRetryTimerID = m_Loop->RunAfter(m_RetryDelay, [weak_self](){
+            if (const auto self = weak_self.lock()) {
+                self->StartInLoop();
+            }
+        });
 
         m_RetryDelay = (m_RetryDelay * 2 < kMaxRetryDelay) ? m_RetryDelay * 2 : kMaxRetryDelay;
     }

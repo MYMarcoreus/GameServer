@@ -21,6 +21,7 @@ bool RpcControllerImpl::is_wait_for_ready() const {
 }
 
 void RpcControllerImpl::Reset() {
+    std::lock_guard lg{mtx_};
     failed_ = false;
     error_text_.clear();
     timeout_ = std::chrono::milliseconds(0);
@@ -28,21 +29,29 @@ void RpcControllerImpl::Reset() {
     cancel_callback_ = nullptr;
 }
 bool RpcControllerImpl::Failed() const {
+    std::lock_guard lg{mtx_};
     return failed_;
 }
 
 std::string RpcControllerImpl::ErrorText() const {
+    std::lock_guard lg{mtx_};
     return error_text_;
 }
 
 void RpcControllerImpl::SetFailed(const std::string& reason) {
+    std::lock_guard lg{mtx_};
     failed_ = true;
     error_text_ = reason;
 }
 
 void RpcControllerImpl::StartCancel() {
-    if (cancel_callback_) {
-        cancel_callback_->Run();
+    google::protobuf::Closure* cb = nullptr;
+    {
+        std::lock_guard lg{mtx_};
+        cb = cancel_callback_;
+    }
+    if (cb) {
+        cb->Run();
     }
 }
 
@@ -51,6 +60,7 @@ bool RpcControllerImpl::IsCanceled() const {
 }
 
 void RpcControllerImpl::NotifyOnCancel(google::protobuf::Closure* callback) {
+    std::lock_guard lg{mtx_};
     cancel_callback_ = callback;
 }
 

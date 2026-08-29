@@ -42,7 +42,7 @@ public:
     void AddEvent(const EventType event) { m_Events |= event; }
     void AddReadEvent () { m_Events |= eReadEvent; }
     void AddWriteEvent() { m_Events |= eWriteEvent; }
-    void AddErrorEvent() { m_Events |= eWriteEvent; }
+    void AddErrorEvent() { m_Events |= eErrorEvent; }
     void AddCloseEvent() { m_Events |= eCloseEvent; }
 
     void DelEvent(const EventType event) { m_Events &= ~event; }

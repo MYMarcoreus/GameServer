@@ -47,19 +47,12 @@ void EventLoopThreadPool::StartTick(const int threadNum, Milliseconds pollwaitTi
 }
 
 EventLoop *EventLoopThreadPool::GetNextLoop() {
-    m_BaseLoop->AssertInLoopingThread();
-
-    EventLoop * loop = nullptr;
-    if(!m_ioLoops.empty()) {
-        loop = m_ioLoops[m_NextLoop++];
-        if(m_NextLoop >= m_ioLoops.size()) {
-            m_NextLoop = 0;
-        }
-    } else {
-        loop = m_BaseLoop;
+    //! 线程安全轮转分配：Start() 之后 m_ioLoops 只读，m_NextLoop 使用原子自增。
+    if (m_ioLoops.empty()) {
+        return m_BaseLoop;
     }
-
-    return loop;
+    const auto idx = m_NextLoop.fetch_add(1, std::memory_order_relaxed);
+    return m_ioLoops[idx % m_ioLoops.size()];
 }
 
 

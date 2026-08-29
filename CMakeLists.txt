@@ -1,13 +1,24 @@
 cmake_minimum_required(VERSION 3.22)
 project(GameServer)
 
+# ---------- ccache 编译缓存（大幅加速增量构建） ----------
+# 需要在创建任何 target 之前设置；未安装 ccache 时自动跳过。
+find_program(CCACHE_PROGRAM ccache)
+if(CCACHE_PROGRAM)
+    set(CMAKE_CXX_COMPILER_LAUNCHER "${CCACHE_PROGRAM}")
+    set(CMAKE_C_COMPILER_LAUNCHER "${CCACHE_PROGRAM}")
+    message(STATUS "使用 ccache 编译缓存: ${CCACHE_PROGRAM}")
+else()
+    message(STATUS "未找到 ccache，跳过编译缓存（可用 sudo apt install ccache 启用）")
+endif()
+
 message(STATUS "CMAKE_TOOLCHAIN_FILE: ${CMAKE_TOOLCHAIN_FILE}")
 
 enable_testing()
 find_package(GTest CONFIG REQUIRED)
 
-# -std=c++20
-set(CMAKE_CXX_STANDARD 20)
+# -std=c++23 (启用 std::expected 等 C++23 标准库设施；需 GCC 13+ / Clang 16+)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_definitions(-DUUID_ENABLE_STL_HASH)
@@ -82,6 +93,24 @@ if(CMAKE_BUILD_TYPE MATCHES "Debug")
     add_definitions(-D____DEBUG)
 endif()
 
+# ---------- 编译提速/省内存（GCC/Clang） ----------
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    # -pipe：用管道传递编译中间数据，减少临时文件磁盘 IO
+    add_compile_options(-pipe)
+
+    if(CMAKE_BUILD_TYPE MATCHES "Debug")
+        # Debug 默认用 -g1（行号+函数名，不含局部变量类型信息）：
+        # 大幅降低每个编译任务的内存占用与耗时，避免 WSL/小内存机器上并行编译 OOM。
+        # 需要完整调试信息时：cmake -DYY_FULL_DEBUG=ON（或 -DCMAKE_CXX_FLAGS_DEBUG="-g"）
+        option(YY_FULL_DEBUG "Debug 构建使用完整调试信息 -g（默认 -g1 以省内存/加速）" OFF)
+        if(YY_FULL_DEBUG)
+            set(CMAKE_CXX_FLAGS_DEBUG "-g")
+        else()
+            set(CMAKE_CXX_FLAGS_DEBUG "-g1")
+        endif()
+    endif()
+endif()
+
 # 查找 protobuf（Windows 下使用 CONFIG 模式）
 if(WIN32)
     find_package(Protobuf CONFIG REQUIRED)
@@ -121,6 +150,7 @@ include_directories(
         base/log
         net
         core
+        core/actor
         core/frontend
         core/redis
         core/mysql
@@ -151,6 +181,13 @@ add_subdirectory(benchmark)
 
 #! 制作 libCommonLibrary.a 静态库
 add_library(CommonLibrary STATIC ${COMMON_SOURCES}) # STATIC替换为SHARED就为动态库，生成 libCommonLibrary.so
+
+# ---------- 预编译头(PCH)加速编译 ----------
+# 将标准库/protobuf/基础项目头预编译一次，避免每个 TU 重复解析（编译慢的主因）。
+# 只作用于 CommonLibrary（包含全部业务 .cpp，收益最大）；可执行文件 main_*.cpp 很小，无需 PCH。
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    target_precompile_headers(CommonLibrary PRIVATE base/pch.h)
+endif()
 
 #! 添加系统动态库
 if(CMAKE_HOST_SYSTEM_NAME MATCHES Windows)

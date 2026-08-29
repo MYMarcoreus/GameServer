@@ -7,6 +7,9 @@
 #include <winsock2.h>
 #endif
 
+#include <expected>
+#include <system_error>
+
 #include "noncopyable.h"
 #include "net_definations.h"
 #include "IPAddress.h"
@@ -63,8 +66,8 @@ public:
     auto GetType() const -> Type { return m_type; }
     auto GetFamily() const -> Family { return m_family; }
     auto GetFD() const -> SocketApiWrapper::socket_t { return m_socketfd; }
-    IPAddress::ptr GetLocalAddr();
-    IPAddress::ptr GetPeerAddr();
+    auto GetLocalAddr() -> std::expected<IPAddress::ptr, std::error_code>;
+    auto GetPeerAddr() -> std::expected<IPAddress::ptr, std::error_code>;
 
     bool IsNonblocking() const { return m_IsNonblocking; }
     void SetNonblocking();
@@ -127,4 +130,3 @@ private:
 };
 
 } // yy::net
-

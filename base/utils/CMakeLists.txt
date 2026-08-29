@@ -1,8 +1,6 @@
 set(LocalSrc
         util_functions.cpp
         ThreadPool.cpp
-        status/Status.cpp
-        LinearBuffer.cpp
         LinearBuffer.cpp
         RingBuffer.cpp
         FullDuplexPipe.cpp

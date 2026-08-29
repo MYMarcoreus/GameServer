@@ -1,9 +1,9 @@
 #include "SocketApiWrapper.h"
 #include "IPAddress.h"
 #include "log.h"
-#include "status/Status.h"
 #include "ErrnoSaver.h"
 #include <fcntl.h>
+#include <cstring>
 #include "util_functions.h"
 
 
@@ -151,20 +151,28 @@ int get_socket_error(socket_t sockfd) {
 bool is_self_connect(socket_t sockfd) {
     auto localAddr = GetLocalAddr(sockfd);
     auto peerAddr = GetPeerAddr(sockfd);
+    if (!localAddr || !peerAddr) {
+        YLOG_WARN("In is_self_connect, 获取本地/对端地址失败：local={}, peer={}",
+                  localAddr ? "ok" : localAddr.error().message(),
+                  peerAddr ? "ok" : peerAddr.error().message());
+        return false;
+    }
 
-    return localAddr->GetFamily() == peerAddr->GetFamily() and localAddr->GetPort() == peerAddr->GetPort();
+    return (*localAddr)->GetFamily() == (*peerAddr)->GetFamily()
+        and (*localAddr)->GetPort() == (*peerAddr)->GetPort();
 }
 
 
-IPAddress::ptr GetLocalAddr(SocketApiWrapper::socket_t sockfd) {
+auto GetLocalAddr(SocketApiWrapper::socket_t sockfd) -> std::expected<IPAddress::ptr, std::error_code> {
     struct sockaddr_storage localAddr;
     socklen_t addrLen = sizeof localAddr;
 
     auto ret = ::getsockname(sockfd, (struct sockaddr *) (&localAddr), &addrLen);
     if (ret < 0) {
+        const int saved_errno = errno;
         YLOG_ERROR("In IPAddress::GetLocalAddr, ::getsockname() error: {}",
-                   yy::util::StatusCode(errno).ToString().c_str());
-        return nullptr;
+                   std::strerror(saved_errno));
+        return std::unexpected(std::error_code(saved_errno, std::generic_category()));
     }
 
     IPAddress::ptr addr{};
@@ -177,15 +185,16 @@ IPAddress::ptr GetLocalAddr(SocketApiWrapper::socket_t sockfd) {
     return addr;
 }
 
-IPAddress::ptr GetPeerAddr(SocketApiWrapper::socket_t sockfd) {
+auto GetPeerAddr(SocketApiWrapper::socket_t sockfd) -> std::expected<IPAddress::ptr, std::error_code> {
     struct sockaddr_storage peerAddr;
     socklen_t addrLen = sizeof peerAddr;
 
     auto ret = ::getpeername(sockfd, (struct sockaddr *) (&peerAddr), &addrLen);
     if (ret < 0) {
+        const int saved_errno = errno;
         YLOG_ERROR("In IPAddress::GetPeerAddr, ::getpeername() error: {}",
-                   yy::util::StatusCode(errno).ToString().c_str());
-        return nullptr;
+                   std::strerror(saved_errno));
+        return std::unexpected(std::error_code(saved_errno, std::generic_category()));
     }
 
     IPAddress::ptr addr{};

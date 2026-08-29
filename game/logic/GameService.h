@@ -10,6 +10,7 @@
 
 namespace yy::app::logic {
 class LogicRedisDAO;
+struct LoginData;
 
 class GameService final : public protocol::app::LogicRoomServiceRpc
 {
@@ -41,6 +42,9 @@ private:
     //Region 消息回调：玩家
     /// @brief 逻辑服登录请求
     void OnSceneLoginReq(const UserConnectionPtr& conn, const Ptr<protocol::app::SceneLoginReq> & req);
+
+    /// @brief 在 IO 线程内完成登录（Redis 数据已就绪）
+    void CompleteLogin(const UserConnectionPtr& conn, const Ptr<protocol::app::SceneLoginReq> & req, core::UID_t uid, LoginData data);
     //End
 
 private:

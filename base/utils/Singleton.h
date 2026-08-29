@@ -25,9 +25,10 @@ public:
             其他线程必须得等到该初始化完成以后才能访问它。
         （non-local static 对象的初始化发生在main函数执行之前，也即main函数之前的单线程启动阶段，所以不存在线程安全问题）*/
 
-        static T* pinstance = new T{std::forward<Args>(args)...}; //! 经测试，在程序结束之后，local static 对象会被自动析构。
+        //! 使用局部静态对象：程序退出时由编译器自动析构（new 出来的对象不会被析构，会导致单例的析构逻辑永不执行）
+        static T instance{std::forward<Args>(args)...};
 
-        return *pinstance;
+        return instance;
     }
 
 protected: //! 单例基类的构造或析构需要被子类(T)继承，然而也不能被外部使用，因此必须为protected
@@ -63,4 +64,3 @@ protected: //! 单例基类的构造或析构需要被子类(T)继承，然而�
     SingletonPtr &operator=(const SingletonPtr &) = delete;
 };
 */
-

@@ -5,12 +5,12 @@
     // 必须用 cmake.environment 注入扩展进程环境才能参与宏展开。
     // （cmake.configureEnvironment 只在调用 cmake 子进程时注入，不参与宏展开）
     "cmake.environment": {
-        // "VCPKG_ROOT": "/home/yangyue/projects/vcpkg"
-        "VCPKG_ROOT": "/opt/vcpkg"
+        "VCPKG_ROOT": "/ho/me/yangyue/projects/vcpkg"
+        // "VCPKG_ROOT": "/opt/vcpkg"
     },
     // 所有集成终端（含 tasks.json 任务）继承的环境变量
     "terminal.integrated.env.linux": {
-        // "VCPKG_ROOT": "/home/yangyue/projects/vcpkg"
-        "VCPKG_ROOT": "/opt/vcpkg"
+        "VCPKG_ROOT": "/home/yangyue/projects/vcpkg"
+        // "VCPKG_ROOT": "/opt/vcpkg"
     }
 }

@@ -49,7 +49,7 @@ void UdpServer::Start(int ioThreadNum, const Milliseconds ioWaitTimeout) {
 void UdpServer::Stop() {
 }
 
-IPAddressPtr UdpServer::GetRecvAddr() const
+auto UdpServer::GetRecvAddr() const -> std::expected<IPAddressPtr, std::error_code>
 {
     return m_udpTran->GetRecvAddr();
 }
@@ -96,4 +96,3 @@ void UdpServer::HandleNewMessage(NetBuffer & recvBuf, const IPAddressPtr& peerAd
 
 
 }
-

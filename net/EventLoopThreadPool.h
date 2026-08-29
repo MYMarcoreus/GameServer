@@ -1,7 +1,9 @@
 #pragma once
-#include <vector>
+#include <atomic>
 #include <functional>
 #include <memory>
+#include <vector>
+
 #include "net_definations.h"
 
 namespace yy::net {
@@ -31,8 +33,7 @@ private:
     std::vector<EventLoop *>                      m_ioLoops;
     std::vector<std::unique_ptr<EventLoopThread>> m_Threads;
 
-    int m_NextLoop;
+    std::atomic<std::size_t>                      m_NextLoop;
 };
 
 }
-

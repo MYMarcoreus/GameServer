@@ -71,21 +71,20 @@ void Logger::delAppender(const ILogAppender::ptr& appender)
     assert(appender != nullptr);
 
     std::lock_guard lg{m_appenderMutex};
-    for (auto it = m_appenders.begin(); it != m_appenders.end() ; ++it) {
+    for (auto it = m_appenders.begin(); it != m_appenders.end(); ) {
         // 智能指针的==运算符比较的是内部指针指向的地址
         if (*it == appender) {
-            m_appenders.erase(it);
+            it = m_appenders.erase(it); // erase返回下一个迭代器，避免迭代器失效
+        } else {
+            ++it;
         }
     }
 }
 
 void Logger::clearAppenders() {
+    //! 直接清空容器；不能在持锁时再次调用delAppender（会重复获取同一把非递归锁导致死锁）
     std::lock_guard lg{m_appenderMutex};
-
-    for(const auto& appender: m_appenders)
-    {
-        delAppender(appender);
-    }
+    m_appenders.clear();
 }
 
 void Logger::Log(const LogMessage::ptr& msg) const
@@ -341,4 +340,3 @@ void LoggerManager::StopAsyncThread()
 
 
 }
-

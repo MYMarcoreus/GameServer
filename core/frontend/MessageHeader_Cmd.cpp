@@ -72,6 +72,11 @@ MessageParseErrorCode MessageHeader_Cmd::ParseFromBuffer(net::NetBuffer &buf, ui
     /**** BodyLength ****/
     buf.PeekToPodStruct(peekedLen, m_BodyLength);
     m_BodyLength = XorNet_BodyLength(xorCode);
+    //! 校验消息体长度上限，防止恶意客户端声明超大长度导致内存被无限撑大（OOM）
+    if(m_BodyLength > config::g_app_config->GetValue().recv_bytes_max()) {
+        YLOG_ERROR("消息体长度超限：{} > {}", m_BodyLength, config::g_app_config->GetValue().recv_bytes_max())
+        return MessageParseErrorCode::eInvalidFullLength;
+    }
     if(buf.GetDataSize() < kMinHeaderLen + m_BodyLength) {
         return MessageParseErrorCode::eNotReceiveFullLength;
     }

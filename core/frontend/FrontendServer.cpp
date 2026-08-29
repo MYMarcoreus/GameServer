@@ -246,7 +246,10 @@ void FrontendServer::OnSecurity(const TcpConnectionPtr & conn, const C2SSecurity
         //! 发送安全验证结果
         protocol::core::SecurityCheckRsp resultBody;
         resultBody.set_result_code(resultCode);
-        resultBody.set_server_udp_port(m_udpServer->GetRecvAddr()->GetPort());
+        const auto recv_addr = m_udpServer->GetRecvAddr();
+        if (recv_addr) {
+            resultBody.set_server_udp_port((*recv_addr)->GetPort());
+        }
         resultBody.set_session_id(conn->GetConnID());
         m_tcpCodec->SendTCP(conn, resultBody);
 
@@ -268,6 +271,7 @@ void FrontendServer::OnUdpPortRegisterRequest(const TcpConnectionPtr & conn, con
     if(message->session_id() != conn->GetConnID()) {
         YLOG_INFO("<{}>客户端会话ID验证错误", conn->GetConnID())
         conn->Shutdown();
+        return; //! 校验失败：立即终止本次注册处理，防止绕过安全校验
     }
 
     std::string client_ip = message->client_udp_ip();
@@ -277,6 +281,10 @@ void FrontendServer::OnUdpPortRegisterRequest(const TcpConnectionPtr & conn, con
 
     const UdpSessionPtr udpSession = m_udpServer->RegisterSession(conn->GetConnID(), udpAddr);
     const auto userconn = FindUser(conn->GetConnID());
+    if(userconn == nullptr) {
+        YLOG_WARN("<{}>未找到用户，UDP注册失败", conn->GetConnID())
+        return;
+    }
     userconn->BindUdp(udpSession);
 
     // 注册1s一次的udp心跳包

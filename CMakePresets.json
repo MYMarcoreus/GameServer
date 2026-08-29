@@ -32,11 +32,13 @@
   "buildPresets": [
     {
       "name": "debug",
-      "configurePreset": "linux-debug"
+      "configurePreset": "linux-debug",
+      "jobs": 7
     },
     {
       "name": "release",
-      "configurePreset": "linux-release"
+      "configurePreset": "linux-release",
+      "jobs": 7
     }
   ]
 }

@@ -26,7 +26,6 @@ set(LocalSrc
         TcpClient.cpp
         SocketApiWrapper.cpp
         SelectPoller.cpp
-        NetBuffer.cpp
         SignalManager.cpp
 )
 

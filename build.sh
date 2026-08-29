@@ -23,7 +23,7 @@ usage() {
 选项:
   debug | release         构建类型，默认 debug
   clean                   清理构建目录后重新构建
-  -j<N>                   并行编译线程数，默认 $(nproc)
+  -j<N>                   并行编译线程数，默认 CPU 核数的一半（$(nproc)/2）
   --vcpkg-root=<路径>     指定 vcpkg 安装路径（优先于环境变量）
   -h, --help              显示本帮助
 
@@ -41,7 +41,8 @@ EOF
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BUILD_DIR="${BUILD_DIR:-build-debug}"
 BUILD_TYPE="Debug"
-JOBS="$(nproc)"
+JOBS="$(( $(nproc) / 2 ))"
+[ "$JOBS" -lt 1 ] && JOBS=1
 CLEAN=0
 VCPKG_ROOT="${VCPKG_ROOT:-}"
 VCPKG_SRC="环境变量"
@@ -91,6 +92,11 @@ fi
 
 export VCPKG_ROOT
 info "vcpkg: $VCPKG_ROOT（来源: $VCPKG_SRC）"
+
+# ---------- ccache 与 PCH 兼容 ----------
+# pch_defines: 允许 PCH 与其依赖 TU 的 -D 宏不一致时仍能命中缓存；
+# time_macros: 忽略 __DATE__/__TIME__ 差异（可复现构建）。
+export CCACHE_SLOPPINESS="${CCACHE_SLOPPINESS:-pch_defines,time_macros}"
 
 # ---------- 清理 ----------
 cd "$PROJECT_DIR"

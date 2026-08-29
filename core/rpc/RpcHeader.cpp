@@ -5,6 +5,7 @@
 #include "rpc.pb.h"
 #include "Endian.h"
 #include "LinearBuffer.h"
+#include "RemoteXmlConfig.h"
 
 namespace yy::core::rpc
 {
@@ -24,12 +25,17 @@ MessageParseErrorCode RpcHeader::ParseFromBuffer(net::NetBuffer& buf)
     if(not std::equal(m_CheckCode.begin(), m_CheckCode.end(), kCheckCode.begin())) {
         return MessageParseErrorCode::eInvalidCheckCode;
     }
-    peekedLen += sizeof(kCheckCodeSize);
+    peekedLen += kCheckCodeSize;
 
     // 检查包总长度
     buf.PeekToPodStruct(peekedLen, m_FullLength);
     m_FullLength = net::network_to_host32(m_FullLength);
     if(m_FullLength < kHeaderSize) {
+        return MessageParseErrorCode::eInvalidFullLength;
+    }
+    //! 校验RPC包总长度上限，防止恶意节点声明超大长度（OOM）
+    if(m_FullLength > static_cast<uint32_t>(config::g_remote_config->GetValue().recvBytesMax)) {
+        YLOG_ERROR("RPC消息总长度超限：{} > {}", m_FullLength, config::g_remote_config->GetValue().recvBytesMax)
         return MessageParseErrorCode::eInvalidFullLength;
     }
     if(buf.GetDataSize() < m_FullLength) {

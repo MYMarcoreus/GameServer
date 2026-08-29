@@ -4,7 +4,6 @@
 #include "Socket.h"
 #include "EventLoop.h"
 #include "log.h"
-#include "status/Status.h"
 #include "ErrnoSaver.h"
 #include "IPAddress.h"
 #include "LinearBuffer.h"
@@ -61,15 +60,19 @@ void UdpTransporter::StartRecvInLoop()
     m_channel->SetReadCallback ([this](){this->HandleRead() ;});
     m_channel->EnableReading();
     const auto recv_addr = m_socket->GetLocalAddr();
-    YLOG_INFO("线程<{}>开始接收Udp，接收地址为：<{}:{}>，接收套接字为{}", util::CastThreadIDToStr(m_recvLoop->GetThreadID()),
-          recv_addr->GetIPStr().c_str(), recv_addr->GetPort(), m_socket->GetFD())
+    if (recv_addr) {
+        YLOG_INFO("线程<{}>开始接收Udp，接收地址为：<{}:{}>，接收套接字为{}", util::CastThreadIDToStr(m_recvLoop->GetThreadID()),
+              (*recv_addr)->GetIPStr().c_str(), (*recv_addr)->GetPort(), m_socket->GetFD())
+    } else {
+        YLOG_ERROR("UdpTransporter 获取本地地址失败：{}", recv_addr.error().message())
+    }
 }
 
 SocketApiWrapper::socket_t UdpTransporter::GetSocketFD() const {
     return m_socket->GetFD();
 }
 
-auto UdpTransporter::GetRecvAddr() const -> IPAddressPtr
+auto UdpTransporter::GetRecvAddr() const -> std::expected<IPAddressPtr, std::error_code>
 {
     return m_socket->GetLocalAddr();
 }

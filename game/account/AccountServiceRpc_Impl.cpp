@@ -41,8 +41,11 @@ void AccountServiceRpc_Impl::Login(google::protobuf::RpcController* controller,
     // 在Mysql获取并验证账号数据
     const auto account_data  = mysql_dao_.GetAccountData(username);
     LoginRsp_Status login_status = LoginRsp_Status_eSuccess;
-    if (!account_data.has_value()) {
-        login_status = LoginRsp_Status_eAccountNotExist;
+    if (!account_data) {
+        // 区分“账号不存在”与“数据库错误”，避免把 DB 故障误报为账号不存在
+        login_status = (account_data.error() == GameError::kAccountNotFound)
+            ? LoginRsp_Status_eAccountNotExist
+            : LoginRsp_Status_eUnknownError;
     } else if (account_data->password != password) {
         login_status = LoginRsp_Status_ePasswordError;
     }
@@ -80,13 +83,15 @@ void AccountServiceRpc_Impl::Register(google::protobuf::RpcController* controlle
 {
     YLOG_TRACE("正在执行 AccountServiceRpc_Impl::Register 服务，填充响应体")
 
-    // 验证注册
-    if (not mysql_dao_.HasAccountData(request->username())) {
-        const auto rst = mysql_dao_.SetAccountData(request->username(), request->password());
+    // 注册：原子完成（SetAccountData 内部通过唯一键冲突识别重复用户名，避免 TOCTOU）
+    const auto rst = mysql_dao_.SetAccountData(request->username(), request->password());
+    if (rst) {
         response->set_uid(rst->uid);
         response->set_result_code(RegisterRsp_Status_eSuccess);
-    } else {
+    } else if (rst.error() == GameError::kDuplicateUsername) {
         response->set_result_code(RegisterRsp_Status_eAccountAlreadyExist);
+    } else {
+        response->set_result_code(RegisterRsp_Status_eUnknownError);
     }
 
     // 发送响应

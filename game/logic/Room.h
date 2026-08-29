@@ -1,10 +1,13 @@
 #pragma once
+#include <chrono>
+
 #include "GameData.h"
 #include "net_definations.h"
 #include "ObjectPool.h"
 #include "Player.h"
 #include "ProtobufDispatcher.h"
 #include "room_data.pb.h"
+#include "Actor.h"
 
 namespace yy::net { class EventLoop; }
 
@@ -12,22 +15,24 @@ namespace yy::net { class EventLoop; }
 namespace yy::app::logic
 {
 
-// 管理一个房间内的玩家：一个房间在一个线程中处理，线程安全，无锁
-class Room: public std::enable_shared_from_this<Room>{
+// 管理一个房间内的玩家：一个房间在一个线程中处理，线程安全，无锁（基于 Actor 框架）
+class Room: public core::actor::Actor<Room>{
 public:
-    Room(net::EventLoop * loop, const protocol::app::RoomDetailData& data);
+    //! 房间空闲检测与超时销毁（防止僵尸房间）
+    static constexpr std::chrono::seconds ROOM_IDLE_CHECK_INTERVAL{60};
+    static constexpr std::chrono::minutes ROOM_IDLE_TIMEOUT{30};
+
+    Room(net::EventLoop * loop, const protocol::app::RoomDetailData& data,
+         std::function<void(UID_t)> on_player_remove,
+         std::function<void(ROOM_ID_t)> on_room_stop);
 
     ~Room();
 
-    void Init(net::Milliseconds deltaTime);
+    void PostMessage(const UserConnectionPtr& conn, const MessagePtr& msg);
 
-    void PostMessage(const UserConnectionPtr& conn, const MessagePtr& msg) const;
-
-    void PostTask(const net::F_TaskCallback& task) const;
+    void PostTask(const net::F_TaskCallback& task);
 
     void OnPlayerDisconnect(const UserConnectionPtr& userconn);
-
-    void SetPlayerRemoveCallback(std::function<void(UID_t)> cb) { m_PlayerRemoveCb = std::move(cb); }
 
     //Region Getter
     [[nodiscard]] auto get_room_data() const -> protocol::app::RoomDetailData ;
@@ -37,17 +42,19 @@ public:
     [[nodiscard]] auto get_capacity() const -> int ;
     //End
 
-    //Region 暴露给外部的接口，需要将任务投递给Room所在线程
-    void AddPlayer(const UserConnectionPtr& self_conn, protocol::app::AccountBaseData account_data);
-    [[nodiscard]] auto GetAllPlayers() -> std::unordered_map<UID_t, PlayerPtr>;
+    //Region 暴露给外部的接口，需要在 Room 线程内调用（通过 Send/AskWith 投递）
+    /// @brief 加入玩家；返回是否成功（重复加入或对象池满则失败）
+    [[nodiscard]] bool AddPlayer(const UserConnectionPtr& self_conn, protocol::app::AccountBaseData account_data);
     //End
 
+protected:
+    void OnStart() override;
+
+    void OnStop() override;
+
 private:
-    void Update();
-
-    void StopUpdate();
-
     [[nodiscard]] auto FindPlayer(UID_t uid) -> PlayerPtr;
+    [[nodiscard]] auto GetAllPlayers() const -> const std::unordered_map<UID_t, PlayerPtr>&;
     [[nodiscard]] auto RemovePlayer(UID_t uid) -> PlayerPtr;
     void InitPlayerData(const PlayerBaseDataPtr& self_data, protocol::app::AccountBaseData account_data);
 
@@ -91,13 +98,13 @@ private:
     //End
 
 private:
-    net::EventLoop *                                    loop_;
-    net::TimerID                                        update_timer_id_;
     protocol::app::RoomDetailData                       room_data_;
     std::unordered_map<UID_t, PlayerPtr>                players_;
     core::ProtobufDispatcher<UserConnectionPtr>         msg_handler_;
     util::ObjectPool<protocol::app::PlayerBaseData> &   players_pool_;
     std::function<void(UID_t)> m_PlayerRemoveCb;
+    std::function<void(ROOM_ID_t)> m_RoomStopCb;
+    std::chrono::steady_clock::time_point               last_activity_{std::chrono::steady_clock::now()};
 };
 
 using RoomPtr = std::shared_ptr<Room>;

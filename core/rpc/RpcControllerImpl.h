@@ -3,7 +3,7 @@
 #include <google/protobuf/service.h>
 #include <string>
 #include <chrono>
-#include <atomic>
+#include <mutex>
 
 namespace yy::core::rpc
 {
@@ -31,9 +31,11 @@ public:
     virtual ~RpcControllerImpl() override;
 
 private:
+    //! SetFailed/Failed/ErrorText 会在 IO 线程与调用线程间交叉访问，需要加锁保护
+    mutable std::mutex mtx_;
     std::chrono::milliseconds timeout_{std::chrono::milliseconds(0)};
     bool wait_for_ready_ = false;
-    std::atomic<bool> failed_{false};
+    bool failed_ = false;
     std::string error_text_{};
     google::protobuf::Closure* cancel_callback_ = nullptr;
 };

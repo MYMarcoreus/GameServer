@@ -1,9 +1,11 @@
 #pragma once
+#include <expected>
 #include <optional>
 #include <string>
 #include <cstdint>
 #include <chrono>
 #include "Singleton.h"
+#include "RedisError.h"
 
 namespace yy::net { class EventLoop; }
 namespace yy::core::redis { class RedisClient; }
@@ -25,7 +27,8 @@ public:
     auto GetToken(uint64_t uid) const -> std::optional<std::string>;
     auto DelToken(uint64_t uid) const -> bool;
     auto SetTokenExprieTime(uint64_t uid, std::chrono::seconds) -> bool;
-    auto GetTokenAndRefreshEx(uint64_t uid) const -> std::optional<std::string>;
+    //! 取用户 token 并刷新过期时间；错误码区分 kNotFound（token 不存在）与 kError（Redis 错误）
+    auto GetTokenAndRefreshEx(uint64_t uid) const -> std::expected<std::string, std::error_code>;
 
 private:
     explicit GateRedisDAO();

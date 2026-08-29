@@ -70,6 +70,11 @@ MessageParseErrorCode MessageHeader_Name::ParseFromBuffer(net::NetBuffer &buf, u
     if(m_FullLength < kMinHeaderLen) {
         return MessageParseErrorCode::eInvalidFullLength;
     }
+    //! 校验整个包的长度上限，防止恶意客户端声明超大长度（OOM）
+    if(m_FullLength > config::g_app_config->GetValue().recv_bytes_max()) {
+        YLOG_ERROR("消息总长度超限：{} > {}", m_FullLength, config::g_app_config->GetValue().recv_bytes_max())
+        return MessageParseErrorCode::eInvalidFullLength;
+    }
     if(buf.GetDataSize() < m_FullLength) {
         return MessageParseErrorCode::eNotReceiveFullLength;
     }
@@ -78,6 +83,11 @@ MessageParseErrorCode MessageHeader_Name::ParseFromBuffer(net::NetBuffer &buf, u
     /**** TypeNameLength ****/
     buf.PeekToPodStruct(peekedLen, m_TypeNameLength);
     m_TypeNameLength = XorNetNameLength(xorCode);
+    //! 校验类型名长度上限，防止 kMaxHeaderLen 之外的恶意值
+    if(m_TypeNameLength > kMaxHeaderLen) {
+        YLOG_ERROR("消息类型名长度超限：{} > {}", m_TypeNameLength, kMaxHeaderLen)
+        return MessageParseErrorCode::eInvalidFullLength;
+    }
     if(buf.GetDataSize() < CalcHeaderLen()) { //! TypeName还没接收完全
         return MessageParseErrorCode::eNotReceiveFullHeader;
     }

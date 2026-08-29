@@ -2,9 +2,6 @@
 #include "log.h"
 #include "AppXmlConfig.h"
 #include "EventLoop.h"
-#include "EventLoopThread.h"
-#include "EventLoopThreadPool.h"
-#include <ranges>
 
 using namespace yy::net;
 using namespace yy::core;
@@ -15,115 +12,140 @@ namespace yy::app::logic
 {
 RoomManager::RoomManager(EventLoop * base_loop): base_loop_(base_loop)
 {
-    work_threads = std::make_unique<EventLoopThreadPool>(base_loop_);
-    work_threads->Start(static_cast<int>(config::g_app_config->GetValue().work_thread_num()), 500ms); //! 启动服务器的工作线程：即时处理
+    actor_system_ = std::make_unique<core::actor::ActorSystem>(base_loop_, static_cast<int>(config::g_app_config->GetValue().work_thread_num()));
 
-    base_loop_->RunEvery(1s, [this]() {
-        for (const auto& [room_id, room] : this->rooms_) {
-            YLOG_INFO("房间{}: {}", room_id, room->get_room_data().ShortDebugString())
-        }
-        for (const auto& [uid, room_id] : this->uid_to_roomid_) {
-            YLOG_INFO("uid:{} - rooid:{}", uid, room_id)
-        }
+    //! 轻量监控：每 10s 输出一条汇总
+    base_loop_->RunEvery(10s, [this]() {
+        YLOG_INFO("[RoomManager] 在线房间数: {}, 在线玩家数: {}", GetRoomCount(), GetOnlinePlayerCount());
     });
 }
 
-void RoomManager::AddRoom(RoomDetailData room_data, std::function<void(RoomPtr)> done)
+std::size_t RoomManager::GetRoomCount()
 {
-    assert(done);
-    if (!done) return;
+    std::shared_lock lock{mutex_};
+    return rooms_.size();
+}
 
-    base_loop_->RunCallbackInLoop([this, room_data = std::move(room_data), done = std::move(done)] {
-        // 初始化房间对象，分配房间对应的线程，开启Update
-        auto room = std::make_shared<Room>(work_threads->GetNextLoop(), room_data);
-        room->Init(ROOM_TICK);
-        room->SetPlayerRemoveCallback([this](UID_t uid) {
-            base_loop_->RunCallbackInLoop([this, uid] {
-                uid_to_roomid_.erase(uid);
-            });
+std::size_t RoomManager::GetOnlinePlayerCount()
+{
+    std::shared_lock lock{mutex_};
+    return uid_to_roomid_.size();
+}
+
+void RoomManager::AddUIDIndexLocked(const UID_t uid, const ROOM_ID_t room_id)
+{
+    uid_to_roomid_[uid] = room_id;
+}
+
+void RoomManager::RemoveUIDIndexLocked(const UID_t uid)
+{
+    uid_to_roomid_.erase(uid);
+}
+
+void RoomManager::RemoveRoomIndexLocked(const ROOM_ID_t room_id)
+{
+    rooms_.erase(room_id);
+    for (auto it = uid_to_roomid_.begin(); it != uid_to_roomid_.end();) {
+        if (it->second == room_id) it = uid_to_roomid_.erase(it);
+        else ++it;
+    }
+}
+
+RoomRef RoomManager::AddRoom(RoomDetailData room_data)
+{
+    const ROOM_ID_t room_id = room_data.room_id();
+    const UID_t owner_uid = room_data.owner_uid();
+
+    bool exists = false;
+    {
+        std::shared_lock lock{mutex_};
+        exists = rooms_.contains(room_id);
+    }
+    if (exists) {
+        return RoomRef{}; //! 房间已存在
+    }
+
+    // 分配线程、注册（ActorSystem 线程安全，可在任意线程调用）
+    auto ref = actor_system_->Spawn<Room>(room_data,
+        [this](UID_t uid) { //! 玩家被移除：清理 uid 索引
+            std::unique_lock lock{mutex_};
+            RemoveUIDIndexLocked(uid);
+        },
+        [this](ROOM_ID_t room_id) { //! 房间停止：清理房间与 uid 索引
+            std::unique_lock lock{mutex_};
+            RemoveRoomIndexLocked(room_id);
         });
 
-        // 加入房间列表
-        rooms_.emplace(room->get_id(), room);
-        // uid_to_roomid_.emplace(room->get_owner_uid(), room->get_id());
-        uid_to_roomid_[room->get_owner_uid()] = room->get_id();
-        return done(room);
-    });
+    {
+        std::unique_lock lock{mutex_};
+        rooms_[room_id] = ref;
+        AddUIDIndexLocked(owner_uid, room_id);
+    }
+    return ref;
 }
 
-void RoomManager::RemoveRoom(const ROOM_ID_t room_id, std::function<void(bool)> done)
+bool RoomManager::RemoveRoom(const ROOM_ID_t room_id)
 {
-    assert(done);
-    if (!done) return;
-
-    base_loop_->RunCallbackInLoop([this, room_id, done = std::move(done)] {
+    RoomRef ref;
+    bool found = false;
+    {
+        std::unique_lock lock{mutex_};
         const auto it = rooms_.find(room_id);
-        const auto room = (it != rooms_.end() ? it->second : nullptr);
-        if (room == nullptr) {
-            return done(false);
+        if (it != rooms_.end()) {
+            ref = it->second;
+            found = true;
+            RemoveRoomIndexLocked(room_id);
         }
-        for (const auto& player_uid : room->GetAllPlayers() | std::views::keys) {
-            uid_to_roomid_.erase(player_uid);
-        }
-        return done(rooms_.erase(room_id) > 0);
-    });
+    }
+
+    if (found) {
+        actor_system_->Stop(ref.GetID()); //! 用 ActorID 停止（业务 room_id 不是 ActorID）
+    }
+    return found;
 }
 
-void RoomManager::FindRoomByRoomID(const ROOM_ID_t room_id, std::function<void(RoomPtr)> done)
+RoomRef RoomManager::FindRoomByRoomID(const ROOM_ID_t room_id)
 {
-    assert(done);
-    if (!done) return;
-
-    base_loop_->RunCallbackInLoop([this, room_id, done = std::move(done)] {
-        const auto it = rooms_.find(room_id);
-        done(it != rooms_.end() ? it->second : nullptr);
-    });
+    std::shared_lock lock{mutex_};
+    const auto it = rooms_.find(room_id);
+    return it != rooms_.end() ? it->second : RoomRef{};
 }
 
-void RoomManager::FindRoomByUID(const UID_t uid, std::function<void(RoomPtr)> done)
+RoomRef RoomManager::FindRoomByUID(const UID_t uid)
 {
-    assert(done);
-    if (!done) return;
-
-    base_loop_->RunCallbackInLoop([this, uid, done = std::move(done)] {
-        const auto it_room_id = uid_to_roomid_.find(uid);
-        if (it_room_id == uid_to_roomid_.end()) {
-            return done(nullptr);
-        }
-        const auto it = rooms_.find(it_room_id->second);
-        done(it != rooms_.end() ? it->second : nullptr);
-    });
+    std::shared_lock lock{mutex_};
+    const auto it_room_id = uid_to_roomid_.find(uid);
+    if (it_room_id == uid_to_roomid_.end()) return RoomRef{};
+    const auto it = rooms_.find(it_room_id->second);
+    return it != rooms_.end() ? it->second : RoomRef{};
 }
 
-void RoomManager::FindRoomIDByUID(const UID_t uid, std::function<void(std::optional<ROOM_ID_t>)> done)
+core::actor::Future<bool> RoomManager::AddPlayerToRoom(const ROOM_ID_t room_id, AccountBaseData account_data, const UserConnectionPtr & userconn)
 {
-    assert(done);
-    if (!done) return;
+    const UID_t uid = account_data.uid();
 
-    base_loop_->RunCallbackInLoop([this, uid, done = std::move(done)] {
-        const auto it_room_id = uid_to_roomid_.find(uid);
-        if (it_room_id == uid_to_roomid_.end()) {
-            return done(std::nullopt);
-        }
-        return done(it_room_id->second);
-    });
-}
-
-void RoomManager::AddPlayerToRoom(ROOM_ID_t room_id, AccountBaseData account_data, const UserConnectionPtr & userconn, std::function<void(RoomPtr)> done)
-{
-    assert(done);
-    if (!done) return;
-
-    base_loop_->RunCallbackInLoop([this, room_id, account_data = std::move(account_data), done = std::move(done), userconn] {
-        // 查找要加入的房间
+    RoomRef ref;
+    {
+        std::shared_lock lock{mutex_};
         const auto it_room = rooms_.find(room_id);
-        const auto room = (it_room != rooms_.end() ? it_room->second : nullptr);
-        if (room == nullptr) {
-            return done(nullptr);
+        if (it_room != rooms_.end()) ref = it_room->second;
+    }
+
+    if (!ref) {
+        auto promise = std::make_shared<core::actor::Promise<bool>>();
+        auto future = promise->get_future();
+        promise->set_value(false);
+        return future;
+    }
+
+    //! 在 Room 线程内执行加入，成功后登记 uid 索引；actor 死亡时 Future 携带异常
+    return ref.AskWith<bool>([this, account_data = std::move(account_data), userconn, uid, room_id](Room& room) mutable {
+        const bool ok = room.AddPlayer(userconn, account_data);
+        if (ok) {
+            std::unique_lock lock{mutex_};
+            AddUIDIndexLocked(uid, room_id);
         }
-        room->AddPlayer(userconn, account_data);
-        uid_to_roomid_[account_data.uid()] = room->get_id();
-        return done(room);
+        return ok;
     });
 }
 

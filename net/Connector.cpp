@@ -3,7 +3,6 @@
 #include "EventLoop.h"
 #include "log.h"
 #include "ErrnoSaver.h"
-#include "status/Status.h"
 #include "SocketApiWrapper.h"
 #include <algorithm>
 

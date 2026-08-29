@@ -13,13 +13,17 @@ using namespace yy::net;
 
 namespace yy::app::logic
 {
-Room::Room(EventLoop * loop, const RoomDetailData& data): loop_(loop), room_data_(data),
+Room::Room(EventLoop * loop, const RoomDetailData& data, std::function<void(UID_t)> on_player_remove, std::function<void(ROOM_ID_t)> on_room_stop): core::actor::Actor<Room>(loop), room_data_(data),
     msg_handler_{[this](const UserConnectionPtr& userdata, const MessagePtr& message) {
         YLOG_DEBUG("未知的消息类型：{}", message->GetDescriptor()->full_name())
         userdata->Shutdown();
     }},
-    players_pool_{util::ObjectPool<PlayerBaseData>::Instance()}
+    players_pool_{util::ObjectPool<PlayerBaseData>::Instance()},
+    m_PlayerRemoveCb{std::move(on_player_remove)},
+    m_RoomStopCb{std::move(on_room_stop)}
 {
+    room_data_.clear_exist_player_datas(); //! 玩家数据以 players_ 为唯一来源，metadata 不冗余存储
+
     RegisterHandler(this, this->msg_handler_  , &Room::OnEnterScene);
     RegisterHandler(this, this->msg_handler_  , &Room::OnLeaveScene);
     RegisterHandler(this, this->msg_handler_  , &Room::OnC2SOtherPlayerData);
@@ -27,60 +31,41 @@ Room::Room(EventLoop * loop, const RoomDetailData& data): loop_(loop), room_data
     RegisterHandler(this, this->msg_handler_  , &Room::OnC2SJumpAndGravity);
 }
 
-Room::~Room()
-{
-    StopUpdate();
-}
+Room::~Room() = default;
 
-void Room::Init(const Milliseconds deltaTime)
+void Room::OnStart()
 {
-    update_timer_id_ = loop_->RunEvery(deltaTime, [this] {
-        this->Update();
-    });
-
-    // 自取消定时器
-    const auto print_timer = loop_->CreateTimerEvery(1s);
-    print_timer->SetCallback([weak_this = std::weak_ptr(shared_from_this()), timerid = print_timer->GetID(), loop = this->loop_] {
-        if (const auto self = weak_this.lock()) {
-            YLOG_INFO("房间 <{}> 内有 ({})/{} 人, ",
-                self->room_data_.ShortDebugString(),
-                // or
-                self->players_.size(),
-                self->room_data_.capacity());
-        } else {
-            loop->CancelTimer(timerid);
+    // 周期性检查：长时间无消息则自动销毁（防止僵尸房间）
+    RunEveryAlive(ROOM_IDLE_CHECK_INTERVAL, [this] {
+        if (std::chrono::steady_clock::now() - last_activity_ > ROOM_IDLE_TIMEOUT) {
+            YLOG_INFO("房间<{}>空闲超时，自动关闭", get_id());
+            StopSelf();
         }
     });
-    loop_->AddTimer(print_timer);
 }
 
-void Room::Update()
+void Room::OnStop()
 {
-    //
+    if (m_RoomStopCb) m_RoomStopCb(get_id());
 }
 
-void Room::StopUpdate()
-{
-    loop_->CancelTimer(update_timer_id_);
-}
-
-void Room::PostMessage(const UserConnectionPtr& conn, const MessagePtr& msg) const
+void Room::PostMessage(const UserConnectionPtr& conn, const MessagePtr& msg)
 {
     //! 对于游戏消息，并不在IO线程处理，而是在专门处理游戏数据的工作线程中处理（让分发器找到该游戏消息所注册的对应的处理函数。）
-    loop_->RunCallbackInLoop([this, conn, msg] { // 注意这里跨线程传输需要拷贝智能指针
-        // 调用消息对应的处理函数
+    Post([this, conn, msg] { // 注意这里跨线程传输需要拷贝智能指针
+        last_activity_ = std::chrono::steady_clock::now();
         msg_handler_.OnProtobufMessage(conn, msg);
     });
 }
 
-void Room::PostTask(const F_TaskCallback& task) const
+void Room::PostTask(const F_TaskCallback& task)
 {
-    loop_->RunCallbackInLoop(task);
+    Post(task);
 }
 
 void Room::OnPlayerDisconnect(const UserConnectionPtr& userconn)
 {
-    loop_->RunCallbackInLoop([this, userconn] {
+    Post([this, userconn] {
         //! 给其他玩家客户端发送离线通告
         S2CLeaveScene playerLeave;
         playerLeave.set_uid(userconn->GetUID());
@@ -90,10 +75,8 @@ void Room::OnPlayerDisconnect(const UserConnectionPtr& userconn)
         userconn->SetState(UserConnection::E_UserBaseState::eSavingData);
 
         //! 清除数据 and 保存数据
-        {
-             // 删除玩家并将玩家数据归还对象池
-             const auto removed_player = RemovePlayer(userconn->GetUID());
-             removed_player->get_base_data()->Clear();
+        if (const auto removed_player = RemovePlayer(userconn->GetUID())) {
+            removed_player->get_base_data()->Clear();
         }
 
         userconn->SetState(UserConnection::E_UserBaseState::eFree);
@@ -141,58 +124,67 @@ void Room::InitPlayerData(const PlayerBaseDataPtr& self_data, AccountBaseData ac
     movement->set_ani_speed(0);
 }
 
-void Room::AddPlayer(const UserConnectionPtr& self_conn, AccountBaseData account_data)
+bool Room::AddPlayer(const UserConnectionPtr& self_conn, AccountBaseData account_data)
 {
-    loop_->RunCallbackInLoop([self_conn, account_data = std::move(account_data), this] {
-        // 初始化进入玩家对象，加入玩家数据列表
-        self_conn->SetUID(account_data.uid());
-        const auto self_data = players_pool_.Acquire(2s);
-        if(self_data == nullptr) {
-            return;
-        }
-        InitPlayerData(self_data, account_data);
+    GetLoop()->AssertInLoopingThread(); //! 必须在 Room 线程内调用
 
-        //! room_data_
-        room_data_.add_exist_player_datas()->CopyFrom(self_data->account_data());
+    const UID_t uid = account_data.uid();
 
-        //! players_
-        players_.emplace(self_data->account_data().uid(), std::make_shared<Player>(self_conn, self_data));
-    });
+    //! 重复加入直接拒绝
+    if (players_.contains(uid)) {
+        YLOG_WARN("玩家<{}>重复加入房间<{}>", uid, get_id());
+        return false;
+    }
+
+    self_conn->SetUID(uid);
+    const auto self_data = players_pool_.Acquire(2s);
+    if (self_data == nullptr) {
+        YLOG_ERROR("房间<{}>玩家对象池已满，玩家<{}>加入失败", get_id(), uid);
+        return false;
+    }
+
+    InitPlayerData(self_data, account_data);
+    players_.emplace(uid, std::make_shared<Player>(self_conn, self_data));
+    last_activity_ = std::chrono::steady_clock::now();
+    return true;
 }
 
 PlayerPtr Room::RemovePlayer(const UID_t uid)
 {
+    GetLoop()->AssertInLoopingThread();
+
     if (m_PlayerRemoveCb)
         m_PlayerRemoveCb(uid);
 
     YLOG_INFO("Room::RemovePlayer {}", uid)
-    //! room_data_
-    auto* repeated = room_data_.mutable_exist_player_datas();
-    for (int i = repeated->size() - 1; i >= 0; --i) {
-        if (repeated->Get(i).uid() == uid) {
-            repeated->DeleteSubrange(i, 1);
-            break;
-        }
-    }
 
-    //! players_
+    //! players_ 是玩家数据的唯一来源
     const auto it = players_.find(uid);
     PlayerPtr player = nullptr;
     if (it != players_.end()) {
         player = it->second;
         players_.erase(it);
     }
+
+    //! 最后一个玩家离开后，自动停止并注销房间
+    if (players_.empty()) {
+        StopSelf();
+    }
     return player;
 }
 
 PlayerPtr Room::FindPlayer(const UID_t uid)
 {
+    GetLoop()->AssertInLoopingThread();
+
     const auto it = players_.find(uid);
     return it == players_.end() ? nullptr : it->second;
 }
 
-auto Room::GetAllPlayers() -> std::unordered_map<UID_t, PlayerPtr>
+auto Room::GetAllPlayers() const -> const std::unordered_map<UID_t, PlayerPtr>&
 {
+    GetLoop()->AssertInLoopingThread();
+
     return players_;
 }
 
@@ -317,9 +309,7 @@ void Room::OnLeaveScene(const UserConnectionPtr& leave_conn, const Ptr<protocol:
     leave_conn->SetState(UserConnection::E_UserBaseState::eSavingData);
 
     //! 清除数据 and 保存数据
-    {
-        // 删除玩家并将玩家数据归还对象池
-        const auto removed_player = RemovePlayer(leave_conn->GetUID());
+    if (const auto removed_player = RemovePlayer(leave_conn->GetUID())) {
         removed_player->get_base_data()->Clear();
     }
 

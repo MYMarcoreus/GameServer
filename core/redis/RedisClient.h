@@ -1,9 +1,11 @@
 #pragma once
 
 #include <chrono>
+#include <expected>
 #include <memory>
 
 #include "Singleton.h"
+#include "RedisError.h"
 #include <string>
 #include <unordered_map>
 #include <optional>
@@ -37,7 +39,8 @@ public:
     auto Get(const std::string& key) -> std::optional<std::string>;
     auto HGetAll(const std::string& key) -> std::unordered_map<std::string, std::string>;
     auto HGet(const std::string& key, const std::string& field) -> std::optional<std::string>;
-    auto GetAndRefreshEx(const std::string& key, std::chrono::seconds expire_seconds) -> std::optional<std::string>;
+    //! 取 key 并刷新过期时间；错误码区分 kNotFound（key 不存在）与 kError（Redis 通信/执行错误）
+    auto GetAndRefreshEx(const std::string& key, std::chrono::seconds expire_seconds) -> std::expected<std::string, std::error_code>;
 
     bool Del(const std::string& key);
     bool HDel(const std::string& key, const std::string& field);
@@ -50,4 +53,3 @@ private:
 };
 
 }
-

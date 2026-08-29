@@ -14,3 +14,4 @@
 /build-release
 /vcpkg_installed
 /logs
+*.log

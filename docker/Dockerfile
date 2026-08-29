@@ -58,6 +58,9 @@ COPY . /workspace
 RUN cmake --preset linux-debug && \
     cmake --build --preset debug -j"$(nproc)"
 
+# 6. 开发容器以宿主用户(uid 1000)运行，将工具链目录属主改为 1000，保证容器内可写
+RUN chown -R 1000:1000 "${VCPKG_ROOT}" "${VCPKG_INSTALLED_DIR}"
+
 # ---------- 阶段 2：运行 ----------
 FROM ubuntu:24.04 AS runtime
 

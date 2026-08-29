@@ -79,10 +79,10 @@ void CenterServiceRpc_Impl::Update()
             // 通知逻辑服
             DeleteRoomReq del_req;
             del_req.set_room_id(room->get_room_id());
-            logic_rpc_client_.CallRemoteAsync_From<DeleteRoomReq, DeleteRoomRsp>(room->get_server_info()->get_name(), del_req,
-                [](std::unique_ptr<DeleteRoomRsp> && response, std::unique_ptr<rpc::RpcControllerImpl> && controller) {
-                    if (response->success()) {
-                        YLOG_INFO("\t逻辑服删除房间<{}>", response->room_id())
+            logic_rpc_client_.CallRemote_From<DeleteRoomReq, DeleteRoomRsp>(room->get_server_info()->get_name(), del_req)
+                .then([](rpc::RpcResult<DeleteRoomRsp> result) {
+                    if (result.ok() && result.response->success()) {
+                        YLOG_INFO("\t逻辑服删除房间<{}>", result.response->room_id());
                     }
                 });
         }
@@ -116,14 +116,12 @@ void CenterServiceRpc_Impl::CreateRoom(RpcController* controller,
     req_NewRoom.mutable_room_data()->CopyFrom(room_data);
     req_NewRoom.set_user_token(request->user_token());
     //
-    logic_rpc_client_.CallRemoteAsync_From<NewRoomReq, NewRoomRsp>(server_name,
-        req_NewRoom,
-        [this, response, done, room_data = std::move(room_data), server_info, owner_data = request->owner_data()]
-        (std::unique_ptr<NewRoomRsp> && rsp_NewRoom, std::unique_ptr<rpc::RpcControllerImpl> && controller)
-        {
-            if(rsp_NewRoom->success()) {
-                response->set_room_ip(rsp_NewRoom->ip());
-                response->set_room_port(rsp_NewRoom->port());
+    logic_rpc_client_.CallRemote_From<NewRoomReq, NewRoomRsp>(server_name, req_NewRoom)
+        .then([this, response, done, room_data = std::move(room_data), server_info, owner_data = request->owner_data()]
+        (rpc::RpcResult<NewRoomRsp> rsp) {
+            if (rsp.ok() && rsp.response->success()) {
+                response->set_room_ip(rsp.response->ip());
+                response->set_room_port(rsp.response->port());
                 //! 中央服务器添加房间，并将创建者加入房间
                 const RoomInfoPtr room = get_room_info_controller().AddRoom(room_data, server_info, owner_data);
                 if (room) {
@@ -135,7 +133,9 @@ void CenterServiceRpc_Impl::CreateRoom(RpcController* controller,
             } else {
                 response->set_result_code(CreateRoomRsp_Status_eUnknownError);
             }
-            YLOG_INFO("收到NewRoomRsp：{}", rsp_NewRoom->DebugString())
+            if (rsp.response) {
+                YLOG_INFO("收到NewRoomRsp：{}", rsp.response->DebugString());
+            }
             done->Run();
         });
 }
@@ -286,9 +286,11 @@ void CenterServiceRpc_Impl::BroadcastRoom(const RoomInfo & room, const UID_t fro
     broadcast_req.set_payload(std::move(msg_str));
 
     // 发送给gate server
-    gate_rpc_client_.CallRemoteAsync_Random<BroadcastRoomReq, BroadcastRoomRsp>(broadcast_req,
-        [msg_cmd](std::unique_ptr<BroadcastRoomRsp> && response, std::unique_ptr<rpc::RpcControllerImpl> && controller) {
-            YLOG_INFO("[CenterServiceRpc_Impl::BroadcastRoom] {}广播成功", g_cmd_to_name[msg_cmd])
+    gate_rpc_client_.CallRemote_Random<BroadcastRoomReq, BroadcastRoomRsp>(broadcast_req)
+        .then([msg_cmd](rpc::RpcResult<BroadcastRoomRsp> result) {
+            if (result.ok()) {
+                YLOG_INFO("[CenterServiceRpc_Impl::BroadcastRoom] {}广播成功", g_cmd_to_name[msg_cmd]);
+            }
         });
 }
 

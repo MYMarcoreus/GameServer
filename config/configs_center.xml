@@ -40,7 +40,7 @@
             username  = "yy"
             password  = "0"
             poolsize  = "10"
-            ip      = "mysql"
+            ip      = "127.0.0.1"
             port    = "33060"
         />
 
@@ -49,7 +49,7 @@
             username  = "yy"
             password  = "0"
             poolsize  = "10"
-            ip      = "zookeeper"
+            ip      = "127.0.0.1"
             port    = "2181"
         />
     </remote>

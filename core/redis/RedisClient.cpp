@@ -97,16 +97,23 @@ auto RedisClient::HGet(const std::string& key, const std::string& field) -> std:
     return std::nullopt;
 }
 
-auto RedisClient::GetAndRefreshEx(const std::string& key, const std::chrono::seconds ttl) -> std::optional<std::string>
+auto RedisClient::GetAndRefreshEx(const std::string& key, const std::chrono::seconds ttl) -> std::expected<std::string, std::error_code>
 {
-    const auto conn = pool_->Acquire();
-    if (auto val = conn->conn.get(key)) {
-        // 成功取值后，刷新该 key 的过期时间
-        if (conn->conn.expire(key, ttl))
-            return *val;
-        return std::nullopt;
+    try {
+        const auto conn = pool_->Acquire();
+        if (auto val = conn->conn.get(key)) {
+            // 成功取值后，刷新该 key 的过期时间
+            if (conn->conn.expire(key, ttl))
+                return *val;
+            YLOG_ERROR("RedisClient::GetAndRefreshEx Expire 失败：key={}", key)
+            return std::unexpected(RedisError::kError);
+        }
+        // key 不存在（如 token 无效/已过期）
+        return std::unexpected(RedisError::kNotFound);
+    } catch (const sw::redis::Error& e) {
+        YLOG_ERROR("RedisClient::GetAndRefreshEx 错误：key={}, {}", key, e.what())
+        return std::unexpected(RedisError::kError);
     }
-    return std::nullopt;
 }
 
 bool RedisClient::Del(const std::string& key)

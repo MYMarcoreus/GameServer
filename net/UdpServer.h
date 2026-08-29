@@ -2,6 +2,8 @@
 #include "net_definations.h"
 
 #include <atomic>
+#include <expected>
+#include <system_error>
 
 #include "RWLock.h"
 
@@ -33,7 +35,7 @@ public:
 
     auto GetMainLoop() const -> EventLoop* { return m_mainLoop; }
     auto GetUdpTran() const -> UdpTransporter& { return *m_udpTran; }
-    auto GetRecvAddr() const -> IPAddressPtr;
+    auto GetRecvAddr() const -> std::expected<IPAddressPtr, std::error_code>;
 
     UdpSessionPtr RegisterSession(uint64_t connid, IPAddressPtr udpAddr);
     void UnregisterSession(uint64_t connid);

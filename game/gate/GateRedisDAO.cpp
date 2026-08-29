@@ -50,7 +50,7 @@ auto GateRedisDAO::SetTokenExprieTime(const uint64_t uid, std::chrono::seconds) 
     return redis_client_.Expire(key, 1800s);
 }
 
-auto GateRedisDAO::GetTokenAndRefreshEx(const uint64_t uid) const -> std::optional<std::string>
+auto GateRedisDAO::GetTokenAndRefreshEx(const uint64_t uid) const -> std::expected<std::string, std::error_code>
 {
     const auto uid_str = std::to_string(uid);
     const auto key = std::format("{}_{}", USR_TKN_field, uid_str);

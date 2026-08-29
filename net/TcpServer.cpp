@@ -70,7 +70,11 @@ void TcpServer::HandleNewConnection(SocketApiWrapper::socket_t sockfd, IPAddress
     m_AcceptorLoop->AssertInLoopingThread();
 
     EventLoop * ioLoop = m_IOThreadPool->GetNextLoop();
-    IPAddressPtr localAddr = SocketApiWrapper::GetLocalAddr(sockfd);
+    const auto localAddrRes = SocketApiWrapper::GetLocalAddr(sockfd);
+    if (!localAddrRes) {
+        YLOG_WARN("TcpServer::HandleNewConnection 获取本地地址失败：{}", localAddrRes.error().message())
+    }
+    const IPAddressPtr localAddr = localAddrRes.value_or(nullptr);
 
     //! 以"连接时间:连接编号"作为连接的唯一标记，相同连接时间的连接编号一定不同
     // auto name = std::format("{:020}-{:011}", Timestamp::Now().GetMircoSecondSinceEpoch().count(), m_NextConnID++);
@@ -171,4 +175,3 @@ void TcpServer::HandleSignal() {
 
 
 }
-

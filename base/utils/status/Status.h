@@ -3,9 +3,12 @@
 #ifndef ____STATUS_H
 #define ____STATUS_H
 
-#include<string>
-#include<cstring>
+#include <string>
+#include <cstring>
 #include <utility>
+#include <memory>
+#include <string_view>
+#include <ostream>
 
 namespace yy::util {
 
@@ -63,7 +66,7 @@ private:
 
 inline bool operator==(StatusCode::__StatusCode lhs, StatusCode rhs) { return rhs == lhs; }
 
-static std::ostream& operator<<(std::ostream& os, StatusCode code) {
+inline std::ostream& operator<<(std::ostream& os, StatusCode code) {
     return os << code.ToString();
 }
 
@@ -88,28 +91,36 @@ class Status final
 public:
     Status();
     Status(StatusCode code, const std::string& message);
-    Status(const Status & other);                // copy-ctor
-    Status& operator=(const Status & other);     // copy-assign
-    Status(Status && other) noexcept;            // move-ctor
-    Status &operator=(Status && other) noexcept; // move-assign
-    ~Status();
+    //! 拷贝/移动/析构全部交由 std::shared_ptr 自动管理：
+    //! 共享的是不可变数据（StatusBase），因此线程安全、零拷贝；移动后源对象为nullptr，所有访问器均已判空防护。
+    Status(const Status &) = default;
+    Status& operator=(const Status &) = default;
+    Status(Status &&) noexcept = default;
+    Status &operator=(Status &&) noexcept = default;
+    ~Status() = default;
 
-    bool ok() const { return data_->code_ == StatusCode::kOk; }
+    bool ok() const { return data_ && data_->code_ == StatusCode::kOk; }
 
-    StatusCode code() const { return data_->code_; }
+    StatusCode code() const { return data_ ? data_->code_ : StatusCode::kOk; }
 
     // 因为data_->message_只读，所以可以返回string_view
-    std::string_view message() const { return data_->message_; }
+    std::string_view message() const { return data_ ? std::string_view{data_->message_} : std::string_view{}; }
 
-    bool operator==(StatusCode code) const { return data_->code_ == code; }
+    bool operator==(StatusCode code) const { return this->code() == code; }
+
+    bool operator==(const Status& other) const {
+        return this->code() == other.code() && this->message() == other.message();
+    }
+
+    bool operator!=(const Status& other) const { return !(*this == other); }
 
     // 返回code+message的格式化的错误信息
     std::string ToString() const;
 private:
-    StatusBase * data_;
+    std::shared_ptr<const StatusBase> data_;
 };
 
-static std::ostream& operator<<(std::ostream& os, const Status& x) {
+inline std::ostream& operator<<(std::ostream& os, const Status& x) {
     return os << x.ToString();
 }
 

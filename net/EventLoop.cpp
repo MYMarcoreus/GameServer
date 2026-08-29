@@ -46,7 +46,12 @@ struct WakeupFD {
         this->wait_fd =  SocketApiWrapper::create_udp_or_die(false);
         const auto loopback_addr = std::make_shared<IPv4Address>("127.0.0.1");
         SocketApiWrapper::bind_or_die(this->wait_fd, loopback_addr);
-        this->wait_addr = SocketApiWrapper::GetLocalAddr(this->wait_fd);
+        const auto local_addr = SocketApiWrapper::GetLocalAddr(this->wait_fd);
+        if (local_addr) {
+            this->wait_addr = *local_addr;
+        } else {
+            YLOG_ERROR("WakeupFD 获取本地地址失败：{}", local_addr.error().message())
+        }
 
         this->notify_fd = SocketApiWrapper::create_udp_or_die(true);
     }

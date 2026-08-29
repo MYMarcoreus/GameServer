@@ -3,7 +3,9 @@
 #include "Timestamp.h"
 #include "socket_definations.h"
 
+#include <expected>
 #include <memory>
+#include <system_error>
 
 
 namespace yy::util
@@ -41,7 +43,7 @@ public:
     ///Region GETTER
     auto GetLoop() const -> EventLoop* { return m_recvLoop; }
     auto GetSocketFD() const -> SocketApiWrapper::socket_t ;
-    auto GetRecvAddr() const -> IPAddressPtr;
+    auto GetRecvAddr() const -> std::expected<IPAddressPtr, std::error_code>;
     ///End
 
     ///Region SETTER

@@ -2,7 +2,7 @@
 #include "log.h"
 #include "EventLoop.h"
 #include "Timer.h"
-#include "status/Status.h"
+#include <cstring>
 
 #ifdef ____LINUX
 #include <sys/timerfd.h>

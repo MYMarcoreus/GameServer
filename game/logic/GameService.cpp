@@ -27,14 +27,12 @@ GameService::GameService(EventLoop * baseLoop, IServer& frontend):
         }
         // YLOG_INFO("User {} Dispatching msg: {}", conn->GetUID(), msg->ShortDebugString())
 
-        m_roomManager->FindRoomByUID(conn->GetUID(),
-            [conn, msg](const RoomPtr & room) {
-                if (room) {
-                    // YLOG_INFO("User {} PostMessage To {}: {}", conn->GetUID(), room->get_room_data().ShortDebugString(), msg->ShortDebugString())
-                    //! 即时处理（非Update）：对于游戏消息，并不在IO线程处理，而是在专门处理游戏数据的工作线程中处理（让分发器找到该游戏消息所注册的对应的处理函数。）
-                    room->PostMessage(conn, msg);
-                }
+        if (auto room = m_roomManager->FindRoomByUID(conn->GetUID())) {
+            //! 即时处理（非Update）：对于游戏消息，并不在IO线程处理，而是在专门处理游戏数据的工作线程中处理
+            room.Send([conn, msg](Room& r) {
+                r.PostMessage(conn, msg);
             });
+        }
     }},
     m_players_pool{ObjectPool<PlayerBaseData>::Instance()},
     m_redisDAO{LogicRedisDAO::Instance()}
@@ -66,36 +64,32 @@ void GameService::DispatchMessage(const UserConnectionPtr& conn, const MessagePt
 void GameService::OnPlayerDisconnect(const UserConnectionPtr& userconn)
 {
     if(!userconn or !userconn->IsLoggedIn()) return;
-    m_roomManager->FindRoomByUID(userconn->GetUID(),
-        [userconn](const RoomPtr & room) {
-            if (room) {
-                room->OnPlayerDisconnect(userconn);
-            }
+    if (auto room = m_roomManager->FindRoomByUID(userconn->GetUID())) {
+        room.Send([userconn](Room& r) {
+            r.OnPlayerDisconnect(userconn);
         });
+    }
 }
 
 void GameService::NewRoom(google::protobuf::RpcController* controller,
     const NewRoomReq* request, NewRoomRsp* response, google::protobuf::Closure* done)
 {
     YLOG_INFO("正在执行 GameService::NewRoom 服务: {}", request->ShortDebugString())
-    // 需要在新建房间时为房间分配线程，分配器需要保证在其所在的线程中进行分配，所以使用异步
-    m_roomManager->AddRoom(request->room_data(),
-        [this, response, done] (const RoomPtr& new_room) {
-            //! 新建房间但是不新建Player，需要在客户端连接logic server时再AddPlayer
-            response->set_success(true);
-            response->set_room_id(new_room->get_id());
-            // 给出逻辑服对外开放的ip和端口
-            const auto fronend_addr = m_frontend.GetTcpListenAddr();
-            // 优先返回配置中的 advertiseIp，若为空则回落到本机IP
-            const auto & advertise = yy::config::g_app_config->GetValue().advertise_ip();
-            if (!advertise.empty()) response->set_ip(advertise);
-            else response->set_ip(GetLocalIP());
-            response->set_port(fronend_addr->GetPort());
-            YLOG_INFO("执行完毕 GameService::NewRoom 服务: {}", response->ShortDebugString())
+    //! 新建房间但是不新建Player，需要在客户端连接logic server时再AddPlayer
+    const auto new_room = m_roomManager->AddRoom(request->room_data());
+    response->set_success(new_room.IsAlive());
+    response->set_room_id(request->room_data().room_id());
+    // 给出逻辑服对外开放的ip和端口
+    const auto fronend_addr = m_frontend.GetTcpListenAddr();
+    // 优先返回配置中的 advertiseIp，若为空则回落到本机IP
+    const auto & advertise = yy::config::g_app_config->GetValue().advertise_ip();
+    if (!advertise.empty()) response->set_ip(advertise);
+    else response->set_ip(GetLocalIP());
+    response->set_port(fronend_addr->GetPort());
+    YLOG_INFO("执行完毕 GameService::NewRoom 服务: {}", response->ShortDebugString())
 
-            // 发送响应
-            done->Run();
-        });
+    // 发送响应
+    done->Run();
 }
 
 void GameService::DeleteRoom(google::protobuf::RpcController* controller,
@@ -105,15 +99,11 @@ void GameService::DeleteRoom(google::protobuf::RpcController* controller,
     response->set_room_id(request->room_id());
 
     // 删除房间
-    m_roomManager->RemoveRoom(request->room_id(),
-        [response, done] (const bool is_removed) {
-            // 填写响应
-            response->set_success(is_removed);
-            YLOG_INFO("执行完毕 GameService::DeleteRoom 服务: {}", response->ShortDebugString())
+    response->set_success(m_roomManager->RemoveRoom(request->room_id()));
+    YLOG_INFO("执行完毕 GameService::DeleteRoom 服务: {}", response->ShortDebugString())
 
-            // 发送响应
-            done->Run();
-        });
+    // 发送响应
+    done->Run();
 }
 
 void GameService::GetLogicAddr(google::protobuf::RpcController* controller,
@@ -147,22 +137,45 @@ void GameService::OnSceneLoginReq(const UserConnectionPtr& conn, const Ptr<Scene
     }
 
     const UID_t uid = req->uid();
+    const auto io_loop = conn->GetConnection()->GetIOLoop(); //! 记录 IO 线程，稍后投回
+
+    //! Redis 阻塞调用挪到工作线程，避免卡住 IO 线程
+    m_redisDAO.FetchLoginDataAsync(uid)
+        .then([this, conn, req, uid, io_loop](LoginData data) -> bool {
+            // 本续体在 Redis 工作线程执行；连接相关操作投回 IO 线程
+            io_loop->RunCallbackInLoop([this, conn, req, uid, data = std::move(data)]() mutable {
+                CompleteLogin(conn, req, uid, std::move(data));
+            });
+            return true;
+        })
+        .onError([](std::exception_ptr) -> bool {
+            YLOG_ERROR("登录失败：Redis 查询异常");
+            return true;
+        });
+}
+
+void GameService::CompleteLogin(const UserConnectionPtr& conn, const Ptr<SceneLoginReq>& req, const UID_t uid, LoginData data)
+{
+    SceneLoginRsp resp;
+    resp.set_is_ok(false);
+
     const std::string scene_token_req = req->scene_token();
     const std::string user_token_req  = req->user_token();
-    const auto scene_token = m_redisDAO.GetAndDelSceneToken(uid);
-    const auto user_token  = m_redisDAO.GetUserTokenAndRefreshEx(uid);
 
-    if (!scene_token || !user_token) {
+    if (!data.scene_token || !data.user_token) {
         YLOG_ERROR("登录失败：Redis中找不到token [uid={}]", uid);
         conn->SendTCP(resp);
         return;
     }
 
-    const bool is_scene_token_ok = (scene_token_req == scene_token);
-    const bool is_user_token_ok  = (user_token_req  == user_token);
+    if (scene_token_req != *data.scene_token || user_token_req != *data.user_token) {
+        YLOG_ERROR("登录失败：token校验失败 [uid={}]", uid);
+        conn->SendTCP(resp);
+        return;
+    }
 
-    if (!is_scene_token_ok || !is_user_token_ok) {
-        YLOG_ERROR("登录失败：token校验失败 [uid={} scene_ok={} user_ok={}]", uid, is_scene_token_ok, is_user_token_ok);
+    if (!data.account) {
+        YLOG_ERROR("获取redis账号数据失败 [uid={}]", uid);
         conn->SendTCP(resp);
         return;
     }
@@ -175,23 +188,18 @@ void GameService::OnSceneLoginReq(const UserConnectionPtr& conn, const Ptr<Scene
     resp.set_is_ok(true);
     conn->SendTCP(resp);
 
-    // 加入房间（异步）
-    const ROOM_ID_t room_id = req->room_id();
-    auto redis_account_data = m_redisDAO.GetAccountData(uid);
-    if (not redis_account_data.has_value()) {
-        YLOG_ERROR("获取redis账号数据失败");
-        return;
-    }
     AccountBaseData account_data;
-    account_data.set_uid(redis_account_data->uid);
-    account_data.set_username(redis_account_data->username);
-    m_roomManager->AddPlayerToRoom(room_id, std::move(account_data), conn,
-        [uid](const RoomPtr& room) {
-           if (room) {
-               YLOG_INFO("[GameService::OnSceneLoginReq] UID {} 验证成功，成功加入房间 {}:{}", uid, room->get_name(), room->get_id());
-           } else {
-               YLOG_INFO("[GameService::OnSceneLoginReq] UID {} 验证成功，但房间不存在", uid);
-           }
+    account_data.set_uid(data.account->uid);
+    account_data.set_username(data.account->username);
+
+    m_roomManager->AddPlayerToRoom(req->room_id(), std::move(account_data), conn)
+        .then([uid](bool ok) -> bool {
+            if (ok) {
+                YLOG_INFO("[GameService::OnSceneLoginReq] UID {} 验证成功，成功加入房间", uid);
+            } else {
+                YLOG_INFO("[GameService::OnSceneLoginReq] UID {} 验证成功，但加入房间失败", uid);
+            }
+            return true;
         });
 }
 

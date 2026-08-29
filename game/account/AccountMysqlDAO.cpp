@@ -13,7 +13,7 @@ void AccountMysqlDAO::Start(net::EventLoop* loop)
     mysql_client_.Start(loop, "gameserver");
 }
 
-auto AccountMysqlDAO::GetAccountData(const std::string& username) -> std::optional<AccountData>
+auto AccountMysqlDAO::GetAccountData(const std::string& username) -> std::expected<AccountData, std::error_code>
 {
     try {
         // redis中没有该用户的信息，便去mysql去取
@@ -27,65 +27,47 @@ auto AccountMysqlDAO::GetAccountData(const std::string& username) -> std::option
 
         auto row = row_rst.fetchOne();
         if (row.isNull()) {
-            return std::nullopt;
+            return std::unexpected(GameError::kAccountNotFound);
         }
         // 验证密码
         const auto mysql_pwd = row[0].get<std::string>();
         const auto mysql_uid = row[1].get<uint64_t>();
-        AccountData data( username, std::move(mysql_pwd), mysql_uid);
-        return data;
+        return AccountData{ username, mysql_pwd, mysql_uid };
     } catch (const mysqlx::Error& e) {
         YLOG_ERROR("AccountRpcServiceImpl::Login MySQL Query Error: {}", e.what())
-        return std::nullopt;
+        return std::unexpected(GameError::kDbError);
     }
 }
 
-auto AccountMysqlDAO::HasAccountData(const std::string& username) -> bool
-{
-    try {
-        const auto mysql_conn = mysql_client_.GetConnection();
-        // 查询账号是否存在
-        auto row_rst = mysql_conn->conn.getDefaultSchema()
-            .getTable("account")
-            .select("1")
-            .where("username = :usrname")
-            .limit(1)
-            .bind("usrname", username)
-        .execute();
-        const bool is_exist = row_rst.count() ;
-        return is_exist;
-    }  catch (const mysqlx::Error& e) {
-        YLOG_ERROR("AccountRpcServiceImpl::Register MySQL Query Error: {}", e.what())
-        return false;
-    }
-}
-
-auto AccountMysqlDAO::SetAccountData(const std::string& username, const std::string& password) -> std::optional<AccountData>
+auto AccountMysqlDAO::SetAccountData(const std::string& username, const std::string& password) -> std::expected<AccountData, std::error_code>
 {
     const auto mysql_conn = mysql_client_.GetConnection();
-    mysql_conn->conn.startTransaction();
     try {
-        // 账号不存在则注册
-        std::optional<AccountData> data = std::nullopt;
+        mysql_conn->conn.startTransaction();
         const auto reg_rst = mysql_conn->conn.getDefaultSchema()
             .getTable("account")
             .insert("username", "password")
             .values(username, password)
         .execute();
         YLOG_INFO("AccountRpcServiceImpl::Register Insert了 {} 条信息", reg_rst.getAffectedItemsCount())
-        if (reg_rst.getAffectedItemsCount() > 0) {
-            const auto uid = reg_rst.getAutoIncrementValue();
-            data = AccountData(username, password, uid);
+
+        if (reg_rst.getAffectedItemsCount() == 0) {
+            mysql_conn->conn.commit();
+            return std::unexpected(GameError::kDuplicateUsername);
         }
 
-        // 注册成功，提交事务
+        const auto uid = reg_rst.getAutoIncrementValue();
         mysql_conn->conn.commit();
-        return data;
+        return AccountData{ username, password, uid };
     } catch (const mysqlx::Error& e) {
         YLOG_ERROR("AccountRpcServiceImpl::Register MySQL Query Error: {}", e.what())
         // 注册失败，回滚事务
-        mysql_conn->conn.rollback();
-        return std::nullopt;
+        try { mysql_conn->conn.rollback(); } catch (...) { /* 忽略回滚失败 */ }
+        // MySQL 唯一键冲突（ER_DUP_ENTRY）的错误消息稳定包含 "Duplicate entry"
+        if (std::string(e.what()).find("Duplicate entry") != std::string::npos) {
+            return std::unexpected(GameError::kDuplicateUsername);
+        }
+        return std::unexpected(GameError::kDbError);
     }
 }
 }

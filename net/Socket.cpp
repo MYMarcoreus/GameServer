@@ -1,6 +1,5 @@
 #include "Socket.h"
 #include "log.h"
-#include "status/Status.h"
 #include "ErrnoSaver.h"
 #include "SocketApiWrapper.h"
 
@@ -84,15 +83,6 @@ void Socket::SetOpt_KeepAlive(const bool onoff) {
     SetOpt(m_socketfd, SO_KEEPALIVE, opt_val);
 }
 
-//! windows没有SO_REUSEPORT
-// void Socket::SetOpt_ReusePort(bool onoff) {
-//     int opt_val = onoff;
-//     int ret = SetOpt(m_socketfd, SO_REUSEPORT, opt_val);
-//     if(ret < 0 and onoff) {
-//         YLOG_ERROR("In Socket::SetOpt_ReusePort(), setsockopt() error, {}", util::StatusCode{errno}.ToString())
-//     }
-// }
-
 void Socket::SetOpt_RecvBuf(int bufSize) {
     SetOpt(m_socketfd, SO_RCVBUF, bufSize);
 }
@@ -136,12 +126,12 @@ SocketApiWrapper::SocketResult Socket::Recvfrom(void *ptr, const size_t nbytes, 
     return SocketApiWrapper::recvfrom(m_socketfd, ptr, nbytes, flags, peerAddr);
 }
 
-IPAddress::ptr Socket::GetLocalAddr()
+auto Socket::GetLocalAddr() -> std::expected<IPAddress::ptr, std::error_code>
 {
     return SocketApiWrapper::GetLocalAddr(m_socketfd);
 }
 
-IPAddress::ptr Socket::GetPeerAddr()
+auto Socket::GetPeerAddr() -> std::expected<IPAddress::ptr, std::error_code>
 {
     return SocketApiWrapper::GetPeerAddr(m_socketfd);
 }

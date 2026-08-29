@@ -29,13 +29,10 @@ void LogicServerController::UpdateLogicInfo()
     for (auto& [name, inner_addr] : logic_client_.GetServerNames())
     {
         protocol::app::GetLogicAddrReq req;
-        logic_client_.CallRemoteAsync_From<protocol::app::GetLogicAddrReq, protocol::app::GetLogicAddrRsp>(name,
-            req,
-            [this, name](std::unique_ptr<protocol::app::GetLogicAddrRsp> && response, std::unique_ptr<core::rpc::RpcControllerImpl> && controller) {
-                if (response == nullptr or controller == nullptr or controller->Failed()) {
-                    return;
-                }
-                const net::IPAddressPtr outter_addr = std::make_shared<net::IPv4Address>(response->ip(), response->port());
+        logic_client_.CallRemote_From<protocol::app::GetLogicAddrReq, protocol::app::GetLogicAddrRsp>(name, req)
+            .then([this, name](core::rpc::RpcResult<protocol::app::GetLogicAddrRsp> result) {
+                if (!result.ok()) return;
+                const net::IPAddressPtr outter_addr = std::make_shared<net::IPv4Address>(result.response->ip(), result.response->port());
                 logic_info_controller_.AddServerInfo(name, outter_addr);
             });
     }

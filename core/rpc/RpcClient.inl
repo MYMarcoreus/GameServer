@@ -163,3 +163,115 @@ bool RpcClient<ServiceStub>::CallRemoteAsync_From(const std::string& server_name
 
     return true;
 }
+
+template <IsValidStub ServiceStub>
+template <IsProtobufMessage Request, IsProtobufMessage Response>
+core::actor::Future<RpcResult<Response>> RpcClient<ServiceStub>::CallRemote_Random(const std::shared_ptr<Request>& request)
+{
+    auto promise = std::make_shared<core::actor::Promise<RpcResult<Response>>>();
+    auto future = promise->get_future();
+
+    const bool started = CallRemoteAsync_Random<Request, Response>(request,
+        [promise](std::unique_ptr<Response>&& response, std::unique_ptr<RpcControllerImpl>&& controller) mutable {
+            RpcResult<Response> result;
+            if (!response) {
+                result.error_text = "rpc response is null";
+            } else if (!controller || controller->Failed()) {
+                result.error_text = controller ? controller->ErrorText() : "rpc failed";
+            } else {
+                result.response = std::move(response);
+            }
+            promise->set_value(std::move(result));
+        });
+
+    if (!started) {
+        RpcResult<Response> result;
+        result.error_text = "rpc call failed to start";
+        promise->set_value(std::move(result));
+    }
+    return future;
+}
+
+template <IsValidStub ServiceStub>
+template <IsProtobufMessage Request, IsProtobufMessage Response>
+core::actor::Future<RpcResult<Response>> RpcClient<ServiceStub>::CallRemote_Random(const Request& request)
+{
+    auto promise = std::make_shared<core::actor::Promise<RpcResult<Response>>>();
+    auto future = promise->get_future();
+
+    const bool started = CallRemoteAsync_Random<Request, Response>(request,
+        [promise](std::unique_ptr<Response>&& response, std::unique_ptr<RpcControllerImpl>&& controller) mutable {
+            RpcResult<Response> result;
+            if (!response) {
+                result.error_text = "rpc response is null";
+            } else if (!controller || controller->Failed()) {
+                result.error_text = controller ? controller->ErrorText() : "rpc failed";
+            } else {
+                result.response = std::move(response);
+            }
+            promise->set_value(std::move(result));
+        });
+
+    if (!started) {
+        RpcResult<Response> result;
+        result.error_text = "rpc call failed to start";
+        promise->set_value(std::move(result));
+    }
+    return future;
+}
+
+template <IsValidStub ServiceStub>
+template <IsProtobufMessage Request, IsProtobufMessage Response>
+core::actor::Future<RpcResult<Response>> RpcClient<ServiceStub>::CallRemote_From(std::string server_name, const std::shared_ptr<Request>& request)
+{
+    auto promise = std::make_shared<core::actor::Promise<RpcResult<Response>>>();
+    auto future = promise->get_future();
+
+    const bool started = CallRemoteAsync_From<Request, Response>(std::move(server_name), request,
+        [promise](std::unique_ptr<Response>&& response, std::unique_ptr<RpcControllerImpl>&& controller) mutable {
+            RpcResult<Response> result;
+            if (!response) {
+                result.error_text = "rpc response is null";
+            } else if (!controller || controller->Failed()) {
+                result.error_text = controller ? controller->ErrorText() : "rpc failed";
+            } else {
+                result.response = std::move(response);
+            }
+            promise->set_value(std::move(result));
+        });
+
+    if (!started) {
+        RpcResult<Response> result;
+        result.error_text = "rpc call failed to start";
+        promise->set_value(std::move(result));
+    }
+    return future;
+}
+
+template <IsValidStub ServiceStub>
+template <IsProtobufMessage Request, IsProtobufMessage Response>
+core::actor::Future<RpcResult<Response>> RpcClient<ServiceStub>::CallRemote_From(const std::string& server_name, const Request& request)
+{
+    auto promise = std::make_shared<core::actor::Promise<RpcResult<Response>>>();
+    auto future = promise->get_future();
+
+    const bool started = CallRemoteAsync_From<Request, Response>(server_name, request,
+        [promise](std::unique_ptr<Response>&& response, std::unique_ptr<RpcControllerImpl>&& controller) mutable {
+            RpcResult<Response> result;
+            if (!response) {
+                result.error_text = "rpc response is null";
+            } else if (!controller || controller->Failed()) {
+                result.error_text = controller ? controller->ErrorText() : "rpc failed";
+            } else {
+                result.response = std::move(response);
+            }
+            promise->set_value(std::move(result));
+        });
+
+    if (!started) {
+        RpcResult<Response> result;
+        result.error_text = "rpc call failed to start";
+        promise->set_value(std::move(result));
+    }
+    return future;
+}

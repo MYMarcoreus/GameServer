@@ -6,6 +6,7 @@
 #include "EventLoop.h"
 #include "GameData.h"
 #include "GateRedisDAO.h"
+#include "RedisError.h"
 #include "UnorderedMapInLoop.hpp"
 #include "UserConnection.h"
 
@@ -108,36 +109,29 @@ void ForwardManager::RegisterRpcForward(core::rpc::RpcClient<ServiceStub> & rpcC
 
             //! 【转发RPC请求】
             YLOG_INFO("RPC转发：{}发送：{}", Request::descriptor()->name(), request->ShortDebugString());
-            const bool success = rpcClient.template CallRemoteAsync_Random<Request, Response>(
-                *request,
+            rpcClient.template CallRemote_Random<Request, Response>(*request)
                 //! 【Rpc响应回调】
-                [userconn, onRspCb = std::move(onRspCb)](std::unique_ptr<Response>&& response, std::unique_ptr<core::rpc::RpcControllerImpl>&& controller)
-                {
-                    // 收到异步响应时玩家可能
-                    if (!userconn->IsConnected() or !response) {
-                        YLOG_INFO("RPC响应时：连接失效 或 {}响应为空", Request::descriptor()->name());
+                .then([userconn, onRspCb = std::move(onRspCb)](core::rpc::RpcResult<Response> result) {
+                    // 收到异步响应时玩家可能已断开
+                    if (!userconn->IsConnected()) {
+                        YLOG_INFO("RPC响应时：连接失效");
                         return;
                     }
-                    if (!controller or controller->Failed()) {
-                        YLOG_INFO("{}失败：{}", Request::descriptor()->name(), controller->ErrorText());
+                    if (!result.ok()) {
+                        YLOG_WARN("{}转发失败：{}", Request::descriptor()->name(), result.error());
+                        userconn->Shutdown();
                         return;
                     }
 
                     //! 《转发Rpc响应前过滤》
-                    const bool shouldSend = !onRspCb || onRspCb(userconn, *response);
+                    const bool shouldSend = !onRspCb || onRspCb(userconn, *result.response);
                     if (shouldSend) {
-                        userconn->SendTCP(*response);
-                        YLOG_INFO("RPC转发：{}返回：{}", Response::descriptor()->name(), response->ShortDebugString());
+                        userconn->SendTCP(*result.response);
+                        YLOG_INFO("RPC转发：{}返回：{}", Response::descriptor()->name(), result.response->ShortDebugString());
                     } else {
                         YLOG_INFO("{}响应无法转发：过滤", Request::descriptor()->name());
                     }
                 });
-
-            //! RPC请求是否转发成功
-            if (not success) {
-                YLOG_WARN("{}转发失败", Request::descriptor()->name());
-                userconn->Shutdown();
-            }
         });
 }
 
@@ -156,7 +150,24 @@ bool ForwardManager::FilterMessage(const UserConnectionPtr& userconn, const Requ
         static_assert(core::HasToken<Request> || core::HasUserToken<Request>, "Request must have token() or user_token()");
     }
 
-    return token == userconn->GetToken() and token == m_redisDAO.GetTokenAndRefreshEx(userconn->GetUID());
+    // 本地保存的 token 与消息携带的不一致，直接拒绝
+    if (token != userconn->GetToken()) {
+        return false;
+    }
+
+    // 与 Redis 中的 token 比对并刷新过期时间；
+    // 区分“token 无效/过期”(kNotFound) 与“Redis 故障”(kError)，
+    // 避免把 Redis 故障静默当作 token 不匹配而丢消息
+    const auto redis_token = m_redisDAO.GetTokenAndRefreshEx(userconn->GetUID());
+    if (!redis_token) {
+        if (redis_token.error() == core::redis::RedisError::kError) {
+            YLOG_ERROR("鉴权校验失败：Redis 错误：{}", redis_token.error().message())
+        } else {
+            YLOG_WARN("鉴权校验失败：token 不存在或已过期")
+        }
+        return false;
+    }
+    return token == *redis_token;
 }
 
 template <core::IsProtobufMessage Request, core::IsProtobufMessage Response, core::rpc::IsValidStub ServiceStub>
@@ -165,28 +176,17 @@ void ForwardManager::SendRpcRequest(core::rpc::RpcClient<ServiceStub>& rpcClient
 {
     //! 【转发RPC请求】
     YLOG_INFO("RPC转发：{}发送：{}", Request::descriptor()->name(), request.ShortDebugString());
-    const bool success = rpcClient.template CallRemoteAsync_Random<Request, Response>(request,
+    rpcClient.template CallRemote_Random<Request, Response>(request)
         //! 【Rpc响应回调】
-        [onRspCb = std::move(onRspCb)](std::unique_ptr<Response>&& response, std::unique_ptr<core::rpc::RpcControllerImpl>&& controller)
-        {
-            if (!response) {
-                YLOG_INFO("RPC响应时：{}响应为空", Request::descriptor()->name());
+        .then([onRspCb = std::move(onRspCb)](core::rpc::RpcResult<Response> result) {
+            if (!result.ok()) {
+                YLOG_INFO("{}失败：{}", Request::descriptor()->name(), result.error());
                 return;
             }
-            if (!controller or controller->Failed()) {
-                YLOG_INFO("{}失败：{}", Request::descriptor()->name(), controller->ErrorText());
-                return;
-            }
-
             if (onRspCb) {
-                onRspCb(*response);
+                onRspCb(*result.response);
             }
         });
-
-    //! RPC请求是否转发成功
-    if (not success) {
-        YLOG_WARN("{}请求发送失败", Request::descriptor()->name());
-    }
 }
 
 template <core::IsProtobufMessage MsgT, typename ClassT> requires core::MessageHandlerInvocable<ClassT, MsgT>

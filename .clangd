@@ -1,2 +1,12 @@
 CompileFlags:
   CompilationDatabase: build-debug
+  #! 强制启用 C++23：std::expected 需要 -std=gnu++23，避免编译数据库缺失/缓存未刷新时回退到 C++17
+  #! 强制使用 gcc-14 的标准库头（与项目实际编译一致；clang 18 默认选最新的 gcc-15 头，
+  #! 其 <expected> 与 clang 18 不兼容，导致 "No template named 'expected' in namespace 'std'"）
+  Add:
+    - "-std=gnu++23"
+    - "--gcc-install-dir=/usr/lib/gcc/x86_64-linux-gnu/14"
+    #! 强制 __cpp_concepts=202002L：clang 18 将其定义为草案值 201907L，
+    #! 而 libstdc++14 要求 >= 202002L 才定义 __cpp_lib_expected（否则 <expected> 不提供 std::expected）。
+    #! 仅作用于 clangd，不影响 gcc 实际构建。
+    - "-D__cpp_concepts=202002L"

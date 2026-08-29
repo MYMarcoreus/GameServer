@@ -6,7 +6,6 @@
 #include "IOChannel.h"
 #include "log.h"
 #include "ErrnoSaver.h"
-#include "status/Status.h"
 #include <sys/epoll.h>
 
 #include <cstdio>
@@ -189,4 +188,3 @@ void EpollPoller::UpdateEpollOperation(IOChannel * channel, const int EPOLL_CTL_
 
 
 #endif
-

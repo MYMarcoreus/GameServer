@@ -8,10 +8,10 @@
         appMaxConnection = "2000"
         appXorCode       = "130"
         appVersion       = "20230123"
-        recvBytesOne     = "16"
-        recvBytesMax     = "64"
-        sendBytesOne     = "16"
-        sendBytesMax     = "64"
+        recvBytesOne     = "2"
+        recvBytesMax     = "4"
+        sendBytesOne     = "2"
+        sendBytesMax     = "4"
         maxHeartTime     = "30"
         maxSecurityTime  = "10"
         securityCode     = "114514"
@@ -27,30 +27,21 @@
         appXorCode      = "130"
         appVersion      = "20230123"
         recvBytesOne    = "8"
-        recvBytesMax    = "32"
+        recvBytesMax    = "256"
         sendBytesOne    = "8"
-        sendBytesMax    = "32"
+        sendBytesMax    = "256"
         maxHeartTime    = "10"
         autoConnectTime = "3"
         securityCode    = "114514"
         checkCode       = "DE"
     >
         <remote_node
-            type    = "mysql"
+            type      = "login"
             username  = "yy"
             password  = "0"
             poolsize  = "10"
-            ip      = "127.0.0.1"
-            port    = "33060"
-        />
-
-        <remote_node
-            type    = "zookeeper"
-            username  = "yy"
-            password  = "0"
-            poolsize  = "10"
-            ip      = "127.0.0.1"
-            port    = "2181"
+            ip        = "127.0.0.1"
+            port      = "13333"
         />
     </remote>
 
@@ -104,10 +95,7 @@
 <!--            </appender>-->
         </logger>
     </log>
-
     <error>
 
     </error>
-
-
 </root>

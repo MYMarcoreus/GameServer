@@ -2,7 +2,9 @@
 #include "socket_definations.h"
 #include "IPAddress.h"
 #include "log.h"
+#include <expected>
 #include <memory>
+#include <system_error>
 #include <unordered_map>
 #include <type_traits>
 
@@ -48,8 +50,9 @@ SocketResult writev(socket_t sockfd, IOV_TYPE *iov, int iovcnt);
 SocketResult sendmsg(socket_t sockfd, IOV_TYPE *iov, int iovcnt, const std::shared_ptr<IPAddress>& peerAddr);
 
 
-extern std::shared_ptr<IPAddress> GetLocalAddr(socket_t sockfd);
-extern std::shared_ptr<IPAddress> GetPeerAddr (socket_t sockfd);
+//! 获取套接字本地/对端地址；失败返回 std::error_code（errno 包装），避免 nullptr 失败模式
+auto GetLocalAddr(socket_t sockfd) -> std::expected<IPAddress::ptr, std::error_code>;
+auto GetPeerAddr (socket_t sockfd) -> std::expected<IPAddress::ptr, std::error_code>;
 
 template<class IPADDR> requires requires {
     requires std::is_base_of_v<IPAddress, IPADDR>;

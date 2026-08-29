@@ -90,6 +90,8 @@ services:
       context: ..
       dockerfile: docker/Dockerfile
       target: builder
+    # 以宿主机用户身份运行，避免容器内写入的文件在宿主机变成 root
+    user: "${UID:-1000}:${GID:-1000}"
     networks: [gsnet]
     environment:
       REDIS_URI: tcp://redis:6379

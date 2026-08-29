@@ -130,8 +130,15 @@ TcpConnectionPtr TcpClient::GetConnection()
 }
 
 void TcpClient::NewConnection(SocketApiWrapper::socket_t sockfd) {
-    IPAddressPtr localAddr = SocketApiWrapper::GetLocalAddr(sockfd);
-    IPAddressPtr peerAddr = SocketApiWrapper::GetPeerAddr(sockfd);
+    const auto localAddrRes = SocketApiWrapper::GetLocalAddr(sockfd);
+    const auto peerAddrRes = SocketApiWrapper::GetPeerAddr(sockfd);
+    if (!localAddrRes || !peerAddrRes) {
+        YLOG_WARN("TcpClient::NewConnection 获取地址失败：local={}, peer={}",
+                  localAddrRes ? "ok" : localAddrRes.error().message(),
+                  peerAddrRes ? "ok" : peerAddrRes.error().message())
+    }
+    const IPAddressPtr localAddr = localAddrRes.value_or(nullptr);
+    const IPAddressPtr peerAddr = peerAddrRes.value_or(nullptr);
 
     // auto name = std::format("{}:{}", Timestamp::Now().GetMircoSecondSinceEpoch().count(), m_NextConnID++);
     auto connid = m_NextConnID++;

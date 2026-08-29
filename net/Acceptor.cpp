@@ -1,7 +1,6 @@
 #include "Acceptor.h"
 #include "EventLoop.h"
 #include "log.h"
-#include "status/Status.h"
 #include "SocketApiWrapper.h"
 #include "Socket.h"
 #include "IOChannel.h"
@@ -22,7 +21,12 @@ Acceptor::Acceptor(EventLoop *loop, const Socket::Type socketType, const IPAddre
     m_AcceptSocket->SetOpt_Linger(true);
     // 如果端口为0，在bind时会随机分配端口
     m_AcceptSocket->Bind(listenAddr);
-    m_ListenAddr = m_AcceptSocket->GetLocalAddr();
+    const auto listen_addr = m_AcceptSocket->GetLocalAddr();
+    if (listen_addr) {
+        m_ListenAddr = *listen_addr;
+    } else {
+        YLOG_ERROR("Acceptor 获取监听地址失败：{}", listen_addr.error().message())
+    }
 }
 
 Acceptor::~Acceptor() {
